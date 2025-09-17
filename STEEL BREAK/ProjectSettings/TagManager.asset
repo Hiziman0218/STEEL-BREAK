@@ -3,15 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - UICrosshair
+  - Enemy
+  - CenterPoint
+  - FxTemporaire
+  - Collide
+  - ClearWall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - NPC
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 
