@@ -59,7 +59,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         // プレイヤーにアタッチされたLockOnを取得
         lockOn = transform.root.GetComponent<LockOn>();
 
-        // --- 初期回転を保持 ---
+        // 初期回転を保持
         if (m_weaponModelTransform != null)
         {
             m_defaultLocalRot = m_weaponModelTransform.localRotation;
@@ -227,6 +227,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         m_elapsedTime = 0f;
     }
 
+    /*
     /// <summary>
     /// ロック中に武器モデルを敵方向へスムーズ回転
     /// </summary>
@@ -264,6 +265,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             }
         }
     }
+    */
 
 
     /// <summary>
@@ -279,6 +281,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         }
     }
 
+    /*
     /// <summary>
     /// 非ロック時に武器モデルを親の forward 方向にスムーズ回転
     /// </summary>
@@ -291,6 +294,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             Time.deltaTime * m_rotationSpeed
         );
     }
+    */
 
     /// <summary>
     /// ターゲット消失時にスムーズにリセット
