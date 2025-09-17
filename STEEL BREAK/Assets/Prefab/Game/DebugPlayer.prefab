@@ -282,6 +282,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MechModelViewer
       objectReference: {fileID: 0}
+    - target: {fileID: 638650367045717145, guid: e5ebd54bed5fd5842ab66770499f34e4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7078419400800354870, guid: e5ebd54bed5fd5842ab66770499f34e4, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1311,7 +1315,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5412421712239215322, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       propertyPath: m_Name
@@ -1330,7 +1334,7 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2775862123970177323, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: aaddffe38381a60428eb1aeab1ba8b85, type: 2}
     - target: {fileID: 5866666021909216657, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
@@ -1618,7 +1622,7 @@ MonoBehaviour:
   detectionRange: 20
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
 --- !u!114 &2989979615990403608
 MonoBehaviour:
   m_ObjectHideFlags: 0
