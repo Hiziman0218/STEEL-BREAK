@@ -1,0 +1,14 @@
+missionID: mission_002
+missionName: 火山の試練
+client: ギルド
+reward: 700G
+description: 火山に住みついている魔物の討伐
+sceneName: MountainStage
+missionImage: Images/mountain_thumb
+companyImage: Images/company_logo
+stageName: 火山
+objectives: 探索|討伐|回収
+objectiveAmounts: 1|3|2
+rewardAmount: 500
+messages: ようこそ|気を付けて|報酬はこちら
+battlesceneName: MountainBattle

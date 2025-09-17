@@ -1,0 +1,14 @@
+missionID: mission_001
+missionName: 山の試練
+client: 山岳ギルド
+reward: 500G
+description: 山の小さな集落を救ってくれ
+sceneName: MountainStage
+missionImage: Images/ミッション選択背景
+companyImage: Images/Cybros 1
+stageName: 山岳
+objectives: 探索|討伐|回収
+objectiveAmounts: 1|3|2
+rewardAmount: 500
+messages: ようこそ|気を付けて|報酬はこちら
+battlesceneName: MountainBattle

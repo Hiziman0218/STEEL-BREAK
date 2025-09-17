@@ -1,0 +1,127 @@
+﻿using UnityEngine;
+
+/// <summary>
+/// Attach this script to all the target game objects in the scene.
+/// </summary>
+[DefaultExecutionOrder(0)]
+public class Target : MonoBehaviour
+{
+    [Tooltip("Change this color to change the indicators color for this target")]
+    [SerializeField] private Color targetColor = Color.red;
+
+    [Tooltip("Select if box indicator is required for this target")]
+    [SerializeField] private bool needBoxIndicator = true;
+
+    [Tooltip("Select if arrow indicator is required for this target")]
+    [SerializeField] private bool needArrowIndicator = true;
+
+    [Tooltip("Select if distance text is required for this target")]
+    [SerializeField] private bool needDistanceText = true;
+
+    [Tooltip("表示位置に使うTransform（通常は子オブジェクトのBP）")]
+    public Transform BP;
+
+    // 追加 : 自身がロックオンされているか(設定はロックオン側で判定)
+    private bool isLockedOn;
+    public bool IsLockedOn
+    {
+        get
+        {
+            return isLockedOn;
+        }
+        set
+        {
+            isLockedOn = value;
+        }
+    }
+
+    /// <summary>
+    /// Please do not assign its value yourself without understanding its use.
+    /// A reference to the target's indicator, 
+    /// its value is assigned at runtime by the offscreen indicator script.
+    /// </summary>
+    [HideInInspector] public Indicator indicator;
+
+    /// <summary>
+    /// Gets the color for the target indicator.
+    /// </summary>
+    public Color TargetColor
+    {
+        get
+        {
+            return targetColor;
+        }
+    }
+
+    /// <summary>
+    /// Gets if box indicator is required for the target.
+    /// </summary>
+    public bool NeedBoxIndicator
+    {
+        get
+        {
+            // 追加 : 表示するかの条件に、ロックオンされているかを追加
+            return needBoxIndicator && isLockedOn;
+        }
+    }
+
+    /// <summary>
+    /// Gets if arrow indicator is required for the target.
+    /// </summary>
+    public bool NeedArrowIndicator
+    {
+        get
+        {
+            return needArrowIndicator;
+        }
+    }
+
+    /// <summary>
+    /// Gets if the distance text is required for the target.
+    /// </summary>
+    public bool NeedDistanceText
+    {
+        get
+        {
+            return needDistanceText;
+        }
+    }
+
+    public Vector3 GetTargetPosition()
+    {
+        return BP != null ? BP.position : transform.position;
+    }
+
+    /// <summary>
+    /// On enable add this target object to the targets list.
+    /// </summary>
+    private void OnEnable()
+    {
+        if(OffScreenIndicator.TargetStateChanged != null)
+        {
+            OffScreenIndicator.TargetStateChanged.Invoke(this, true);
+        }
+    }
+
+    /// <summary>
+    /// On disable remove this target object from the targets list.
+    /// </summary>
+    private void OnDisable()
+    {
+        if(OffScreenIndicator.TargetStateChanged != null)
+        {
+            OffScreenIndicator.TargetStateChanged.Invoke(this, false);
+        }
+    }
+
+    /// <summary>
+    /// Gets the distance between the camera and the target.
+    /// </summary>
+    /// <param name="cameraPosition">Camera position</param>
+    /// <returns></returns>
+    public float GetDistanceFromCamera(Vector3 cameraPosition)
+    {
+        float distanceFromCamera = Vector3.Distance(cameraPosition, transform.position);
+        return distanceFromCamera;
+    }
+}

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: Artemis(Lge)
+  m_EditorClassIdentifier: 
+  partName: Artemis
+  partType: 4
+  partIcon: {fileID: 21300000, guid: f9dc0812c7bffff4ba4cdc491527b045, type: 3}
+  partPrefab: {fileID: 1817231661583642947, guid: 6a7f5946e862fc54ab6681404a805636, type: 3}
+  multiPrefabs:
+  - {fileID: 1817231661583642947, guid: 6a7f5946e862fc54ab6681404a805636, type: 3}
+  - {fileID: 3969795880154904524, guid: 53456d892669e0a4da83c0e709be331f, type: 3}
+  - {fileID: 7627176725698145530, guid: b0e2f0440f6db3d43b69428e96b6f91c, type: 3}
+  - {fileID: 8476537341354808353, guid: a93c8c041ef8fe442a7af96500212db5, type: 3}
+  - {fileID: 8008690975150140527, guid: fe2305053ef4c2246accc899299e375a, type: 3}
+  - {fileID: 7250506801631256898, guid: 76c17e9ed8f01984c83b5c26f5a56253, type: 3}
+  - {fileID: 8801104360375983127, guid: 8fd37927cbc4e9f4cb25c4382f625d40, type: 3}
+  boneScales:
+  - boneName: B-shin.L
+    scale: {x: 1, y: 1.5, z: 1}
+  - boneName: B-shin.R
+    scale: {x: 1, y: 1.5, z: 1}
+  scaleInfos:
+  - prefab: {fileID: 7627176725698145530, guid: b0e2f0440f6db3d43b69428e96b6f91c, type: 3}
+    scale: {x: 1, y: 0.1676614, z: -0.8728207}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  - prefab: {fileID: 7250506801631256898, guid: 76c17e9ed8f01984c83b5c26f5a56253, type: 3}
+    scale: {x: 1, y: 0.67, z: 1}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  AP: 0
+  stability: 0
+  weight: 0
+  enLoad: 0
+  description: 

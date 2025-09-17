@@ -1,0 +1,29 @@
+# 表示するテキスト
+TEXTCLS:
+TEXT:「ミカ、やっと分かったんだ」
+TEXT:「俺達にはたどりつく場所なんて要らねえ」
+TEXT:「ただ進み続けるだけでいい」
+TEXT:「止まんねえ限り…道は…続く」
+TEXT:「俺は止まんねえからよ…」
+TEXT:「お前らが止まんねえ限り、その先に俺はいるぞ！」
+TEXT:「だからよ…止まるんじゃねえぞ…」
+# TEXTWindowCLS:
+
+# 画像を表示
+SHOW_IMAGE_S:主人公
+TEXT:主人公センター
+
+SHOW_IMAGE_R:主人公
+TEXT:主人公右
+
+SHOW_IMAGE_L:主人公
+TEXT:主人公左
+
+# 表示するテキスト
+TEXT:この村を救ってください。
+
+# BGMを再生
+PLAY_BGM:AdventureTheme
+
+# 正面画を消す
+SHOW_IMAGE_S_CLS:

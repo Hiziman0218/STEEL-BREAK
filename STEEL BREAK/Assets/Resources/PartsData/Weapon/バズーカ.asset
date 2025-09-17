@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: "\u30D0\u30BA\u30FC\u30AB"
+  m_EditorClassIdentifier: 
+  partName: Bazooka
+  partType: 5
+  partIcon: {fileID: 21300000, guid: 277e66af03e7e6247a27e0bb9e667424, type: 3}
+  partPrefab: {fileID: 3212595489810784232, guid: f7a99e8a92579d84f9b68ff71d3c914b, type: 3}
+  multiPrefabs: []
+  boneScales: []
+  scaleInfos: []
+  AP: 0
+  stability: 0
+  weight: 0
+  enLoad: 0
+  description: 

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: Artemis(Body)
+  m_EditorClassIdentifier: 
+  partName: Artemis
+  partType: 1
+  partIcon: {fileID: 21300000, guid: b35650a93e4c8d84ab5d68c22a955de1, type: 3}
+  partPrefab: {fileID: 8475825486460209016, guid: 099d9c42d6281504787e2b1fff752594, type: 3}
+  multiPrefabs: []
+  boneScales:
+  - boneName: B-chest
+    scale: {x: 1, y: 1, z: 1}
+  scaleInfos:
+  - prefab: {fileID: 0}
+    scale: {x: 0, y: 0, z: 0}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  AP: 0
+  stability: 0
+  weight: 0
+  enLoad: 0
+  description: 

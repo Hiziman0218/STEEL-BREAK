@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: "\u30B7\u30E7\u30C3\u30C8\u30AC\u30F3"
+  m_EditorClassIdentifier: 
+  partName: Shotgun
+  partType: 5
+  partIcon: {fileID: 21300000, guid: 5cd818ca9a70f3c44aa8b16a5546b9b4, type: 3}
+  partPrefab: {fileID: 6225482779715760953, guid: 21931846b90b464478c19a75b25c8928, type: 3}
+  multiPrefabs: []
+  boneScales: []
+  scaleInfos: []
+  AP: 0
+  stability: 0
+  weight: 0
+  enLoad: 0
+  description: 

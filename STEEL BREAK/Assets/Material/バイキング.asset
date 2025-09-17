@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd53e68c675443041b323c64bb181d2c, type: 3}
+  m_Name: "\u30D0\u30A4\u30AD\u30F3\u30B0"
+  m_EditorClassIdentifier: 
+  m_AnimationPanel: {fileID: 0}
+  m_Material: {fileID: 0}
+  m_Rigidbody: {fileID: 0}
+  m_LR_Animetion:
+  - {fileID: 21300000, guid: 331cb544487956642876d45886c012b8, type: 3}
+  - {fileID: 21300000, guid: c8e9d21e688f85a408b2d922bf637621, type: 3}
+  - {fileID: 21300000, guid: 51e298b3f7bc74c46b17c6e8ce0d149d, type: 3}
+  - {fileID: 21300000, guid: d3cf92f2dc92f9c4596f6b64cf4092e1, type: 3}
+  - {fileID: 21300000, guid: 022effa5ee2b17d40b06f17b13ed4f22, type: 3}
+  - {fileID: 21300000, guid: e060d8cf469882941916685cec20c238, type: 3}
+  - {fileID: 21300000, guid: 82db6763bc55d5c4d80753fa14ca06ac, type: 3}
+  - {fileID: 21300000, guid: 2c8f814043d46af4f827799a846c19e5, type: 3}
+  m_Up_Animetion:
+  - {fileID: 21300000, guid: 8f3534651ffbc2341b83982828f1b17c, type: 3}
+  - {fileID: 21300000, guid: f5ba804ff5631b946a0dcf67c09e44ac, type: 3}
+  - {fileID: 21300000, guid: 1891b5567e48d3249b7639f8c9dd4d5a, type: 3}
+  - {fileID: 21300000, guid: dcb97f4b566643c449a55a1583f92dc1, type: 3}
+  - {fileID: 21300000, guid: bf60351fc6c73ea45af3ae700118ee89, type: 3}
+  - {fileID: 21300000, guid: 8a4697b5261dec544a55e3107328117e, type: 3}
+  - {fileID: 21300000, guid: d2c055cf2a8a18949819efcbdc82e45a, type: 3}
+  - {fileID: 21300000, guid: 22c004d9fbaf5d042b366c95ab7e4e3a, type: 3}
+  m_Down_Animetion:
+  - {fileID: 21300000, guid: 68b34632e67a8b047bfbc2e72d88b69b, type: 3}
+  - {fileID: 21300000, guid: b60fdf858452e4942978f4b3aaf55bd4, type: 3}
+  - {fileID: 21300000, guid: d60ae0d0fd0a8a0499d8f063886e1dd3, type: 3}
+  - {fileID: 21300000, guid: 705dd313dd32c5e47b982de520ae675a, type: 3}
+  - {fileID: 21300000, guid: 1a018afeeaf422b4eb73c8a47aef4bd1, type: 3}
+  - {fileID: 21300000, guid: ee8f2b06f32f2ac4ca88cc7421dcd96b, type: 3}
+  - {fileID: 21300000, guid: 292466e989413fb478a106a8da1fb8fd, type: 3}
+  - {fileID: 21300000, guid: 2b368e4abdf42c447b401e4996b1a47b, type: 3}
+  m_AnimationNo: 0
+  m_AnimationTime: 0
+  m_AnimationMaxTime: 0.1
+  m_Speed: 3
+  m_MukiData: 3

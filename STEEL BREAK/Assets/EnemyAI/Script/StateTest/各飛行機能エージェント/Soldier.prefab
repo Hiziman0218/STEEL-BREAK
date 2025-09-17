@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3840784196727427622
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6045560889105662159}
+  - component: {fileID: 6022895994269186505}
+  - component: {fileID: 7179193609274629903}
+  - component: {fileID: 649798475387452253}
+  m_Layer: 2
+  m_Name: Soldier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6045560889105662159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840784196727427622}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.02, y: 8.3, z: -27.59}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6022895994269186505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840784196727427622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dced1f97001f9b4888f1367578f9755, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  autoUpdate: 0
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 2
+  blockLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  solverType: 0
+  checkLineOfSight: 1
+  usingTagFilter: 0
+  tagFilter: Untagged
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  pulseTime: 0
+  detectVector: {x: 0, y: 0, z: 0}
+  destination: {fileID: 0}
+  groundRay: {fileID: 0}
+  colliderSize: 1
+  radius: 20
+  stoppingDistance: 0
+  local: 1
+  angleX: 360
+  angleY: 360
+  iteration: 8
+  moveSharpness: 6
+  markSolverCount: 6
+  markSolverInfluence: 1
+  markSolverRefreshTime: 1
+  obstacleNormalInfluence: 1
+  obstacleDistanceInfluence: 1
+  spiderSolver: 1
+  timeMode: 0
+  calculatedDirection: {x: -0.8377374, y: 0.0012903935, z: 0.5460719}
+--- !u!54 &7179193609274629903
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840784196727427622}
+  serializedVersion: 4
+  m_Mass: 50
+  m_Drag: 1
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &649798475387452253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840784196727427622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e0d89e1723fbd34497986edffc6e7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detector: {fileID: 6022895994269186505}
+  accelerationSpeed: 4
+  arriveDistance: 1
+  turnRate: 6
+  movable: 1
+  rotatable: 1
+  fixRotate: 0
+  speed: 14
