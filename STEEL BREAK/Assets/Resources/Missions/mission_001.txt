@@ -1,14 +1,15 @@
 missionID: mission_001
-missionName: 山の試練
-client: 山岳ギルド
-reward: 500G
-description: 山の小さな集落を救ってくれ
-sceneName: MountainStage
-missionImage: Images/ミッション選択背景
-companyImage: Images/Cybros 1
-stageName: 山岳
-objectives: 探索|討伐|回収
-objectiveAmounts: 1|3|2
-rewardAmount: 500
-messages: ようこそ|気を付けて|報酬はこちら
+missionName: チュートリアル
+client: オールユニオン
+reward: 1000
+description: 操作方法の確認
+sceneName: TutorialStage
+missionImage: Images/Mission/ミッション選択背景
+companyImage: Images/Mission/All_Union
+stageName: Tutorial
+objectives: ||
+objectiveAmounts: ||
+rewardAmount: 1000
+messages: ようこそ|私は傭兵支援システム「オールユニオン」です|こちらは新兵に向けたチュートリアルステージです|こちらでは操作方法など基本を学ぶことが出来ます|クリアしていただくと報酬もございますのでふるってご参加ください。
+voices: VoiceClips/All-Union/チュートリアル/001|VoiceClips/All-Union/チュートリアル/002|VoiceClips/All-Union/チュートリアル/003|VoiceClips/All-Union/チュートリアル/004|VoiceClips/All-Union/チュートリアル/005
 battlesceneName: MountainBattle

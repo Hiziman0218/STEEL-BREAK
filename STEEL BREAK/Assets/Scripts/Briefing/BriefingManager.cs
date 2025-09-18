@@ -5,27 +5,31 @@ using UnityEngine.UI;
 public class BriefingManager : MonoBehaviour
 {
     [Header("基本情報UI")]
-    public TextMeshProUGUI missionTitleText;
-    public TextMeshProUGUI clientText;
-    public TextMeshProUGUI stageNameText;
-    public TextMeshProUGUI rewardAmountText;
+    public TextMeshProUGUI missionTitleText;  // ミッション名表示
+    public TextMeshProUGUI clientText;        // 発注企業名表示
+    public TextMeshProUGUI stageNameText;     // ステージ名表示
+    public TextMeshProUGUI rewardAmountText;  // 報酬金額表示
 
     [Header("画像UI")]
-    public Image companyImage;
-    public Image missionImage;
+    public Image companyImage;   // 企業ロゴ表示用
+    public Image missionImage;   // ステージ画像表示用
 
-    [Header("目標UI（3つ）")]
-    public TextMeshProUGUI[] objectiveTexts; // 配列で3つ分のTextを設定
+    [Header("目標UI")]
+    public TextMeshProUGUI[] objectiveTexts;  // ミッション目標（複数）
 
     [Header("メッセージ表示")]
-    public TypeWriterEffect messageTyper;
+    public TypeWriterEffect messageTyper;     // メッセージを一文字ずつ表示するスクリプト
+    public AudioSource voiceSource;           // ボイス再生用のAudioSource（インスペクタで設定）
 
     [Header("UIオブジェクト")]
-    public GameObject briefingUI;  // ブリーフィング全体UI親
-    public GameObject selectionUI; // 次に表示したいUI親
+    public GameObject briefingUI;  // ブリーフィング画面の親UI
+    public GameObject selectionUI; // ミッション選択画面の親UI
+
+    private string[] voices;  // ボイスのパスを格納する配列（MissionDataから取得）
 
     void Start()
     {
+        // 選択されたミッションデータを取得
         var mission = GameData.currentSelected;
         if (mission == null)
         {
@@ -33,49 +37,71 @@ public class BriefingManager : MonoBehaviour
             return;
         }
 
-        // 基本テキスト
-        missionTitleText.text = mission.missionName;
-        //clientText.text = $"依頼者: {mission.client}";
-        stageNameText.text = mission.stageName;
-        rewardAmountText.text = $"{mission.rewardAmount:N0}";
+        // 基本テキストのセット
+        missionTitleText.text = mission.missionName;        // ミッション名
+        stageNameText.text = mission.stageName;             // ステージ名
+        rewardAmountText.text = $"{mission.rewardAmount:N0}"; // 報酬を3桁区切りで表示
 
-        // 画像
+        // 画像のセット（nullチェックあり）
         if (companyImage != null) companyImage.sprite = mission.companyImage;
         if (missionImage != null) missionImage.sprite = mission.missionImage;
 
-        // 目標（3つ）
+        // 目標テキスト初期化（必要なら後でセット）
         for (int i = 0; i < objectiveTexts.Length; i++)
         {
-            if (i < mission.objectives.Length && i < mission.objectiveAmounts.Length)
-            {
-                objectiveTexts[i].text = $"{mission.objectives[i]}：¥{mission.objectiveAmounts[i]:N0}";
-            }
-            else
-            {
-                objectiveTexts[i].text = "";
-            }
+            objectiveTexts[i].text = "";
         }
 
-        // メッセージ（タイプライター）開始＆終了コールバック登録
+        // MissionDataからvoices配列を取得
+        voices = mission.voices;
+
+        // メッセージの表示開始
         if (messageTyper != null)
         {
+            // メッセージが全て終わったときに呼ばれる
             messageTyper.OnTypingFinished += OnMessageFinished;
+            // メッセージが切り替わったタイミングでボイスを再生
+            messageTyper.OnMessageChanged += PlayVoice;
+            // タイピング開始
             messageTyper.StartTyping(mission.messages);
         }
     }
 
+    /// <summary>
+    /// メッセージ切り替え時に対応するボイスを再生
+    /// </summary>
+    private void PlayVoice(int index)
+    {
+        if (voices != null && index < voices.Length)
+        {
+            // ResourcesフォルダからAudioClipをロード
+            var clip = Resources.Load<AudioClip>(voices[index]);
+            if (clip != null && voiceSource != null)
+            {
+                voiceSource.clip = clip;
+                voiceSource.Play();  // 再生開始
+            }
+            else
+            {
+                Debug.LogWarning($"ボイスクリップが見つからない: {voices[index]}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// メッセージが全て終わった時に呼ばれる
+    /// </summary>
     private void OnMessageFinished()
     {
-        // ブリーフィングUIを非表示に
+        // ブリーフィングUIを閉じて、ミッション選択画面を表示
         if (briefingUI != null) briefingUI.SetActive(false);
-
-        // 選択UIを表示
         if (selectionUI != null) selectionUI.SetActive(true);
 
-        // イベント解除
+        // イベント登録を解除（メモリリーク防止）
         if (messageTyper != null)
         {
             messageTyper.OnTypingFinished -= OnMessageFinished;
+            messageTyper.OnMessageChanged -= PlayVoice;
         }
     }
 }

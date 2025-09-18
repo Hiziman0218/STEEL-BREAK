@@ -148,6 +148,9 @@ public class MissionSelectManager : MonoBehaviour
                     case "messages":
                         mission.messages = value.Split('|');
                         break;
+                    case "voices":
+                        mission.voices = value.Split('|');
+                        break;
                     case "battlesceneName":
                         mission.battlesceneName = value;
                         break;

@@ -23,6 +23,8 @@ public class MissionData : ScriptableObject
     [TextArea(3, 5)]
     public string[] messages;      // 💬 複数メッセージ ←★変更
 
+    public string[] voices;        // 🔊 各メッセージに対応するボイス
+
     public string battlesceneName;       // ステージ遷移用シーン名
 
     // 内部識別用
