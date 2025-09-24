@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TutorialField : MonoBehaviour
@@ -23,14 +22,17 @@ public class TutorialField : MonoBehaviour
         SpawnEnemies();
     }
 
+    /// <summary>
+    /// プレイヤーを生成
+    /// </summary>
     private void SpawnPlayer()
     {
         if (m_playerPrefab != null && m_playerSpawnPoint != null)
         {
-            // プレイヤー生成
+            //プレイヤー生成
             m_playerInstance = Instantiate(m_playerPrefab, m_playerSpawnPoint.position, m_playerSpawnPoint.rotation);
 
-            // GameManager へ通知
+            //GameManagerへ通知
             GameManager.Instance.OnPlayerSpawned(m_playerInstance);
         }
     }

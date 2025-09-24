@@ -3811,6 +3811,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3983,8 +3986,7 @@ MonoBehaviour:
   m_rate: 0.8
   m_maxAmmo: 20
   m_reloadTime: 2
-  m_weaponModelTransform: {fileID: 108971331171991449}
-  m_rotationSpeed: 10
+  m_statusData: {fileID: 11400000, guid: 644c086b6f3424849898b1b367d2429a, type: 2}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
   m_ammo: 0
 --- !u!1 &6427270961120857104

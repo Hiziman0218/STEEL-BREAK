@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
     [Header("マウス横回転感度")]
-    [Tooltip("大きいほどゆっくり、小さいほど速く回転します")]
+    [Tooltip("大きいほどゆっくり、小さいほど速く回転")]
     public float mouseSensitivity = 100f;
 
     void Update()

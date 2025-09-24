@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e576948516e6634db5370ed85bd45d3, type: 3}
+  m_Name: "\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB\u30C7\u30FC\u30BF"
+  m_EditorClassIdentifier: 
+  Name: "\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB"
+  Rate: 0.08
+  ReloadTime: 2.5
+  MaxAmmo: 60
+  BulletPrefab: {fileID: -8026933686053553379, guid: 8f546a2cc11b0494fa290c29a8230c41, type: 3}
+  MuzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}

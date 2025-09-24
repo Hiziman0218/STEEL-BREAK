@@ -10,19 +10,17 @@ public class LockOn : MonoBehaviour
     [Tooltip("ロックオン可能な最大距離")]
     public float detectionRange = 20f;
 
-    [Tooltip("敵だけを検出するレイヤーマスク")]
+    [Tooltip("敵のレイヤー")]
     public LayerMask enemyLayer;
 
     private bool lockOnEnabled = true; //ロックオン機能の有効/無効フラグ
 
     private Transform currentTarget; //現在のロックオン対象
-    public Transform CurrentTarget => currentTarget;
+    public Transform CurrentTarget => currentTarget; //現在のロックオン対象(外部参照用)
 
     private Enemy currentEnemy; //イベント登録用に保持
-
-    private List<Transform> candidates = new List<Transform>(); //ターゲット候補リスト
-
     private InputManager input; //入力受け取りクラス
+    private List<Transform> candidates = new List<Transform>(); //ターゲット候補リスト
 
     private void Start()
     {
@@ -46,7 +44,7 @@ public class LockOn : MonoBehaviour
         // 生存・範囲チェック → アンロック
         if (currentTarget != null)
         {
-            // 死亡チェック
+            //死亡チェック
             var enemy = currentTarget.GetComponentInParent<Enemy>();
             if (enemy == null || !enemy.IsAlive)
             {
@@ -54,7 +52,7 @@ public class LockOn : MonoBehaviour
                 return;
             }
 
-            // 範囲外チェック
+            //範囲外チェック
             float dist = Vector3.Distance(transform.position, currentTarget.position);
             if (dist > detectionRange || !candidates.Contains(currentTarget))
             {
@@ -62,7 +60,7 @@ public class LockOn : MonoBehaviour
                 return;
             }
 
-            // カメラ中心から最も近い敵に自動でロックし直す
+            //カメラ中心から最も近い敵に自動でロックし直す
             Transform nearestToCenter = FindClosestToScreenCenter(candidates);
             if (nearestToCenter != null && nearestToCenter != currentTarget)
             {
@@ -70,17 +68,15 @@ public class LockOn : MonoBehaviour
             }
         }
 
-        // 未ロック → 自動ロック
+        //未ロック → 自動ロック
         if (candidates.Count > 0)
         {
-            //Lock(candidates[0]);
-
-            // 候補リストの先頭（最も近い）を取り出して画面内判定
+            //候補リストの先頭(最も近い)を取り出して画面内判定
             Transform candidate = candidates[0];
             Vector3 screenPos = ScreenUtility.WorldToScreen(Camera.main, candidate.position);
             if (ScreenUtility.IsInScreen(screenPos))
             {
-                // 画面内にいるときだけロック処理を呼ぶ
+                //画面内にいるときだけロック処理を呼ぶ
                 Lock(candidate);
             }
         }
@@ -89,10 +85,10 @@ public class LockOn : MonoBehaviour
     //範囲内の敵を検出し、距離順にソート
     private void RefreshCandidates()
     {
-        // 検出前のコライダー数をログ
+        //検出前のコライダー数をログ
         var cols = Physics.OverlapSphere(transform.position, detectionRange, enemyLayer);
 
-        // Enemy & 生存フィルタ後の数をログ
+        //Enemy & 生存フィルタ後の数をログ
         candidates = cols
             .Select(c => c.GetComponentInParent<Enemy>())
             .Where(e => e != null && e.IsAlive)
@@ -102,7 +98,10 @@ public class LockOn : MonoBehaviour
             .ToList();
     }
 
-    //ロックオン開始
+    /// <summary>
+    /// ロックオン開始
+    /// </summary>
+    /// <param name="target">ロックオンするターゲット</param>
     private void Lock(Transform target)
     {
         if (currentTarget == target) return;
@@ -142,12 +141,14 @@ public class LockOn : MonoBehaviour
         OnLock(target);
     }
 
-    //ロック解除
+    /// <summary>
+    /// ロック解除
+    /// </summary>
     private void Unlock()
     {
         if (currentTarget != null)
         {
-            // --- 追加: 現ターゲットの Target スクリプトをオフに ---
+            //現ターゲットのTargetスクリプトをオフに
             var targetScript = currentTarget.GetComponent<Target>();
             if (targetScript != null)
             {
@@ -156,7 +157,7 @@ public class LockOn : MonoBehaviour
 
             OnUnlock(currentTarget);
 
-            // --- 追加: イベント解除 ---
+            //イベント解除
             if (currentEnemy != null)
             {
                 currentEnemy.OnDeath -= OnTargetDeath;
@@ -167,6 +168,11 @@ public class LockOn : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 画面の中心から最も近い敵を探索
+    /// </summary>
+    /// <param name="candidates"></param>
+    /// <returns></returns>
     private Transform FindClosestToScreenCenter(List<Transform> candidates)
     {
         if (candidates == null || candidates.Count == 0 || Camera.main == null)
@@ -193,7 +199,9 @@ public class LockOn : MonoBehaviour
         return closest;
     }
 
-    //次のターゲットへ切り替え
+    /// <summary>
+    /// 次のターゲットへ切り替え
+    /// </summary>
     private void SwitchTarget()
     {
         if (candidates.Count < 2) return;
@@ -203,7 +211,10 @@ public class LockOn : MonoBehaviour
         Lock(candidates[idx]);
     }
 
-    //敵の死亡通知を受け取る ---
+    /// <summary>
+    /// 敵の死亡通知を受け取る
+    /// </summary>
+    /// <param name="enemy"></param>
     private void OnTargetDeath(Enemy enemy)
     {
         if (enemy == currentEnemy)
@@ -213,19 +224,27 @@ public class LockOn : MonoBehaviour
         }
     }
 
-    //ロックオン時の通知
+    /// <summary>
+    /// ロック通知(デバッグ)
+    /// </summary>
+    /// <param name="target"></param>
     private void OnLock(Transform target)
     {
         Debug.Log($"ロックオン対象を発見 : {target.name}");
     }
 
-    //ロック解除時の通知
+    /// <summary>
+    /// ロック解除通知(デバッグ)
+    /// </summary>
+    /// <param name="target"></param>
     private void OnUnlock(Transform target)
     {
         Debug.Log($"ロックオン対象を喪失 : {target.name}");
     }
 
-    //ギズモを表示
+    /// <summary>
+    /// ギズモを表示
+    /// </summary>
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

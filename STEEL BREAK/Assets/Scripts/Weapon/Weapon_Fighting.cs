@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +5,7 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
 {
     [Header("基本設定")]
     [SerializeField] private string m_name; //武装の名前
-    private bool m_isIKFinished;    //IKが完了しているかフラグ
+    private bool m_isIKFinished;            //IKが完了しているかフラグ
     [SerializeField] private Collider m_attackCollider; //当たり判定のコライダー
     private List<CharaBase> m_hitList = new List<CharaBase>(); //一度の攻撃内で当たった敵のリスト(多段ヒット対策)
 
@@ -55,6 +54,11 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
         m_attackCollider.enabled = false;
     }
 
+    /// <summary>
+    /// 武器を手に持ち、装備させる
+    /// </summary>
+    /// <param name="hand"></param>
+    /// <param name="left"></param>
     public void AttachToHand(Transform hand, bool left)
     {
         Transform grip = transform.Find("GripPoint");

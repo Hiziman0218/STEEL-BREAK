@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class IK_Control : MonoBehaviour
@@ -22,9 +20,9 @@ public class IK_Control : MonoBehaviour
         public Vector3 rotationOffsetEuler = Vector3.zero; //回転オフセット
     }
 
-    private Animator animator;         // アニメーター
-    private InputManager inputManager; // 入力管理クラス
-    public HandIK[] hands;             // 手のリスト(右手と左手)
+    private Animator animator;         //アニメーター
+    private InputManager inputManager; //入力管理クラス
+    public HandIK[] hands;             //手のリスト(右手と左手)
 
     [Header("IK 有効化／無効化設定")]
     [Tooltip("IK 無効化までの猶予時間（秒）")]
@@ -35,7 +33,7 @@ public class IK_Control : MonoBehaviour
     [Tooltip("IK を有効にする左右の最大角度（°）")]
     public float maxIKAngle = 60f;
 
-    // 手ごとの状態管理
+    //手ごとの状態管理
     private float lastFireTimeRight = -Mathf.Infinity;
     private float lastFireTimeLeft = -Mathf.Infinity;
     private float targetWeightRight = 0f;
@@ -43,15 +41,15 @@ public class IK_Control : MonoBehaviour
 
     void Start()
     {
-        // アニメーションを取得
+        //アニメーションを取得
         animator = GetComponent<Animator>();
-        // 入力受け取りクラスを取得
+        //入力受け取りクラスを取得
         inputManager = GetComponent<InputManager>();
     }
 
     void Update()
     {
-        // 右手武装使用
+        //右手武装使用
         if (inputManager.IsFireinRightHand)
         {
             lastFireTimeRight = Time.time;
@@ -63,7 +61,7 @@ public class IK_Control : MonoBehaviour
             targetWeightRight = 0f;
         }
 
-        // 左手武装使用
+        //左手武装使用
         if (inputManager.IsFireinLeftHand)
         {
             lastFireTimeLeft = Time.time;
@@ -78,13 +76,13 @@ public class IK_Control : MonoBehaviour
 
     void OnAnimatorIK(int layerIndex)
     {
-        // アニメーターが設定されていない場合、以降の処理を行わない
+        //アニメーターが設定されていない場合、以降の処理を行わない
         if (animator == null) return;
 
-        // handsの要素の数だけ繰り返し
+        //handsの要素の数だけ繰り返し
         foreach (var handIK in hands)
         {
-            // どちらの手か判定して目標ウェイトを選ぶ
+            //どちらの手か判定して目標ウェイトを選ぶ
             float goal = handIK.hand == AvatarIKGoal.RightHand
                          ? targetWeightRight
                          : targetWeightLeft;
@@ -104,7 +102,7 @@ public class IK_Control : MonoBehaviour
                 goal = 0f;
             }
 
-            // ターゲットなし時は必ず 0
+            //ターゲットなし時は必ず 0
             if (handIK.ikTarget == null) goal = 0f;
 
             //ゴールが0かどうかで加算と減算を切り替え
@@ -116,6 +114,7 @@ public class IK_Control : MonoBehaviour
             {
                 handIK.Counter += Mathf.Lerp(0f, 1, Time.deltaTime * lerpSpeed);
             }
+
             //カウンターが0か1(ウェイトの最大値以上/最小値以下)なら、その値に設定   
             if (handIK.Counter <= 0)
             {
@@ -137,13 +136,13 @@ public class IK_Control : MonoBehaviour
             handIK.ikPositionWeight = handIK.Counter;
             handIK.ikRotationWeight = handIK.Counter;
 
-            // IKを適用（ウェイト設定は常に行う）
+            //IKを適用（ウェイト設定は常に行う）
             animator.SetIKPositionWeight(handIK.hand, handIK.ikPositionWeight);
             animator.SetIKRotationWeight(handIK.hand, handIK.ikRotationWeight);
 
             if (handIK.ikTarget != null)
             {
-                // 常に毎フレーム渡すことで、ウェイトに応じたブレンドが成立
+                //常に毎フレーム渡すことで、ウェイトに応じたブレンドが成立
                 animator.SetIKPosition(handIK.hand, handIK.ikTarget.position);
 
                 //回転にオフセットをかけて設定

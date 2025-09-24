@@ -6,11 +6,15 @@ public class NewBullet : MonoBehaviour
 {
     [SerializeField] private Collider m_attackCollider; //当たり判定のコライダー
     [SerializeField] private GameObject m_hitEffect;    //ヒット時のエフェクト
-    [SerializeField] private float m_speed;             //弾速
+    [SerializeField] private float m_speed;             //弾速(削除？)
     [SerializeField] private bool m_disappearOnHit = true; //ヒット時に消えるか
     private List<CharaBase> m_hitList = new List<CharaBase>(); //一度の攻撃内で当たった敵のリスト(多段ヒット対策)←もし弾丸が敵に当たってすぐ消えるならいらない
     private string m_myTeam; //自身のチーム
 
+    /// <summary>
+    /// 自身の所属するチームを設定
+    /// </summary>
+    /// <param name="team"></param>
     public void SetTeam(string team)
     {
         m_myTeam = team;

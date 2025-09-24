@@ -1,26 +1,27 @@
 using Ilumisoft.RadarSystem;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : PlayerBase
 {
     //デバッグ用 武装をインスペクタで設定
-    [SerializeField] private MonoBehaviour m_righthandWeaponMono; //右手武装(デバッグ)
-    [SerializeField] private MonoBehaviour m_lefthandWeaponMono;  //左手武装(デバッグ)
+    //[SerializeField] private MonoBehaviour m_righthandWeaponMono; //右手武装(デバッグ)
+    //[SerializeField] private MonoBehaviour m_lefthandWeaponMono;  //左手武装(デバッグ)
 
-    //パーツ設定用オブジェクト
-    public MechAssemblyManager PartsSet;
+    [Header("プレハブ設定")]
+    [Tooltip("パーツ設定用オブジェクト")]
+    [SerializeField] private MechAssemblyManager PartsSet;
 
+    [Tooltip("破壊時エフェクト")]
     [SerializeField] private GameObject m_destroyEffect;
+
+    private float m_HPRate;           //現在の耐久割合
+    private float m_boostRate;        //現在のブースト割合
 
     private InputManager inputManager; //入力受け取りクラス
     private Movement movement;         //コントローラーやキーによる移動
 
     private ProgressBar m_HPBar;      //HPバー
-    private float m_HPRate;           //現在の耐久割合
     private ProgressBar m_boostGauge; //ブーストゲージ
-    private float m_boostRate;        //現在のブースト割合
     private Radar m_radar;            //プレイヤーを中心とするレーダー
 
     /// <summary>
@@ -31,6 +32,7 @@ public class Player : PlayerBase
         //基底クラスの初期化呼び出し
         base.Initialize();
 
+        //パーツ設定用オブジェクトに自身を設定
         PartsSet.SetPlayer(this);
 
         //各制御クラスを取得
@@ -65,7 +67,7 @@ public class Player : PlayerBase
             m_lefthandWeapon?.Reload();
         }
 
-        //割合計算
+        //割合計算/反映
         UpdateRate();
 
         //HPが0以下なら、破壊エフェクトを再生し自身を削除、その後ゲームオーバー画面へ遷移
@@ -78,10 +80,11 @@ public class Player : PlayerBase
     }
 
     /// <summary>
-    /// 各種割合を計算
+    /// 各種割合を計算し、対応したUIに反映
     /// </summary>
     void UpdateRate()
     {
+        //HPバーが設定されていたら
         if (m_HPBar != null)
         {
             //現在のHP割合を計算
@@ -90,7 +93,7 @@ public class Player : PlayerBase
             m_HPBar.BarValue = m_HPRate;
         }
 
-
+        //ブーストゲージが設定されていたら
         if (m_boostGauge != null)
         {
             //現在のブースト割合を計算
@@ -99,16 +102,29 @@ public class Player : PlayerBase
             m_boostGauge.BarValue = m_boostRate;
         }
     }
+
+    /// <summary>
+    /// HPバーを設定
+    /// </summary>
+    /// <param name="bar">HPバー</param>
     public void SetHPBar(ProgressBar bar)
     {
         m_HPBar = bar;
     }
 
+    /// <summary>
+    /// ブーストゲージを設定
+    /// </summary>
+    /// <param name="bar">ブーストゲージ</param>
     public void SetBoostGauge(ProgressBar bar)
     {
         m_boostGauge = bar;
     }
 
+    /// <summary>
+    /// レーダーを設定
+    /// </summary>
+    /// <param name="radar">レーダー</param>
     public void SetRadar(Radar radar)
     {
         m_radar = radar;

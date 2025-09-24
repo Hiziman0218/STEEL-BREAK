@@ -109,18 +109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: "\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB"
-  m_bulletPrefab: {fileID: 0}
-  m_bulletPrefab_: {fileID: -8026933686053553379, guid: 8f546a2cc11b0494fa290c29a8230c41, type: 3}
+  m_statusData: {fileID: 11400000, guid: 227357dc7da03a24781541844dbeac24, type: 2}
   m_muzzleTransform: {fileID: 4589789557783379333}
-  m_muzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}
-  m_rate: 0.2
-  m_maxAmmo: 60
-  m_reloadTime: 2.5
-  m_weaponModelTransform: {fileID: 3180019317804794075}
-  m_rotationSpeed: 10
   m_attachOffsetPos: {x: 0.05, y: 0.006, z: 0.062}
-  m_ammo: 0
 --- !u!1001 &4127177693331508248
 PrefabInstance:
   m_ObjectHideFlags: 0

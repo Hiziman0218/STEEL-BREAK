@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e576948516e6634db5370ed85bd45d3, type: 3}
-  m_Name: "\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EBData"
+  m_Name: "\u30B7\u30E7\u30C3\u30C8\u30AC\u30F3\u30C7\u30FC\u30BF"
   m_EditorClassIdentifier: 
-  Name: "\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB"
-  Rate: 0.3
-  ReloadTime: 3
-  MaxAmmo: 60
+  Name: "\u30B7\u30E7\u30C3\u30C8\u30AC\u30F3"
+  Rate: 0.8
+  ReloadTime: 2
+  MaxAmmo: 20
+  BulletPrefab: {fileID: -7883066180421967020, guid: 970a525a80976e64cb524b02f837953a, type: 3}
+  MuzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}

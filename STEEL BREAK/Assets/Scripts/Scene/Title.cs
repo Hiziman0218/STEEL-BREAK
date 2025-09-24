@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class Title : MonoBehaviour
 {
@@ -41,8 +39,8 @@ public class Title : MonoBehaviour
 
     void Update()
     {
-        // 任意キー（ここでは Space）でスキップフラグを立てる
-        if (!skipRequested && Input.GetKeyDown(KeyCode.Space))
+        //任意キーでスキップフラグを立てる
+        if (!skipRequested && /*Input.GetKeyDown(KeyCode.Space)*/ Input.anyKeyDown)
         {
             skipRequested = true;
         }
@@ -84,8 +82,7 @@ public class Title : MonoBehaviour
         // 6) ボタン群をフェードイン（0→1）させる
         yield return StartCoroutine(FadeCanvasGroup(buttonGroup, 0f, 1f, fadeDuration_Button));
 
-        // ここまで来たら「演出完了」状態。
-        // スキップが発生していた場合、スキップ処理後にこの瞬間の状態にジャンプしているはずです。
+        // ここまで来たら演出完了
     }
 
     /// <summary>

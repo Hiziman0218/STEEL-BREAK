@@ -1,6 +1,4 @@
 using Ilumisoft.RadarSystem;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -23,11 +21,11 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// プレイヤーにUIを設定
     /// </summary>
-    /// <param name="playerObj"></param>
+    /// <param name="playerObj">プレイヤー</param>
     public void OnPlayerSpawned(GameObject playerObj)
     {
         Player player = playerObj.GetComponent<Player>();
-        //プレイヤーのHPバー、ブーストゲージを設定
+        //プレイヤーの各種UIを設定
         player.SetHPBar(m_playerHPBar);
         player.SetBoostGauge(m_playerBoostGauge);
         player.SetRadar(m_radar);

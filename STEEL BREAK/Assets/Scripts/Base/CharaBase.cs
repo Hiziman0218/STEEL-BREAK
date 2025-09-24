@@ -1,25 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CharaBase : MonoBehaviour
 {
     //キャラクターが持つステータスのデータ
-    [SerializeField]
-    protected StatusData m_statusData; //インスペクタで設定
-    protected Status m_status;         //インスペクタで設定されたものを代入
+    [Header("ステータス設定")]
+    [Tooltip("キャラのステータス(StatusDataを設定)")]
+    [SerializeField] protected StatusData m_statusData; //インスペクタで設定
 
-    //キャラクターが持つ詳細のデータ
-    [SerializeField]
-    protected CharaData m_charaData; //インスペクタで設定
-    protected Parameter m_parameter; //インスペクタで設定されたものを代入
+    protected Status m_status; //インスペクタで設定されたものを代入
 
-    protected string myTeam; //自身が所属するチーム
-
+    /// <summary>
+    /// 初期化
+    /// </summary>
     protected virtual void Initialize()
     {
+        //各ステータス情報を設定
         m_status = new Status(m_statusData);
-        m_parameter = new Parameter(m_charaData);
     }
 
     public void Start()
@@ -42,15 +38,6 @@ public class CharaBase : MonoBehaviour
     /// <returns></returns>
     public string GetTeam()
     {
-        return m_parameter.GetTeam();
-    }
-
-    /// <summary>
-    /// 所属するチームを設定
-    /// </summary>
-    /// <param name="team"></param>
-    public void SetTeam(string team)
-    {
-        myTeam = team;
+        return m_status.GetTeam();
     }
 }

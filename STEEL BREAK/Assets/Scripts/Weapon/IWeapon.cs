@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IWeapon
 {
     /// <summary>
-    /// 手に持つ
+    /// 手に持ち、装備させる
     /// </summary>
-    /// <param name="hand"></param>
+    /// <param name="hand">手のトランスフォーム</param>
+    /// <param name="left">左手か(右手か左手の二択なのでフラグ管理)</param>
     public void AttachToHand(Transform hand, bool left);
 
     ///<summary>
@@ -21,8 +20,9 @@ public interface IWeapon
     void Reload();
 
     /// <summary>
-    /// IKの完了/未完了を通達
+    /// IKの完了/未完了を設定
     /// </summary>
+    /// <param name="IKFinished">IKが完了したか</param>
     void SetIKFinished(bool IKFinished);
 
     ///<summary>
@@ -31,5 +31,9 @@ public interface IWeapon
     ///<returns>武装の名前</returns>
     string GetName();
 
+    /// <summary>
+    /// チームを設定
+    /// </summary>
+    /// <param name="team">現在のチーム</param>
     void SetTeam(string team);
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : CharaBase
@@ -8,16 +6,17 @@ public class Enemy : CharaBase
     public bool IsAlive { get; private set; } = true; //生存中か
     public event Action<Enemy> OnDeath;  //死亡イベント
     public GameObject DestructionEffect; //破壊エフェクト
-    public EnemyGun weaponR; //右武器(型変換前)
-    public EnemyGun weaponL; //左武器(型変換前)
+    public EnemyGun weaponR; //右武器
+    public EnemyGun weaponL; //左武器
 
     protected override void Initialize()
     {
         //基底クラスの初期化処理呼び出し
         base.Initialize();
 
-        weaponR.SetTeam(m_parameter.GetTeam());
-        weaponL.SetTeam(m_parameter.GetTeam());
+        //自身の武器のチームを設定
+        weaponR.SetTeam(m_status.GetTeam());
+        weaponL.SetTeam(m_status.GetTeam());
     }
 
     private void Update()
@@ -32,11 +31,17 @@ public class Enemy : CharaBase
         }
     }
 
+    /// <summary>
+    /// 右に装備された武装を使用
+    /// </summary>
     public void UseR()
     {
         weaponR ?.Fire();
     }
 
+    /// <summary>
+    /// 左に装備された武装を使用
+    /// </summary>
     public void UseL()
     {
         weaponL ?.Fire();
@@ -57,6 +62,9 @@ public class Enemy : CharaBase
         StageCount();
     }
 
+    /// <summary>
+    /// ステージに死亡を通知
+    /// </summary>
     private void StageCount()
     {
         GameObject stageObj = GameObject.FindGameObjectWithTag("Stage");
