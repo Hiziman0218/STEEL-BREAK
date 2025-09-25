@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
 
@@ -20,8 +21,11 @@ public class MissionSelectManager : MonoBehaviour
     [Tooltip("Resources/Missions フォルダに *.txt を置いてください")]
     public string resourcesFolder = "Missions";
 
-    // 読み込んだ MissionData のリスト（動的に ScriptableObject を作成）
+    // 読み込んだ MissionData のリスト
     private List<MissionData> missions = new List<MissionData>();
+
+    // 生成したボタンを保持してNavigation設定に使う
+    private List<Button> generatedButtons = new List<Button>();
 
     void Start()
     {
@@ -39,6 +43,8 @@ public class MissionSelectManager : MonoBehaviour
             return;
         }
 
+        generatedButtons.Clear();
+
         // リスト生成
         foreach (var mission in missions)
         {
@@ -52,20 +58,64 @@ public class MissionSelectManager : MonoBehaviour
             {
                 Debug.LogError("MissionSelectManager: listItemPrefab に MissionListItem スクリプトをアタッチしてください。");
             }
+
+            // Button コンポーネントを保持
+            var button = go.GetComponent<Button>();
+            if (button != null) generatedButtons.Add(button);
         }
 
         // 最初のミッションを選択表示
         SelectMission(missions[0]);
+
+        // Navigation 設定（上下キー移動可能にする）
+        SetupButtonNavigation();
+
+        // 最初のボタンをフォーカス
+        if (generatedButtons.Count > 0)
+        {
+            StartCoroutine(SetInitialSelection(generatedButtons[0].gameObject));
+        }
     }
 
-    /// <summary>
-    /// Resources/<resourcesFolder> にあるすべての TextAsset を読み込み、MissionData を生成する
-    /// </summary>
+    System.Collections.IEnumerator SetInitialSelection(GameObject firstButton)
+    {
+        yield return null; // 1フレーム待ってから設定
+        EventSystem.current.SetSelectedGameObject(firstButton);
+    }
+
+    void SetupButtonNavigation()
+    {
+        for (int i = 0; i < generatedButtons.Count; i++)
+        {
+            Navigation nav = generatedButtons[i].navigation;
+            nav.mode = Navigation.Mode.Explicit;
+            nav.selectOnUp = generatedButtons[(i - 1 + generatedButtons.Count) % generatedButtons.Count];
+            nav.selectOnDown = generatedButtons[(i + 1) % generatedButtons.Count];
+            generatedButtons[i].navigation = nav;
+        }
+    }
+
+    void Update()
+    {
+        // Enter または Space で現在選択中のボタンを押す
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        {
+            var selected = EventSystem.current.currentSelectedGameObject;
+            if (selected != null)
+            {
+                var button = selected.GetComponent<Button>();
+                if (button != null)
+                {
+                    button.onClick.Invoke();
+                }
+            }
+        }
+    }
+
     void LoadMissionsFromResources()
     {
         missions.Clear();
 
-        // Resources.LoadAll<TextAsset>("Missions")
         TextAsset[] txtFiles = Resources.LoadAll<TextAsset>(resourcesFolder);
         if (txtFiles == null || txtFiles.Length == 0)
         {
@@ -75,93 +125,48 @@ public class MissionSelectManager : MonoBehaviour
 
         foreach (var txt in txtFiles)
         {
-            // 新しい MissionData をインスタンス化して値を埋める
             MissionData mission = ScriptableObject.CreateInstance<MissionData>();
 
-            // 初期化（配列の長さを合わせる等）
             mission.objectives = new string[3];
             mission.objectiveAmounts = new int[3];
             mission.messages = new string[0];
 
-            // 行ごとに処理
             string[] lines = txt.text.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
             foreach (string rawLine in lines)
             {
                 string line = rawLine.Trim();
                 if (string.IsNullOrEmpty(line)) continue;
-                if (line.StartsWith("#")) continue; // コメント行
+                if (line.StartsWith("#")) continue;
 
                 int colon = line.IndexOf(':');
                 if (colon < 0) continue;
                 string key = line.Substring(0, colon).Trim();
                 string value = line.Substring(colon + 1).Trim();
 
-                // key によって代入
                 switch (key)
                 {
-                    case "missionID":
-                        mission.missionID = value;
-                        break;
-                    case "missionName":
-                        mission.missionName = value;
-                        break;
-                    case "client":
-                        mission.client = value;
-                        break;
-                    case "reward":
-                        mission.reward = value;
-                        break;
-                    case "description":
-                        mission.description = value;
-                        break;
-                    case "sceneName":
-                        mission.sceneName = value;
-                        break;
-                    case "missionImage":
-                        // 画像は Resources 内のパス（例: Images/mountain_thumb）
-                        var sp = Resources.Load<Sprite>(value);
-                        mission.missionImage = sp;
-                        break;
-                    case "companyImage":
-                        mission.companyImage = Resources.Load<Sprite>(value);
-                        break;
-                    case "stageName":
-                        mission.stageName = value;
-                        break;
-                    case "objectives":
-                        // 区切りは '|' 
-                        mission.objectives = value.Split('|');
-                        break;
+                    case "missionID": mission.missionID = value; break;
+                    case "missionName": mission.missionName = value; break;
+                    case "client": mission.client = value; break;
+                    case "reward": mission.reward = value; break;
+                    case "description": mission.description = value; break;
+                    case "sceneName": mission.sceneName = value; break;
+                    case "missionImage": mission.missionImage = Resources.Load<Sprite>(value); break;
+                    case "companyImage": mission.companyImage = Resources.Load<Sprite>(value); break;
+                    case "stageName": mission.stageName = value; break;
+                    case "objectives": mission.objectives = value.Split('|'); break;
                     case "objectiveAmounts":
-                        {
-                            string[] nums = value.Split('|');
-                            mission.objectiveAmounts = new int[nums.Length];
-                            for (int i = 0; i < nums.Length; i++)
-                            {
-                                int.TryParse(nums[i], out mission.objectiveAmounts[i]);
-                            }
-                        }
+                        string[] nums = value.Split('|');
+                        mission.objectiveAmounts = new int[nums.Length];
+                        for (int i = 0; i < nums.Length; i++) int.TryParse(nums[i], out mission.objectiveAmounts[i]);
                         break;
-                    case "rewardAmount":
-                        int.TryParse(value, out mission.rewardAmount);
-                        break;
-                    case "messages":
-                        mission.messages = value.Split('|');
-                        break;
-                    case "voices":
-                        mission.voices = value.Split('|');
-                        break;
-                    case "battlesceneName":
-                        mission.battlesceneName = value;
-                        break;
-                    // 追加フィールドあればここに書く
-                    default:
-                        // 無視 or 将来ログ出力
-                        break;
+                    case "rewardAmount": int.TryParse(value, out mission.rewardAmount); break;
+                    case "messages": mission.messages = value.Split('|'); break;
+                    case "voices": mission.voices = value.Split('|'); break;
+                    case "battlesceneName": mission.battlesceneName = value; break;
                 }
             }
 
-            // ミッション名がなければファイル名を代わりに設定
             if (string.IsNullOrEmpty(mission.missionName))
                 mission.missionName = txt.name;
 
@@ -169,14 +174,10 @@ public class MissionSelectManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// UI にミッション詳細を表示して、GameData.currentSelected に代入する
-    /// </summary>
     public void SelectMission(MissionData mission)
     {
         if (mission == null) return;
 
-        // 互換のため GameData.currentSelected に MissionData をセット（既存処理との互換を維持）
         GameData.currentSelected = mission;
 
         missionTitleText.text = mission.missionName ?? "";
@@ -195,15 +196,10 @@ public class MissionSelectManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ミッション開始ボタン（Briefing シーンへ遷移）
-    /// </summary>
     public void OnStartMission()
     {
         if (GameData.currentSelected != null)
         {
-            // Briefing シーンに遷移する場合、
-            // Briefing シーン側で GameData.currentSelected を参照して処理してください
             UnityEngine.SceneManagement.SceneManager.LoadScene("Briefing");
         }
     }
