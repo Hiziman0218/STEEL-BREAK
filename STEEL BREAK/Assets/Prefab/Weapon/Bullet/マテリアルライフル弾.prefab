@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3678458781911335266}
   - component: {fileID: 1935336751626611882}
   - component: {fileID: 3403750374104762210}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: "\u30DE\u30C6\u30EA\u30A2\u30EB\u30E9\u30A4\u30D5\u30EB\u5F3E"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2724,8 +2724,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f1a663034250c498e4216aa12bbd81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_attackCollider: {fileID: 3678458781911335266}
-  m_speed: 900
+  m_bulletRadius: 0.1
+  m_hitEffect: {fileID: 0}
   m_disappearOnHit: 1
 --- !u!114 &3483786731285547199
 MonoBehaviour:
@@ -2741,14 +2741,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 5517635905693680470
-  m_Size: {x: -0.06, y: 0.06, z: -0.06}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 2876
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.03, y: 0.03, z: 0.03}
+  m_Size: {x: -0.06, y: 0.06, z: -0.06}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -2772,6 +2768,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2873,6 +2872,9 @@ TrailRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

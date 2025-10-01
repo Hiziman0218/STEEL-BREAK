@@ -15,6 +15,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private float m_elapsedTime; //経過時間計測用
 
     private bool m_isFire;       //発射可能フラグ
+    private bool m_isFireNew = true; //外部管理用発射可能フラグ(外部からしか触らないので、ミニガン等外部から変更されないなら常にtrue)
     private bool m_isReloading;  //リロード中フラグ
     private bool m_isIKFinished; //IKが完了しているかフラグ
 
@@ -26,10 +27,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private void Awake()
     {
-        // オブジェクトプール初期化
-        //m_bulletManager = gameObject.AddComponent<BulletManager>();
-        //m_bulletManager.Initialize(transform.root.gameObject, m_bulletPrefab);
-
         //銃のステータスを設定
         m_status = new GunStatus(m_statusData);
 
@@ -94,18 +91,37 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void Use()
     {
         // 発射可否チェック
-        if (!m_isFire || !m_isIKFinished)
+        if (!m_isFire || !m_isFireNew || !m_isIKFinished)
             return;
 
+        Vector3 shootDir;
+
         //ターゲットがいる場合
-        if(lockOn.CurrentTarget != null)
+        if (lockOn.CurrentTarget != null)
         {
-            //銃口を強制的に敵に向ける
-            //敵への方向を取得(ここは敵のBPに変更)
-            Vector3 targetPos = lockOn.CurrentTarget.transform.Find("BP").position;
-            Vector3 dir = (targetPos - m_muzzleTransform.position).normalized;
-            //敵の方向へ銃口を回転
-            m_muzzleTransform.rotation = Quaternion.LookRotation(dir);
+            // 敵のBPを狙う
+            Transform bp = lockOn.CurrentTarget.transform.Find("BP");
+
+            if (bp != null)
+            {
+                Rigidbody targetRb = lockOn.CurrentTarget.GetComponent<Rigidbody>();
+                shootDir = CalculateInterceptDirection(
+                    m_muzzleTransform.position,
+                    bp.position,
+                    targetRb != null ? targetRb.linearVelocity : Vector3.zero,
+                    m_status.GetSpeed()
+                );
+
+                // 銃口を敵に向ける
+                m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+            }
+            else
+            {
+                // BP が見つからない場合はとりあえず位置のみで狙う
+                Vector3 targetPos = lockOn.CurrentTarget.transform.position;
+                shootDir = (targetPos - m_muzzleTransform.position).normalized;
+                m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+            }
         }
         //ターゲットがいない場合
         else
@@ -116,17 +132,26 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             Quaternion forward = rootObj.transform.rotation;
             //銃口を元に戻す
             m_muzzleTransform.rotation = forward;
+            shootDir = m_muzzleTransform.forward;
         }
 
         //弾を有効化
         NewBullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
         //弾のチームを自身と同じものに設定
         Dummy.SetTeam(m_myTeam);
+        //ターゲットがいる場合、弾丸のターゲットに設定
+        if(lockOn.CurrentTarget != null)
+        {
+            Dummy.SetTarget(lockOn.CurrentTarget);
+        }
         //マズルフラッシュのエフェクトを有効化
         GameObject MuzzleFlash = Instantiate(m_status.GetMuzzleFlashEffect(), m_muzzleTransform.position, m_muzzleTransform.rotation);
         Destroy(MuzzleFlash, 0.1f);
-        //弾に力を加えて移動させる(AddForse)
-        Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
+
+        //弾の初速を velocity で設定
+        Rigidbody rb = Dummy.GetComponent<Rigidbody>();
+        rb.linearVelocity = shootDir * m_status.GetSpeed();
+
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);
 
@@ -137,7 +162,43 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         if (m_status.GetAmmo() <= 0)
         {
             m_isReloading = true;
-        }     
+        }
+    }
+
+    /// <summary>
+    /// 敵の移動を考慮した迎撃方向を計算する
+    /// </summary>
+    /// <param name="shooterPos">銃口の位置</param>
+    /// <param name="targetPos">敵の現在位置</param>
+    /// <param name="targetVel">敵の速度ベクトル</param>
+    /// <param name="bulletSpeed">弾速</param>
+    /// <returns>狙う方向</returns>
+    private Vector3 CalculateInterceptDirection(Vector3 shooterPos, Vector3 targetPos, Vector3 targetVel, float bulletSpeed)
+    {
+        Vector3 displacement = targetPos - shooterPos;
+
+        float a = Vector3.Dot(targetVel, targetVel) - bulletSpeed * bulletSpeed;
+        float b = 2f * Vector3.Dot(displacement, targetVel);
+        float c = Vector3.Dot(displacement, displacement);
+
+        float discriminant = b * b - 4f * a * c;
+
+        if (discriminant < 0f || Mathf.Abs(a) < 0.001f)
+        {
+            // 解なし → 現在位置を狙う
+            return displacement.normalized;
+        }
+
+        float sqrtDisc = Mathf.Sqrt(discriminant);
+        float t1 = (-b + sqrtDisc) / (2f * a);
+        float t2 = (-b - sqrtDisc) / (2f * a);
+
+        float t = Mathf.Min(t1, t2);
+        if (t < 0f) t = Mathf.Max(t1, t2);
+        if (t < 0f) return displacement.normalized;
+
+        Vector3 aimPoint = targetPos + targetVel * t;
+        return (aimPoint - shooterPos).normalized;
     }
 
     /// <summary>
@@ -178,6 +239,11 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void SetTeam(string team)
     {
         m_myTeam = team;
+    }
+
+    public void SetIsFire(bool isFire)
+    {
+        m_isFireNew = isFire;
     }
 
     /// <summary>

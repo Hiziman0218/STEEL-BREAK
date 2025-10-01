@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1236919395198296652}
   - component: {fileID: 8808292506915435246}
+  - component: {fileID: 9106104295812470252}
   m_Layer: 0
   m_Name: "\u30DF\u30CB\u30AC\u30F3"
   m_TagString: Untagged
@@ -47,16 +48,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: 
-  m_bulletPrefab: {fileID: 0}
-  m_muzzleTransform: {fileID: 0}
-  m_rate: 0
-  m_maxAmmo: 0
-  m_reloadTime: 0
-  m_weaponModelTransform: {fileID: 0}
-  m_rotationSpeed: 10
-  crosshairController: {fileID: 0}
-  m_ammo: 0
+  m_statusData: {fileID: 11400000, guid: 42cf103c5f1e41548a992937a342d88f, type: 2}
+  m_muzzleTransform: {fileID: 2625803294500891688}
+  m_attachOffsetPos: {x: 0, y: 0, z: 0}
+--- !u!114 &9106104295812470252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4686241366055906080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c705d16789e88749825059ffeda4e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gunBarrel: {fileID: 7783926426368442628}
+  m_gunBurrelNumber: 3
+  m_rotateSpeed: 3
 --- !u!1 &7772158342648643496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,5 +1544,10 @@ PrefabInstance:
 --- !u!4 &2912928489327410460 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5036411830158887169, guid: 406d3194ab6c61649b4c63942b3487b1, type: 3}
+  m_PrefabInstance: {fileID: 7892594523632284701}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7783926426368442628 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 112078988498449689, guid: 406d3194ab6c61649b4c63942b3487b1, type: 3}
   m_PrefabInstance: {fileID: 7892594523632284701}
   m_PrefabAsset: {fileID: 0}

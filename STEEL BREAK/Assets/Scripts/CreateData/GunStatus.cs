@@ -5,6 +5,7 @@ public class GunStatus
     private string Name;      //武器名
     private float Rate;       //発射レート
     private float ReloadTime; //リロード時間
+    private float Speed;      //発射力
     private int MaxAmmo;      //最大弾数
     private int Ammo;         //現在の弾数
     private NewBullet BulletPrefab;       //弾丸プレハブ
@@ -19,6 +20,7 @@ public class GunStatus
         Name = data.Name;
         Rate = data.Rate;
         ReloadTime = data.ReloadTime;
+        Speed = data.Speed;
         MaxAmmo = data.MaxAmmo;
         Ammo = data.MaxAmmo;
         BulletPrefab = data.BulletPrefab;
@@ -50,6 +52,15 @@ public class GunStatus
     public float GetReloadTime()
     {
         return ReloadTime;
+    }
+
+    /// <summary>
+    /// 弾速を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetSpeed()
+    {
+        return Speed;
     }
 
     /// <summary>

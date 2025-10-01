@@ -78,17 +78,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: 
-  m_bulletPrefab: {fileID: 0}
-  m_muzzleTransform: {fileID: 0}
-  m_rate: 0
-  m_maxAmmo: 0
-  m_reloadTime: 0
-  m_weaponModelTransform: {fileID: 0}
-  m_rotationSpeed: 10
+  m_statusData: {fileID: 11400000, guid: ec0d97660f18de940973d0b4e64ab777, type: 2}
+  m_muzzleTransform: {fileID: 1675194817531683891}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
-  crosshairController: {fileID: 0}
-  m_ammo: 0
 --- !u!1 &8977854013688485171
 GameObject:
   m_ObjectHideFlags: 0

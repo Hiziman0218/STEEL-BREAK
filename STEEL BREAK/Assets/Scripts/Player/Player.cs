@@ -40,7 +40,7 @@ public class Player : PlayerBase
         movement = GetComponent<Movement>();
         IK = GetComponent<IK_Control>();
 
-        // インスペクタ上で設定したモノビヘイビア型の武装を武装クラスに変換し設定
+        //インスペクタ上で設定したモノビヘイビア型の武装を武装クラスに変換し設定
         //EquipWeapon(m_righthandWeaponMono as IWeapon, WeaponSlot.RightHand);
         //EquipWeapon(m_lefthandWeaponMono as IWeapon, WeaponSlot.LeftHand);
     }
