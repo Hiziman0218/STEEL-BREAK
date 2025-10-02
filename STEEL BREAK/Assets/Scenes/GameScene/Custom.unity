@@ -2279,7 +2279,7 @@ Transform:
   m_GameObject: {fileID: 864628820}
   serializedVersion: 2
   m_LocalRotation: {x: -0.0000000025974365, y: 0.9961947, z: -0.087155506, w: -0.000000029688916}
-  m_LocalPosition: {x: 0, y: 1.27, z: 2.3}
+  m_LocalPosition: {x: -0, y: 3, z: 4.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2772,7 +2772,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -310, y: -180}
+  m_AnchoredPosition: {x: -310, y: -157}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1106205309
@@ -3063,7 +3063,7 @@ RectTransform:
   m_GameObject: {fileID: 1202824861}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.91005, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 162561879}
@@ -3071,7 +3071,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 296, y: 55}
+  m_AnchoredPosition: {x: 296, y: 40}
   m_SizeDelta: {x: 199.3295, y: 383.4104}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1202824863
@@ -5561,7 +5561,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -310, y: -219}
+  m_AnchoredPosition: {x: -310, y: -195}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1800989494
@@ -7319,7 +7319,7 @@ Transform:
   m_GameObject: {fileID: 3335370738539676378}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.17364834, z: -0, w: 0.9848077}
-  m_LocalPosition: {x: -399.917, y: -250.44, z: -0.663}
+  m_LocalPosition: {x: -399.917, y: -225.092, z: -0.663}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8148,7 +8148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: 5e4a24108ae46fb46afca6967ca8fff5, type: 2}
-  m_charaData: {fileID: 11400000, guid: 93fa3edb28cd1714283f473a3f570706, type: 2}
   m_rightHandTransform: {fileID: 1463536708215760309}
   m_leftHandTransform: {fileID: 3570766480465965646}
   mechRoot: {fileID: 3059256407421173677}

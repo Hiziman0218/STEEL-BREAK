@@ -110,8 +110,9 @@ public class NewBullet : MonoBehaviour
     }
 
     /// <summary>
-    /// 弾丸の所属チームを設定
+    /// 自身の所属するチームを設定
     /// </summary>
+    /// <param name="team"></param>
     public void SetTeam(string team)
     {
         m_myTeam = team;

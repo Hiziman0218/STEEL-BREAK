@@ -12,26 +12,30 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        // マウス操作用ハンドラを各メニューに追加
+        for (int i = 0; i < menuItems.Length; i++)
+        {
+            var handler = menuItems[i].gameObject.AddComponent<MenuItemMouseHandler>();
+            handler.Setup(i, this);
+        }
+
         UpdateMenu();
     }
 
     void Update()
     {
-        // 上キー or W
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             currentIndex = (currentIndex - 1 + menuItems.Length) % menuItems.Length;
             UpdateMenu();
         }
 
-        // 下キー or S
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             currentIndex = (currentIndex + 1) % menuItems.Length;
             UpdateMenu();
         }
 
-        // 決定キー（Enter または Z）
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Z))
         {
             SelectMenu();
@@ -46,12 +50,24 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    public void SetCurrentIndex(int idx)
+    {
+        currentIndex = idx;
+        UpdateMenu();
+    }
+
+    public void SelectMenuFromIndex(int idx)
+    {
+        currentIndex = idx;
+        UpdateMenu();
+        SelectMenu();
+    }
+
     void SelectMenu()
     {
         switch (currentIndex)
         {
             case 0:
-                // 選択中ミッションの戦闘シーン名を取得
                 string battleScene = GameData.currentSelected.battlesceneName;
                 SceneHistoryManager.LoadScene(battleScene);
                 break;

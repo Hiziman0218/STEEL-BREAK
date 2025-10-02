@@ -30,6 +30,9 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //銃のステータスを設定
         m_status = new GunStatus(m_statusData);
 
+        //銃のステータスを設定
+        m_status = new GunStatus(m_statusData);
+
         //最初から撃てるように設定
         m_elapsedTime = m_status.GetRate();
         m_isFire = true;
@@ -152,6 +155,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         Rigidbody rb = Dummy.GetComponent<Rigidbody>();
         rb.linearVelocity = shootDir * m_status.GetSpeed();
 
+        //弾に力を加えて移動させる(AddForse)
+        Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);
 
