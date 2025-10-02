@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: Atlas(R_Arm)
+  m_EditorClassIdentifier: 
+  partName: Artemis
+  partType: 3
+  partIcon: {fileID: 21300000, guid: 3ee97514c6579db42b929205d5c746bb, type: 3}
+  partPrefab: {fileID: 3534122639308859708, guid: 46ce6629b3752704c9a2c2dd30d2d6fb, type: 3}
+  multiPrefabs:
+  - {fileID: 3534122639308859708, guid: 46ce6629b3752704c9a2c2dd30d2d6fb, type: 3}
+  - {fileID: 2441347563011281361, guid: 53f735ca8f4561c41a180b1fc41507b5, type: 3}
+  - {fileID: 251486645506778203, guid: 41a2b4d904c3ada478feae2e7c7902bd, type: 3}
+  - {fileID: 5563646146537379157, guid: b76035958eca9254c99c84240adcba08, type: 3}
+  boneScales: []
+  scaleInfos: []
+  AP: 0
+  stability: 0
+  weight: 0
+  enLoad: 0
+  description: 
