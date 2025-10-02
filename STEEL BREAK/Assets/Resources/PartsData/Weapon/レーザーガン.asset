@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
-  m_Name: Booster2
+  m_Name: "\u30EC\u30FC\u30B6\u30FC\u30AC\u30F3"
   m_EditorClassIdentifier: 
-  partName: Artemis
-  partType: 7
-  partIcon: {fileID: 21300000, guid: b3e159d756431b84d99056f791db5898, type: 3}
-  partPrefab: {fileID: 2771715617333161016, guid: 53c041440590e264aa05b4c2508b3edc, type: 3}
+  partName: Laser Gun
+  partType: 5
+  partIcon: {fileID: 21300000, guid: b503a29a876508743961a7ff670da105, type: 3}
+  partPrefab: {fileID: 5591668388950058548, guid: 3a35502cb311a8048ad1e8d48c6870c8, type: 3}
   multiPrefabs: []
   boneScales: []
   scaleInfos: []

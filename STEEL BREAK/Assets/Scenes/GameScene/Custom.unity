@@ -1714,6 +1714,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d049fb086a80bdd47a69b902c01313a1, type: 2}
   - {fileID: 11400000, guid: a10fd217fca873041a1a325e50616072, type: 2}
   - {fileID: 11400000, guid: fc943d93386a9ae409cb5edec818d40e, type: 2}
+  - {fileID: 11400000, guid: c326f166ac60c904db548e150e9197f8, type: 2}
+  - {fileID: 11400000, guid: 76cc85a3695b2824591b464e4e63f562, type: 2}
   saveLoader: {fileID: 1427478451}
 --- !u!1 &686962125
 GameObject:
@@ -6992,7 +6994,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1615597041381032621}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7711,7 +7713,7 @@ Transform:
   m_GameObject: {fileID: 3335370738539676378}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.17364834, z: -0, w: 0.9848077}
-  m_LocalPosition: {x: -399.917, y: -225.045, z: -0.663}
+  m_LocalPosition: {x: -399.917, y: -250.52, z: -0.663}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
