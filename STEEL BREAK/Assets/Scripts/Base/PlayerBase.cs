@@ -65,7 +65,9 @@ public class PlayerBase : CharaBase
             case WeaponSlot.RightHand:
                 m_righthandWeapon = weapon;
                 weapon.AttachToHand(m_rightHandTransform, false);
+                if(m_status != null) { 
                 m_righthandWeapon.SetTeam(m_status.GetTeam());
+                }
                 if(IK != null)
                 {
                     IK.hands[0].Weapon = m_righthandWeapon;
@@ -74,7 +76,9 @@ public class PlayerBase : CharaBase
             case WeaponSlot.LeftHand:
                 m_lefthandWeapon = weapon;
                 weapon.AttachToHand(m_leftHandTransform, true);
+                if(m_status != null) { 
                 m_lefthandWeapon.SetTeam(m_status.GetTeam());
+                }
                 if(IK != null)
                 {
                     IK.hands[1].Weapon = m_lefthandWeapon;
