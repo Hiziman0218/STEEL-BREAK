@@ -14,8 +14,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private float m_elapsedTime; //経過時間計測用
 
-    private bool m_isFire;       //発射可能フラグ
-    private bool m_isFireNew = true; //外部管理用発射可能フラグ(外部からしか触らないので、ミニガン等外部から変更されないなら常にtrue)
+    private bool m_isFireInternal = false; //発射可能フラグ(内部管理)
+    private bool m_isFireExternal = true;  //発射可能フラグ(外部管理)
     private bool m_isReloading;  //リロード中フラグ
     private bool m_isIKFinished; //IKが完了しているかフラグ
 
@@ -35,7 +35,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
         //最初から撃てるように設定
         m_elapsedTime = m_status.GetRate();
-        m_isFire = true;
+        m_isFireInternal = true;
 
         // プレイヤーにアタッチされたLockOnを取得
         lockOn = transform.root.GetComponent<LockOn>();
@@ -44,7 +44,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private void Update()
     {
         //発射不可能の場合
-        if (!m_isFire)
+        if (!m_isFireInternal)
         {
             //経過時間を計測
             m_elapsedTime += Time.deltaTime;
@@ -63,7 +63,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             else if (m_elapsedTime >= m_status.GetRate())
             {
                 //発射可能処理
-                m_isFire = true;
+                m_isFireInternal = true;
                 m_elapsedTime = 0f;
             }
         }
@@ -94,7 +94,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void Use()
     {
         // 発射可否チェック
-        if (!m_isFire || !m_isFireNew || !m_isIKFinished)
+        if (!m_isFireInternal || !m_isFireExternal || !m_isIKFinished)
             return;
 
         Vector3 shootDir;
@@ -139,7 +139,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         }
 
         //弾を有効化
-        NewBullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+        Bullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
         //弾のチームを自身と同じものに設定
         Dummy.SetTeam(m_myTeam);
         //ターゲットがいる場合、弾丸のターゲットに設定
@@ -162,7 +162,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
         //既存の弾数減少／フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);
-        m_isFire = false;
+        m_isFireInternal = false;
         m_elapsedTime = 0f;
         if (m_status.GetAmmo() <= 0)
         {
@@ -212,7 +212,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void Reload()
     {
         //各フラグをリロード中の状態の物に設定
-        m_isFire = false;
+        m_isFireInternal = false;
         m_isReloading = true;
     }
 
@@ -224,7 +224,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //各フラグをリロード前の状態の物に設定し、弾丸と経過時間を初期化
         m_isReloading = false;
         m_status.SetAmmo(m_status.GetMaxAmmo());
-        m_isFire = true;
+        m_isFireInternal = true;
         m_elapsedTime = 0f;
     }
 
@@ -248,7 +248,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     public void SetIsFire(bool isFire)
     {
-        m_isFireNew = isFire;
+        m_isFireExternal = isFire;
     }
 
     /// <summary>

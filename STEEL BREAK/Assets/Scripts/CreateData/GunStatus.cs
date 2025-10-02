@@ -8,7 +8,7 @@ public class GunStatus
     private float Speed;      //発射力
     private int MaxAmmo;      //最大弾数
     private int Ammo;         //現在の弾数
-    private NewBullet BulletPrefab;       //弾丸プレハブ
+    private Bullet BulletPrefab;       //弾丸プレハブ
     private GameObject MuzzleFlashEffect; //マズルフラッシュのエフェクト
 
     /// <summary>
@@ -94,7 +94,7 @@ public class GunStatus
     /// 弾丸プレハブを取得
     /// </summary>
     /// <returns></returns>
-    public NewBullet GetBulletPrefab()
+    public Bullet GetBulletPrefab()
     {
         return BulletPrefab;
     }

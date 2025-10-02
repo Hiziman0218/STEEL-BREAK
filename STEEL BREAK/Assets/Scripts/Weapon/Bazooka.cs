@@ -10,12 +10,12 @@ public class Bazooka : MonoBehaviour
 
     private Transform m_target; //追尾対象
     private Rigidbody m_rb;     //物理挙動
-    private NewBullet m_bullet; //弾丸の基本機能
+    private Bullet m_bullet; //弾丸の基本機能
 
     private void Awake()
     {
         m_rb = GetComponent<Rigidbody>();
-        m_bullet = GetComponent<NewBullet>();
+        m_bullet = GetComponent<Bullet>();
 
         //命中イベントに爆発処理を登録
         m_bullet.OnHit += Explode;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class shotgun : MonoBehaviour
+public class Shotgun : MonoBehaviour
 {
     public int m_count = 10; //•ª—ô”
     public float m_maxRange; //Å‘åŠp“x

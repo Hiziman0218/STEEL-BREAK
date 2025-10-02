@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Barrel : MonoBehaviour
+public class Minigun : MonoBehaviour
 {
     [Header("ƒoƒŒƒ‹Ý’è")]
     [Tooltip("‰ñ“]Šî•”")]
@@ -26,7 +26,10 @@ public class Barrel : MonoBehaviour
 
     private void Update()
     {
-        m_shooting.SetIsFire(false);
+        if(m_shooting != null)
+        {
+            m_shooting.SetIsFire(false);
+        }
 
         //Žg—p’†‚Íí‚É‰ñ“]
         if (m_isUse)
@@ -38,7 +41,10 @@ public class Barrel : MonoBehaviour
             //‰ñ“]‚µ‚½—Ê‚ª’e‚ð”­ŽË‚·‚é‰ñ“]”‚É“ž’B‚µ‚½‚çA’e‚ð”­ŽË‚µŒ»Ý‚Ì‰ñ“]—Ê‚ðƒŠƒZƒbƒg
             if(m_accumulatedAngle >= m_fireIntervalAngle)
             {
-                m_shooting.SetIsFire(true);
+                if(m_shooting != null)
+                {
+                    m_shooting.SetIsFire(true);
+                }
                 m_accumulatedAngle -= m_fireIntervalAngle;
             }
         }

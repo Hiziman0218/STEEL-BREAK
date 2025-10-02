@@ -3,7 +3,7 @@ using UnityEngine;
 public class ARMS : MonoBehaviour
 {
     [Header("基本設定")]
-    [SerializeField] private NewBullet m_bulletPrefab;   //弾丸プレハブ
+    [SerializeField] private Bullet m_bulletPrefab;   //弾丸プレハブ
     [SerializeField] private Transform m_muzzleTransform; //発射口
     [SerializeField] private GunStatusData m_statusData;  //銃の性能(インスペクタで設定)
 
@@ -58,7 +58,7 @@ public class ARMS : MonoBehaviour
         if (m_FireFlag)
         {
             //弾を生成
-            NewBullet Dummy = Instantiate(m_bulletPrefab, m_muzzleTransform.position, m_muzzleTransform.rotation);
+            Bullet Dummy = Instantiate(m_bulletPrefab, m_muzzleTransform.position, m_muzzleTransform.rotation);
             //弾に力を加えて移動させる(AddForse)
             Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
             //10秒後に削除

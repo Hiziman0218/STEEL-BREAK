@@ -3,109 +3,136 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private Collider m_attackCollider; //ï¿½ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[
-    [SerializeField] private float m_speed; //ï¿½eï¿½ï¿½
-    [SerializeField] private float m_destroyTime; //ï¿½ï¿½ï¿½Ë‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½íœï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚Ìï¿½ï¿½ï¿½
-    [SerializeField] private bool m_disappearOnHit; //ï¿½qï¿½bï¿½gï¿½ï¿½ï¿½Éï¿½ï¿½ï¿½ï¿½é‚©
-    private List<CharaBase> m_hitList = new List<CharaBase>(); //ï¿½ï¿½xï¿½ÌUï¿½ï¿½ï¿½ï¿½ï¿½Å“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½Ìƒï¿½ï¿½Xï¿½g(ï¿½ï¿½ï¿½iï¿½qï¿½bï¿½gï¿½Îï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½Û‚ï¿½ï¿½Gï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ç‚¢ï¿½ï¿½È‚ï¿½
-    [SerializeField] private float m_elapsedTime = 0f; //ï¿½oï¿½ßï¿½ï¿½ÔŒvï¿½ï¿½ï¿½pï¿½Ïï¿½
-    private ObjectPool<Bullet> pool; //ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½vï¿½[ï¿½ï¿½
-    private Rigidbody rb;
+    [Header("’eŠÛ”»’èİ’è")]
+    [Tooltip("’e‚Ì”¼Œa(ƒŒƒCƒLƒƒƒXƒg‚ğg—p‚µ‚½“–‚½‚è”»’è‚Ég—p)")]
+    [SerializeField] private float m_bulletRadius = 0.1f;  //“–‚½‚è”»’è‚Ì”¼Œa
+    [Tooltip("ƒqƒbƒgƒGƒtƒFƒNƒg")]
+    [SerializeField] private GameObject m_hitEffect;       //ƒqƒbƒg‚ÌƒGƒtƒFƒNƒg
+    [Tooltip("ƒqƒbƒg‚µ‚½‚çÁ‚¦‚é‚©/ŠÑ’Ê‚µ‚È‚¢‚©")]
+    [SerializeField] private bool m_disappearOnHit = true; //ƒqƒbƒg‚µ‚½‚çÁ‚¦‚é‚©
 
-    ///<summary>
-    ///ï¿½ï¿½ï¿½Ë‘Oï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Æ‚ß‚ï¿½ï¿½ï¿½ï¿½\ï¿½bï¿½h
-    ///</summary>
-    ///<param name="shooter">ï¿½ï¿½ï¿½ËŒï¿½(Playerï¿½ï¿½Enemy)</param>
-    ///<param name="pool">ï¿½ï¿½ï¿½ï¿½ Bullet ï¿½Ìï¿½ï¿½ï¿½ï¿½vï¿½[ï¿½ï¿½</param>
-    public void Initialize(GameObject shooter, ObjectPool<Bullet> pool)
+    private string m_myTeam;    //Š‘®ƒ`[ƒ€
+    private Vector3 m_prevPos;  //‘OƒtƒŒ[ƒ€‚Å‚ÌˆÊ’u
+    private Transform m_target; //©g‚ª‘_‚Á‚Ä‚¢‚éƒ^[ƒQƒbƒg
+    private List<CharaBase> m_hitList = new List<CharaBase>(); //‘½’iƒqƒbƒg–h~
+
+    public System.Action<Vector3> OnHit; // –½’†‚ÉÀ•W‚ğ“n‚·ƒCƒxƒ“ƒg
+
+    private void Start()
     {
-        //ï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½É‰ï¿½ï¿½ï¿½ï¿½Äƒï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½İ’ï¿½
-        if (shooter.CompareTag("Player"))
-            gameObject.layer = LayerMask.NameToLayer("Player_Bullet");
-        else if (shooter.CompareTag("Enemy"))
-            gameObject.layer = LayerMask.NameToLayer("Enemy_Bullet");
-
-        //ï¿½vï¿½[ï¿½ï¿½ï¿½oï¿½^
-        this.pool = pool;
-
-        //ï¿½ï¿½ï¿½Wï¿½bï¿½hï¿½{ï¿½fï¿½Bï¿½Ìİ’ï¿½ÏXï¿½Aï¿½Ç‚È‚Ç‚ï¿½ï¿½ï¿½ï¿½è”²ï¿½ï¿½ï¿½È‚ï¿½ï¿½æ‚¤ï¿½Éİ’ï¿½
-        rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-
-        //ï¿½ï¿½ï¿½Wï¿½bï¿½hï¿½{ï¿½fï¿½Bï¿½Ì—Í‚Ìï¿½ï¿½ï¿½ï¿½ï¿½
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-
-        //ï¿½qï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½oï¿½ßï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½Zï¿½bï¿½g
-        m_hitList.Clear();
-        m_elapsedTime = 0f;
-
-        //ï¿½Rï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ÍÅï¿½ï¿½Í–ï¿½ï¿½ï¿½ï¿½É‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½AAttackStart()ï¿½Å—Lï¿½ï¿½ï¿½ï¿½
-        m_attackCollider.enabled = false;
-
-        //ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½(ObjectPoolï¿½ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½inactiveï¿½È‚Ì‚ï¿½)
-        gameObject.SetActive(true);
+        //‰ŠúˆÊ’u‚ğ•Û‘¶
+        m_prevPos = transform.position;
     }
 
-    ///<summary>
-    ///ï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½
-    ///</summary>
     private void Update()
     {
-        //ï¿½fï¿½ï¿½ï¿½^ï¿½^ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Z
-        m_elapsedTime += Time.deltaTime;
-        //ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ßï¿½ï¿½Ô‚ï¿½ï¿½íœï¿½ï¿½ï¿½Ô‚ï¿½ï¿½zï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½vï¿½[ï¿½ï¿½ï¿½É•Ô‹p
-        if (m_elapsedTime > m_destroyTime)
+        Vector3 currentPos = transform.position;
+        Vector3 move = currentPos - m_prevPos;
+        float dist = move.magnitude;
+
+        //“®‚¢‚Ä‚¢‚éê‡‚Ì‚İ”»’è
+        if (dist > 0.0001f)
         {
-            pool.ReturnToPool(this);
+            Vector3 dir = move.normalized;
+
+            //SphereCast ‚ÅˆÚ“®Œo˜H‚ğ”»’è
+            if (Physics.SphereCast(m_prevPos, m_bulletRadius, dir, out RaycastHit hit, dist))
+            {
+                //“–‚½‚Á‚½‘ÎÛ‚©‚çCharaBaseƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾
+                var chara = hit.collider.GetComponentInParent<CharaBase>();
+
+                //ƒqƒbƒgÀ•W‚ğ•â³
+                Vector3 hitPos = hit.point + hit.normal * m_bulletRadius;
+
+                //ƒLƒƒƒ‰ƒNƒ^[‚¾‚Á‚½ê‡
+                if (chara != null)
+                {
+                    //©g‚Æ“¯‚¶ƒ`[ƒ€‚Å‚Í‚È‚¢‚©‚ÂA‚Ü‚¾“–‚½‚Á‚Ä‚¢‚È‚¢“G‚È‚ç
+                    if (chara.GetTeam() != m_myTeam && !m_hitList.Contains(chara))
+                    {
+                        //ƒ_ƒ[ƒW‚ğ—^‚¦AƒŠƒXƒg‚É’Ç‰Á‚µ‚½ŒãAƒGƒtƒFƒNƒg‚ğ¶¬
+                        chara.GetDamage(1.0f);
+                        m_hitList.Add(chara);
+                        if (m_hitEffect) Instantiate(m_hitEffect, hit.point, Quaternion.identity);
+
+                        //ƒqƒbƒg‚µ‚½‚çÁ‚¦‚éƒIƒuƒWƒFƒNƒg‚È‚çíœ
+                        if (m_disappearOnHit)
+                        {
+                            //OnHit?.Invoke(hit.point); //ƒCƒxƒ“ƒg”­‰Î
+                            OnHit?.Invoke(hitPos);
+                            Destroy(gameObject);
+                            return;
+                        }
+                    }
+                }
+                //ƒLƒƒƒ‰ƒNƒ^[ˆÈŠO‚Ìê‡
+                else
+                {
+                    OnHit?.Invoke(hit.point); //ƒCƒxƒ“ƒg”­‰Î
+                    //ƒqƒbƒgƒGƒtƒFƒNƒg‚ğ¶¬‚µA©g‚ğíœ
+                    //if (m_hitEffect) Instantiate(m_hitEffect, hit.point, Quaternion.identity);
+                    if (m_hitEffect) Instantiate(m_hitEffect, hitPos, Quaternion.identity);
+                    Destroy(gameObject);
+                    return;
+
+                }
+            }
         }
+
+        //ˆÚ“®Œã‚ÌˆÊ’u‚ğŸ‚Ì”»’èŠJn“_‚É•Û‘¶
+        m_prevPos = currentPos;
     }
 
-    private void FixedUpdate()
+    // –½’†‰Â”\‚©”»’è‚·‚é
+    public bool CanHit(GameObject other)
     {
-        //ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½
-        rb.isKinematic = false;
-        rb.AddForce(transform.forward * m_speed);
+        // ©•ª©g‚Í–³‹
+        if (other == this.gameObject) return false;
+
+        //“¯‚¶ƒ`[ƒ€‚Ì’e‚È‚ç“–‚½‚ç‚È‚¢
+        var targetBullet = other.GetComponent<Bullet>();
+        if (targetBullet != null && targetBullet.GetTeam() == m_myTeam)
+        {
+            return false;
+        }
+
+        // ‘¼‚É‚àuƒ^ƒO‚ªEnvironment‚È‚çOKv‚Æ‚©©—R‚É’Ç‰Á‰Â”\
+        return true;
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½
+    /// ’eŠÛ‚ÌŠ‘®ƒ`[ƒ€‚ğæ“¾
     /// </summary>
-    /// <param name="other">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½g</param>
-    private void OnTriggerEnter(Collider other)
+    /// <returns></returns>
+    public string GetTeam()
     {
-        var chara = other.GetComponentInParent<CharaBase>();
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½^ï¿½[ï¿½ï¿½ï¿½ÂAï¿½qï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½gï¿½É–ï¿½ï¿½ï¿½ï¿½ï¿½ÎA
-        //ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½^ï¿½[ï¿½Éƒ_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½qï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½gï¿½É’Ç‰ï¿½
-        if (chara != null && !m_hitList.Contains(chara))
-        {
-            chara.GetDamage(1.0f);
-            m_hitList.Add(chara);
-            //ï¿½qï¿½bï¿½gï¿½ï¿½ï¿½Éï¿½ï¿½ï¿½ï¿½ï¿½eï¿½È‚ï¿½Aï¿½vï¿½[ï¿½ï¿½ï¿½É•Ô‹p
-            if (m_disappearOnHit)
-            {
-                pool.ReturnToPool(this);
-            }
-        }
+        return m_myTeam;
     }
 
-    ///<summary>
-    ///ï¿½Uï¿½ï¿½ï¿½Jï¿½nï¿½Ìï¿½ï¿½ï¿½
-    ///</summary>
-    public void AttackStart()
+    /// <summary>
+    /// ©g‚ÌŠ‘®‚·‚éƒ`[ƒ€‚ğİ’è
+    /// </summary>
+    /// <param name="team"></param>
+    public void SetTeam(string team)
     {
-        //ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-        m_hitList.Clear();
-        //ï¿½Rï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½
-        m_attackCollider.enabled = true;
+        m_myTeam = team;
     }
 
-    ///<summary>
-    ///ï¿½Uï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
-    ///</summary>
-    public void AttackEnd()
+    /// <summary>
+    /// ƒ^[ƒQƒbƒg‚ğæ“¾
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetTarget()
     {
-        //ï¿½Rï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ğ–³Œï¿½ï¿½ï¿½
-        m_attackCollider.enabled = false;
+        return m_target;
+    }
+
+    /// <summary>
+    /// ƒ^[ƒQƒbƒg‚ğİ’è
+    /// </summary>
+    /// <param name="target"></param>
+    public void SetTarget(Transform target)
+    {
+        m_target = target;
     }
 }

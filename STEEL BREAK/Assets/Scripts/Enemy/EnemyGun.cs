@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyGun : MonoBehaviour
 {
-    [SerializeField] private NewBullet bulletPrefab;      // �C���X�y�N�^�Œe�̃v���n�u���Z�b�g
+    [SerializeField] private Bullet bulletPrefab;      // �C���X�y�N�^�Œe�̃v���n�u���Z�b�g
     [SerializeField] private Transform muzzleTransform;    // �C���X�y�N�^�ŏe���ʒu���Z�b�g
     [SerializeField] private GameObject muzzleFlashEffect; //�}�Y���t���b�V���̃G�t�F�N�g
     [SerializeField] private float bulletSpeed = 20f;      // �e��
@@ -23,7 +23,7 @@ public class EnemyGun : MonoBehaviour
         Vector3 dir = (targetPoint.position - muzzleTransform.position).normalized;
 
         // �e�𐶐����Č��������킹�ARigidbody�ő��x��^����
-        NewBullet bullet = Instantiate(bulletPrefab, muzzleTransform.position, Quaternion.LookRotation(dir));
+        Bullet bullet = Instantiate(bulletPrefab, muzzleTransform.position, Quaternion.LookRotation(dir));
         bullet.SetTeam(m_myTeam);
         Destroy(bullet.gameObject, 10f);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();

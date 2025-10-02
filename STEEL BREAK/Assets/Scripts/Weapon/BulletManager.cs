@@ -3,7 +3,7 @@ using UnityEngine;
 public class BulletManager : MonoBehaviour
 {
     //プール本体
-    private ObjectPool<Bullet> bulletPool;
+    private ObjectPool<Bullet_ObjectPool> bulletPool;
     //このプールを使う使用者
     private GameObject shooter;
 
@@ -13,10 +13,10 @@ public class BulletManager : MonoBehaviour
     ///<param name="shooter">使用者(PlayerやEnemy)</param>
     ///<param name="bulletPrefab">弾丸プレハブ</param>
     ///<param name="initialSize">プールの初期サイズ</param>
-    public void Initialize(GameObject shooter, Bullet bulletPrefab, int initialSize = 20)
+    public void Initialize(GameObject shooter, Bullet_ObjectPool bulletPrefab, int initialSize = 20)
     {
         this.shooter = shooter;
-        bulletPool = new ObjectPool<Bullet>(bulletPrefab, initialSize);
+        bulletPool = new ObjectPool<Bullet_ObjectPool>(bulletPrefab, initialSize);
     }
 
     ///<summary>
