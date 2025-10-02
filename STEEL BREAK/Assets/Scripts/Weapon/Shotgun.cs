@@ -2,42 +2,39 @@ using UnityEngine;
 
 public class Shotgun : MonoBehaviour
 {
-    public int m_count = 10; //分裂数
-    public float m_maxRange; //最大角度
-    public float m_minRange; //最小角度
-    public GameObject m_bulletPrefab; //弾プレハブ
-    [SerializeField] private GameObject m_hitEffect; //ヒット時のエフェクト
+    [Header("拡散設定")]
+    [Tooltip("分裂数")]
+    [SerializeField] private int m_count = 10; //分裂数
+    [Tooltip("拡散の最大角度")]
+    [SerializeField] private float m_maxRange; //最大角度
+    [Tooltip("拡散の最小角度")]
+    [SerializeField] private float m_minRange; //最小角度
+    [Tooltip("弾丸の基本データ")]
+    [SerializeField] private Bullet m_bullet;  //拡散前の弾丸
+    [Tooltip("拡散後の弾丸")]
+    [SerializeField] private Bullet m_bulletPrefab; //弾プレハブ
 
     private void Start()
     {
+        m_bullet = GetComponent<Bullet>();
         Destroy(gameObject);
     }
 
     private void OnDestroy()
     {
+        //拡散する数だけ繰り返し
         for(int i = 0; i <= m_count; i++)
         {
             //拡散用プレハブを生成
-            GameObject Dummy = Instantiate(m_bulletPrefab, transform.position, transform.rotation);
+            Bullet Dummy = Instantiate(m_bulletPrefab, transform.position, transform.rotation);
+            //弾の所属チームとダメージ量を設定
+            Dummy.SetTeam(m_bullet.GetTeam());
+            Dummy.SetDamage(m_bullet.GetDamage());
+            //指定範囲内のランダムな方向へ向け、その方向へ発射
             Dummy.transform.Rotate(new Vector3(Random.Range(m_minRange, m_maxRange), Random.Range(m_minRange, m_maxRange), 0));
-            Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 10000.0f);
+            Dummy.GetComponent<Rigidbody>().linearVelocity = Dummy.transform.forward * m_bullet.GetSpeed();
+            //10秒後に削除
             Destroy(Dummy, 10f);
-        }
-    }
-
-    /// <summary>
-    /// 当たり判定
-    /// </summary>
-    /// <param name="other">当たったオブジェクト</param>
-    private void OnTriggerEnter(Collider other)
-    {
-        var chara = other.GetComponentInParent<CharaBase>();
-        //キャラクターにダメージを与え、ヒットエフェクトを生成した後、自身を削除
-        if (chara != null)
-        {
-            chara.GetDamage(1.0f);
-            Instantiate(m_hitEffect, chara.transform.position, Quaternion.Inverse(transform.rotation));
-            Destroy(gameObject);
         }
     }
 }

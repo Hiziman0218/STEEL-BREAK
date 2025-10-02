@@ -16,6 +16,7 @@ MonoBehaviour:
   Rate: 0.08
   ReloadTime: 2.5
   Speed: 150
+  Damage: 3
   MaxAmmo: 60
   BulletPrefab: {fileID: -8026933686053553379, guid: 8f546a2cc11b0494fa290c29a8230c41, type: 3}
   MuzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}

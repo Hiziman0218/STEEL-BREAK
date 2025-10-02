@@ -2689,8 +2689,8 @@ MonoBehaviour:
   m_count: 10
   m_maxRange: 3
   m_minRange: -3
-  m_bulletPrefab: {fileID: 7085308232831996385, guid: 04541e7a339fa9142b13ccb84dbf4301, type: 3}
-  m_hitEffect: {fileID: 100014, guid: 5332791ebce075d4a9e56f4581e7fb47, type: 3}
+  m_bullet: {fileID: -7883066180421967020}
+  m_bulletPrefab: {fileID: -7883066180421967020, guid: 04541e7a339fa9142b13ccb84dbf4301, type: 3}
 --- !u!114 &3985853587162962553
 MonoBehaviour:
   m_ObjectHideFlags: 0

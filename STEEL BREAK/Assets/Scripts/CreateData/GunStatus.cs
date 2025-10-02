@@ -6,6 +6,7 @@ public class GunStatus
     private float Rate;       //発射レート
     private float ReloadTime; //リロード時間
     private float Speed;      //発射力
+    private float Damege;     //与えるダメージ量
     private int MaxAmmo;      //最大弾数
     private int Ammo;         //現在の弾数
     private Bullet BulletPrefab;       //弾丸プレハブ
@@ -21,6 +22,7 @@ public class GunStatus
         Rate = data.Rate;
         ReloadTime = data.ReloadTime;
         Speed = data.Speed;
+        Damege = data.Damage;
         MaxAmmo = data.MaxAmmo;
         Ammo = data.MaxAmmo;
         BulletPrefab = data.BulletPrefab;
@@ -61,6 +63,15 @@ public class GunStatus
     public float GetSpeed()
     {
         return Speed;
+    }
+
+    /// <summary>
+    /// 与えるダメージ量を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetDamage()
+    {
+        return Damege;
     }
 
     /// <summary>

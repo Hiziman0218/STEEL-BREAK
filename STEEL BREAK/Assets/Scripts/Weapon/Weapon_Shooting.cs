@@ -140,8 +140,10 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
         //弾を有効化
         Bullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
-        //弾のチームを自身と同じものに設定
+        //弾の所属チームとダメージ量と弾速を設定
         Dummy.SetTeam(m_myTeam);
+        Dummy.SetDamage(m_status.GetDamage());
+        Dummy.SetSpeed(m_status.GetSpeed());
         //ターゲットがいる場合、弾丸のターゲットに設定
         if(lockOn.CurrentTarget != null)
         {
@@ -156,7 +158,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         rb.linearVelocity = shootDir * m_status.GetSpeed();
 
         //弾に力を加えて移動させる(AddForse)
-        Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
+        //Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
+
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);
 
@@ -246,6 +249,10 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         m_myTeam = team;
     }
 
+    /// <summary>
+    /// 発射できるかを設定(外部管理)
+    /// </summary>
+    /// <param name="isFire"></param>
     public void SetIsFire(bool isFire)
     {
         m_isFireExternal = isFire;

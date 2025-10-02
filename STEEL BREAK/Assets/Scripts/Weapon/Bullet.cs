@@ -12,6 +12,8 @@ public class Bullet : MonoBehaviour
     [SerializeField] private bool m_disappearOnHit = true; //ヒットしたら消えるか
 
     private string m_myTeam;    //所属チーム
+    private float m_damage;     //与えられるダメージ
+    private float m_speed;      //弾速
     private Vector3 m_prevPos;  //前フレームでの位置
     private Transform m_target; //自身が狙っているターゲット
     private List<CharaBase> m_hitList = new List<CharaBase>(); //多段ヒット防止
@@ -51,7 +53,7 @@ public class Bullet : MonoBehaviour
                     if (chara.GetTeam() != m_myTeam && !m_hitList.Contains(chara))
                     {
                         //ダメージを与え、リストに追加した後、エフェクトを生成
-                        chara.GetDamage(1.0f);
+                        chara.GetDamage(m_damage);
                         m_hitList.Add(chara);
                         if (m_hitEffect) Instantiate(m_hitEffect, hit.point, Quaternion.identity);
 
@@ -116,6 +118,42 @@ public class Bullet : MonoBehaviour
     public void SetTeam(string team)
     {
         m_myTeam = team;
+    }
+
+    /// <summary>
+    /// 与えるダメージ量を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetDamage()
+    {
+        return m_damage;
+    }
+
+    /// <summary>
+    /// 与えるダメージ量を設定
+    /// </summary>
+    /// <param name="damage"></param>
+    public void SetDamage(float damage)
+    {
+        m_damage = damage;
+    }
+
+    /// <summary>
+    /// 弾速を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetSpeed()
+    {
+        return m_speed;
+    }
+
+    /// <summary>
+    /// 弾速を設定
+    /// </summary>
+    /// <param name="speed"></param>
+    public void SetSpeed(float speed)
+    {
+        m_speed = speed;
     }
 
     /// <summary>
