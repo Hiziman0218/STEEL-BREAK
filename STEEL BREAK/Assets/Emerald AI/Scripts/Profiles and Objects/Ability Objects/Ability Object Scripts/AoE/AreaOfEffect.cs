@@ -6,14 +6,31 @@ using System.Linq;
 
 namespace EmeraldAI
 {
+    /// <summary>
+    /// 【AreaOfEffect】
+    /// 範囲攻撃（Area of Effect, AoE）を実行するコンポーネント。
+    /// ・オーナー（発動者）の DetectionLayerMask に一致するレイヤーのみを対象に検出
+    /// ・派閥関係が「Enemy」の相手に対してのみ効果を適用
+    /// ・ヒットエフェクト、ノックバック、スタン、ダメージ（DoT含む）に対応
+    /// </summary>
     public class AreaOfEffect : MonoBehaviour
     {
+        [Header("AoE 対象とするレイヤーマスク（敵レイヤー）。初期値は AI の DetectionLayerMask を使用")]
         public LayerMask Enemies;
+
+        [Header("現在の範囲攻撃アビリティデータ（AreaOfEffectAbility）")]
         AreaOfEffectAbility CurrentAbilityData;
+
+        [Header("この AoE を発動した所有者（発動元の GameObject）")]
         GameObject Owner;
+
+        [Header("所有者の EmeraldSystem 参照（検知や派閥判定に使用）")]
         EmeraldSystem EmeraldComponent;
 
-        public void Initialize (GameObject owner, Transform AttackTransform, AreaOfEffectAbility abilityData)
+        /// <summary>
+        /// AoE を初期化します。
+        /// </summary>
+        public void Initialize(GameObject owner, Transform AttackTransform, AreaOfEffectAbility abilityData)
         {
             EmeraldComponent = owner.GetComponent<EmeraldSystem>();
             Enemies = EmeraldComponent.DetectionComponent.DetectionLayerMask;
@@ -22,18 +39,24 @@ namespace EmeraldAI
             IntitailizeInternal(Owner, AttackTransform);
         }
 
-        void IntitailizeInternal (GameObject Owner, Transform AttackTransform)
+        /// <summary>
+        /// 内部初期化処理。
+        /// </summary>
+        void IntitailizeInternal(GameObject Owner, Transform AttackTransform)
         {
-            List<Collider> DetectedAOETargets = Physics.OverlapSphere(AttackTransform.position, CurrentAbilityData.AreaOfEffectSettings.Radius, Enemies).ToList(); //Only looks for targets that have the same layer as the layers from the AI's DetectionLayerMask.
-            DetectedAOETargets.Remove(Owner.GetComponent<Collider>()); //Remove the owner's collider if it happens to be detected.
+            // AI の DetectionLayerMask と同じレイヤーを持つ対象のみを検出する。
+            List<Collider> DetectedAOETargets = Physics.OverlapSphere(AttackTransform.position, CurrentAbilityData.AreaOfEffectSettings.Radius, Enemies).ToList();
+            // 検出対象にオーナー自身のコライダーが含まれる場合は除外する。
+            DetectedAOETargets.Remove(Owner.GetComponent<Collider>());
 
             for (int i = 0; i < DetectedAOETargets.Count; i++)
             {
-                //Only damage targets that the Owner has an Enemy Relation Type with.
+                // オーナーから見て派閥関係が「Enemy」の相手にのみ効果を適用する。
                 if (EmeraldAPI.Faction.GetTargetFactionRelation(EmeraldComponent, DetectedAOETargets[i].transform) == "Enemy")
                 {
                     ICombat m_ICombat = DetectedAOETargets[i].GetComponent<ICombat>();
 
+                    // ヒットエフェクトが設定されている場合、回避・防御中でなく、テレポート中でない相手に対して再生する。
                     if (CurrentAbilityData.AreaOfEffectSettings.HitTargetEffect != null)
                     {
                         if (m_ICombat != null && !m_ICombat.IsDodging() && !m_ICombat.IsBlocking() && DetectedAOETargets[i].transform.localScale != Vector3.one * 0.003f)
@@ -46,25 +69,27 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Damages the projectile's StartingTarget, given that it has a IDamageable.
+        /// ヒット対象にダメージを与えます（IDamageable を持つことが前提）。
         /// </summary>
         void DamageTarget(GameObject Target, ICombat ICombatRef)
         {
+            // テレポート中の対象は無視する。
             if (Target.transform.localScale == Vector3.one * 0.003f) return;
 
-            //If knockbacks are enabled, roll for a knowckback
+            // ノックバックが有効なら、確率でノックバックを適用する。
             if (CurrentAbilityData.KnockbackSettings.Enabled && CurrentAbilityData.KnockbackSettings.RollForKnockback())
             {
                 Vector3 Direction = (ICombatRef.TargetTransform().transform.position - Owner.transform.position).normalized;
                 if (ICombatRef != null) Owner.gameObject.GetComponent<MonoBehaviour>().StartCoroutine(CurrentAbilityData.KnockbackSettings.KnockbackSequence(Direction, ICombatRef.TargetTransform(), ICombatRef));
             }
 
+            // スタンが有効なら、確率でスタンを付与する。
             if (CurrentAbilityData.StunnedSettings.Enabled && CurrentAbilityData.StunnedSettings.RollForStun())
             {
                 if (ICombatRef != null) ICombatRef.TriggerStun(CurrentAbilityData.StunnedSettings.StunLength);
             }
 
-            //Only cause damage if it's enabled
+            // ダメージが無効化されている場合はここで終了。
             if (!CurrentAbilityData.DamageSettings.Enabled) return;
 
             var m_IDamageable = Target.GetComponent<IDamageable>();
@@ -76,7 +101,8 @@ namespace EmeraldAI
             }
             else
             {
-                Debug.Log(Target.gameObject + " is missing a IDamageable and/or ICombat Component, apply one");
+                // 対象に IDamageable および/または ICombat が存在しない場合の通知。
+                Debug.Log(Target.gameObject + " には IDamageable または ICombat コンポーネントがありません。追加してください。");
             }
         }
     }

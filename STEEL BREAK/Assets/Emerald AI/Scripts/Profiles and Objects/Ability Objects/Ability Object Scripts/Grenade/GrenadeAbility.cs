@@ -6,20 +6,40 @@ using System.Linq;
 
 namespace EmeraldAI
 {
-    [CreateAssetMenu(fileName = "Grenade Ability", menuName = "Emerald AI/Ability/Grenade Ability")]
+    /// <summary>
+    /// 【GrenadeAbility】
+    /// グレネード系アビリティの定義用 ScriptableObject。
+    /// ・投擲/爆発設定
+    /// ・ノックバック/スタン/ダメージ設定
+    /// をまとめて管理します。
+    /// </summary>
+    [CreateAssetMenu(fileName = "グレネード アビリティ", menuName = "Emerald AI/アビリティ/グレネード アビリティ")]
     public class GrenadeAbility : EmeraldAbilityObject
     {
+        [Header("グレネード設定（プレハブ/爆発半径/爆発時間/回転/レイヤー 等）")]
         public AbilityData.GrenadeData GrenadeSettings;
+
+        [Header("ノックバック設定（有効/確率/力/時間 等）")]
         public AbilityData.KnockbackData KnockbackSettings;
+
+        [Header("スタン付与設定（有効/確率/時間 等）")]
         public AbilityData.StunnedData StunnedSettings;
+
+        [Header("ダメージ設定（基礎ダメージ/DoT/クリティカル 等）")]
         public AbilityData.DamageData DamageSettings;
 
-        public override void InvokeAbility(GameObject Owner, Transform AttackTransform = null) 
+        /// <summary>
+        /// アビリティの実行処理：グレネードを生成して初期化します。
+        /// </summary>
+        public override void InvokeAbility(GameObject Owner, Transform AttackTransform = null)
         {
             SpawnProjectiles(Owner, AttackTransform);
         }
 
-        void SpawnProjectiles (GameObject Owner, Transform AttackTransform)
+        /// <summary>
+        /// グレネードを生成し、ターゲットへ向けて初期化します。
+        /// </summary>
+        void SpawnProjectiles(GameObject Owner, Transform AttackTransform)
         {
             Transform Target = GetTarget(Owner, AbilityData.TargetTypes.CurrentTarget);
 
@@ -32,7 +52,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Assign the ProjectileMovement script on the newly spawned projectile.
+        /// 新しく生成したグレネードに Grenade スクリプトを割り当てます。
         /// </summary>
         public Grenade AssignScript(GameObject SpawnedProjectile)
         {

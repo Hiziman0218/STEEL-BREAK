@@ -10,9 +10,13 @@ namespace EmeraldAI.Utility
     [CanEditMultipleObjects]
     public class FootstepSurfaceObjectEditor : Editor
     {
+        [Header("インスペクター用：折りたたみ見出しの GUI スタイル")]
         GUIStyle FoldoutStyle;
+
+        [Header("エディタ用アイコン（Resources/Editor Icons/EmeraldFootsteps）")]
         Texture FootstepsEditorIcon;
 
+        [Header("インスペクター項目に対応する SerializedProperty 参照")]
         SerializedProperty HideSettingsFoldout, SurfaceSettingsFoldout, SurfaceType, SurfaceTexture, SurfaceTag, StepVolume, StepSounds, StepEffectTimeout, StepEffects, FootprintTimeout, Footprints;
 
         void OnEnable()
@@ -43,7 +47,8 @@ namespace EmeraldAI.Utility
             FootstepSurfaceObject self = (FootstepSurfaceObject)target;
             serializedObject.Update();
 
-            CustomEditorProperties.BeginScriptHeaderNew("Footstep Surface Settings", FootstepsEditorIcon, new GUIContent(), HideSettingsFoldout);
+            // 見出し（日本語化）
+            CustomEditorProperties.BeginScriptHeaderNew("フットステップ サーフェス設定", FootstepsEditorIcon, new GUIContent(), HideSettingsFoldout);
 
             EditorGUILayout.Space();
             FootstepSurfaceSettings(self);
@@ -54,14 +59,20 @@ namespace EmeraldAI.Utility
             serializedObject.ApplyModifiedProperties();
         }
 
-        void FootstepSurfaceSettings (FootstepSurfaceObject self)
+        void FootstepSurfaceSettings(FootstepSurfaceObject self)
         {
-            SurfaceSettingsFoldout.boolValue = EditorGUILayout.Foldout(SurfaceSettingsFoldout.boolValue, "Footstep Surface Settings", true, FoldoutStyle);
+            // セクション見出し（日本語化）
+            SurfaceSettingsFoldout.boolValue = EditorGUILayout.Foldout(SurfaceSettingsFoldout.boolValue, "フットステップ サーフェス設定", true, FoldoutStyle);
 
             if (SurfaceSettingsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Footstep Surface Settings", "Controls the Footstep Surface Object settings. You can hover over each setting to get a tooltip of its usage.", true);
+                // セクション説明（日本語化）
+                CustomEditorProperties.TextTitleWithDescription(
+                    "フットステップ サーフェス設定",
+                    "Footstep Surface Object の各種設定を制御します。各項目にカーソルを乗せるとツールチップで使い方の説明が表示されます。",
+                    true
+                );
 
                 CustomEditorProperties.BeginIndent(12);
 

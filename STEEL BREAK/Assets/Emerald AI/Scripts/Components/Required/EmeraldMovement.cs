@@ -3,6 +3,8 @@ using System.Collections.Generic;                           // List 等のコレ
 using UnityEngine;                                          // Unity 基本API
 using UnityEngine.AI;                                       // NavMeshAgent 等
 using EmeraldAI.Utility;                                    // Emerald のユーティリティ
+using Plugins.RaycastPro.Demo.Scripts;
+using RaycastPro;                      // RayCastProのプラグイン（個人改造）
 
 namespace EmeraldAI
 {
@@ -31,7 +33,7 @@ namespace EmeraldAI
         public bool DefaultMovementPaused; //A bool used to pause any built-in movement functions (Wander and CombatMovement). This can be used during custom actions or behaviors if needed.
 
         // 徘徊方式の列挙
-        public enum WanderTypes { Dynamic = 0, Waypoints = 1, Stationary = 2, Destination = 3, Custom = 4 };
+        public enum WanderTypes { Dynamic = 0, Waypoints = 1, Stationary = 2, Destination = 3, RayCastPro = 4, Custom = 5 };
 
         [Header("徘徊方式（Dynamic/Waypoints/Stationary/Destination/Custom）")]
         public WanderTypes WanderType = WanderTypes.Dynamic;
@@ -43,9 +45,9 @@ namespace EmeraldAI
         public WaypointTypes WaypointType = WaypointTypes.Random;
 
         // 移動の駆動方式
-        public enum MovementTypes { RootMotion, NavMeshDriven };
+        public enum MovementTypes { RootMotion, NavMeshDriven , RayCastPro};
 
-        [Header("移動の駆動方式（RootMotion か NavMeshDriven）")]
+        [Header("移動の駆動方式（RootMotion か NavMeshDriven かRayCastPro）")]
         public MovementTypes MovementType = MovementTypes.RootMotion;
 
         // 移動状態
@@ -239,6 +241,9 @@ namespace EmeraldAI
         #endregion
 
         #region Private Variables
+        [Header("プレイヤーをタグで取得（内部 個人改造）")]
+        Transform m_Player;
+
         [Header("主要コンポーネント EmeraldSystem 参照（内部）")]
         EmeraldSystem EmeraldComponent;
 
@@ -247,6 +252,12 @@ namespace EmeraldAI
 
         [Header("NavMeshAgent の参照（内部）")]
         NavMeshAgent m_NavMeshAgent;
+
+        [Header("RayCastPro の参照（内部 個人改造）")]
+        GameObject m_RayCastPro;
+
+        [Header("取得したRayCastPro のコントローラー（内部 個人改造）")]
+        SteeringController m_RCController;
 
         [Header("現在計算済みの NavMesh 経路（内部）")]
         NavMeshPath AIPath;
@@ -358,7 +369,11 @@ namespace EmeraldAI
             StationaryIdleSeconds = Random.Range(StationaryIdleSecondsMin, StationaryIdleSecondsMax + 1);
             StartingWanderingType = (int)WanderType;
             StartingDestination = transform.position;
-            SetupNavMeshAgent();
+            //今回はナビメッシュを使わないのでコメント化
+            //地上戦、空中戦どっちもすることになると多分使うので一旦置いておく
+            //SetupNavMeshAgent();
+            //レイキャストプロのセットアップ（個人改造）
+            SetupRayCastPro();
 
             if (AlignmentQuality == AlignmentQualities.Low)
             {
@@ -382,6 +397,58 @@ namespace EmeraldAI
             {
                 AlignOnStart();
             }
+        }
+
+        /// <summary>
+        /// RayCastPro の初期化と設定（個人改造）
+        /// ・Rigidbody の挙動調整、Agent の追加/取得、停止距離や回転更新の無効化
+        /// </summary>
+        public void SetupRayCastPro()
+        {
+            // NavMeshAgent は使わないので無効化
+            if (m_NavMeshAgent != null)
+            {
+                m_NavMeshAgent.enabled = false;
+            }
+
+            //プレイヤーを取得していなければ取得
+            if (!m_Player)
+            {
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+                if (playerObj != null)
+                {
+                    m_Player = playerObj.transform; // Transform を代入
+                }
+                else
+                {
+                    Debug.Log("プレイヤーが取得されていない！");
+                }
+            }
+
+            //プールマネージャーからエージェントを取得（空きがなければ勝手に生成してくれるはず）
+            m_RayCastPro = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);
+
+            if (m_RayCastPro == null)
+            {
+                m_RayCastPro = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);
+            }
+            else
+            {
+                Debug.Log("RayCastPro エージェントを取得成功: " + m_RayCastPro.name);
+            }
+
+            // Rigidbody が存在する場合、物理挙動を有効化
+            if (GetComponent<Rigidbody>())
+            {
+                Rigidbody RigidbodyComp = GetComponent<Rigidbody>();
+                RigidbodyComp.isKinematic = false;
+                RigidbodyComp.useGravity = false;
+            }
+
+            //取得したエージェントのコントローラー取得
+            m_RCController = m_RayCastPro.GetComponent<SteeringController>();
+
         }
 
         /// <summary>
@@ -570,6 +637,78 @@ namespace EmeraldAI
         }
 
         /// <summary>
+        /// RayCastPro　駆動時の移動処理（個人改造）
+        /// とりあえずNavMeshを参考にやってみる
+        /// </summary>
+        void MoveAIRayCastPro()
+        {
+            //RayCastProのdetectorの追従ターゲットを指定
+            if (m_RCController.detector.destination == null)
+            {
+                m_RCController.detector.destination = m_Player;
+            }
+
+            // 【方向ベクトルの計算】
+            // desiredVelocity をローカル座標に変換し、進行方向の角度を算出
+            Vector3 direction = (m_Player.position - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            AIAnimator.SetFloat("Direction", angle * MovementTurningSensitivity, DirectionDampTime, Time.deltaTime);
+
+            //Flyにy軸回転動を同期
+            Quaternion yOnlyRotation = Quaternion.Euler(0, m_RayCastPro.transform.rotation.eulerAngles.y, 0);
+            transform.rotation = yOnlyRotation;
+
+            //FlyingAgentに追従
+            transform.position = m_RayCastPro.transform.position;
+
+            // 【移動可能かの判定】
+            // NavMesh上に存在し、AIが有効で、初期化済みであることを確認
+            if (AIAgentActive && m_RCController.enabled && MovementInitialized)
+            {
+                // 【方向アニメーションの更新】
+                // Animator に方向角度を渡して旋回アニメーションを補正
+                AIAnimator.SetFloat("Direction", angle * MovementTurningSensitivity, DirectionDampTime, Time.deltaTime);
+
+                // 【停止条件の判定】
+                // 停止中・被弾中・目的地到達・アイドル可能 → 停止処理へ
+                if (m_RCController.isStopped || AIAnimator.GetBool("Hit") || m_RCController.remainingDistance <= m_RCController.detector.stoppingDistance || CanIdle())
+                {
+                    AIAnimator.SetFloat("Speed", 0, 0.3f, Time.deltaTime); // アニメーション停止
+                    m_RCController.speed = 0; // 実移動も停止
+                }
+
+                // 【移動条件の判定】
+                // 停止しておらず、被弾しておらず、目的地未到達、移動可能 → 移動処理へ
+                else if (!m_RCController.isStopped && !AIAnimator.GetBool("Hit") && m_RCController.remainingDistance > m_RCController.detector.stoppingDistance && CanMove())
+                {
+                    // 【近距離補正】
+                    // 目的地が近すぎる場合は強制的に歩行速度へ切り替え（RootMotionの停止遅延対策）
+                    if (m_RCController.remainingDistance < (m_RCController.detector.stoppingDistance + ForceWalkDistance))
+                    {
+                        m_RCController.speed = Mathf.Lerp(m_RCController.speed, WalkSpeed, Time.deltaTime * 2); // 徐々に歩行速度へ
+                        AIAnimator.SetFloat("Speed", 0.5f, 0.3f, Time.deltaTime); // 歩行アニメーション
+                    }
+                    else
+                    {
+                        // 【通常移動処理】
+                        // 現在の移動ステートに応じて速度とアニメーションを切り替え
+                        if (CurrentMovementState == MovementStates.Run)
+                        {
+                            m_RCController.speed = Mathf.Lerp(m_RCController.speed, RunSpeed, Time.deltaTime * 2); // 走行速度へ
+                            AIAnimator.SetFloat("Speed", 1, 0.3f, Time.deltaTime); // 走行アニメーション
+                        }
+                        else if (CurrentMovementState == MovementStates.Walk)
+                        {
+                            m_RCController.speed = Mathf.Lerp(m_RCController.speed, WalkSpeed, Time.deltaTime * 2); // 歩行速度へ
+                            AIAnimator.SetFloat("Speed", 0.5f, 0.3f, Time.deltaTime); // 歩行アニメーション
+                        }
+                    }
+                }
+            }
+
+        }
+
+        /// <summary>
         /// （日本語）Root Motion 駆動時の移動処理。
         /// ・角度とアニメ速度を更新し、移動/停止を切り替えます。
         /// </summary>
@@ -658,6 +797,7 @@ namespace EmeraldAI
         /// </summary>
         void RotateAI()
         {
+
             if (AnimationComponent.IsDead || RotateTowardsTarget || m_NavMeshAgent.pathPending) return;
 
             //Rotate while stationary -  There's certain instances where steeringTarget, destination, or CurrentTarget need to be used.
@@ -984,6 +1124,14 @@ namespace EmeraldAI
                 LockTurning = false;
                 OnReachedDestination?.Invoke();
             }
+            //RayCastPro用の徘徊タイプ設定（個人改造）
+            else if (WanderType == WanderTypes.RayCastPro && !ReachedDestination && m_RCController.remainingDistance <= StoppingDistance && MovementInitialized && !AnimationComponent.IsSwitchingWeapons)
+            {
+                //とりあえず他のタイプがナビメッシュ依存なので避難させる
+                //特に徘徊する必要性がないのでreturn処理だけ
+                //今後徘徊処理を使うのならナビメッシュとレイキャストプロで分ける必要がありそう（検討ポイント）
+                return;
+            }
 
             //Play an idle sound if the AI is not moving and the Idle Seconds have been met. 
             if (!AnimationComponent.IsMoving && EmeraldComponent.SoundComponent != null)
@@ -992,9 +1140,22 @@ namespace EmeraldAI
             }
 
             //If the AI gets moved, for whatever reason, disable Idle Active so it can move back to its current destination.
-            if (m_NavMeshAgent.remainingDistance > StoppingDistance + 0.1f && AIAnimator.GetBool("Idle Active"))
+            //RayCastProタイプの徘徊でなければ（個人改造）
+            if (WanderType != WanderTypes.RayCastPro)
             {
-                AIAnimator.SetBool("Idle Active", false);
+                //ナビメッシュで判断
+                if (m_NavMeshAgent.remainingDistance > StoppingDistance + 0.1f && AIAnimator.GetBool("Idle Active"))
+                {
+                    AIAnimator.SetBool("Idle Active", false);
+                }
+            }
+            else
+            {
+                //レイキャストプロのコントローラーで判断
+                if (m_RCController.remainingDistance > StoppingDistance + 0.1f && AIAnimator.GetBool("Idle Active"))
+                {
+                    AIAnimator.SetBool("Idle Active", false);
+                }
             }
 
             ClearReturnToStart();
@@ -1066,21 +1227,50 @@ namespace EmeraldAI
         /// </summary>
         public void MovementUpdate()
         {
-            if (m_NavMeshAgent.isOnOffMeshLink)
+            Debug.Log("MoveAIRayCastPro 呼ばれた");
+
+            // RayCastPro の場合は NavMeshAgent を参照しない(若干個人改造)
+            if (MovementType != MovementTypes.RayCastPro)
             {
-                m_NavMeshAgent.speed = 1f;
-                return;
+                if (m_NavMeshAgent.isOnOffMeshLink)
+                {
+                    m_NavMeshAgent.speed = 1f;
+                    return;
+                }
             }
 
             CanReachTarget = CanReachTargetInternal();
-            AIAgentActive = m_NavMeshAgent.enabled;
+
+            // NavMeshAgent の状態を AIAgentActive に反映(個人改造)
+            if (MovementType != MovementTypes.RayCastPro)
+            {
+                // NavMesh を使う場合だけ NavMeshAgent を参照する
+                AIAgentActive = (m_NavMeshAgent != null && m_NavMeshAgent.enabled);
+            }
+            else
+            {
+                // RayCastPro の場合は NavMeshAgent を使わないので、
+                // 「動ける状態」として true を直接入れておく
+                AIAgentActive = true;
+            }
 
             if (EmeraldComponent.AnimationComponent.BusyBetweenStates) return;
 
+            //RayCastProを選択した場合はMoveAIRayCastProを使う（個人改造）
+            if (MovementType == MovementTypes.RayCastPro && !AnimationComponent.IsDead)
+            {
+                Debug.Log("RayCastPro 分岐に入った");
+                MoveAIRayCastPro();
+                //RotateAIで不具合が起きるのでリターンでいったん対応
+                return;
+            }
+
             //Calculates an AI's movement speed when using Root Motion
+            //　ルートモーションを選択しているならMoveAIRootMotion
             if (MovementType == MovementTypes.RootMotion && !AnimationComponent.IsDead) MoveAIRootMotion();
 
             //Calculates an AI's movement speed when using NavMesh
+            //ナビメッシュを選択しているならナビメッシュ駆動法を使う
             else if (MovementType == MovementTypes.NavMeshDriven && !AnimationComponent.IsDead) MoveAINavMesh();
 
             RotateAI(); //Handles all of the rotations, and alignment of an AI, depending on its current state.
@@ -1092,6 +1282,33 @@ namespace EmeraldAI
         /// </summary>
         public void CombatMovement()
         {
+            //RayCastPro用（個人改造）
+            if (MovementType == MovementTypes.RayCastPro)
+            {
+                if (EmeraldComponent.CombatTarget == null) return;
+
+                float dist = Vector3.Distance(transform.position, EmeraldComponent.CombatTarget.position);
+
+                // 近すぎる場合はバック歩行
+                if (dist < EmeraldComponent.CombatComponent.TooCloseDistance)
+                {
+                    // RayCastPro 用のバック処理を書く
+                    BackupState();
+                }
+                // 攻撃距離外なら前進
+                else if (dist > EmeraldComponent.CombatComponent.AttackDistance)
+                {
+                    // RayCastPro 用の前進処理を書く（例：transform.Translate など）
+                }
+                else
+                {
+                    // 攻撃可能距離内なら停止
+                }
+
+                return; // NavMeshAgent 用の処理はスキップ
+            }
+
+
             if (AnimationComponent.IsBackingUp && !CanReachTarget) StopBackingUp(); //Stop backing up if the target cannot be reached.
             if (CanReachTarget) BackupState(); //Handles all backup related movement.
 
@@ -1398,6 +1615,22 @@ namespace EmeraldAI
         /// </summary>
         public bool CanReachTargetInternal()
         {
+            // CombatTarget がいない場合は到達不可（個人改造）
+            if (EmeraldComponent.CombatTarget == null)
+            {
+                Debug.LogError("EmeraldComponent.CombatTargetが見つからない");
+                return false;
+            }
+
+            // RayCastPro の場合は NavMeshAgent を使わず距離判定で代替（個人改造）
+            if (MovementType == MovementTypes.RayCastPro)
+            {
+                float dist = Vector3.Distance(transform.position, EmeraldComponent.CombatTarget.position);
+                //とりあえず検知半径を使って判定させておく（変更未定）
+                return dist <= EmeraldComponent.DetectionComponent.DetectionRadius; 
+            }
+
+
             if (EmeraldComponent.CombatTarget == null || !m_NavMeshAgent.enabled || !m_NavMeshAgent.isOnNavMesh)
                 return false;
 

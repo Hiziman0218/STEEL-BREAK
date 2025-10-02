@@ -10,24 +10,48 @@ namespace EmeraldAI
     [RequireComponent(typeof(AudioSource))]
     public class BulletProjectile : MonoBehaviour, IAvoidable
     {
-        #region Variables
+        #region 変数
+        [Header("現在のアビリティデータ（BulletProjectileAbility）")]
         BulletProjectileAbility CurrentAbilityData;
+
+        [Header("所有者の EmeraldSystem 参照")]
         EmeraldSystem EmeraldComponent;
+
+        [Header("現在のターゲット（Transform）")]
         Transform CurrentTarget;
+
         public Transform AbilityTarget { get => CurrentTarget; set => CurrentTarget = value; }
+
+        [Header("初期ターゲット位置（ダメージ位置のキャッシュ）")]
         Vector3 InitialTargetPosition;
+
+        [Header("ターゲット側の ICombat 参照（ダメージ位置取得に使用）")]
         ICombat StartingICombat;
+
+        [Header("自分自身の AudioSource 参照")]
         AudioSource m_AudioSource;
+
+        [Header("移動音などのサウンドエフェクト（Resources からロード）")]
         GameObject m_SoundEffect;
+
+        [Header("このプロジェクタイルの所有者（発射元）")]
         GameObject Owner;
+
+        [Header("衝突判定を無視するコライダー一覧（LBD 内部コライダー等）")]
         List<Collider> IgnoredColliders = new List<Collider>();
+
+        [Header("発射（初期化）された時間（秒）")]
         float StartTime;
+
+        [Header("初期化が完了したか（内部フラグ）")]
         bool Initialized;
+
+        [Header("ターゲットとの角度（内部参照用）")]
         float TargetAngle;
         #endregion
 
         /// <summary>
-        /// Used to initialize the needed components and settings the first time the projectile is used.
+        /// 最初にプロジェクタイルが使用される際に、必要なコンポーネントや設定を初期化します。
         /// </summary>
         void Awake()
         {
@@ -40,12 +64,12 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Initialize the projectile with the passed information.
+        /// 渡された情報でプロジェクタイルを初期化します。
         /// </summary>
-        /// <param name="owner">The owner of this projectile.</param>
-        /// <param name="currentTarget">The current target for this projectile.</param>
-        /// <param name="abilityData">The current ability data for this projectile.</param>
-        public void Initialize (GameObject owner, Transform currentTarget, BulletProjectileAbility abilityData)
+        /// <param name="owner">このプロジェクタイルの所有者。</param>
+        /// <param name="currentTarget">このプロジェクタイルの現在のターゲット。</param>
+        /// <param name="abilityData">このプロジェクタイルのアビリティデータ。</param>
+        public void Initialize(GameObject owner, Transform currentTarget, BulletProjectileAbility abilityData)
         {
             Owner = owner;
             CurrentTarget = currentTarget;
@@ -58,17 +82,20 @@ namespace EmeraldAI
             EmeraldComponent = Owner.GetComponent<EmeraldSystem>();
             CurrentAbilityData = abilityData;
 
-            GetLBDColliders(); //Get a reference to the Owner's LBD component so internal colliders can be ignored.
+            GetLBDColliders(); // Owner の LBD コンポーネントを参照し、内部コライダーを無視対象に設定する。
 
             Initialized = false;
-            InitializeProjectile(); //Intialize the projectile's settings.
+            InitializeProjectile(); // プロジェクタイルの設定を初期化。
 
             StartTime = Time.time;
         }
 
+        /// <summary>
+        /// Owner の LBD コンポーネントを参照して、内部コライダーを無視対象へ登録します。
+        /// </summary>
         void GetLBDColliders()
         {
-            //Get a reference to the Owner's LBD component so internal colliders can be ignored.
+            // Owner の LBD コンポーネントを参照し、内部コライダーを無視対象に設定する。
             LocationBasedDamage LBDComponent = Owner.GetComponent<LocationBasedDamage>();
             if (LBDComponent)
             {
@@ -80,20 +107,26 @@ namespace EmeraldAI
             }
         }
 
-        void InitializeProjectile ()
+        /// <summary>
+        /// プロジェクタイルの初期向きなどを設定します。
+        /// </summary>
+        void InitializeProjectile()
         {
             if (EmeraldComponent.CombatComponent.TargetAngle < EmeraldComponent.MovementComponent.CombatAngleToTurn) transform.LookAt(InitialTargetPosition);
             Initialized = true;
             StartCoroutine(MoveProjectile());
         }
 
+        /// <summary>
+        /// 弾丸の移動と、一定間隔での衝突判定（Raycast）を行います。
+        /// </summary>
         IEnumerator MoveProjectile()
         {
             bool Collided = false;
             float collisionCheckTimer = 0;
             Vector3 EndPosition = Vector3.zero;
 
-            //Add a random offset for bullet spread based on the BulletSpread settings
+            // BulletSpread 設定に基づくランダムな拡散（精度のばらつき）を付与
             Vector3 Accuracy = new Vector3(
                 Random.Range(-CurrentAbilityData.BulletProjectileSettings.BulletSpreadX, CurrentAbilityData.BulletProjectileSettings.BulletSpreadX) * 0.001f,
                 Random.Range(-CurrentAbilityData.BulletProjectileSettings.BulletSpreadY, CurrentAbilityData.BulletProjectileSettings.BulletSpreadY) * 0.001f,
@@ -103,7 +136,7 @@ namespace EmeraldAI
 
             while (!Collided)
             {
-                //Move bullet every frame
+                // 毎フレーム弾丸を移動
                 float step = CurrentAbilityData.BulletProjectileSettings.BulletSpeed * Time.deltaTime;
                 Vector3 nextPosition = Vector3.MoveTowards(
                     transform.position,
@@ -114,10 +147,10 @@ namespace EmeraldAI
 
                 collisionCheckTimer += Time.deltaTime;
 
-                //If enough time has passed, do a single collision check
+                // 一定時間ごとに単発の衝突チェックを行う
                 if (collisionCheckTimer >= CurrentAbilityData.BulletProjectileSettings.CollisionCheckSpeed)
                 {
-                    //Perform the raycast from lastCheckPosition to the current position
+                    // 直前チェック位置から現在位置までの Raycast を実行
                     Vector3 travelVector = transform.position - lastCheckPosition;
                     float travelDistance = travelVector.magnitude;
 
@@ -129,19 +162,19 @@ namespace EmeraldAI
                         Collided = true;
                     }
 
-                    //Reset the timer and update the last check position
+                    // タイマをリセットし、基準位置を更新
                     collisionCheckTimer = 0f;
                     lastCheckPosition = transform.position;
                 }
 
-                //Stop moving, if there was a collision
+                // 衝突があれば移動終了
                 if (Collided) break;
 
-                //If not, wait until the next frame
+                // なければ次フレームへ
                 yield return null;
             }
 
-            //Finish traveling the last bit so the bullet痴 trail can get to the collision point
+            // 最後のわずかな距離を移動して、Trail などが衝突点まで到達できるようにする
             Vector3 startingPosition = transform.position;
             float t = 0f;
             bool complete = false;
@@ -160,18 +193,17 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used to move and track the time since the projectile has been spawned.
+        /// プロジェクタイル生成後の経過時間を追跡します。
         /// </summary>
         void Update()
         {
-            ProjectileTimeout(); //Track the time since the projectile has been active.
+            ProjectileTimeout(); // アクティブになってからの時間を追跡
         }
 
         /// <summary>
-        /// Track the time since the projectile has been active. Once the time ProjectileTimeoutSeconds 
-        /// has been met, despawn the projectile and spawn an impact effect from its current position.
+        /// アクティブからの時間を追跡し、BulletObjectTimeout に達したらデスポーンします。
         /// </summary>
-        void ProjectileTimeout ()
+        void ProjectileTimeout()
         {
             if (!Initialized) return;
 
@@ -184,19 +216,22 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Handles all impact related functionality.
+        /// 衝突時の処理（位置・法線を用いた着弾演出の再生、ダメージ、デスポーン予約）。
         /// </summary>
-        void Impact (GameObject TargetHit, Vector3 HitPosition, Vector3 HitNormal)
+        void Impact(GameObject TargetHit, Vector3 HitPosition, Vector3 HitNormal)
         {
-            if (!this.enabled) return; //Only allow trigger collisions to work if the script is active
+            if (!this.enabled) return; // スクリプトが有効なときのみ衝突判定を許可
 
-            Initialized = false; //Disable initialization so the projectile stops operating.
+            Initialized = false; // 初期化フラグを下ろしてプロジェクタイルの動作を停止
             BulletImpact(TargetHit, HitPosition, HitNormal);
-            DamageTarget(TargetHit); //Damages the projectile's Target. If a LocationBasedDamageArea is detected, damage it. If not, damage the target's IDamageable component.
+            DamageTarget(TargetHit); // ヒット対象にダメージを与える（LBD があれば部位ダメージ、なければ IDamageable へ）
             Invoke(nameof(ImpactDespawn), CurrentAbilityData.BulletProjectileSettings.BulletCollisionTimeout);
         }
 
-        void BulletImpact (GameObject TargetHit, Vector3 HitPosition, Vector3 HitNormal)
+        /// <summary>
+        /// 対象の表面タグに応じて適切な着弾エフェクトを再生（該当がなければデフォルト）。
+        /// </summary>
+        void BulletImpact(GameObject TargetHit, Vector3 HitPosition, Vector3 HitNormal)
         {
             if (CurrentAbilityData.BulletProjectileSettings.BulletImpactData.Count == 0)
             {
@@ -216,40 +251,43 @@ namespace EmeraldAI
             CurrentAbilityData.BulletProjectileSettings.SpawnDefaultBulletImpact(TargetHit, HitPosition, HitNormal);
         }
 
-        void OnDisable ()
+        /// <summary>
+        /// このコンポーネントが無効化されたとき、進行中のコルーチンを停止します。
+        /// </summary>
+        void OnDisable()
         {
             StopAllCoroutines();
         }
 
         /// <summary>
-        /// Damages the projectile's Target. If a LocationBasedDamageArea is detected, damage it. If not, damage the target's IDamageable component.
+        /// ヒット対象にダメージを与えます。LocationBasedDamageArea があれば部位ダメージ、なければ IDamageable にダメージ。
         /// </summary>
         void DamageTarget(GameObject Target)
         {
             LocationBasedDamageArea m_LocationBasedDamageArea = Target.GetComponent<LocationBasedDamageArea>();
 
-            //Only damage layers that are in the AI's DetectionLayerMask or if the target has a LBD component on it.
+            // AI の DetectionLayerMask に含まれるレイヤー、または対象に LBD がある場合のみダメージ可。
             if (!m_LocationBasedDamageArea && ((1 << Target.layer) & EmeraldComponent.DetectionComponent.DetectionLayerMask) == 0) return;
 
-            //Return if the target is teleporting.
+            // テレポート中の対象は除外。
             if (m_LocationBasedDamageArea != null && m_LocationBasedDamageArea.EmeraldComponent.transform.localScale == Vector3.one * 0.003f || Target.transform.localScale == Vector3.one * 0.003f) return;
 
             var m_ICombat = Target.GetComponentInParent<ICombat>();
 
-            //If knockbacks are enabled, roll for a knowckback
+            // ノックバックが有効なら、確率でノックバックを適用。
             if (CurrentAbilityData.KnockbackSettings.Enabled && CurrentAbilityData.KnockbackSettings.RollForKnockback())
             {
                 Vector3 Direction = transform.forward;
                 if (m_ICombat != null) Owner.gameObject.GetComponent<MonoBehaviour>().StartCoroutine(CurrentAbilityData.KnockbackSettings.KnockbackSequence(Direction, m_ICombat.TargetTransform(), m_ICombat));
             }
 
-            //If stuns are enabled, roll for a stun
+            // スタンが有効なら、確率でスタンを付与。
             if (CurrentAbilityData.StunnedSettings.Enabled && CurrentAbilityData.StunnedSettings.RollForStun())
             {
                 if (m_ICombat != null) m_ICombat.TriggerStun(CurrentAbilityData.StunnedSettings.StunLength);
             }
 
-            //Only cause damage if it's enabled
+            // ダメージが無効化されている場合はここで終了。
             if (!CurrentAbilityData.DamageSettings.Enabled) return;
 
             if (m_LocationBasedDamageArea == null)
@@ -264,7 +302,7 @@ namespace EmeraldAI
                 }
                 else
                 {
-                    Debug.Log(Target.gameObject + " is missing IDamageable Component, apply one");
+                    Debug.Log(Target.gameObject + " には IDamageable コンポーネントがありません。追加してください。");
                 }
             }
             else if (m_LocationBasedDamageArea != null)
@@ -277,11 +315,11 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Despawns the impact effect after the CollisionTimeout has been met.
+        /// BulletCollisionTimeout 経過後に着弾エフェクトをデスポーンします。
         /// </summary>
-        void ImpactDespawn ()
+        void ImpactDespawn()
         {
-            this.enabled = false; //Disable the script so it doesn't interfere with other objects that may use the same object through Object Pooling
+            this.enabled = false; // 同一プールオブジェクトの他用途で干渉しないよう、スクリプトを無効化
             EmeraldObjectPool.Despawn(gameObject);
         }
     }

@@ -14,27 +14,38 @@ namespace EmeraldAI.Utility
     public class AnimationProfileEditor : Editor
     {
         #region SerializedProperties
+        [Header("インスペクター用の折りたたみスタイル（GUIStyle）")]
         GUIStyle FoldoutStyle;
+
+        [Header("ヘルプボタンのGUIスタイル（GUIStyle）")]
         GUIStyle HelpButtonStyle;
+
+        [Header("エディタ用アイコン（AnimationProfileEditor 用）")]
         Texture AnimationProfileEditorIcon;
 
+        [Header("Animator の Culling Mode／Animator Controller の SerializedProperty 参照")]
         SerializedProperty AnimatorCullingModeProp, AIAnimatorProp;
 
         //Bool
+        [Header("折りたたみ状態やフラグ類（SerializedProperty 参照）")]
         SerializedProperty AnimationListsChangedProp, AnimationsUpdatedProp, WalkFoldout, RunFoldout, TurnFoldout, Type1CombatWalkFoldout, Type1CombatRunFoldout, Type1CombatTurnFoldout, EmotesFoldout,
             Type2CombatWalkFoldout, Type2CombatRunFoldout, Type2CombatTurnFoldout, Type1StrafeFoldout, Type2StrafeFoldout, Type1DodgeFoldout, Type2DodgeFoldout, Type1CoverFoldout, Type2CoverFoldout;
         SerializedProperty Type1CombatAnimationsFoldout, Type2CombatAnimationsFoldout, Type1EquipsFoldout, Type2EquipsFoldout, Type1AttacksFoldout, Type2AttacksFoldout, Type1IdleFoldout, Type2IdleFoldout, NonCombatAnimationsFoldout, NonCombatIdleFoldout, NonCombatDeathFoldout,
            AnimatorSettingsFoldout, NonCombatHitFoldout, Type1HitFoldout, Type2HitFoldout, Type1BlockFoldout, Type2BlockFoldout, Type1DeathFoldout, Type2DeathFoldout;
 
         //NonCombat
+        [Header("非戦闘アニメーションの ReorderableList 参照（被弾/待機/感情/死亡）")]
         ReorderableList NonCombatHitAnimationList, NonCombatIdleAnimationList, EmoteAnimationList, NonCombatDeathAnimationList;
 
         //Type 1
+        [Header("タイプ1（近接など）アニメーションの ReorderableList 参照（被弾/攻撃/死亡）")]
         ReorderableList Type1CombatHitAnimationList, Type1AttackAnimationList, Type1DeathAnimationList;
 
         //Type 2
+        [Header("タイプ2（遠隔など）アニメーションの ReorderableList 参照（被弾/攻撃/死亡）")]
         ReorderableList Type2CombatHitAnimationList, Type2AttackAnimationList, Type2DeathAnimationList;
 
+        [Header("被弾アニメーションの条件/クールダウン（タイプ1/タイプ2）")]
         SerializedProperty Type1HitConditionsProp, Type2HitConditionsProp, Type1HitAnimationCooldownProp, Type2HitAnimationCooldownProp;
         #endregion
 
@@ -52,10 +63,10 @@ namespace EmeraldAI.Utility
                 self.FilePath = AssetDatabase.GetAssetPath(self.AIAnimator);
             }
 
-            //Fail-safe for if a user deletes an Animator Controller that belongs to an Animation Profile.
+            // ユーザーが Animation Profile に紐づく Animator Controller を削除してしまった場合のフェイルセーフ
             if (self.AnimatorControllerGenerated && self.AIAnimator == null)
             {
-                Debug.LogError("It looks like the '" + self.name + "' Animation Profile has lost its Animator Controller. This is likely due to it being mistakenly deleted. All animations have been retained. Please regenerate an Animator Controller.");
+                Debug.LogError("「" + self.name + "」アニメーションプロファイルの Animator Controller を見失いました。おそらく誤って削除された可能性があります。アニメーションクリップの設定は保持されています。Animator Controller を再生成してください。");
                 self.AnimatorControllerGenerated = false;
             }
         }
@@ -66,14 +77,14 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// A callback for registering undos. When this happens, update the Animation Profile so the changes made can be undone.
+        /// Undo 登録時のコールバック。これが呼ばれたら、変更を元に戻せるようアニメーションプロファイルを更新します。
         /// </summary>
         void UndoCallback()
         {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
             AnimationProfile self = (AnimationProfile)target;
             EmeraldAnimatorGenerator.GenerateAnimatorController(self);
-        #endif
+#endif
         }
 
         void InitializeProperties()
@@ -129,52 +140,52 @@ namespace EmeraldAI.Utility
 
         void InitializeAnimationLists()
         {
-            //NonCombat Hit Animations
+            // 非戦闘時の被弾アニメーション一覧
             NonCombatHitAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("NonCombatAnimations.HitList"), true, true, true, true);
             DrawAnimationList(NonCombatHitAnimationList);
             NonCombatHitAnimationList.onChangedCallback = (HitAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //NonCombat Idle
+            // 非戦闘時の待機アニメーション一覧
             NonCombatIdleAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("NonCombatAnimations.IdleList"), true, true, true, true);
             DrawAnimationList(NonCombatIdleAnimationList);
             NonCombatIdleAnimationList.onChangedCallback = (IdleAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //NonCombat Idle
+            // 非戦闘時の死亡アニメーション一覧
             NonCombatDeathAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("NonCombatAnimations.DeathList"), true, true, true, true);
             DrawAnimationList(NonCombatDeathAnimationList);
             NonCombatDeathAnimationList.onChangedCallback = (DeathAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Combat Hit Animations
+            // タイプ1の戦闘被弾アニメーション一覧
             Type1CombatHitAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type1Animations.HitList"), true, true, true, true);
             DrawAnimationList(Type1CombatHitAnimationList);
             Type1CombatHitAnimationList.onChangedCallback = (Type1CombatHitAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Type 2 Combat Hit Animations
+            // タイプ2の戦闘被弾アニメーション一覧
             Type2CombatHitAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type2Animations.HitList"), true, true, true, true);
             DrawAnimationList(Type2CombatHitAnimationList);
             Type2CombatHitAnimationList.onChangedCallback = (Type2CombatHitAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Type 1 Attack Animations
+            // タイプ1の攻撃アニメーション一覧
             Type1AttackAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type1Animations.AttackList"), true, true, true, true);
             DrawAnimationList(Type1AttackAnimationList);
             Type1AttackAnimationList.onChangedCallback = (Type1AttackAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Type 2 Attack Animations
+            // タイプ2の攻撃アニメーション一覧
             Type2AttackAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type2Animations.AttackList"), true, true, true, true);
             DrawAnimationList(Type2AttackAnimationList);
             Type2AttackAnimationList.onChangedCallback = (RangedAttackAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Type 1 Animations
+            // タイプ1の死亡アニメーション一覧
             Type1DeathAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type1Animations.DeathList"), true, true, true, true);
             DrawAnimationList(Type1DeathAnimationList);
             Type1DeathAnimationList.onChangedCallback = (Type1DeathAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Type 2 Death Animations
+            // タイプ2の死亡アニメーション一覧
             Type2DeathAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("Type2Animations.DeathList"), true, true, true, true);
             DrawAnimationList(Type2DeathAnimationList);
             Type2DeathAnimationList.onChangedCallback = (Type2DeathAnimationList) => { AnimationListsChangedProp.boolValue = true; };
 
-            //Emote Animations
+            // エモートアニメーション一覧
             EmoteAnimationList = new ReorderableList(serializedObject, serializedObject.FindProperty("EmoteAnimationList"), true, true, true, true);
             EmoteAnimationList.drawElementCallback =
                 (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -191,7 +202,7 @@ namespace EmeraldAI.Utility
 
             EmoteAnimationList.drawHeaderCallback = rect =>
             {
-                EditorGUI.LabelField(rect, "   ID  " + "         Emote Animation Clip", EditorStyles.boldLabel);
+                EditorGUI.LabelField(rect, "   ID  " + "         エモートアニメーションクリップ", EditorStyles.boldLabel);
             };
             EmoteAnimationList.onChangedCallback = (EmoteAnimationList) =>
             {
@@ -209,7 +220,7 @@ namespace EmeraldAI.Utility
             UpdateAnimatorController(self);
             NoGeneratedAnimatorMessage(self);
 
-            CustomEditorProperties.BeginScriptHeader("Animation Profile", AnimationProfileEditorIcon);
+            CustomEditorProperties.BeginScriptHeader("アニメーションプロファイル", AnimationProfileEditorIcon);
 
             EditorGUI.BeginDisabledGroup(!self.AnimatorControllerGenerated);
             EditorGUILayout.Space();
@@ -231,16 +242,16 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Handles all non-combat related animations
+        /// 非戦闘時に関わるアニメーション全般を扱います。
         /// </summary>
         void NonCombatAnimations(AnimationProfile self)
         {
-            NonCombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(NonCombatAnimationsFoldout.boolValue, "Non-Combat Animations", true, FoldoutStyle);
+            NonCombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(NonCombatAnimationsFoldout.boolValue, "非戦闘アニメーション", true, FoldoutStyle);
 
             if (NonCombatAnimationsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Non-Combat Animations", "Controls all animations for when an AI is not in combat or wandering.", true);
+                CustomEditorProperties.TextTitleWithDescription("非戦闘アニメーション", "AI が戦闘中でも徘徊中でもない時に使用する全アニメーションを制御します。", true);
                 CustomEditorProperties.BeginIndent(20);
                 NonCombatIdleAnimations(self);
                 EditorGUILayout.Space();
@@ -256,17 +267,16 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Handles all Type 1 combat related animations
+        /// タイプ1武器（近接など）に関わる戦闘アニメーションをすべて扱います。
         /// </summary>
         void Type1CombatAnimations(AnimationProfile self)
         {
-            Type1CombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatAnimationsFoldout.boolValue, "Type 1 Combat Animations", true, FoldoutStyle);
+            Type1CombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatAnimationsFoldout.boolValue, "タイプ1 戦闘アニメーション", true, FoldoutStyle);
 
             if (Type1CombatAnimationsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Type 1 Combat Animations", "Controls all combat animations for the Type 1 Weapon Type. If you are only using one weapon type, this will be all your default combat animations. If your AI " +
-                    "has the same non-combat and combat animations, you have the option to auto-fill your non-combat animations to all of your combat animation slots.", true);
+                CustomEditorProperties.TextTitleWithDescription("タイプ1 戦闘アニメーション", "タイプ1武器タイプ用の全戦闘アニメーションを制御します。武器タイプが1つだけなら、ここが戦闘アニメーションのデフォルト一式です。非戦闘と戦闘で同じアニメを使う場合、非戦闘アニメを戦闘スロットへ自動コピーする機能が使えます。", true);
                 CustomEditorProperties.BeginIndent(20);
                 Type1CombatIdleAnimations(self);
                 EditorGUILayout.Space();
@@ -294,16 +304,16 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Handles all Type 2 combat related animations
+        /// タイプ2武器（遠隔など）に関わる戦闘アニメーションをすべて扱います。
         /// </summary>
         void Type2CombatAnimations(AnimationProfile self)
         {
-            Type2CombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatAnimationsFoldout.boolValue, "Type 2 Combat Animations", true, FoldoutStyle);
+            Type2CombatAnimationsFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatAnimationsFoldout.boolValue, "タイプ2 戦闘アニメーション", true, FoldoutStyle);
 
             if (Type2CombatAnimationsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Type 2 Combat Animations", "Controls all combat animations for the Type 2 Weapon Type.", true);
+                CustomEditorProperties.TextTitleWithDescription("タイプ2 戦闘アニメーション", "タイプ2武器タイプ用の全戦闘アニメーションを制御します。", true);
                 CustomEditorProperties.BeginIndent(20);
                 Type2CombatIdleAnimations(self);
                 EditorGUILayout.Space();
@@ -332,109 +342,109 @@ namespace EmeraldAI.Utility
 
         void NonCombatMovementAnimations(AnimationProfile self)
         {
-            //Non-Combat Movement
-            WalkFoldout.boolValue = EditorGUILayout.Foldout(WalkFoldout.boolValue, "Walk Animations", true, FoldoutStyle);
+            // 非戦闘時の移動
+            WalkFoldout.boolValue = EditorGUILayout.Foldout(WalkFoldout.boolValue, "歩行アニメーション", true, FoldoutStyle);
 
             if (WalkFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Walk Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkForward, "Walk Forward", "The walk animation that plays when your AI is walking forward when not in combat.", 2, false, true);
+                // 前進歩行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkForward, "前進（歩行）", "非戦闘時に前方へ歩く際に再生される歩行アニメーション。", 2, false, true);
 
-                //Walk Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkLeft, "Walk Left", "The walk animation that plays when your AI is walking left when not in combat. If you do not have a Walk Left animation, the Walk Forward animation can be used instead.", 2, true, true);
+                // 左歩行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkLeft, "左（歩行）", "非戦闘時に左へ歩く際に再生されるアニメーション。左歩行がない場合は前進歩行を流用できます。", 2, true, true);
 
-                //Walk Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkRight, "Walk Right", "The walk animation that plays when your AI is walking right when not in combat. If you do not have a Walk Right animation, the Walk Forward animation can be used instead.", 0, true, true);
+                // 右歩行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.WalkRight, "右（歩行）", "非戦闘時に右へ歩く際に再生されるアニメーション。右歩行がない場合は前進歩行を流用できます。", 0, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            RunFoldout.boolValue = EditorGUILayout.Foldout(RunFoldout.boolValue, "Run Animations", true, FoldoutStyle);
+            RunFoldout.boolValue = EditorGUILayout.Foldout(RunFoldout.boolValue, "走行アニメーション", true, FoldoutStyle);
 
             if (RunFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Run Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunForward, "Run Forward", "The run animation that plays when your AI is running forward when not in combat.", 2, false, true);
+                // 前進走行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunForward, "前進（走行）", "非戦闘時に前方へ走る際に再生されるアニメーション。", 2, false, true);
 
-                //Run Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunLeft, "Run Left", "The run animation that plays when your AI is running left when not in combat. If you do not have a Run Left animation, the Run Forward animation can be used instead.", 2, true, true);
+                // 左走行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunLeft, "左（走行）", "非戦闘時に左へ走る際に再生されるアニメーション。左走行がない場合は前進走行を流用できます。", 2, true, true);
 
-                //Run Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunRight, "Run Right", "The run animation that plays when your AI is running right when not in combat. If you do not have a Run Right animation, the Run Forward animation can be used instead.", 0, true, true);
+                // 右走行
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.RunRight, "右（走行）", "非戦闘時に右へ走る際に再生されるアニメーション。右走行がない場合は前進走行を流用できます。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            TurnFoldout.boolValue = EditorGUILayout.Foldout(TurnFoldout.boolValue, "Turn Animations", true, FoldoutStyle);
+            TurnFoldout.boolValue = EditorGUILayout.Foldout(TurnFoldout.boolValue, "その場旋回アニメーション", true, FoldoutStyle);
 
             if (TurnFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Turn Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.TurnLeft, "Turn Left", "The animation clip for turning left (and is stationary) when not in combat.", 2, true, true);
+                // 左旋回
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.TurnLeft, "左回転（その場）", "非戦闘時にその場で左へ回転するアニメーションクリップ。", 2, true, true);
 
-                //Turn Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.TurnRight, "Turn Right", "The animation clip for turning right (and is stationary) when not in combat.", 1, true, true);
+                // 右旋回
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.TurnRight, "右回転（その場）", "非戦闘時にその場で右へ回転するアニメーションクリップ。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
-            //Non-Combat Movement
+            // 非戦闘時の移動
         }
 
         void Type1CombatMovement()
         {
             AnimationProfile self = (AnimationProfile)target;
-            Type1CombatWalkFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatWalkFoldout.boolValue, "Combat Walk Animations", true, FoldoutStyle);
+            Type1CombatWalkFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatWalkFoldout.boolValue, "戦闘時の歩行アニメーション（タイプ1）", true, FoldoutStyle);
 
-            //Type 1 Combat Walks
+            // タイプ1 戦闘歩行
             if (Type1CombatWalkFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Combat Walk Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkForward, "Combat Walk Forward", "The walk animation that plays when your AI is walking forward when in combat.", 2, false, true);
+                // 前進
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkForward, "戦闘歩行（前進）", "戦闘中に前へ歩く際に再生される歩行アニメーション。", 2, false, true);
 
-                //Combat Walk Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkLeft, "Combat Walk Left", "The walk animation that plays when your AI is walking left when in combat. If you do not have a Walk Left animation, the Walk Forward animation can be used instead.", 2, true, true);
+                // 左
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkLeft, "戦闘歩行（左）", "戦闘中に左へ歩く際に再生されるアニメーション。左がない場合は前進歩行で代用可能。", 2, true, true);
 
-                //Combat Walk Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkRight, "Combat Walk Right", "The walk animation that plays when your AI is walking right when in combat. If you do not have a Walk Right animation, the Walk Forward animation can be used instead.", 2, true, true);
+                // 右
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkRight, "戦闘歩行（右）", "戦闘中に右へ歩く際に再生されるアニメーション。右がない場合は前進歩行で代用可能。", 2, true, true);
 
-                //Walk Back
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkBack, "Combat Walk Back", "The walk animation that plays when your AI is walking backwards when in combat.", 1, true, true, true);
+                // 後退
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.WalkBack, "戦闘歩行（後退）", "戦闘中に後ろへ歩く際に再生されるアニメーション。", 1, true, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            Type1CombatRunFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatRunFoldout.boolValue, "Combat Run Animations", true, FoldoutStyle);
+            Type1CombatRunFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatRunFoldout.boolValue, "戦闘時の走行アニメーション（タイプ1）", true, FoldoutStyle);
 
-            //Combat Runs
+            // 戦闘走行
             if (Type1CombatRunFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Combat Run Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunForward, "Combat Run Forward ", "The run animation that plays when your AI is running forward when in combat.", 2, false, true);
+                // 前進
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunForward, "戦闘走行（前進）", "戦闘中に前へ走る際に再生されるアニメーション。", 2, false, true);
 
-                //Combat Run Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunLeft, "Combat Run Left ", "The run animation that plays when your AI is running left when in combat. If you do not have a Run Left animation, the Run Forward animation can be used instead.", 2, true, true);
+                // 左
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunLeft, "戦闘走行（左）", "戦闘中に左へ走る際に再生されるアニメーション。左がない場合は前進走行で代用可能。", 2, true, true);
 
-                //Combat Run Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunRight, "Combat Run Right ", "The run animation that plays when your AI is running right when in combat. If you do not have a Run Right animation, the Run Forward animation can be used instead.", 1, true, true);
+                // 右
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.RunRight, "戦闘走行（右）", "戦闘中に右へ走る際に再生されるアニメーション。右がない場合は前進走行で代用可能。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            Type1CombatTurnFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatTurnFoldout.boolValue, "Combat Turn Animations", true, FoldoutStyle);
+            Type1CombatTurnFoldout.boolValue = EditorGUILayout.Foldout(Type1CombatTurnFoldout.boolValue, "戦闘時のその場旋回（タイプ1）", true, FoldoutStyle);
 
-            //Combat Stationary Turns
+            // 戦闘時その場旋回
             if (Type1CombatTurnFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Combat Turn Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.TurnLeft, "Combat Turn Left", "The turn animation that plays when your AI is turning left (and is stationary) when in combat.", 2, true, true);
+                // 左回転
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.TurnLeft, "戦闘旋回（左）", "戦闘中にその場で左へ回転するアニメーション。", 2, true, true);
 
-                //Combat Turn Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.TurnRight, "Combat Turn Right", "The turn animation that plays when your AI is turning right (and is stationary) when in combat.", 1, true, true);
+                // 右回転
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.TurnRight, "戦闘旋回（右）", "戦闘中にその場で右へ回転するアニメーション。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
         }
@@ -443,77 +453,76 @@ namespace EmeraldAI.Utility
         {
             AnimationProfile self = (AnimationProfile)target;
 
-            Type2CombatWalkFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatWalkFoldout.boolValue, "Combat Walk Animations", true, FoldoutStyle);
+            Type2CombatWalkFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatWalkFoldout.boolValue, "戦闘時の歩行アニメーション（タイプ2）", true, FoldoutStyle);
 
-            //Type 2 Walks
+            // タイプ2 戦闘歩行
             if (Type2CombatWalkFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Type 2 Combat Walk Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkForward, "Combat Walk Forward", "The walk animation that plays when your AI is walking forward when in combat.", 2, false, true);
+                // 前進
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkForward, "戦闘歩行（前進）", "戦闘中に前へ歩く際に再生されるアニメーション。", 2, false, true);
 
-                //Type 2 Combat Walk Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkLeft, "Combat Walk Left", "The walk animation that plays when your AI is walking left when in combat. If you do not have a Walk Left animation, the Walk Forward animation can be used instead.", 2, true, true);
+                // 左
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkLeft, "戦闘歩行（左）", "戦闘中に左へ歩く際に再生されるアニメーション。左がない場合は前進歩行で代用可能。", 2, true, true);
 
-                //Type 2 Combat Walk Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkRight, "Combat Walk Right", "The walk animation that plays when your AI is walking right when in combat. If you do not have a Walk Right animation, the Walk Forward animation can be used instead.", 2, true, true);
+                // 右
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkRight, "戦闘歩行（右）", "戦闘中に右へ歩く際に再生されるアニメーション。右がない場合は前進歩行で代用可能。", 2, true, true);
 
-                //Type 2 Walk Back
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkBack, "Combat Walk Back", "The walk animation that plays when your AI is walking backwards when in combat.", 1, true, true, true);
+                // 後退
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.WalkBack, "戦闘歩行（後退）", "戦闘中に後ろへ歩く際に再生されるアニメーション。", 1, true, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            Type2CombatRunFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatRunFoldout.boolValue, "Combat Run Animations", true, FoldoutStyle);
+            Type2CombatRunFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatRunFoldout.boolValue, "戦闘時の走行アニメーション（タイプ2）", true, FoldoutStyle);
 
-            //Type 2 Combat Runs
+            // タイプ2 戦闘走行
             if (Type2CombatRunFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Type 2 Combat Run Forward
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunForward, "Combat Run Forward", "The run animation that plays when your AI is running forward when in combat.", 2, false, true);
+                // 前進
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunForward, "戦闘走行（前進）", "戦闘中に前へ走る際に再生されるアニメーション。", 2, false, true);
 
-                //Type 2 Combat Run Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunLeft, "Combat Run Left", "The run animation that plays when your AI is running left when in combat. If you do not have a Run Left animation, the Run Forward animation can be used instead.", 2, true, true);
+                // 左
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunLeft, "戦闘走行（左）", "戦闘中に左へ走る際に再生されるアニメーション。左がない場合は前進走行で代用可能。", 2, true, true);
 
-                //Type 2 Combat Run Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunRight, "Combat Run Right", "The run animation that plays when your AI is running right when in combat. If you do not have a Run Right animation, the Run Forward animation can be used instead.", 1, true, true);
+                // 右
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.RunRight, "戦闘走行（右）", "戦闘中に右へ走る際に再生されるアニメーション。右がない場合は前進走行で代用可能。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
 
             EditorGUILayout.Space();
-            Type2CombatTurnFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatTurnFoldout.boolValue, "Combat Turn Animations", true, FoldoutStyle);
+            Type2CombatTurnFoldout.boolValue = EditorGUILayout.Foldout(Type2CombatTurnFoldout.boolValue, "戦闘時のその場旋回（タイプ2）", true, FoldoutStyle);
 
-            //Type 2 Combat Stationary Turns
+            // タイプ2 戦闘その場旋回
             if (Type2CombatTurnFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                //Ranhed Combat Stationary Turn Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.TurnLeft, "Combat Turn Left", "The turn animation that plays when your AI is turning left (and is stationary) when in combat.", 2, true, true);
+                // 左回転
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.TurnLeft, "戦闘旋回（左）", "戦闘中にその場で左へ回転するアニメーション。", 2, true, true);
 
-                //Ranhed Combat Stationary Turn Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.TurnRight, "Combat Turn Right", "The turn animation that plays when your AI is turning right (and is stationary) when in combat.", 1, true, true);
+                // 右回転
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.TurnRight, "戦闘旋回（右）", "戦闘中にその場で右へ回転するアニメーション。", 1, true, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
         }
 
         void Type1EquipAnimations(AnimationProfile self)
         {
-            Type1EquipsFoldout.boolValue = EditorGUILayout.Foldout(Type1EquipsFoldout.boolValue, "Equip & Unequip Animations", true, FoldoutStyle);
+            Type1EquipsFoldout.boolValue = EditorGUILayout.Foldout(Type1EquipsFoldout.boolValue, "装備／納刀アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1EquipsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Equip & Unequip Animations", "Controls the animations that will be used for equipping and unequipping an AI's weapon objects. If you do not apply animations here, this feature will be ignored.", true);
+                CustomEditorProperties.TextTitleWithDescription("装備／納刀アニメーション", "AI の武器オブジェクトを装備・収納する際のアニメーションを制御します。ここにアニメを設定しない場合、この機能は無視されます。", true);
 
-                CustomEditorProperties.TutorialButton("Note: This requires an AI to have an EquipWeapon and UnequipWeapon Animation Events setup on the equip and unequip animations. " +
-                    "For a guide on how to do this, refer to the Emerald AI Documentation, if you haven't yet set them up and would like to use this feature.",
+                CustomEditorProperties.TutorialButton("注意：この機能を使うには、装備と納刀のアニメーションに EquipWeapon と UnequipWeapon のアニメーションイベントを設定する必要があります。未設定の場合や手順が不明な場合はドキュメントをご覧ください。",
                     "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/items-component/creating-equippable-weapons");
 
-                //Pullout Weapon
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.PullOutWeapon, "Equip Weapon", "The animation that plays when the AI is pulling out their weapon.", 0, false, false);
-                //Put Away Weapon
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.PutAwayWeapon, "Unequip Weapon", "The animation that plays when the AI is putting away their weapon.", 1, false, false);
+                // 武器を抜く
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.PullOutWeapon, "武器を装備", "AI が武器を取り出すときに再生されるアニメーション。", 0, false, false);
+                // 武器をしまう
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.PutAwayWeapon, "武器を収納", "AI が武器をしまうときに再生されるアニメーション。", 1, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -521,21 +530,20 @@ namespace EmeraldAI.Utility
 
         void Type2EquipAnimations(AnimationProfile self)
         {
-            Type2EquipsFoldout.boolValue = EditorGUILayout.Foldout(Type2EquipsFoldout.boolValue, "Equip & Unequip Animations", true, FoldoutStyle);
+            Type2EquipsFoldout.boolValue = EditorGUILayout.Foldout(Type2EquipsFoldout.boolValue, "装備／納刀アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2EquipsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Equip & Unequip Animations", "Controls the animations that will be used for equipping and unequipping an AI's weapon objects. If you do not apply animations here, this feature will be ignored.", true);
+                CustomEditorProperties.TextTitleWithDescription("装備／納刀アニメーション", "AI の武器オブジェクトを装備・収納する際のアニメーションを制御します。ここにアニメを設定しない場合、この機能は無視されます。", true);
 
-                CustomEditorProperties.TutorialButton("Note: This requires an AI to have an EquipWeapon and UnequipWeapon Animation Events setup on the equip and unequip animations. " +
-                    "For a guide on how to do this, refer to the Emerald AI Documentation, if you haven't yet set them up and would like to use this feature.",
+                CustomEditorProperties.TutorialButton("注意：この機能を使うには、装備と納刀のアニメーションに EquipWeapon と UnequipWeapon のアニメーションイベントを設定する必要があります。未設定の場合や手順が不明な場合はドキュメントをご覧ください。",
                     "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/items-component/creating-equippable-weapons");
 
-                //Pullout Weapon
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.PullOutWeapon, "Equip Weapon", "The animation that plays when the AI is pulling out their weapon.", 0, false, false);
-                //Put Away Weapon
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.PutAwayWeapon, "Unequip Weapon", "The animation that plays when the AI is putting away their weapon.", 1, false, false);
+                // 武器を抜く
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.PullOutWeapon, "武器を装備", "AI が武器を取り出すときに再生されるアニメーション。", 0, false, false);
+                // 武器をしまう
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.PutAwayWeapon, "武器を収納", "AI が武器をしまうときに再生されるアニメーション。", 1, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -543,27 +551,27 @@ namespace EmeraldAI.Utility
 
         void Type1AttackAnimations(AnimationProfile self)
         {
-            Type1AttacksFoldout.boolValue = EditorGUILayout.Foldout(Type1AttacksFoldout.boolValue, "Attack Animations", true, FoldoutStyle);
+            Type1AttacksFoldout.boolValue = EditorGUILayout.Foldout(Type1AttacksFoldout.boolValue, "攻撃アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1AttacksFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                CustomEditorProperties.TextTitleWithDescription("Attack Animations", "Controls the attack animations that an will use when the AI in combat. A max of 12 can be used. Attack animations should have 'Loop Time' unchecked.", true);
+                CustomEditorProperties.TextTitleWithDescription("攻撃アニメーション", "AI が戦闘中に使用する攻撃アニメーションを制御します。最大12個まで。攻撃アニメは『Loop Time』のチェックを外してください。", true);
 
-                CustomEditorProperties.ImportantTutorialButton("Note: You will need to manually create a CreateAbility Animation Event on each of your AI's attack animations to allow your AI to trigger an attack. " +
-                "Please refer to Emerlad's documentation for a tutorial on how to do this.", "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-managers/animation-viewer-manager/creating-attack-animation-events");
+                CustomEditorProperties.ImportantTutorialButton("注意：各攻撃アニメーションに CreateAbility のアニメーションイベントを手動で追加する必要があります。追加しないと攻撃が発動しません。手順はドキュメントを参照してください。",
+                "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-managers/animation-viewer-manager/creating-attack-animation-events");
 
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Type 1 Attack Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the attack animations that an will use when the AI in combat. A max of 12 can be used. Attack animations should have 'Loop Time' unchecked.", false);
-                CustomEditorProperties.NoticeTextDescription("Note: Reordering this list, or removing an animation from this list, will change the order of the generated Attack Animation names within the AI's Type 1 Attacks (given they have already been assigned).", false);
+                EditorGUILayout.LabelField("タイプ1 攻撃アニメーション一覧", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("AI が戦闘中に使用する攻撃アニメーションを制御します。最大12個まで。攻撃アニメは『Loop Time』のチェックを外してください。", false);
+                CustomEditorProperties.NoticeTextDescription("注意：このリストの並び替えや削除は、AI の『Type 1 Attacks』に生成される攻撃アニメーション名の順序に影響します（すでに割り当て済みの場合）。", false);
 
                 EditorGUILayout.Space();
                 Type1AttackAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Attack
+                // 追加可否
                 if (self.Type1Animations.AttackList.Count == 12)
                 {
                     Type1AttackAnimationList.displayAdd = false;
@@ -579,26 +587,26 @@ namespace EmeraldAI.Utility
 
         void Type2AttackAnimations(AnimationProfile self)
         {
-            Type2AttacksFoldout.boolValue = EditorGUILayout.Foldout(Type2AttacksFoldout.boolValue, "Attack Animations", true, FoldoutStyle);
+            Type2AttacksFoldout.boolValue = EditorGUILayout.Foldout(Type2AttacksFoldout.boolValue, "攻撃アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2AttacksFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                CustomEditorProperties.TextTitleWithDescription("Attack Animations", "Controls the attack animations that an will use when the AI in combat. A max of 12 can be used. Attack animations should have 'Loop Time' unchecked.", true);
+                CustomEditorProperties.TextTitleWithDescription("攻撃アニメーション", "AI が戦闘中に使用する攻撃アニメーションを制御します。最大12個まで。攻撃アニメは『Loop Time』のチェックを外してください。", true);
 
-                CustomEditorProperties.TutorialButton("Note: You will need to manually create an CreateAbility Animation Event on each of your AI's attack animations to allow your AI to trigger an attack. " +
-                "Please refer to Emerlad's documentation for a tutorial on how to do this.", "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-managers/animation-viewer-manager/creating-attack-animation-events");
+                CustomEditorProperties.TutorialButton("注意：各攻撃アニメーションに CreateAbility のアニメーションイベントを手動で追加する必要があります。追加しないと攻撃が発動しません。手順はドキュメントを参照してください。",
+                "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-managers/animation-viewer-manager/creating-attack-animation-events");
 
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Type 2 Attack Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the attack animations that an will use when the AI in combat. A max of 12 can be used. Attack animations should have 'Loop Time' unchecked.", false);
+                EditorGUILayout.LabelField("タイプ2 攻撃アニメーション一覧", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("AI が戦闘中に使用する攻撃アニメーションを制御します。最大12個まで。攻撃アニメは『Loop Time』のチェックを外してください。", false);
 
                 EditorGUILayout.Space();
                 Type2AttackAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Attack
+                // 追加可否（タイプ2では6個上限の仕様に合わせる）
                 if (self.Type2Animations.AttackList.Count == 6)
                 {
                     Type2AttackAnimationList.displayAdd = false;
@@ -614,18 +622,18 @@ namespace EmeraldAI.Utility
 
         void NonCombatIdleAnimations(AnimationProfile self)
         {
-            NonCombatIdleFoldout.boolValue = EditorGUILayout.Foldout(NonCombatIdleFoldout.boolValue, "Idle Animations", true, FoldoutStyle);
+            NonCombatIdleFoldout.boolValue = EditorGUILayout.Foldout(NonCombatIdleFoldout.boolValue, "待機アニメーション（非戦闘）", true, FoldoutStyle);
 
             if (NonCombatIdleFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Idle Animations", "Controls idle animations that this AI will use when wandering.", true);
-                EditorGUILayout.LabelField("Idle Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the idle animations that will randomly play when the AI is wandering or grazing. A max of 6 can be used.", false);
+                CustomEditorProperties.TextTitleWithDescription("待機アニメーション", "AI が徘徊中に使用する待機アニメーションを制御します。", true);
+                EditorGUILayout.LabelField("待機アニメーション一覧", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("徘徊や採食時など、ランダムに再生される待機アニメーションを制御します。最大6個まで。", false);
                 NonCombatIdleAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Idle
+                // 追加可否
                 if (self.NonCombatAnimations.IdleList.Count == 6)
                 {
                     NonCombatIdleAnimationList.displayAdd = false;
@@ -635,23 +643,23 @@ namespace EmeraldAI.Utility
                     NonCombatIdleAnimationList.displayAdd = true;
                 }
 
-                //Non-Combat Idke
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.IdleStationary, "Idle Non-Combat", "Controls the default idle animation.", 0, false, true);
+                // 非戦闘時の基本待機アニメ
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.NonCombatAnimations.IdleStationary, "待機（非戦闘）", "デフォルトの待機アニメーションを制御します。", 0, false, true);
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
         }
 
         void Type1CombatIdleAnimations(AnimationProfile self)
         {
-            Type1IdleFoldout.boolValue = EditorGUILayout.Foldout(Type1IdleFoldout.boolValue, "Combat Idle Animations", true, FoldoutStyle);
+            Type1IdleFoldout.boolValue = EditorGUILayout.Foldout(Type1IdleFoldout.boolValue, "待機アニメーション（戦闘・タイプ1）", true, FoldoutStyle);
 
             if (Type1IdleFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.IdleStationary, "Combat Idle", "Controls the idle animation that the AI will play while an AI is in Combat Mode.", 2, false, false);
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.IdleStationary, "戦闘待機", "戦闘モード中に再生される待機アニメーションを制御します。", 2, false, false);
 
-                //Type 1 Idle Warning
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.IdleWarning, "Type 1 Idle Warning", "Controls the animation that the AI will play to warn a target that they will attack, if the target doesn't leave their attack radius soon.", 1, false, false);
+                // タイプ1 警告待機
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.IdleWarning, "タイプ1 警告待機", "ターゲットが攻撃半径から離れない場合に警告として再生されるアニメーション。", 1, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -659,15 +667,15 @@ namespace EmeraldAI.Utility
 
         void Type2CombatIdleAnimations(AnimationProfile self)
         {
-            Type2IdleFoldout.boolValue = EditorGUILayout.Foldout(Type2IdleFoldout.boolValue, "Idle Animations", true, FoldoutStyle);
+            Type2IdleFoldout.boolValue = EditorGUILayout.Foldout(Type2IdleFoldout.boolValue, "待機アニメーション（戦闘・タイプ2）", true, FoldoutStyle);
 
             if (Type2IdleFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.IdleStationary, "Combat Idle", "Controls the ranged idle animation that the AI will play while an AI is in Combat Mode.", 2, false, true);
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.IdleStationary, "戦闘待機", "戦闘モード中に再生される遠隔向けの待機アニメーションを制御します。", 2, false, true);
 
-                //Type 2 Idle Warning
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.IdleWarning, "Type 2 Idle Warning", "Controls the animation that the AI will play to warn a target that they will attack, if the target doesn't leave their attack radius soon.", 0, false, true);
+                // タイプ2 警告待機
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.IdleWarning, "タイプ2 警告待機", "ターゲットが攻撃半径から離れない場合に警告として再生されるアニメーション。", 0, false, true);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -675,18 +683,18 @@ namespace EmeraldAI.Utility
 
         void NonCombatCombatHitAnimations(AnimationProfile self)
         {
-            NonCombatHitFoldout.boolValue = EditorGUILayout.Foldout(NonCombatHitFoldout.boolValue, "Hit Animations", true, FoldoutStyle);
+            NonCombatHitFoldout.boolValue = EditorGUILayout.Foldout(NonCombatHitFoldout.boolValue, "被弾アニメーション（非戦闘）", true, FoldoutStyle);
 
             if (NonCombatHitFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                EditorGUILayout.LabelField("Hit Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI receives damage when not in combat.", false);
+                EditorGUILayout.LabelField("被弾アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("非戦闘時にダメージを受けた際に再生されるアニメーションを制御します。", false);
                 NonCombatHitAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Hit
+                // 追加可否
                 if (self.NonCombatAnimations.HitList.Count == 6)
                 {
                     NonCombatHitAnimationList.displayAdd = false;
@@ -702,25 +710,24 @@ namespace EmeraldAI.Utility
 
         void Type1CombatHitAnimations(AnimationProfile self)
         {
-            Type1HitFoldout.boolValue = EditorGUILayout.Foldout(Type1HitFoldout.boolValue, "Combat Hit Animations", true, FoldoutStyle);
+            Type1HitFoldout.boolValue = EditorGUILayout.Foldout(Type1HitFoldout.boolValue, "被弾アニメーション（戦闘・タイプ1）", true, FoldoutStyle);
 
             if (Type1HitFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Stunned
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.Stunned, "Stunned", "Controls the stunned animation that plays after an AI gets struck by a stunning hit. " +
-                    "Hit animations will be blended with the Stunned Animation while in this state (this feature can be disabled by excluding the Stunned state from the Hit Conditions below).", 2, false, false);
+                // スタン
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.Stunned, "スタン", "スタン効果を受けた後に再生されるアニメーションを制御します。この状態では、被弾アニメーションがスタンアニメーションへブレンドされます（下記の『被弾可能状態』から Stunned を除外すれば無効化可能）。", 2, false, false);
 
-                CustomEditorProperties.CustomPropertyField(Type1HitConditionsProp, "Hit Conditions", "Controls which states are allowed to be canceled to play a hit animation. Note: Dodge and Equipping are automatically excluded.", false);
-                CustomEditorProperties.CustomFloatSliderPropertyField(Type1HitAnimationCooldownProp, "Hit Animation Cooldown", "Controls the time (in seconds) that need to pass in order to play another hit animation.", 0f, 4f, true);
+                CustomEditorProperties.CustomPropertyField(Type1HitConditionsProp, "被弾可能状態", "どの状態をキャンセルして被弾アニメーションを再生できるかを制御します。※回避と装備中は自動的に対象外です。", false);
+                CustomEditorProperties.CustomFloatSliderPropertyField(Type1HitAnimationCooldownProp, "被弾アニメのクールダウン", "次の被弾アニメーションを再生可能になるまでの秒数。", 0f, 4f, true);
 
-                EditorGUILayout.LabelField("Combat Hit Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI receives damage when not in combat.", false);
+                EditorGUILayout.LabelField("戦闘時の被弾アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("戦闘時にダメージを受けた際に再生されるアニメーションを制御します。", false);
                 Type1CombatHitAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Combat Hit
+                // 追加可否
                 if (self.Type1Animations.HitList.Count == 6)
                 {
                     Type1CombatHitAnimationList.displayAdd = false;
@@ -736,25 +743,24 @@ namespace EmeraldAI.Utility
 
         void Type2CombatHitAnimations(AnimationProfile self)
         {
-            Type2HitFoldout.boolValue = EditorGUILayout.Foldout(Type2HitFoldout.boolValue, "Combat Hit Animations", true, FoldoutStyle);
+            Type2HitFoldout.boolValue = EditorGUILayout.Foldout(Type2HitFoldout.boolValue, "被弾アニメーション（戦闘・タイプ2）", true, FoldoutStyle);
 
             if (Type2HitFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Stunned
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.Stunned, "Stunned", "Controls the stunned animation that plays after an AI gets struck by a stunning hit. " +
-                    "Hit animations will be blended with the Stunned Animation while in this state (this feature can be disabled by excluding the Stunned state from the Hit Conditions below).", 2, false, false);
+                // スタン
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.Stunned, "スタン", "スタン効果を受けた後に再生されるアニメーションを制御します。この状態では、被弾アニメーションがスタンアニメーションへブレンドされます（下記の『被弾可能状態』から Stunned を除外すれば無効化可能）。", 2, false, false);
 
-                CustomEditorProperties.CustomPropertyField(Type2HitConditionsProp, "Hit Conditions", "Controls which states are allowed to be canceled to play a hit animation. Note: Dodge and Equipping are automatically excluded.", false);
-                CustomEditorProperties.CustomFloatSliderPropertyField(Type2HitAnimationCooldownProp, "Hit Animation Cooldown", "Controls the time (in seconds) that need to pass in order to play another hit animation.", 0f, 4f, true);
+                CustomEditorProperties.CustomPropertyField(Type2HitConditionsProp, "被弾可能状態", "どの状態をキャンセルして被弾アニメーションを再生できるかを制御します。※回避と装備中は自動的に対象外です。", false);
+                CustomEditorProperties.CustomFloatSliderPropertyField(Type2HitAnimationCooldownProp, "被弾アニメのクールダウン", "次の被弾アニメーションを再生可能になるまでの秒数。", 0f, 4f, true);
 
-                EditorGUILayout.LabelField("Combat Hit Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI receives damage when not in combat.", false);
+                EditorGUILayout.LabelField("戦闘時の被弾アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("戦闘時にダメージを受けた際に再生されるアニメーションを制御します。", false);
                 Type2CombatHitAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Combat Hit
+                // 追加可否
                 if (self.Type2Animations.HitList.Count == 6)
                 {
                     Type2CombatHitAnimationList.displayAdd = false;
@@ -770,18 +776,18 @@ namespace EmeraldAI.Utility
 
         void Type1BlockAnimations(AnimationProfile self)
         {
-            Type1BlockFoldout.boolValue = EditorGUILayout.Foldout(Type1BlockFoldout.boolValue, "Combat Block Animations", true, FoldoutStyle);
+            Type1BlockFoldout.boolValue = EditorGUILayout.Foldout(Type1BlockFoldout.boolValue, "ガード関連アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1BlockFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Block Idle
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.BlockIdle, "Block Idle Animation", "The looping animation that plays when your AI is blocking.", 2, false, false);
-                //Block Hit
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.BlockHit, "Block Impact Animation", "The animation that plays when your AI is blocking and is hit with an attack.", 2, false, false);
-                //Recoil
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.Recoil, "Recoil", "Controls the recoil animation that plays after an AI hits a blocking target.", 2, false, false);
+                // ガード待機
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.BlockIdle, "ガード待機", "ガード中にループ再生されるアニメーション。", 2, false, false);
+                // ガード被弾
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.BlockHit, "ガード被弾", "ガード中に攻撃を受けた際に再生されるアニメーション。", 2, false, false);
+                // リコイル
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.Recoil, "攻撃側リコイル", "ブロック対象に攻撃が当たった後、攻撃側に再生されるリコイルアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -789,18 +795,18 @@ namespace EmeraldAI.Utility
 
         void Type2BlockAnimations(AnimationProfile self)
         {
-            Type2BlockFoldout.boolValue = EditorGUILayout.Foldout(Type2BlockFoldout.boolValue, "Combat Block Animations", true, FoldoutStyle);
+            Type2BlockFoldout.boolValue = EditorGUILayout.Foldout(Type2BlockFoldout.boolValue, "ガード関連アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2BlockFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Block Idle
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.BlockIdle, "Block Animation", "The animation that plays when your AI is blocking.", 2, false, false);
-                //Block Hit
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.BlockHit, "Block Impact Animation", "The animation that plays when your AI is blocking and is hit with an attack.", 2, false, false);
-                //Recoil
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.Recoil, "Recoil", "Controls the recoil animation that plays after an AI hits a blocking target.", 2, false, false);
+                // ガード
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.BlockIdle, "ガード", "ガード中に再生されるアニメーション。", 2, false, false);
+                // ガード被弾
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.BlockHit, "ガード被弾", "ガード中に攻撃を受けた際に再生されるアニメーション。", 2, false, false);
+                // リコイル
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.Recoil, "攻撃側リコイル", "ブロック対象に攻撃が当たった後、攻撃側に再生されるリコイルアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -808,18 +814,18 @@ namespace EmeraldAI.Utility
 
         void NonCombatDeathAnimations(AnimationProfile self)
         {
-            NonCombatDeathFoldout.boolValue = EditorGUILayout.Foldout(NonCombatDeathFoldout.boolValue, "Death Animations", true, FoldoutStyle);
+            NonCombatDeathFoldout.boolValue = EditorGUILayout.Foldout(NonCombatDeathFoldout.boolValue, "死亡アニメーション（非戦闘）", true, FoldoutStyle);
 
             if (NonCombatDeathFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                EditorGUILayout.LabelField("Death Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI dies. Note: If no death animations are applied, an AI will use ragdoll deaths.", false);
-                CustomEditorProperties.NoticeTextDescription("Note: If no death animations are applied, an AI will automatically use ragdoll deaths, which requires an AI to be setup through Unity's Ragdoll Wizard or another 3rd party ragdoll tool.", false);
+                EditorGUILayout.LabelField("死亡アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("AI が死亡した際に再生されるアニメーションを制御します。注意：死亡アニメーションが一切設定されていない場合、ラグドール死亡が使用されます。", false);
+                CustomEditorProperties.NoticeTextDescription("注意：死亡アニメーションがない場合、Unity の Ragdoll Wizard または他のラグドールツールで AI にラグドール設定が必要です。", false);
                 NonCombatDeathAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Death
+                // 追加可否
                 if (self.NonCombatAnimations.DeathList.Count == 6)
                 {
                     NonCombatDeathAnimationList.displayAdd = false;
@@ -834,18 +840,18 @@ namespace EmeraldAI.Utility
 
         void Type1DeathAnimations(AnimationProfile self)
         {
-            Type1DeathFoldout.boolValue = EditorGUILayout.Foldout(Type1DeathFoldout.boolValue, "Combat Death Animations", true, FoldoutStyle);
+            Type1DeathFoldout.boolValue = EditorGUILayout.Foldout(Type1DeathFoldout.boolValue, "死亡アニメーション（戦闘・タイプ1）", true, FoldoutStyle);
 
             if (Type1DeathFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                EditorGUILayout.LabelField("Death Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI dies. Note: If no death animations are applied, an AI will use ragdoll deaths.", false);
-                CustomEditorProperties.NoticeTextDescription("Note: If no death animations are applied, an AI will automatically use ragdoll deaths, which requires an AI to be setup through Unity's Ragdoll Wizard or another 3rd party ragdoll tool.", false);
+                EditorGUILayout.LabelField("死亡アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("AI が死亡した際に再生されるアニメーションを制御します。注意：死亡アニメーションが一切設定されていない場合、ラグドール死亡が使用されます。", false);
+                CustomEditorProperties.NoticeTextDescription("注意：死亡アニメーションがない場合、Unity の Ragdoll Wizard または他のラグドールツールで AI にラグドール設定が必要です。", false);
                 Type1DeathAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Death
+                // 追加可否
                 if (self.Type1Animations.DeathList.Count == 6)
                 {
                     Type1DeathAnimationList.displayAdd = false;
@@ -860,18 +866,18 @@ namespace EmeraldAI.Utility
 
         void Type2DeathAnimations(AnimationProfile self)
         {
-            Type2DeathFoldout.boolValue = EditorGUILayout.Foldout(Type2DeathFoldout.boolValue, "Combat Death Animations", true, FoldoutStyle);
+            Type2DeathFoldout.boolValue = EditorGUILayout.Foldout(Type2DeathFoldout.boolValue, "死亡アニメーション（戦闘・タイプ2）", true, FoldoutStyle);
 
             if (Type2DeathFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                EditorGUILayout.LabelField("Death Animations", EditorStyles.boldLabel);
-                CustomEditorProperties.CustomHelpLabelField("Controls the animations that will play when an AI dies.", false);
-                CustomEditorProperties.NoticeTextDescription("Note: If no death animations are applied, an AI will automatically use ragdoll deaths, which requires an AI to be setup through Unity's Ragdoll Wizard or another 3rd party ragdoll tool.", false);
+                EditorGUILayout.LabelField("死亡アニメーション", EditorStyles.boldLabel);
+                CustomEditorProperties.CustomHelpLabelField("AI が死亡した際に再生されるアニメーションを制御します。", false);
+                CustomEditorProperties.NoticeTextDescription("注意：死亡アニメーションがない場合、Unity の Ragdoll Wizard または他のラグドールツールで AI にラグドール設定が必要です。", false);
                 Type2DeathAnimationList.DoLayoutList();
                 EditorGUILayout.Space();
 
-                //Death
+                // 追加可否
                 if (self.Type1Animations.DeathList.Count == 6)
                 {
                     Type2DeathAnimationList.displayAdd = false;
@@ -886,17 +892,17 @@ namespace EmeraldAI.Utility
 
         void Type1StrafeAnimations(AnimationProfile self)
         {
-            Type1StrafeFoldout.boolValue = EditorGUILayout.Foldout(Type1StrafeFoldout.boolValue, "Combat Strafe Animations", true, FoldoutStyle);
+            Type1StrafeFoldout.boolValue = EditorGUILayout.Foldout(Type1StrafeFoldout.boolValue, "平行移動（ストレイフ）アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1StrafeFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Strafe Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.StrafeLeft, "Strafe Left", "Controls the strafe animation when strafing left.", 2, false, true);
+                // 左ストレイフ
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.StrafeLeft, "左ストレイフ", "左へ平行移動する際のアニメーション。", 2, false, true);
 
-                //Strafe Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.StrafeRight, "Strafe Right", "Controls the strafe animation when strafing right.", 2, false, true);
+                // 右ストレイフ
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.StrafeRight, "右ストレイフ", "右へ平行移動する際のアニメーション。", 2, false, true);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -904,17 +910,17 @@ namespace EmeraldAI.Utility
 
         void Type2StrafeAnimations(AnimationProfile self)
         {
-            Type2StrafeFoldout.boolValue = EditorGUILayout.Foldout(Type2StrafeFoldout.boolValue, "Combat Strafe Animations", true, FoldoutStyle);
+            Type2StrafeFoldout.boolValue = EditorGUILayout.Foldout(Type2StrafeFoldout.boolValue, "平行移動（ストレイフ）アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2StrafeFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Strafe Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.StrafeLeft, "Strafe Left", "Controls the strafe animation when strafing left.", 2, false, true);
+                // 左ストレイフ
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.StrafeLeft, "左ストレイフ", "左へ平行移動する際のアニメーション。", 2, false, true);
 
-                //Strafe Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.StrafeRight, "Strafe Right", "Controls the strafe animation when strafing right.", 2, false, true);
+                // 右ストレイフ
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.StrafeRight, "右ストレイフ", "右へ平行移動する際のアニメーション。", 2, false, true);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -922,20 +928,20 @@ namespace EmeraldAI.Utility
 
         void Type1DodgeAnimations(AnimationProfile self)
         {
-            Type1DodgeFoldout.boolValue = EditorGUILayout.Foldout(Type1DodgeFoldout.boolValue, "Combat Dodge Animations", true, FoldoutStyle);
+            Type1DodgeFoldout.boolValue = EditorGUILayout.Foldout(Type1DodgeFoldout.boolValue, "回避アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1DodgeFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Dodge Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeLeft, "Dodge Left", "Controls the dodge animation when dodging left.", 2, false, false);
+                // 左回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeLeft, "回避（左）", "左へ回避する際のアニメーション。", 2, false, false);
 
-                //Dodge Back
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeBack, "Dodge Back", "Controls the dodge animation when dodging back.", 2, false, false);
+                // 後退回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeBack, "回避（後ろ）", "後ろへ回避する際のアニメーション。", 2, false, false);
 
-                //Dodge Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeRight, "Dodge Right", "Controls the dodge animation when dodging right.", 2, false, false);
+                // 右回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.DodgeRight, "回避（右）", "右へ回避する際のアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -943,20 +949,20 @@ namespace EmeraldAI.Utility
 
         void Type2DodgeAnimations(AnimationProfile self)
         {
-            Type2DodgeFoldout.boolValue = EditorGUILayout.Foldout(Type2DodgeFoldout.boolValue, "Combat Dodge Animations", true, FoldoutStyle);
+            Type2DodgeFoldout.boolValue = EditorGUILayout.Foldout(Type2DodgeFoldout.boolValue, "回避アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2DodgeFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                //Dodge Left
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeLeft, "Dodge Left", "Controls the dodge animation when dodging left.", 2, false, false);
+                // 左回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeLeft, "回避（左）", "左へ回避する際のアニメーション。", 2, false, false);
 
-                //Dodge Back
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeBack, "Dodge Back", "Controls the dodge animation when dodging back.", 2, false, false);
+                // 後退回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeBack, "回避（後ろ）", "後ろへ回避する際のアニメーション。", 2, false, false);
 
-                //Dodge Right
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeRight, "Dodge Right", "Controls the dodge animation when dodging right.", 2, false, false);
+                // 右回避
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.DodgeRight, "回避（右）", "右へ回避する際のアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -964,20 +970,20 @@ namespace EmeraldAI.Utility
 
         void Type1CoverAnimations(AnimationProfile self)
         {
-            Type1CoverFoldout.boolValue = EditorGUILayout.Foldout(Type1CoverFoldout.boolValue, "Combat Cover Animations", true, FoldoutStyle);
+            Type1CoverFoldout.boolValue = EditorGUILayout.Foldout(Type1CoverFoldout.boolValue, "カバー（遮蔽物）アニメーション（タイプ1）", true, FoldoutStyle);
 
             if (Type1CoverFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                CustomEditorProperties.ImportantTutorialButton("Note: An AI needs to have a Cover Component and have Cover Nodes set up in order to use its cover animations." +
-                    "Please refer to Emerlad's documentation for a tutorial on how to do this, if you haven't already done so.", "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/cover-component");
+                CustomEditorProperties.ImportantTutorialButton("注意：この機能を使用するには、AI に Cover コンポーネントを追加し、Cover Node を配置しておく必要があります。未設定の場合はドキュメントをご覧ください。",
+                    "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/cover-component");
 
-                //Cover Idle
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.CoverIdle, "Cover Idle", "Controls the cover idle animation when an AI is actively in cover. It is recommended that this is some type of crouch animation.", 2, true, false);
+                // カバー待機
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.CoverIdle, "カバー待機", "AI がカバー中に再生される待機アニメーション。しゃがみ等の姿勢を推奨。", 2, true, false);
 
-                //Cover Hit
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.CoverHit, "Cover Hit", "Controls the cover hit animation when an AI is actively in cover and gets hit.", 2, false, false);
+                // カバー被弾
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type1Animations.CoverHit, "カバー被弾", "AI がカバー中に被弾した際に再生されるアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -985,20 +991,20 @@ namespace EmeraldAI.Utility
 
         void Type2CoverAnimations(AnimationProfile self)
         {
-            Type2CoverFoldout.boolValue = EditorGUILayout.Foldout(Type2CoverFoldout.boolValue, "Combat Cover Animations", true, FoldoutStyle);
+            Type2CoverFoldout.boolValue = EditorGUILayout.Foldout(Type2CoverFoldout.boolValue, "カバー（遮蔽物）アニメーション（タイプ2）", true, FoldoutStyle);
 
             if (Type2CoverFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
 
-                CustomEditorProperties.ImportantTutorialButton("Note: An AI needs to have a Cover Component and have Cover Nodes set up in order to use its cover animations. " +
-                    "Please refer to Emerlad's documentation for a tutorial on how to do this, if you haven't already done so.", "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/cover-component");
+                CustomEditorProperties.ImportantTutorialButton("注意：この機能を使用するには、AI に Cover コンポーネントを追加し、Cover Node を配置しておく必要があります。未設定の場合はドキュメントをご覧ください。",
+                    "https://black-horizon-studios.gitbook.io/emerald-ai-wiki/emerald-components-optional/cover-component");
 
-                //Cover Idle
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.CoverIdle, "Cover Idle", "Controls the cover idle animation when an AI is actively in cover. It is recommended that this is some type of crouch animation.", 2, true, false);
+                // カバー待機
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.CoverIdle, "カバー待機", "AI がカバー中に再生される待機アニメーション。しゃがみ等の姿勢を推奨。", 2, true, false);
 
-                //Cover Hit
-                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.CoverHit, "Cover Hit", "Controls the cover hit animation when an AI is actively in cover and gets hit.", 2, false, false);
+                // カバー被弾
+                CustomEditorProperties.DrawAnimationClassVariables(self, self.Type2Animations.CoverHit, "カバー被弾", "AI がカバー中に被弾した際に再生されるアニメーション。", 2, false, false);
 
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
@@ -1006,20 +1012,20 @@ namespace EmeraldAI.Utility
 
         void EmoteAnimations(AnimationProfile self)
         {
-            EmotesFoldout.boolValue = EditorGUILayout.Foldout(EmotesFoldout.boolValue, "Emote Animations", true, FoldoutStyle);
+            EmotesFoldout.boolValue = EditorGUILayout.Foldout(EmotesFoldout.boolValue, "エモートアニメーション", true, FoldoutStyle);
 
             if (EmotesFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Emote Animations", "Controls the animations an AI can use as emotes.", true);
+                CustomEditorProperties.TextTitleWithDescription("エモートアニメーション", "AI がエモートとして使用できるアニメーションを制御します。", true);
 
-                EditorGUILayout.LabelField("Emote Animations", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("エモートアニメーション一覧", EditorStyles.boldLabel);
                 GUI.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.19f);
-                EditorGUILayout.LabelField("Controls the emote animations that will play when an AI's PlayEmoteAnimation function is called and passing the emote ID as the parameter. The speed of each animation can be adjusted by changing the speed parameter. A max of 10 can be used.", EditorStyles.helpBox);
+                EditorGUILayout.LabelField("PlayEmoteAnimation 関数を呼び出し、引数にエモートIDを渡したときに再生されるアニメーション群を設定します。各アニメーションの速度は speed パラメータで調整可能。最大10個まで。", EditorStyles.helpBox);
                 GUI.backgroundColor = Color.white;
                 EmoteAnimationList.DoLayoutList();
 
-                //Emote
+                // 追加可否
                 if (self.EmoteAnimationList.Count == 10)
                 {
                     EmoteAnimationList.displayAdd = false;
@@ -1036,28 +1042,27 @@ namespace EmeraldAI.Utility
 
         void AnimatorControllerSettings(AnimationProfile self)
         {
-            AnimatorSettingsFoldout.boolValue = EditorGUILayout.Foldout(AnimatorSettingsFoldout.boolValue, "Animator Settings", true, FoldoutStyle);
+            AnimatorSettingsFoldout.boolValue = EditorGUILayout.Foldout(AnimatorSettingsFoldout.boolValue, "Animator 設定", true, FoldoutStyle);
 
             if (AnimatorSettingsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Animator Settings", "The Animation system will automatically update an AI's Animator Controller as changes are made so there's no need to apply animations manually to it.", true);
+                CustomEditorProperties.TextTitleWithDescription("Animator 設定", "アニメーションシステムは、変更に応じて AI の Animator Controller を自動更新するため、手動での適用は不要です。", true);
 
                 DisplayAnimatorController();
                 EditorGUILayout.PropertyField(AnimatorCullingModeProp, new GUIContent("Animator Culling Mode"));
-                CustomEditorProperties.CustomHelpLabelField("Controls what type of Culling Mode this AI's Animator will use. Always Animate is recommended when using animated deaths as an AI can sometimes get stuck in T-pose if they die while off-screen.", true);
+                CustomEditorProperties.CustomHelpLabelField("この AI の Animator に適用する Culling Mode を制御します。アニメ死亡アニメを使用する場合は Always Animate 推奨（オフスクリーン死亡でTポーズのまま固まることがあるため）。", true);
 
                 EditorGUILayout.Space();
-                if (GUILayout.Button(new GUIContent("Copy Non-Combat Animations to Type 1 Combat Animations"), GUILayout.Height(23)))
+                if (GUILayout.Button(new GUIContent("非戦闘アニメをタイプ1戦闘アニメへコピー"), GUILayout.Height(23)))
                 {
                     CopyNonCombatAnimationsToType1(self);
                 }
-                if (GUILayout.Button(new GUIContent("Copy Non-Combat Animations to Type 2 Combat Animations"), GUILayout.Height(23)))
+                if (GUILayout.Button(new GUIContent("非戦闘アニメをタイプ2戦闘アニメへコピー"), GUILayout.Height(23)))
                 {
                     CopyNonCombatAnimationsToType2(self);
                 }
-                CustomEditorProperties.CustomHelpLabelField("Use this to copy all non-combat animations (idles, turns, movement, hits, and death) so the same animations don't have to be reassigned as the combat animations." +
-                    " Note: This will only work for the Type 1 Weapon Type and is practical for AI who use the same animations for the non-combat animations and their Type 1 Combat Animations.", true);
+                CustomEditorProperties.CustomHelpLabelField("非戦闘アニメ（待機・旋回・移動・被弾・死亡）を一括で戦闘アニメへコピーします。※タイプ1武器タイプにのみ有効。非戦闘と戦闘で同一アニメを使うAIに実用的です。", true);
 
                 CopyAnimationProfileButton(self);
                 RegenerateAnimatorControllerButton(self);
@@ -1070,12 +1075,10 @@ namespace EmeraldAI.Utility
 
         void CheckForMissingAnimationsButton(AnimationProfile self)
         {
-            CustomEditorProperties.NoticeTextTitleWithDescription("Reminder", "All animation slots that are enabled must have animations applied to avoid errors. Please ensure you have applied all of the neccesary " +
-                    "animations before using this AI. Note: You can press the 'Check for Missing Animations' button below to have Emerald AI debug log missing animations to the Unity Console so you don't have to manually " +
-                    "look through each animation tab.", false);
+            CustomEditorProperties.NoticeTextTitleWithDescription("リマインダー", "有効化されているアニメーションスロットには必ずアニメーションを割り当ててください。未設定があるとエラーの原因になります。下の『不足アニメーションのチェック』ボタンを押すと、足りないアニメを Unity Console にログ出力できます。", false);
 
             GUI.backgroundColor = new Color(1.5f, 0f, 0f, 0.5f);
-            if (GUILayout.Button("Check for Missing Animations", HelpButtonStyle, GUILayout.Height(23)))
+            if (GUILayout.Button("不足アニメーションをチェック", HelpButtonStyle, GUILayout.Height(23)))
             {
                 CheckForMissingAnimations();
             }
@@ -1084,12 +1087,12 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Updates the Animator Controller automatically when changes are made.
+        /// 変更があったときに Animator Controller を自動更新します。
         /// </summary>
         /// <param name="self"></param>
         void UpdateAnimatorController(AnimationProfile self)
         {
-            //Only auto-update the Animator Controller if inside the Unity Editor as runtime auto-updating is not possible.
+            // Unity Editor 内でのみ自動更新（ランタイム自動更新は不可）
 #if UNITY_EDITOR
             if (self.AnimatorControllerGenerated && self.AIAnimator != null)
             {
@@ -1107,26 +1110,26 @@ namespace EmeraldAI.Utility
             {
                 EditorGUILayout.Space();
                 GUI.backgroundColor = new Color(10f, 0.0f, 0.0f, 0.35f);
-                EditorGUILayout.HelpBox("There is currently no generated Animator Controller for this Animation Profile. You will need to press the Create Animator Controller button below first before you can apply animations.", MessageType.Warning);
+                EditorGUILayout.HelpBox("このアニメーションプロファイルには、まだ生成済みの Animator Controller がありません。下の『Animator Controller を作成』ボタンを押してから、アニメーションを適用してください。", MessageType.Warning);
                 GUI.backgroundColor = Color.white;
                 EditorGUILayout.Space();
-                CreateAnimatorControllerButton(self); //Draws the Create Animator Controller button 
+                CreateAnimatorControllerButton(self); // 「Animator Controller を作成」ボタンの描画
             }
         }
 
         void CheckForMissingAnimations()
         {
-            //TODO: Instead of checking all aniations, only check essential ones.
-            //EmeraldAI.Internal.AnimationCheck.CheckForMissingAnimations(EmeraldComp);
+            // TODO: すべてではなく、必須アニメのみをチェックするように最適化する。
+            // EmeraldAI.Internal.AnimationCheck.CheckForMissingAnimations(EmeraldComp);
         }
 
         void CreateAnimatorControllerButton(AnimationProfile self)
         {
             if (!self.AnimatorControllerGenerated || self.MissingRuntimeController)
             {
-                if (GUILayout.Button("Create Animator Controller", GUILayout.Height(23)))
+                if (GUILayout.Button("Animator Controller を作成", GUILayout.Height(23)))
                 {
-                    self.FilePath = EditorUtility.SaveFilePanelInProject("Save as OverrideController", "", "overrideController", "Please enter a file name to save the file to");
+                    self.FilePath = EditorUtility.SaveFilePanelInProject("OverrideController として保存", "", "overrideController", "保存するファイル名を入力してください");
                     if (self.FilePath != string.Empty)
                     {
                         string UserFilePath = self.FilePath;
@@ -1144,36 +1147,34 @@ namespace EmeraldAI.Utility
             }
         }
 
-        void DisplayAnimatorController ()
+        void DisplayAnimatorController()
         {
             EditorGUILayout.PropertyField(AIAnimatorProp, new GUIContent("Animator Controller"));
-            CustomEditorProperties.CustomHelpLabelField("The current Animator Controller for this Animation Profile. Any AI that is using this Animation Profile will have this Animator Controller applied to it at runtime.", true);
+            CustomEditorProperties.CustomHelpLabelField("このアニメーションプロファイルに紐づく Animator Controller。実行時、これを使用している全AIへ適用されます。", true);
         }
 
         void RegenerateAnimatorControllerButton(AnimationProfile self)
         {
             EditorGUILayout.Space();
-            CustomEditorProperties.CustomHelpLabelFieldWithType("Regenerates the current Animator Controller. Use only if there have been changes to the master Emerald AI controller and you'd like to update to the newest version. " +
-                "Note: This will overwrite any custom changes you've made to this Animator Controller.", false, new Color(145f, 145f, 0f, 0.6f), MessageType.Info);
+            CustomEditorProperties.CustomHelpLabelFieldWithType("現在の Animator Controller を再生成します。マスターの Emerald AI コントローラに変更があった場合、新しい内容へ更新できます。\n注意：手動で加えた変更は上書きされます。", false, new Color(145f, 145f, 0f, 0.6f), MessageType.Info);
 
             GUI.backgroundColor = new Color(1.5f, 1.3f, 0, 1f);
-            if (GUILayout.Button("Regenerate Animator Controller", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("Regenerate Animator Controller?", "Are you sure you want to regenerate this Animator Controller? " +
-                "This will overwrite any custom changes you've made to this Animator Controller. This process cannot be undone.", "Yes", "Cancel"))
+            if (GUILayout.Button("Animator Controller を再生成", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("Animator Controller を再生成しますか？", "この Animator Controller を再生成してよろしいですか？\n手動で加えた変更は上書きされます。この操作は元に戻せません。", "はい", "キャンセル"))
             {
                 string SourceFilePath = AssetDatabase.GetAssetPath(Resources.Load("Emerald Animator Controller"));
                 string ControllerPath = self.FilePath;
                 AssetDatabase.CopyAsset(SourceFilePath, ControllerPath);
                 var TempRuntimeAnimator = AssetDatabase.LoadAssetAtPath(ControllerPath, typeof(RuntimeAnimatorController)) as RuntimeAnimatorController;
                 self.AIAnimator = TempRuntimeAnimator;
-                EmeraldAnimatorGenerator.GenerateAnimatorController(self); //Regenerate the Animator Controller using the animations from the Animation Profile.
+                EmeraldAnimatorGenerator.GenerateAnimatorController(self); // アニメーションプロファイルの設定から Animator Controller を再生成
                 ApplyRuntimeAnimatorController();
             }
             GUI.backgroundColor = Color.white;
         }
 
-        void CopyNonCombatAnimationsToType1 (AnimationProfile self)
+        void CopyNonCombatAnimationsToType1(AnimationProfile self)
         {
-            if (EditorUtility.DisplayDialog("Copy Non-Combat Animations?", "Are you sure you want to copy your non-combat animations to the Type 1 combat animations? This process cannot be undone.", "Okay", "Cancel"))
+            if (EditorUtility.DisplayDialog("非戦闘アニメをコピーしますか？", "非戦闘アニメーションをタイプ1の戦闘アニメーションへコピーします。実行してよろしいですか？この操作は元に戻せません。", "OK", "キャンセル"))
             {
                 self.Type1Animations.IdleStationary = new AnimationClass(self.NonCombatAnimations.IdleStationary.AnimationSpeed, self.NonCombatAnimations.IdleStationary.AnimationClip, self.NonCombatAnimations.IdleStationary.Mirror);
 
@@ -1209,7 +1210,7 @@ namespace EmeraldAI.Utility
 
         void CopyNonCombatAnimationsToType2(AnimationProfile self)
         {
-            if (EditorUtility.DisplayDialog("Copy Non-Combat Animations?", "Are you sure you want to copy your non-combat animations to the Type 2 combat animations? This process cannot be undone.", "Okay", "Cancel"))
+            if (EditorUtility.DisplayDialog("非戦闘アニメをコピーしますか？", "非戦闘アニメーションをタイプ2の戦闘アニメーションへコピーします。実行してよろしいですか？この操作は元に戻せません。", "OK", "キャンセル"))
             {
                 self.Type2Animations.IdleStationary = new AnimationClass(self.NonCombatAnimations.IdleStationary.AnimationSpeed, self.NonCombatAnimations.IdleStationary.AnimationClip, self.NonCombatAnimations.IdleStationary.Mirror);
 
@@ -1244,7 +1245,7 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Applies the Runtime Animator Controller from the Animation Profile to the AI's Animator.
+        /// アニメーションプロファイルの RuntimeAnimatorController を、対象AIの Animator へ適用します。
         /// </summary>
         void ApplyRuntimeAnimatorController()
         {
@@ -1260,10 +1261,10 @@ namespace EmeraldAI.Utility
         void CopyAnimationProfileButton(AnimationProfile self)
         {
             EditorGUILayout.Space();
-            CustomEditorProperties.CustomHelpLabelFieldWithType("Creates a copy of this Animation Profile (keeping all of the applied animations) and clears its Animator Controller so a new one can be created.", false, new Color(0.25f, 2f, 0f, 0.75f), MessageType.Info);
+            CustomEditorProperties.CustomHelpLabelFieldWithType("このアニメーションプロファイルを（アニメ設定を保持したまま）複製し、Animator Controller をクリアします。新規コントローラ生成のための下準備に使えます。", false, new Color(0.25f, 2f, 0f, 0.75f), MessageType.Info);
 
             GUI.backgroundColor = new Color(0.1f, 1.2f, 0f, 0.5f);
-            if (GUILayout.Button("Copy Animation Profile", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("Copy Animation Profile?", "Are you sure you want to copy this Animation Profile? This process cannot be undone.", "Yes", "Cancel"))
+            if (GUILayout.Button("アニメーションプロファイルを複製", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("アニメーションプロファイルを複製しますか？", "このアニメーションプロファイルを複製してよろしいですか？この操作は元に戻せません。", "はい", "キャンセル"))
             {
                 EmeraldAnimatorGenerator.CopyAnimationProfile(self);
             }
@@ -1273,10 +1274,10 @@ namespace EmeraldAI.Utility
         void ClearAnimatorControllerButton(AnimationProfile self)
         {
             EditorGUILayout.Space();
-            CustomEditorProperties.CustomHelpLabelFieldWithType("Clears the current Animator Controller so a new one can be created.", false, new Color(1.5f, 0f, 0f, 0.75f), MessageType.Info);
+            CustomEditorProperties.CustomHelpLabelFieldWithType("現在の Animator Controller をクリアし、新しく作成できる状態にします。", false, new Color(1.5f, 0f, 0f, 0.75f), MessageType.Info);
 
             GUI.backgroundColor = new Color(1.5f, 0f, 0f, 0.5f);
-            if (GUILayout.Button("Clear Animator Controller", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("Clear Animator Controller?", "Are you sure you want to clear this Animator Controller? This process cannot be undone.", "Yes", "Cancel"))
+            if (GUILayout.Button("Animator Controller をクリア", HelpButtonStyle, GUILayout.Height(23)) && EditorUtility.DisplayDialog("Animator Controller をクリアしますか？", "この Animator Controller をクリアしてよろしいですか？この操作は元に戻せません。", "はい", "キャンセル"))
             {
                 self.AIAnimator = null;
                 self.AnimatorControllerGenerated = false;
@@ -1307,12 +1308,12 @@ namespace EmeraldAI.Utility
 
             ListRef.drawHeaderCallback = rect =>
             {
-                EditorGUI.LabelField(rect, "   Speed  " + "     Clip", EditorStyles.boldLabel);
+                EditorGUI.LabelField(rect, "   速度  " + "     クリップ", EditorStyles.boldLabel);
             };
         }
 
         /// <summary>
-        /// Clears the EmeraldAnimationComponent from the Animation Profile.
+        /// Animation Profile から EmeraldAnimationComponent の参照をクリアします。
         /// </summary>
         void OnDestroy()
         {

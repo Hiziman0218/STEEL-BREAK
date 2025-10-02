@@ -27,22 +27,22 @@ namespace EmeraldAI                                     // EmeraldAI の名前�
         [System.Serializable]                            // インスペクタから編集可能にする
         public class EquippableWeapons                   // 武器1件分の装備定義
         {
-            [Header("手に持つ（Held）武器を使用するか（On/Off）")]
+            //[Header("手に持つ（Held）武器を使用するか（On/Off）")]
             public bool HeldToggle;                      // 手持ち武器の使用フラグ
 
-            [Header("手に持つ（Held）武器の GameObject 参照")]
+            //[Header("手に持つ（Held）武器の GameObject 参照")]
             public GameObject HeldObject;                // 手持ち武器の実体
 
-            [Header("ホルスター（収納）武器を使用するか（On/Off）")]
+            //[Header("ホルスター（収納）武器を使用するか（On/Off）")]
             public bool HolsteredToggle;                 // ホルスター武器の使用フラグ
 
-            [Header("ホルスター（収納）武器の GameObject 参照")]
+           // [Header("ホルスター（収納）武器の GameObject 参照")]
             public GameObject HolsteredObject;           // 収納時に表示する武器
 
-            [Header("死亡時ドロップ用に使用するか（On/Off）")]
+            //[Header("死亡時ドロップ用に使用するか（On/Off）")]
             public bool DroppableToggle;                 // ドロップ武器の使用フラグ
 
-            [Header("死亡時に生成するドロップ武器のプレハブ参照")]
+            //[Header("死亡時に生成するドロップ武器のプレハブ参照")]
             public GameObject DroppableObject;           // ドロップ生成する武器のPrefab
         }
 

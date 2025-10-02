@@ -18,8 +18,8 @@ MonoBehaviour:
   CooldownLength: 10
   UseCooldown: 1
   HideSettingsFoldout: 0
-  DefaultSettingsFoldout: 1
-  CustomSettingsFoldout: 1
+  DefaultSettingsFoldout: 0
+  CustomSettingsFoldout: 0
   InfoSettingsFoldout: 0
   ActionName: Random Movement
   ActionDescription: Gives AI the ability to generate a random position within the

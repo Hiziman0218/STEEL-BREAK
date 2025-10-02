@@ -11,47 +11,50 @@ namespace EmeraldAI.Utility
     [CanEditMultipleObjects]
     public class EmeraldAbilityObjectEditor : Editor
     {
+        [Header("折りたたみ見出しのスタイル（GUIStyle）")]
         GUIStyle FoldoutStyle;
+
+        [Header("派生クラスの公開インスタンスフィールド一覧（反射で取得）")]
         FieldInfo[] CustomFields;
+
+        [Header("インスペクター基本情報（SerializedProperty 参照）: 能力名/アイコン/各折りたたみ表示/モジュール折りたたみ/クールダウン/条件/召喚")]
         SerializedProperty AbilityName, AbilityIcon, DerivedSettingsFoldout, InfoSettingsFoldout, HideSettingsFoldout, ModularSettingsFoldout, CooldownSettings, ConditionSettings, SummonSettings;
 
-        SerializedProperty MeleeSettings, ProjectileSettings, ArrowProjectileSettings, GrenadeSettings, GeneralProjectileSettings, BulletProjectileSettings, AerialProjectileSettings, GroundProjectileSettings, BarrageProjectileSettings, TeleportSettings, HomingSettings, TargetTypeSettings, 
+        [Header("各モジュール設定の SerializedProperty 参照（近接/プロジェクタイル/矢/グレネード/一般弾/銃弾/空中/地上/弾幕/テレポート/ホーミング/ターゲット種別/拡散/コライダー/生成/チャージ/AOE/ダメージ/スタン/回復/ノックバック）")]
+        SerializedProperty MeleeSettings, ProjectileSettings, ArrowProjectileSettings, GrenadeSettings, GeneralProjectileSettings, BulletProjectileSettings, AerialProjectileSettings, GroundProjectileSettings, BarrageProjectileSettings, TeleportSettings, HomingSettings, TargetTypeSettings,
             SpreadSettings, ColliderSettings, CreateSettings, ChargeSettings, AreaOfEffectSettings, DamageSettings, StunnedSettings, HealingSettings, KnockbackSettings;
-        string ChargeSettingsTooltip = "Allows the ability to play an effect and/or sound when it is charging. The location of this effect is determined by the Attack Transform " +
-            "name passed through the ChargeEffect animation event. In order to use this setting, it must be set to true.\n\nNote: A ChargeEffect animation event is required for this to trigger. This should be done through the AI's attack animations before the EmeraldAttack animation event is called.";
-        string CreateSettingsTooltip = "Allows the ability to play an effect and/or sound when it is created. The location of this effect is determined by the Attack Transform " +
-            "name passed through the CreateAbility. In order to use this setting, it must be set to true.";
-        string MeleeSettingsTooltip = "Allows an ability to deal damage within the specified angle and distance.\n\nNote: " +
-            "If your melee attack animation is using Weapon Collision Events, the angle and distance settings will be ignored and this ability will rely on a successful collision from the weapon instead.";
-        string ProjectileSettingsTooltip = "Controls the main effects used for this ability.\n\nNote: Settings can be shared between other Projectile Effect Modules by right clicking and copying this module and pasting it elsewhere. " +
-            "The Projectile Effect slot is required, any other settings that are left empty will be ignored when the ability is used.";
-        string GeneralProjectileSettingsTooltip = "Allows projectiles to move towards the specified target. Can be used for various spells or even rockets.";
-        string BulletProjectileSettingsTooltip = "Allows projectiles, like bullets, to move very quickly towards the specified target.";
-        string GroundProjectileSettingsTooltip = "Allows projectiles to align themselves with and travel along the ground.\n\nNote: This setting relies on this ability's Projectile Settings.";
-        string TeleportSettingsTooltip = "Allows the ability to teleport the owner within the radius of the specified target.";
-        string HomingSettingsTooltip = "Allows projectiles to home towards their Target Source.";
-        string AerialProjectileSettingsTooltip = "Allows projectiles to spawn from above the creator or Target Source within a customizable radius.\n\nNote: This setting relies on this ability's Projectile Settings.";
-        string TargetTypeSettingsTooltip = "Controls the source of this ability's intended target.";
+
+        [Header("ツールチップ文（日本語）: チャージ/生成/近接/プロジェクタイル/一般弾/銃弾/地上/テレポート/ホーミング/空中/ターゲット種別/拡散/コライダー/AOE/スタン/ノックバック/ダメージ/回復/グレネード/クールダウン/条件/召喚")]
+        string ChargeSettingsTooltip = "アビリティのチャージ（詠唱）時に、エフェクトやサウンドを再生できるようにします。エフェクトの位置は、ChargeEffect アニメーションイベントから渡される Attack Transform 名で決まります。この設定を使うには Enabled を true にしてください。\n\n注意：発火には ChargeEffect のアニメーションイベントが必須です。AI の攻撃アニメ内で EmeraldAttack イベントより前に設定してください。";
+        string CreateSettingsTooltip = "アビリティが『生成された瞬間』に、エフェクトやサウンドを再生できるようにします。エフェクトの位置は CreateAbility で渡される Attack Transform 名で決まります。この設定を使うには Enabled を true にしてください。";
+        string MeleeSettingsTooltip = "指定した角度と距離の範囲内でダメージを与えられるようにします。\n\n注意：近接攻撃アニメが Weapon Collision Events を使用している場合、角度と距離の設定は無視され、武器コリジョンの衝突判定に依存します。";
+        string ProjectileSettingsTooltip = "このアビリティで使用する主なエフェクトを制御します。\n\n注意：右クリックでこのモジュールをコピーし、他のプロジェクタイル系モジュールへ貼り付けて共有できます。Projectile Effect は必須で、未設定の項目は使用時に無視されます。";
+        string GeneralProjectileSettingsTooltip = "プロジェクタイルを指定ターゲットへ向かって移動させます。各種魔法やロケット等に利用できます。";
+        string BulletProjectileSettingsTooltip = "弾丸のようなプロジェクタイルを、指定ターゲットへ非常に高速で移動させます。";
+        string GroundProjectileSettingsTooltip = "プロジェクタイルを地面へアラインし、地表に沿って移動させます。\n\n注意：この設定は本アビリティの Projectile Settings に依存します。";
+        string TeleportSettingsTooltip = "所有者を、指定ターゲットの半径内へテレポートさせます。";
+        string HomingSettingsTooltip = "プロジェクタイルをターゲットソースへホーミングさせます。";
+        string AerialProjectileSettingsTooltip = "作成者またはターゲットの『上空』から、カスタマイズ可能な半径でプロジェクタイルをスポーンさせます。\n\n注意：この設定は本アビリティの Projectile Settings に依存します。";
+        string TargetTypeSettingsTooltip = "このアビリティの想定ターゲットの取得元（現在ターゲット/ランダム/複数 等）を制御します。";
         //string BranchSettingsTooltip = "Allows projectiles the chance to branch to other nearby targets after they have collided with the ability's Target Source. The effect for this is based on this ability's Projectile Module.";
-        string SpreadSettingsTooltip = "Allows projectiles to spread in the X and Y directions from the their spawn source.";
-        string ColliderSettingsTooltip = "Allows projectiles to collide with objects and targets by automatically adding a Sphere Collider to the Projectile Effect." +
-            "\n\nNote: If a collider exists on Projectile Effect, the Sphere Collider will not be generated and the existing collider will be used instead.";
-        string AreaOfEffectSettingsTooltip = "Allows an ability to affect the area within the specified Radius.";
-        string StunSettingsTooltip = "Allows abilities the chance to stun a successfully hit target.";
-        string KnockbackSettingsTooltip = "Allows abilities the chance to knockback a successfully hit target.";
-        string DamageSettingsTooltip = "Allows abilities to deal damage to a successfully hit target.";
-        string HealSettingsTooltip = "Allows abilities to heal friendly AI targets.";
-        string GrenadeSettingsTooltip = "Controls the settings for the Grenade Ability.";
-        string CooldownSettingsTooltip = "Allows abilities to have cooldowns so they can't be used more than what's set by the Cooldown Length amount.";
-        string ConditionSettingsTooltip = "Abilities that use a Condition Module will need to have their condition met in order to be triggered. " +
-            "Conditions that are High Priorty will ignore an AI's Pick Type and be picked first, given the condition is met.\n\nNote: If the condition is not met, this ability will be skipped.";
-        string SummonSettingsTooltip = "Controls the settings for the Summong Ability.\n\nNote: The Summon Ability can only spawn Emerald AI agents.";
+        string SpreadSettingsTooltip = "プロジェクタイルをスポーンソースから X/Y 方向に拡散させます。";
+        string ColliderSettingsTooltip = "Projectile Effect に Sphere Collider を自動付与し、オブジェクトやターゲットとの衝突を有効化します。\n\n注意：Projectile Effect にコライダーが既に存在する場合は自動生成されず、既存のコライダーが使用されます。";
+        string AreaOfEffectSettingsTooltip = "指定半径内の範囲（AOE）にアビリティ効果を与えます。";
+        string StunSettingsTooltip = "ヒットに成功したターゲットへ、確率でスタン効果を与えます。";
+        string KnockbackSettingsTooltip = "ヒットに成功したターゲットへ、確率でノックバック効果を与えます。";
+        string DamageSettingsTooltip = "ヒットに成功したターゲットへダメージを与えます。";
+        string HealSettingsTooltip = "味方AIターゲットを回復します。";
+        string GrenadeSettingsTooltip = "グレネードアビリティの各種設定を制御します。";
+        string CooldownSettingsTooltip = "アビリティにクールダウンを設定し、再使用間隔（Cooldown Length）を超えるまで使用できないようにします。";
+        string ConditionSettingsTooltip = "条件モジュールを使うアビリティは、条件が満たされたときのみ発動します。High Priority の条件は AI の Pick Type を無視して優先的に選ばれます（条件が満たされている場合）。\n\n注意：条件が満たされない場合、このアビリティはスキップされます。";
+        string SummonSettingsTooltip = "召喚アビリティの設定を制御します。\n\n注意：召喚アビリティは Emerald AI エージェントのみをスポーンできます。";
 
 
         void OnEnable()
         {
             EmeraldAbilityObject self = (EmeraldAbilityObject)target;
-            if (self.AbilityIcon == null) self.AbilityIcon = Resources.Load("Editor Icons/EmeraldAbility") as Texture2D; //Load the default icon if the AbilityIcon is null
+            if (self.AbilityIcon == null) self.AbilityIcon = Resources.Load("Editor Icons/EmeraldAbility") as Texture2D; // AbilityIcon が null の場合はデフォルトアイコンをロード
+
             DerivedSettingsFoldout = serializedObject.FindProperty("DerivedSettingsFoldout");
             HideSettingsFoldout = serializedObject.FindProperty("HideSettingsFoldout");
             InfoSettingsFoldout = serializedObject.FindProperty("InfoSettingsFoldout");
@@ -83,7 +86,7 @@ namespace EmeraldAI.Utility
             HealingSettings = serializedObject.FindProperty("HealingSettings");
             SummonSettings = serializedObject.FindProperty("SummonSettings");
 
-            //Get all variables that are not part of the parent class.
+            // 親クラスに属さない（派生クラス固有の）パブリック変数を全取得
             CustomFields = target.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
         }
 
@@ -120,21 +123,21 @@ namespace EmeraldAI.Utility
 
         void InfoSettings(EmeraldAbilityObject self)
         {
-            InfoSettingsFoldout.boolValue = EditorGUILayout.Foldout(InfoSettingsFoldout.boolValue, "Info Settings", true, FoldoutStyle);
+            InfoSettingsFoldout.boolValue = EditorGUILayout.Foldout(InfoSettingsFoldout.boolValue, "情報設定", true, FoldoutStyle);
 
             if (InfoSettingsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Info Settings", "Customize the name, description, and icon of an ability.", true);
+                CustomEditorProperties.TextTitleWithDescription("情報設定", "アビリティの名前・説明・アイコンを設定します。", true);
 
                 EditorGUILayout.PropertyField(AbilityName);
-                CustomEditorProperties.CustomHelpLabelField("The name of this Ability.", true);
+                CustomEditorProperties.CustomHelpLabelField("このアビリティの名前。", true);
 
-                self.AbilityDescription = CustomEditorProperties.CustomDescriptionField(self, "Ability Description", self.AbilityDescription);
-                CustomEditorProperties.CustomHelpLabelField("The description of this Ability.", true);
+                self.AbilityDescription = CustomEditorProperties.CustomDescriptionField(self, "アビリティ説明", self.AbilityDescription);
+                CustomEditorProperties.CustomHelpLabelField("このアビリティの説明。", true);
 
                 EditorGUILayout.PropertyField(AbilityIcon);
-                CustomEditorProperties.CustomHelpLabelField("The icon for this Ability. If this field is empty, the default icon will be used.", true);
+                CustomEditorProperties.CustomHelpLabelField("このアビリティのアイコン。空の場合はデフォルトアイコンが使用されます。", true);
 
                 EditorGUILayout.Space();
                 CustomEditorProperties.EndFoldoutWindowBox();
@@ -142,54 +145,54 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Displays all custom variables in a separate part of the editor.
+        /// 派生クラスのカスタム変数（親クラス以外）を、専用のスタイルでまとめて表示します。
         /// </summary>
         void DerivedSettings(EmeraldAbilityObject self)
         {
-            DerivedSettingsFoldout.boolValue = EditorGUILayout.Foldout(DerivedSettingsFoldout.boolValue, self.AbilityName + " Settings", true, FoldoutStyle);
+            DerivedSettingsFoldout.boolValue = EditorGUILayout.Foldout(DerivedSettingsFoldout.boolValue, self.AbilityName + " 設定", true, FoldoutStyle);
 
             if (DerivedSettingsFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription(self.AbilityName + " Settings", self.AbilityDescription, true);
+                CustomEditorProperties.TextTitleWithDescription(self.AbilityName + " 設定", self.AbilityDescription, true);
 
-                if (ChargeSettings != null) DrawModule(ChargeSettings, "Charge Module", ChargeSettingsTooltip);
-                if (CreateSettings != null) DrawModule(CreateSettings, "Create Module", CreateSettingsTooltip);
+                if (ChargeSettings != null) DrawModule(ChargeSettings, "チャージモジュール", ChargeSettingsTooltip);
+                if (CreateSettings != null) DrawModule(CreateSettings, "生成モジュール", CreateSettingsTooltip);
 
-                if (CooldownSettings != null) DrawModule(CooldownSettings, "Cooldown Module", CooldownSettingsTooltip, false);
+                if (CooldownSettings != null) DrawModule(CooldownSettings, "クールダウンモジュール", CooldownSettingsTooltip, false);
 
-                if (ConditionSettings != null) DrawConditionModule(ConditionSettings, "Condition Module", ConditionSettingsTooltip, false);
+                if (ConditionSettings != null) DrawConditionModule(ConditionSettings, "発動条件モジュール", ConditionSettingsTooltip, false);
 
-                if (SummonSettings != null) DrawSummonModule(SummonSettings, "Summon Module", SummonSettingsTooltip, true);
+                if (SummonSettings != null) DrawSummonModule(SummonSettings, "召喚モジュール", SummonSettingsTooltip, true);
 
-                if (MeleeSettings != null) DrawModule(MeleeSettings, "Melee Module", MeleeSettingsTooltip, true);
+                if (MeleeSettings != null) DrawModule(MeleeSettings, "近接モジュール", MeleeSettingsTooltip, true);
 
-                if (ColliderSettings != null) DrawModule(ColliderSettings, "Collider Module", ColliderSettingsTooltip, true);
-                if (TargetTypeSettings != null) DrawModule(TargetTypeSettings, "Target Type Module", TargetTypeSettingsTooltip, true);
-                if (ProjectileSettings != null) DrawModule(ProjectileSettings, "Projectile Effects Module", ProjectileSettingsTooltip, true);
-                if (GeneralProjectileSettings != null) DrawModule(GeneralProjectileSettings, "General Projectile Module", GeneralProjectileSettingsTooltip, true);
-                if (GrenadeSettings != null) DrawModule(GrenadeSettings, "Grenade Module", GrenadeSettingsTooltip, true);
-                if (BulletProjectileSettings != null) DrawModule(BulletProjectileSettings, "Bullet Projectile Module", BulletProjectileSettingsTooltip, true);
-                if (ArrowProjectileSettings != null) DrawModule(ArrowProjectileSettings, "Arrow Projectile Module", "", true);
-                if (AerialProjectileSettings != null) DrawModule(AerialProjectileSettings, "Aerial Projectile Module", AerialProjectileSettingsTooltip, true);
-                if (GroundProjectileSettings != null) DrawModule(GroundProjectileSettings, "Ground Projectile Module", GroundProjectileSettingsTooltip, true);
-                if (BarrageProjectileSettings != null) DrawModule(BarrageProjectileSettings, "Barrage Projectile Module", "", true);
-                if (TeleportSettings != null) DrawModule(TeleportSettings, "Teleport Module", TeleportSettingsTooltip, true);
-                if (AreaOfEffectSettings != null) DrawModule(AreaOfEffectSettings, "Area of Effect Module", AreaOfEffectSettingsTooltip, true);
+                if (ColliderSettings != null) DrawModule(ColliderSettings, "コライダーモジュール", ColliderSettingsTooltip, true);
+                if (TargetTypeSettings != null) DrawModule(TargetTypeSettings, "ターゲット種別モジュール", TargetTypeSettingsTooltip, true);
+                if (ProjectileSettings != null) DrawModule(ProjectileSettings, "プロジェクタイル演出モジュール", ProjectileSettingsTooltip, true);
+                if (GeneralProjectileSettings != null) DrawModule(GeneralProjectileSettings, "一般プロジェクタイルモジュール", GeneralProjectileSettingsTooltip, true);
+                if (GrenadeSettings != null) DrawModule(GrenadeSettings, "グレネードモジュール", GrenadeSettingsTooltip, true);
+                if (BulletProjectileSettings != null) DrawModule(BulletProjectileSettings, "弾丸プロジェクタイルモジュール", BulletProjectileSettingsTooltip, true);
+                if (ArrowProjectileSettings != null) DrawModule(ArrowProjectileSettings, "矢プロジェクタイルモジュール", "", true);
+                if (AerialProjectileSettings != null) DrawModule(AerialProjectileSettings, "空中プロジェクタイルモジュール", AerialProjectileSettingsTooltip, true);
+                if (GroundProjectileSettings != null) DrawModule(GroundProjectileSettings, "地上プロジェクタイルモジュール", GroundProjectileSettingsTooltip, true);
+                if (BarrageProjectileSettings != null) DrawModule(BarrageProjectileSettings, "弾幕プロジェクタイルモジュール", "", true);
+                if (TeleportSettings != null) DrawModule(TeleportSettings, "テレポートモジュール", TeleportSettingsTooltip, true);
+                if (AreaOfEffectSettings != null) DrawModule(AreaOfEffectSettings, "範囲効果（AOE）モジュール", AreaOfEffectSettingsTooltip, true);
 
-                if (HomingSettings != null) DrawModule(HomingSettings, "Homing Module", HomingSettingsTooltip);
+                if (HomingSettings != null) DrawModule(HomingSettings, "ホーミングモジュール", HomingSettingsTooltip);
                 //if (BranchSettings != null) DrawModule(BranchSettings, "Branch Module", BranchSettingsTooltip);
-                if (SpreadSettings != null) DrawModule(SpreadSettings, "Spread Module", SpreadSettingsTooltip);
-                if (DamageSettings != null) DrawDamageModule(DamageSettings, "Damage Module", DamageSettingsTooltip);
-                if (StunnedSettings != null) DrawModule(StunnedSettings, "Stunned Module", StunSettingsTooltip);
-                if (KnockbackSettings != null) DrawModule(KnockbackSettings, "Knockback Module", KnockbackSettingsTooltip);
-                if (HealingSettings != null) DrawHealingModule(HealingSettings, "Heal Module", HealSettingsTooltip, true);
-                
+                if (SpreadSettings != null) DrawModule(SpreadSettings, "拡散モジュール", SpreadSettingsTooltip);
+                if (DamageSettings != null) DrawDamageModule(DamageSettings, "ダメージモジュール", DamageSettingsTooltip);
+                if (StunnedSettings != null) DrawModule(StunnedSettings, "スタンモジュール", StunSettingsTooltip);
+                if (KnockbackSettings != null) DrawModule(KnockbackSettings, "ノックバックモジュール", KnockbackSettingsTooltip);
+                if (HealingSettings != null) DrawHealingModule(HealingSettings, "回復モジュール", HealSettingsTooltip, true);
+
 
                 foreach (FieldInfo field in CustomFields)
                 {
-                    //Get all fields so they can be drawn in the Ability Object Editor's style,
-                    //but exclude any classes derived from EmeraldAI.AbilityData as they are handled elsewhere.
+                    // すべてのフィールドを取得して Ability Object Editor スタイルで描画する。
+                    // ただし EmeraldAI.AbilityData 由来のクラスは別で処理するため除外。
                     var TypeInfo = field.FieldType.GetTypeInfo();
                     string Namespace = TypeInfo.Namespace;
                     var DeclaringType = TypeInfo.DeclaringType;
@@ -200,7 +203,7 @@ namespace EmeraldAI.Utility
                         ClassInfo = DeclaringType.ToString();
                     }
 
-                    //Offset Arrays with extra space
+                    // 配列には余白を追加してオフセット表示
                     if (field.FieldType.GetElementType() != null)
                     {
                         EditorGUILayout.BeginHorizontal();
@@ -209,7 +212,7 @@ namespace EmeraldAI.Utility
                         GUILayout.Space(1);
                         EditorGUILayout.EndHorizontal();
                     }
-                    //Offset Lists with extra space
+                    // List には余白を追加してオフセット表示
                     else if (field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>))
                     {
                         EditorGUILayout.BeginHorizontal();
@@ -254,7 +257,7 @@ namespace EmeraldAI.Utility
                         GUILayout.Space(2.5f);
                         CustomEditorProperties.EndFoldoutWindowBox();
                     }
-                    //Don't apply an offset to single variables
+                    // 単体の変数はオフセットせずに表示
                     else
                     {
                         if (ClassInfo != "EmeraldAI.AbilityData")
@@ -268,9 +271,9 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Draws the passed property (dervied from the AnilityData class) as a module foldout.
+        /// AbilityData 由来のプロパティを、モジュール用の折りたたみUIとして描画します。
         /// </summary>
-        void DrawModule (SerializedProperty property, string Name, string Tooltip, bool Required = false)
+        void DrawModule(SerializedProperty property, string Name, string Tooltip, bool Required = false)
         {
             CustomEditorProperties.BeginFoldoutWindowBox();
             GUILayout.BeginHorizontal();
@@ -279,7 +282,7 @@ namespace EmeraldAI.Utility
                 if (!Required)
                 {
                     property.FindPropertyRelative("Enabled").boolValue = EditorGUILayout.Toggle(property.FindPropertyRelative("Enabled").boolValue, GUILayout.Width(28));
-                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(Optional) "+ Tooltip));
+                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(任意) " + Tooltip));
                 }
                 else if (Required)
                 {
@@ -287,9 +290,9 @@ namespace EmeraldAI.Utility
                     EditorGUILayout.Toggle(true, GUILayout.Width(28));
                     property.FindPropertyRelative("Enabled").boolValue = true;
                     EditorGUI.EndDisabledGroup();
-                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(Required) " + Tooltip));
+                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(必須) " + Tooltip));
                 }
-                
+
                 EditorGUILayout.EndHorizontal();
 
             }
@@ -301,7 +304,7 @@ namespace EmeraldAI.Utility
         }
 
         /// <summary>
-        /// Draws the passed property (dervied from the AnilityData class) as a module foldout.
+        /// AbilityData 由来（ダメージ）のプロパティを、モジュール用の折りたたみUIとして描画します。
         /// </summary>
         void DrawDamageModule(SerializedProperty property, string Name, string Tooltip, bool Required = false)
         {
@@ -312,7 +315,7 @@ namespace EmeraldAI.Utility
                 if (!Required)
                 {
                     property.FindPropertyRelative("Enabled").boolValue = EditorGUILayout.Toggle(property.FindPropertyRelative("Enabled").boolValue, GUILayout.Width(28));
-                    property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(Optional) " + Tooltip), true);
+                    property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(任意) " + Tooltip), true);
                 }
                 else if (Required)
                 {
@@ -320,7 +323,7 @@ namespace EmeraldAI.Utility
                     EditorGUILayout.Toggle(true, GUILayout.Width(28));
                     property.FindPropertyRelative("Enabled").boolValue = true;
                     EditorGUI.EndDisabledGroup();
-                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(Required) " + Tooltip));
+                    EditorGUILayout.PropertyField(property, new GUIContent(Name, "(必須) " + Tooltip));
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -329,14 +332,14 @@ namespace EmeraldAI.Utility
 
             if (property.FindPropertyRelative("Foldout").boolValue)
             {
-                //Base Damage
+                // Base Damage
                 GUILayout.Space(5);
                 CustomEditorProperties.BeginIndent(45);
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("BaseDamageSettings"));
                 CustomEditorProperties.EndIndent();
-                //Base Damage
+                // Base Damage
 
-                //Critical Hits
+                // Critical Hits
                 CustomEditorProperties.BeginIndent(45);
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("UseCriticalHits"));
                 EditorGUI.BeginDisabledGroup(!property.FindPropertyRelative("UseCriticalHits").boolValue);
@@ -345,11 +348,11 @@ namespace EmeraldAI.Utility
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("CriticalHitSettings"));
                 CustomEditorProperties.EndIndent();
                 CustomEditorProperties.EndFoldoutWindowBox();
-                EditorGUI.EndDisabledGroup();             
+                EditorGUI.EndDisabledGroup();
                 CustomEditorProperties.EndIndent();
-                //Critical Hits
+                // Critical Hits
 
-                //Damage Over Time
+                // Damage Over Time
                 CustomEditorProperties.BeginIndent(45);
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("UseDamageOverTime"));
                 EditorGUI.BeginDisabledGroup(!property.FindPropertyRelative("UseDamageOverTime").boolValue);
@@ -360,7 +363,7 @@ namespace EmeraldAI.Utility
                 CustomEditorProperties.EndFoldoutWindowBox();
                 EditorGUI.EndDisabledGroup();
                 CustomEditorProperties.EndIndent();
-                //Damage Over Time
+                // Damage Over Time
             }
 
             GUILayout.Space(2.5f);
@@ -368,6 +371,9 @@ namespace EmeraldAI.Utility
             GUILayout.Space(2.5f);
         }
 
+        /// <summary>
+        /// AbilityData 由来（回復）のプロパティを、モジュール用の折りたたみUIとして描画します。
+        /// </summary>
         void DrawHealingModule(SerializedProperty property, string Name, string Tooltip, bool Required = false)
         {
             CustomEditorProperties.BeginFoldoutWindowBox();
@@ -377,7 +383,7 @@ namespace EmeraldAI.Utility
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.BeginDisabledGroup(true);
                 property.FindPropertyRelative("Enabled").boolValue = EditorGUILayout.Toggle(property.FindPropertyRelative("Enabled").boolValue, GUILayout.Width(28));
-                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(Required) " + Tooltip), true);
+                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(必須) " + Tooltip), true);
                 EditorGUI.EndDisabledGroup();
                 EditorGUILayout.EndHorizontal();
             }
@@ -393,7 +399,7 @@ namespace EmeraldAI.Utility
                 CustomEditorProperties.BeginIndent(15);
                 if (property.FindPropertyRelative("TargetType").intValue == 0) //Self
                 {
-                    
+
                 }
                 else if (property.FindPropertyRelative("TargetType").intValue == 1) //Target
                 {
@@ -445,6 +451,9 @@ namespace EmeraldAI.Utility
             GUILayout.Space(2.5f);
         }
 
+        /// <summary>
+        /// AbilityData 由来（召喚）のプロパティを、モジュール用の折りたたみUIとして描画します。
+        /// </summary>
         void DrawSummonModule(SerializedProperty property, string Name, string Tooltip, bool Required = false)
         {
             CustomEditorProperties.BeginFoldoutWindowBox();
@@ -454,7 +463,7 @@ namespace EmeraldAI.Utility
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.BeginDisabledGroup(true);
                 property.FindPropertyRelative("Enabled").boolValue = EditorGUILayout.Toggle(property.FindPropertyRelative("Enabled").boolValue, GUILayout.Width(28));
-                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(Required) " + Tooltip), true);
+                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(必須) " + Tooltip), true);
                 EditorGUI.EndDisabledGroup();
                 EditorGUILayout.EndHorizontal();
             }
@@ -515,6 +524,9 @@ namespace EmeraldAI.Utility
             GUILayout.Space(2.5f);
         }
 
+        /// <summary>
+        /// AbilityData 由来（条件判定）のプロパティを、モジュール用の折りたたみUIとして描画します。
+        /// </summary>
         void DrawConditionModule(SerializedProperty property, string Name, string Tooltip, bool Required = false)
         {
             CustomEditorProperties.BeginFoldoutWindowBox();
@@ -523,7 +535,7 @@ namespace EmeraldAI.Utility
             {
                 EditorGUILayout.BeginHorizontal();
                 property.FindPropertyRelative("Enabled").boolValue = EditorGUILayout.Toggle(property.FindPropertyRelative("Enabled").boolValue, GUILayout.Width(28));
-                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(Optional) " + Tooltip), true);
+                property.FindPropertyRelative("Foldout").boolValue = EditorGUILayout.Foldout(property.FindPropertyRelative("Foldout").boolValue, new GUIContent(Name, "(任意) " + Tooltip), true);
                 EditorGUILayout.EndHorizontal();
             }
             GUILayout.Space(5);
@@ -566,7 +578,7 @@ namespace EmeraldAI.Utility
             GUILayout.Space(2.5f);
         }
 
-        void SetModule (SerializedProperty property, bool State)
+        void SetModule(SerializedProperty property, bool State)
         {
             property.FindPropertyRelative("Enabled").boolValue = State;
         }

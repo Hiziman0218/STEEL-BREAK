@@ -1,23 +1,44 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace EmeraldAI
 {
     /// <summary>
-    /// A modular action giving AI the ability to generate a random waypoint around their targets to move to during combat.
+    /// 【モジュール式アクション】
+    /// 戦闘中、ターゲットの周囲にランダムなウェイポイントを生成し、そこへ移動する能力をAIに与えます。
     /// </summary>
-    [CreateAssetMenu(fileName = "Random Movement Action", menuName = "Emerald AI/Combat Action/Random Movement Action")]
+    [CreateAssetMenu(fileName = "ランダム移動アクション", menuName = "Emerald AI/コンバットアクション/ランダム移動アクション")]
     public class RandomMovementAction : EmeraldAction
     {
-        [Range(4, 20)] [Tooltip("The radius a random movement waypoint can be generated in.")] public int MinWaypointRadius = 4;
-        [Range(4, 20)] [Tooltip("The radius a random movement waypoint can be generated in.")] public int MaxWaypointRadius = 7;
-        [Range(0f, 6)] [Tooltip("The length (in seconds) the AI will wait before resuming attacking.")] public float MinWaitSeconds = 0.5f;
-        [Range(0f, 6)] [Tooltip("The length (in seconds) the AI will wait before resuming attacking.")] public float MaxWaitSeconds = 2f;
-        [Range(0, 1)] [Tooltip("The odds for a random movement to happen, given the needed conditions are met.")] public float OddsToMove = 0.5f;
+        [Header("最小ウェイポイント半径（メートル）")]
+        [Range(4, 20)]
+        [Tooltip("ランダム移動のウェイポイントを生成できる半径の最小値。")]
+        public int MinWaypointRadius = 4;
+
+        [Header("最大ウェイポイント半径（メートル）")]
+        [Range(4, 20)]
+        [Tooltip("ランダム移動のウェイポイントを生成できる半径の最大値。")]
+        public int MaxWaypointRadius = 7;
+
+        [Header("攻撃再開までの最短待機秒数")]
+        [Range(0f, 6)]
+        [Tooltip("ランダム移動後にAIが攻撃を再開するまでの最短待機時間（秒）。")]
+        public float MinWaitSeconds = 0.5f;
+
+        [Header("攻撃再開までの最長待機秒数")]
+        [Range(0f, 6)]
+        [Tooltip("ランダム移動後にAIが攻撃を再開するまでの最長待機時間（秒）。")]
+        public float MaxWaitSeconds = 2f;
+
+        [Header("ランダム移動が発生する確率（0〜1）")]
+        [Range(0, 1)]
+        [Tooltip("必要条件が満たされた場合にランダム移動が発生する確率。")]
+        public float OddsToMove = 0.5f;
 
         /// <summary>
-        /// Continiously updates the EmeraldAction. This acts like an Update function that can run within this action using the information from the passed EmeraldComponent and its ActionClass.
+        /// EmeraldAction を継続的に更新します。
+        /// 渡された EmeraldComponent と ActionClass の情報を使い、このアクションの範囲内で Update 相当の処理を行います。
         /// </summary>
         public override void UpdateAction(EmeraldSystem EmeraldComponent, ActionsClass ActionClass)
         {
@@ -25,11 +46,11 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Updates the strafe action using the UpdateAction.
+        /// UpdateAction を用いてランダム移動アクションを更新します。
         /// </summary>
         void RandomMovementActionUpdate(EmeraldSystem EmeraldComponent, ActionsClass ActionClass)
         {
-            //Return if the Cover Component is present as this Combat Action could interfere with its functionality
+            // Cover Component が存在する場合は、このコンバットアクションが干渉する可能性があるため処理を終了
             if (EmeraldComponent.CoverComponent) return;
 
             if (!ActionClass.IsActive)
@@ -114,7 +135,7 @@ namespace EmeraldAI
 
             yield return new WaitForSeconds(0.5f);
 
-            //Wait according for the randomly generated seconds amount and rotate towards the target while doing so.
+            // ランダムに生成した待機秒数のあいだ待機し、その間はターゲットの方向へ回転し続ける
             float WaitSeconds = Random.Range(MinWaitSeconds, MaxWaitSeconds);
             float t = 0;
 
@@ -139,7 +160,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Conditions required for the EmeraldAction to execute.
+        /// この EmeraldAction を実行するために必要な条件。
         /// </summary>
         bool CanExecute(EmeraldSystem EmeraldComponent, ActionsClass ActionClass)
         {

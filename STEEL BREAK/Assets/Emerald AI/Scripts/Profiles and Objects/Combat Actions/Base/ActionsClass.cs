@@ -3,16 +3,38 @@ using UnityEngine;
 namespace EmeraldAI
 {
     [System.Serializable]
+    /// <summary>
+    /// EmeraldAction の状態とランタイム情報を保持するデータクラス。
+    /// ScriptableObject 側（EmeraldAction）には保持できない実行時データをここで管理します。
+    /// インスペクターでの視認性向上のため、各メンバーに [Header] を付与しています。
+    /// </summary>
     public class ActionsClass
     {
+        //[Header("実行するアクション（ScriptableObject 参照）")]
         public EmeraldAction emeraldAction;
-        public bool Enabled = true; //Used to store the whether or not this action is enabled as it cannot be stored within the EmeraldAction ScriptableObject
-        public bool IsActive; //Used to store the current active state of this action as it cannot be stored within the EmeraldAction ScriptableObject
-        public float CooldownLengthTimer; //Used to track the current cooldown length as it cannot be stored within the EmeraldAction ScriptableObject
-        public float ActionLength; //Used to store the generated action length (if used) as it cannot be stored within the EmeraldAction ScriptableObject
-        public float ActionLengthTimer; //Used to track the current action length as it cannot be stored within the EmeraldAction ScriptableObject
-        public float Timer; //Used to track time within a custom action as it cannot be stored within the EmeraldAction ScriptableObject
-        public int TimesUsed; //Used to track of the amount of times this action has been used as it cannot be stored within the EmeraldAction ScriptableObject
-        public Coroutine ActionCoroutine; //Used to keep a reference to this action's coroutine as it cannot be stored within the EmeraldAction ScriptableObject
+
+        //[Header("このアクションを有効化するか（ScriptableObject 内に保持できないためここで管理）")]
+        public bool Enabled = true; // このアクションが有効かどうか（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("現在このアクションがアクティブか（実行中フラグ。ScriptableObject 内に保持できないためここで管理）")]
+        public bool IsActive; // このアクションの現在のアクティブ状態（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("クールダウンの現在値（残り時間の計測）。ScriptableObject 内に保持できないためここで管理")]
+        public float CooldownLengthTimer; // 現在のクールダウン時間を計測（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("アクション継続時間（使用する場合はここに生成された長さを保持）")]
+        public float ActionLength; // 生成されたアクションの継続時間（使用時）。ScriptableObject 内では保持できないため、ここで管理
+
+        [Header("アクション継続時間の経過タイマー（ActionLength 用）")]
+        public float ActionLengthTimer; // アクション継続時間の経過を計測（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("汎用タイマー（カスタムアクション内で任意用途に使用）")]
+        public float Timer; // カスタムアクション内での時間計測用（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("このアクションの使用回数（統計・条件用）")]
+        public int TimesUsed; // このアクションが使用された回数（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
+
+        [Header("このアクションのコルーチン参照（停止や状態管理に使用）")]
+        public Coroutine ActionCoroutine; // このアクションのコルーチン参照（EmeraldAction ScriptableObject 内では保持できないため、ここで管理）
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   AbilityName: Melee Attack
   AbilityDescription: A general melee attack.
   AbilityIcon: {fileID: 2800000, guid: 225c0664134d17744b824ae6e345d539, type: 3}
-  InfoSettingsFoldout: 0
+  InfoSettingsFoldout: 1
   DerivedSettingsFoldout: 1
   ModularSettingsFoldout: 0
   HideSettingsFoldout: 0
@@ -52,6 +52,13 @@ MonoBehaviour:
     MaxDamageDistance: 2.25
     MaxAttackHeight: 5
     MaxDamageAngle: 90
+  KnockbackSettings:
+    Enabled: 0
+    OddsToKnockback: 100
+    KnockbackDistance: 2.5
+    KnockbackDuration: 0.25
+    MovementDelay: 0.25
+    AffectsPlayerTargets: 0
   StunnedSettings:
     Enabled: 1
     OddsToStun: 10

@@ -12,9 +12,20 @@ namespace EmeraldAI.Utility
     [CanEditMultipleObjects]
     public class FactionExtensionEditor : Editor
     {
+        [Header("Foldout（折りたたみ）タイトルのスタイル（内部用）")]
         GUIStyle FoldoutStyle;
+
+        [Header("FactionExtension エディタ用アイコン（内部用）")]
         Texture FactionExtensionEditorIcon;
-        SerializedProperty CurrentFactionProp, HideSettingsFoldout, FactionFoldout;
+
+        [Header("現在の派閥IDの SerializedProperty（CurrentFaction）")]
+        SerializedProperty CurrentFactionProp;
+
+        [Header("設定全体の折りたたみを隠すフラグ（HideSettingsFoldout）")]
+        SerializedProperty HideSettingsFoldout;
+
+        [Header("派閥設定セクションの折りたたみ（FactionFoldout）")]
+        SerializedProperty FactionFoldout;
 
         void OnEnable()
         {
@@ -31,7 +42,8 @@ namespace EmeraldAI.Utility
             FactionExtension self = (FactionExtension)target;
             serializedObject.Update();
 
-            CustomEditorProperties.BeginScriptHeaderNew("Faction Extension", FactionExtensionEditorIcon, new GUIContent(), HideSettingsFoldout);
+            // ヘッダ（日本語化）
+            CustomEditorProperties.BeginScriptHeaderNew("派閥拡張", FactionExtensionEditorIcon, new GUIContent(), HideSettingsFoldout);
 
             if (!HideSettingsFoldout.boolValue)
             {
@@ -41,24 +53,38 @@ namespace EmeraldAI.Utility
             }
 
             serializedObject.ApplyModifiedProperties();
-            CustomEditorProperties.EndScriptHeader(); 
+            CustomEditorProperties.EndScriptHeader();
         }
 
-        void FactionSetting (FactionExtension self)
+        void FactionSetting(FactionExtension self)
         {
-            FactionFoldout.boolValue = EditorGUILayout.Foldout(FactionFoldout.boolValue, "Faction Settings", true, FoldoutStyle);
+            // セクション見出し（日本語化）
+            FactionFoldout.boolValue = EditorGUILayout.Foldout(FactionFoldout.boolValue, "派閥設定", true, FoldoutStyle);
 
             if (FactionFoldout.boolValue)
             {
                 CustomEditorProperties.BeginFoldoutWindowBox();
-                CustomEditorProperties.TextTitleWithDescription("Faction Settings", "Allows AI to identify this gameobject without having to rely on Unity's Tag system. This means all potential targets can share the same Unity Tag and Unity Layer.", true);
 
-                CustomEditorProperties.FactionListEnum(new Rect(), new GUIContent(), CurrentFactionProp, "Faction", FactionExtension.StringFactionList);
-                CustomEditorProperties.CustomHelpLabelField("This Faction is used to identify this gameobject and is indended to be used on non-AI objects such as players. This is the name that AI will use when " +
-                    "looking for targets.", true);
+                // タイトルと説明（日本語化）
+                CustomEditorProperties.TextTitleWithDescription(
+                    "派閥設定",
+                    "Unity の Tag システムに依存せず、この GameObject を AI が識別できるように派閥（Faction）IDを付与します。これにより、潜在的な全ターゲットが同じ Unity の Tag や Layer を共有していても区別できます。",
+                    true
+                );
 
-                CustomEditorProperties.CustomHelpLabelField("Factions can be created and removed using the Faction Manager. ", false);
-                if (GUILayout.Button("Open Faction Manager"))
+                // 派閥選択（ラベルを日本語化）
+                CustomEditorProperties.FactionListEnum(new Rect(), new GUIContent(), CurrentFactionProp, "派閥", FactionExtension.StringFactionList);
+
+                // 説明（日本語化）
+                CustomEditorProperties.CustomHelpLabelField(
+                    "この派閥は、この GameObject（主にプレイヤーなどの非AIオブジェクト）を識別するために使用されます。AI がターゲットを探索する際、この名前で判別します。",
+                    true
+                );
+
+                CustomEditorProperties.CustomHelpLabelField("派閥は『派閥マネージャ（Faction Manager）』で作成・削除できます。", false);
+
+                // ボタン（日本語化）
+                if (GUILayout.Button("派閥マネージャを開く"))
                 {
                     EditorWindow APS = EditorWindow.GetWindow(typeof(EmeraldFactionManager));
                     APS.minSize = new Vector2(600f, 775f);
@@ -68,7 +94,6 @@ namespace EmeraldAI.Utility
                 CustomEditorProperties.EndFoldoutWindowBox();
             }
         }
-
 
         void LoadFactionData()
         {

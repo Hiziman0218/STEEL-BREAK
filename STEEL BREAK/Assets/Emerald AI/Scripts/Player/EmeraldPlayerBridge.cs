@@ -9,19 +9,32 @@ namespace EmeraldAI
     [RequireComponent(typeof(FactionExtension))]
     public class EmeraldPlayerBridge : MonoBehaviour, IDamageable, ICombat
     {
+        [field: Header("開始時の体力（初期HP）")]
         public int StartHealth { get; set; } = 100;
+
+        [field: Header("現在の体力（実行時に同期）")]
         public int Health { get; set; } = 100;
 
+        [Header("不死（ダメージを受けても死亡しない）")]
         [HideInInspector] public bool Immortal = false;
 
         [Space(5)]
+        [Header("ダメージを受けたときに発火するイベント")]
         public UnityEvent OnTakeDamage;
+
+        [Header("死亡時に発火するイベント")]
         public UnityEvent OnDeath;
 
+        [field: Header("アクティブな効果一覧（文字列）")]
         public List<string> ActiveEffects { get; set; } = new List<string>();
 
+        [Header("照準位置補正用の参照（TargetPositionModifier）")]
         TargetPositionModifier m_TargetPositionModifier;
+
+        [Header("自身のコライダー参照")]
         Collider m_Collider;
+
+        [Header("直近の攻撃がクリティカルか（内部用）")]
         bool m_CriticalHit;
 
         public virtual void Awake()
@@ -34,11 +47,12 @@ namespace EmeraldAI
         {
             Health = StartHealth;
 
-            //You should set your StartHealth and Health variables equal to that of your character controller here.
+            // ここで、キャラクターコントローラ側の体力値に合わせて
+            // StartHealth と Health を同期させてください。
         }
 
         /// <summary>
-        /// Called internally through the IDamageable interface.
+        /// IDamageable インターフェイス経由で内部的に呼び出されます。
         /// </summary>
         public void Damage(int DamageAmount, Transform AttackerTransform = null, int RagdollForce = 100, bool CriticalHit = false)
         {
@@ -52,16 +66,17 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Displays damage text based on the damage passed. This is a separate function so users can used it when need (by passing block, dodge, etc.).
+        /// 渡されたダメージ量に基づいてコンバットテキストを表示します。
+        /// ブロックや回避などを自前で判定して使いたい場合に備え、別関数として分離しています。
         /// </summary>
         public virtual void DisplayDamageText(int DamageAmount)
         {
-            //Creates damage text on the target's position, if enabled.
+            // 有効な場合、ターゲット位置にコンバットテキスト（与ダメージ）を生成します。
             if (CombatTextSystem.Instance != null) CombatTextSystem.Instance.CreateCombatText(DamageAmount, DamagePosition(), m_CriticalHit, false, false);
         }
 
         /// <summary>
-        /// Used for referencing the damage position for this object when an AI takes damage from external sources.
+        /// 外部ソースからAIがダメージを受けた際に、このオブジェクトのダメージ位置を参照するために使用します。
         /// </summary>
         public Vector3 DamagePosition()
         {
@@ -75,15 +90,15 @@ namespace EmeraldAI
         {
             if (Immortal) return;
 
-            //The code for damaging your character controller should go here.
+            // ここに、プレイヤーのキャラクターコントローラへダメージを与えるコードを記述してください。
 
             OnTakeDamage.Invoke();
 
-            //You should set the Health variables equal to that of your character controller after it was damaged here.
+            // ダメージ処理後、Health 変数をキャラクターコントローラ側の体力値に同期させてください。
 
             if (Health <= 0)
             {
-                //Controls what happens when your player dies.
+                // プレイヤーが死亡した際の挙動を制御します。
 
                 if (m_Collider != null) m_Collider.enabled = false;
                 OnDeath.Invoke();
@@ -91,7 +106,8 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Resets this Non-AI target to its default settings before it was killed. This includes health, layer, and tag.
+        /// この Non-AI ターゲットを、死亡前のデフォルト設定にリセットします。
+        /// （体力、レイヤー、タグを含む）
         /// </summary>
         public void ResetTarget()
         {
@@ -105,7 +121,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is attacking.
+        /// このターゲットが攻撃中かどうかの検出に使用します。
         /// </summary>
         public virtual bool IsAttacking()
         {
@@ -113,7 +129,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is blocking.
+        /// このターゲットが防御中かどうかの検出に使用します。
         /// </summary>
         public virtual bool IsBlocking()
         {
@@ -121,7 +137,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is dodging.
+        /// このターゲットが回避中かどうかの検出に使用します。
         /// </summary>
         public virtual bool IsDodging()
         {
@@ -130,7 +146,7 @@ namespace EmeraldAI
 
         public virtual void TriggerStun(float StunLength)
         {
-            //Custom trigger mechanics can go here, but are not required
+            // 必要であれば、ここにカスタムのスタン処理を記述できます（必須ではありません）。
         }
     }
 }

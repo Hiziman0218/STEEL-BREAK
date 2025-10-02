@@ -1,185 +1,268 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using EmeraldAI.Utility;
+﻿// ===============================================================
+// ファイル名 : AbilityData.cs
+// 目的     : Emerald AI 2025 のアビリティ関連パラメータをまとめたデータコンテナ
+// 注意     : ご主人様の指示により実行ロジックは一切変更せず、コメントとEditor用属性のみ追加
+// ポリシー : ・各メンバー変数に [Header("…")] を追加（HideInInspector でも付与）
+//            ・すべての Tooltip を日本語化
+//            ・クラス宣言の直前に日本語の用途注釈
+//            ・可能な範囲で各行に日本語コメント（過度な冗長化は避けつつ可読性重視）
+//            ・Debug.Log/Log 系の行には理由と影響を注釈
+// ===============================================================
 
-namespace EmeraldAI
+using UnityEngine;                           // Unityエンジンの基本API
+using System.Collections;                    // コルーチン等
+using System.Collections.Generic;            // Listなどのコレクション
+using EmeraldAI.Utility;                     // Emerald AI ユーティリティ（オブジェクトプール等）
+
+namespace EmeraldAI                           // EmeraldAI 名前空間
 {
+    /// <summary>
+    /// 【AbilityData】アビリティ設定の親データクラス（モジュール別の入れ子クラスを保持）
+    /// </summary>
     [System.Serializable]
     public class AbilityData
     {
+        /// <summary>
+        /// 【CreateSettingsData】アビリティ生成（作成）時の演出設定（エフェクト/サウンド/寿命）
+        /// </summary>
         [System.Serializable]
         public class CreateSettingsData
         {
-            [Tooltip("Controls whether or not this module is enabled.")]
-            [HideInInspector] public bool Enabled;
-            [Tooltip("Controls the effect that happens when the ability is created.")]
-            public GameObject CreateEffect;
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
+            [Tooltip("このモジュールを有効にするかどうかを制御します。")]
+            [HideInInspector] public bool Enabled;                             // 有効フラグ（非表示）
+
+            [Header("生成時エフェクト（作成時に再生）")]
+            [Tooltip("アビリティが生成された際に再生するエフェクトを指定します。")]
+            public GameObject CreateEffect;                                     // 生成時のエフェクト
+
+            [Header("生成エフェクトの寿命（秒）")]
             [Range(0.5f, 8f)]
-            [Tooltip("Controls the how long the Create Effect will last before being despanwed.")]
-            public float CreateEffectTimeout = 2;
-            [Tooltip("Controls the sound that's played when the Create Effect is spawned.")]
-            public List<AudioClip> CreateSoundsList = new List<AudioClip>();
+            [Tooltip("生成エフェクトが消えるまでの時間（秒）を制御します。")]
+            public float CreateEffectTimeout = 2;                               // エフェクト寿命
+
+            [Header("生成時サウンド候補リスト")]
+            [Tooltip("生成エフェクト再生時に鳴らすサウンドの候補リストです。")]
+            public List<AudioClip> CreateSoundsList = new List<AudioClip>();    // サウンド一覧
 
             /// <summary>
-            /// Spawns a Create Effect at the specified location.
+            /// 指定位置に生成エフェクトをスポーンします。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Create Effect.</param>
+            /// <param name="Owner">このアビリティの所有者。</param>
+            /// <param name="SpawnPosition">生成エフェクトのスポーン位置。</param>
             public void SpawnCreateEffect(GameObject Owner, Transform SpawnPosition)
             {
-                if (Enabled)
+                if (Enabled)                                                    // モジュールが有効な場合のみ
                 {
-                    if (CreateEffect != null)
+                    if (CreateEffect != null)                                   // エフェクトが設定されている
                     {
+                        // オブジェクトプールから生成し、寿命付きで再生
                         GameObject SpawnedCreateEffect = EmeraldObjectPool.SpawnEffect(CreateEffect, SpawnPosition.position, Owner.transform.rotation, CreateEffectTimeout);
-                        SpawnedCreateEffect.name = CreateEffect.name;
-                        SpawnedCreateEffect.transform.localScale = CreateEffect.transform.localScale;
+                        SpawnedCreateEffect.name = CreateEffect.name;           // 名前同期（管理しやすくするため）
+                        SpawnedCreateEffect.transform.localScale = CreateEffect.transform.localScale; // スケール同期
                     }
 
-                    if (CreateSoundsList.Count > 0)
+                    if (CreateSoundsList.Count > 0)                             // サウンド候補がある場合
                     {
                         AudioClip Clip = CreateSoundsList[Random.Range(0, CreateSoundsList.Count)];
-                        if (Clip)
+                        if (Clip)                                               // クリップが有効
                         {
+                            // サウンド専用プールオブジェクトによりワンショット再生
                             AudioSource TempSound = EmeraldObjectPool.SpawnEffect(Resources.Load("Emerald Sound") as GameObject, SpawnPosition.position, Quaternion.identity, Clip.length).GetComponent<AudioSource>();
-                            TempSound.volume = Random.Range(0.75f, 1f);
-                            TempSound.PlayOneShot(Clip);
+                            TempSound.volume = Random.Range(0.75f, 1f);         // 音量に軽い揺らぎ
+                            TempSound.PlayOneShot(Clip);                        // 再生
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// 【ChargeSettingsData】詠唱/チャージ中の演出設定（エフェクト/サウンド/長さ）
+        /// </summary>
         [System.Serializable]
         public class ChargeSettingsData
         {
-            [Tooltip("Controls whether or not this module is enabled.")]
-            [HideInInspector] public bool Enabled;
-            [Tooltip("Controls the effect that happens when the ability is charging or being casted.\n\nNote: This must be a single object with a Particle System on it.")]
-            public GameObject ChargeEffect;
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
+            [Tooltip("このモジュールを有効にするかどうかを制御します。")]
+            [HideInInspector] public bool Enabled;                               // 有効フラグ（非表示）
+
+            [Header("チャージ（詠唱）エフェクト（粒子推奨・単一オブジェクト）")]
+            [Tooltip("アビリティのチャージ/詠唱中に再生するエフェクトを制御します。\n\n注意: パーティクルシステムを持つ単一オブジェクトである必要があります。")]
+            public GameObject ChargeEffect;                                      // チャージ用エフェクト
+
+            [Header("チャージ継続時間（秒）")]
             [Range(0.5f, 8f)]
-            [Tooltip("Controls how long the Charge Effect will last before being faded out. This is done by setting the Duration of the Charge Effect equal to that of the Charge Length. The Charge Effect's Particle System should have Loop set to false.")]
-            public float ChargeLength = 2;
-            [Tooltip("Controls the sound that's played when the Charge Effect is spawned.")]
-            public List<AudioClip> ChargeSoundsList = new List<AudioClip>();
+            [Tooltip("チャージエフェクトの持続時間です。ChargeLength をパーティクルの duration に合わせてください。エフェクトの Loop は false を推奨。")]
+            public float ChargeLength = 2;                                       // チャージ時間
+
+            [Header("チャージ時サウンド候補リスト")]
+            [Tooltip("チャージエフェクト生成時に再生されるサウンドを制御します。")]
+            public List<AudioClip> ChargeSoundsList = new List<AudioClip>();     // サウンド候補
 
             /// <summary>
-            /// Spawns a Charge Effect at the specified location.
+            /// 指定位置にチャージエフェクトをスポーンします。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Charge Effect.</param>
+            /// <param name="Owner">アビリティの所有者。</param>
+            /// <param name="SpawnPosition">チャージエフェクトのスポーン位置。</param>
             public void SpawnChargeEffect(GameObject Owner, Transform SpawnPosition)
             {
-                if (Enabled)
+                if (Enabled)                                                     // 有効時のみ
                 {
-                    if (ChargeEffect != null)
+                    if (ChargeEffect != null)                                    // エフェクト設定あり
                     {
-                        GameObject SpawnedChargeEffect = EmeraldObjectPool.SpawnEffect(ChargeEffect, SpawnPosition.position, Owner.transform.rotation, ChargeLength+1f);
-                        SpawnedChargeEffect.name = ChargeEffect.name;
-                        SpawnedChargeEffect.transform.localScale = ChargeEffect.transform.localScale;
-                        SpawnedChargeEffect.transform.SetParent(SpawnPosition);
-                        ParticleSystem ParticleSystemRef = SpawnedChargeEffect.GetComponent<ParticleSystem>();
+                        // 寿命に+1fの余裕（フェード等の猶予）
+                        GameObject SpawnedChargeEffect = EmeraldObjectPool.SpawnEffect(ChargeEffect, SpawnPosition.position, Owner.transform.rotation, ChargeLength + 1f);
+                        SpawnedChargeEffect.name = ChargeEffect.name;            // 名称同期
+                        SpawnedChargeEffect.transform.localScale = ChargeEffect.transform.localScale; // スケール同期
+                        SpawnedChargeEffect.transform.SetParent(SpawnPosition);  // 詠唱点に追従
+
+                        ParticleSystem ParticleSystemRef = SpawnedChargeEffect.GetComponent<ParticleSystem>(); // 粒子取得
                         if (ParticleSystemRef)
                         {
-                            ParticleSystemRef.Stop();
-                            var main = ParticleSystemRef.main;
-                            main.duration = ChargeLength;
-                            ParticleSystemRef.Play();
+                            ParticleSystemRef.Stop();                            // いったん停止してから
+                            var main = ParticleSystemRef.main;                   // メインモジュール取得
+                            main.duration = ChargeLength;                        // チャージ時間に同期
+                            ParticleSystemRef.Play();                            // 再生
                         }
                         else
                         {
+                            // ▼ログ注釈：指定エフェクトに ParticleSystem が無い警告。
+                            //   実行続行は可能だが、チャージ演出が機能せず視覚フィードバックが欠落する。
                             Debug.LogError("The " + ChargeEffect.name + " does not have a Particle System on it so it will not be used. A Particle System is required to be used as an ability's Charge Effect.");
                         }
                     }
 
-                    if (ChargeSoundsList.Count > 0)
+                    if (ChargeSoundsList.Count > 0)                              // サウンド候補あり
                     {
                         AudioClip Clip = ChargeSoundsList[Random.Range(0, ChargeSoundsList.Count)];
                         if (Clip)
                         {
                             AudioSource TempSound = EmeraldObjectPool.SpawnEffect(Resources.Load("Emerald Sound") as GameObject, SpawnPosition.position, Quaternion.identity, Clip.length).GetComponent<AudioSource>();
-                            TempSound.volume = Random.Range(0.75f, 1f);
-                            TempSound.PlayOneShot(Clip);
+                            TempSound.volume = Random.Range(0.75f, 1f);         // 音量揺らぎ
+                            TempSound.PlayOneShot(Clip);                        // 再生
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// 【MeleeData】近接攻撃アビリティの演出・当たり範囲設定
+        /// </summary>
         [System.Serializable]
         public class MeleeData
         {
-            [HideInInspector] public bool Enabled;
-            [Tooltip("Controls the effect that happens when the ability hits a target.")]
-            public GameObject ImpactEffect;
-            [Range(0.5f, 10)]
-            [Tooltip("Controls the time (in seconds) before the Impact Effect is disabled after it has been spawned.")]
-            public float ImpactEffectTimeoutSeconds = 2;
-            [Tooltip("The list of possible sounds that will play when the ability hits a target.")]
-            public List<AudioClip> ImpactSoundsList = new List<AudioClip>();
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
+            [HideInInspector] public bool Enabled;                               // 有効フラグ（非表示）
 
-            [Space(15)]
+            [Header("命中時エフェクト（近接が当たった瞬間）")]
+            [Tooltip("アビリティが対象に命中した際のエフェクトを制御します。")]
+            public GameObject ImpactEffect;                                      // 命中エフェクト
+
+            [Header("命中エフェクトの寿命（秒）")]
+            [Range(0.5f, 10)]
+            [Tooltip("命中エフェクトがスポーン後に無効化されるまでの時間（秒）を制御します。")]
+            public float ImpactEffectTimeoutSeconds = 2;                         // 寿命
+
+            [Header("命中時サウンド候補リスト")]
+            [Tooltip("対象に命中した時に再生されるサウンドの候補一覧です。")]
+            public List<AudioClip> ImpactSoundsList = new List<AudioClip>();     // サウンド候補
+
+            [Space(15)] // 視覚的区切り
+
+            [Header("ダメージ有効距離（最大）")]
             [Range(1, 30)]
-            [Tooltip("Controls the max distance allowed to deal damage with this ability.\n\nNote: If your melee attack animation is using Weapon Collision Events, " +
-                "this setting will be ignored and this ability will rely on a successful collision from the weapon instead.")]
-            public float MaxDamageDistance = 4;
+            [Tooltip("このアビリティでダメージを与えられる最大距離を制御します。\n\n注意: 近接攻撃アニメが武器衝突イベントを使用している場合、この設定は無視され、武器のコリジョン成否に依存します。")]
+            public float MaxDamageDistance = 4;                                   // 有効距離
+
+            [Header("攻撃可能高さ（最大）")]
             [Range(1, 20)]
-            [Tooltip("Controls the max allowed height the AI can attack with this ability.\n\nNote: If this height is exceeded, the AI will wait to attack the current target until they are within range.")]
-            public float MaxAttackHeight = 5;
+            [Tooltip("AIが攻撃可能な最大高さを制御します。\n\n注意: この高さを超えると、対象が範囲内に入るまで攻撃を待機します。")]
+            public float MaxAttackHeight = 5;                                     // 高さ
+
+            [Header("ダメージ有効角度（最大）")]
             [Range(5, 360)]
-            [Tooltip("Controls the max angle allowed to deal damage with this ability.\n\nNote: If your melee attack animation is using Weapon Collision Events, " +
-                "this setting will be ignored and this ability will rely on a successful collision from the weapon instead.")]
-            public float MaxDamageAngle = 90;
+            [Tooltip("このアビリティでダメージが入る最大角度を制御します。\n\n注意: 武器衝突イベントを使用する場合、この設定は無視されます。")]
+            public float MaxDamageAngle = 90;                                     // 角度
         }
 
+        /// <summary>
+        /// 【ProjectileData】一般的な投射体の演出（生成/発射/着弾エフェクト・サウンド）
+        /// </summary>
         [System.Serializable]
         public class ProjectileData
         {
-            [HideInInspector] public bool Enabled = true;
-            public GameObject SpawnProjectileEffect;
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
+            [HideInInspector] public bool Enabled = true;                        // 有効（非表示）
+
+            [Header("投射生成時エフェクト（スポーン時）")]
+            public GameObject SpawnProjectileEffect;                              // 生成エフェクト
+
+            [Header("投射生成エフェクトの寿命（秒）")]
             [Range(1, 15)]
-            public float SpawnProjectileTimeoutSeconds = 2;
-            public List<AudioClip> SpawnProjectileSoundsList = new List<AudioClip>();
+            public float SpawnProjectileTimeoutSeconds = 2;                       // 生成寿命
+
+            [Header("投射生成サウンド候補リスト")]
+            public List<AudioClip> SpawnProjectileSoundsList = new List<AudioClip>(); // 生成時サウンド
 
             [Space(15)]
-            [Tooltip("(Required) The effect that will be used for the projectile object.")]
-            public GameObject ProjectileEffect;
+
+            [Header("【必須】投射体本体のエフェクト")]
+            [Tooltip("投射体オブジェクトとして使用されるエフェクト（必須）を指定します。")]
+            public GameObject ProjectileEffect;                                   // 本体
+
+            [Header("投射体の寿命（秒）")]
             [Range(1, 15)]
-            [Tooltip("Controls the time (in seconds) the Projectile Effect will time out. When this happens, the projectile will play its Impact Effect, given it isn't empty.")]
-            public float ProjectileTimeoutSeconds = 6;
-            [Tooltip("The sound that will play (and loop) while the projectile is moving. This will stop once the projectile has collided with something or ended.")]
-            public AudioClip TravelSound;
-            [Tooltip("A list of particle effect names that will be disabled on impact (after the Effects Disable Time has passed). This gives effects like trails time to finish playing, but still allows the main part of the projectile to be disabled on impact." +
-                "\n\nNote: This is based on the Projectile Effect object.")]
-            public List<string> EffectsToDisable = new List<string>();
+            [Tooltip("投射体エフェクトのタイムアウト（秒）。タイムアウト時、ImpactEffect が設定されていれば着弾エフェクトを再生します。")]
+            public float ProjectileTimeoutSeconds = 6;                            // 本体寿命
+
+            [Header("移動中ループサウンド（任意）")]
+            [Tooltip("投射体移動中にループ再生されるサウンド。衝突または終了時に停止します。")]
+            public AudioClip TravelSound;                                         // 走行音
+
+            [Header("衝突時に無効化する子エフェクト名リスト")]
+            [Tooltip("着弾後（Effects Disable Time 経過後）に無効化するパーティクル名のリスト。トレイル等の終了時間を確保しつつ、本体の停止を可能にします。\n\n注意: ProjectileEffect 側の子階層に対する名前参照です。")]
+            public List<string> EffectsToDisable = new List<string>();            // 無効化対象
 
             [Space(15)]
-            [Tooltip("Controls the effect that happens when the projectile starts moving towards its target.\n\nNote: This setting is more useful when there the Launch Projectile Delay is used.")]
-            public GameObject LaunchProjectileEffect;
-            [Range(1, 15)]
-            [Tooltip("Controls the time (in seconds) before the Launch Projectile Effect is disabled after it has been spawned.")]
-            public float LaunchProjectileTimeoutSeconds = 2;
 
+            [Header("発射直前（Launch）エフェクト")]
+            [Tooltip("投射体が目標へ向けて動き始めるときのエフェクト。\n\n補足: Launch Projectile Delay を使う際に特に有効です。")]
+            public GameObject LaunchProjectileEffect;                             // ランチ演出
+
+            [Header("ランチエフェクトの寿命（秒）")]
+            [Range(1, 15)]
+            [Tooltip("ランチエフェクトがスポーン後に無効化されるまでの時間（秒）。")]
+            public float LaunchProjectileTimeoutSeconds = 2;                      // ランチ寿命
+
+            [Header("発射の遅延（秒）")]
             [Range(0, 4)]
-            [Tooltip("Controls the time (in seconds) the projectile's launch will be delayed, after the Projectile Effect has been spawnwed.")]
-            public float LaunchProjectileDelay = 0f;
+            [Tooltip("ProjectileEffect のスポーン後、実際に発射を開始するまでの遅延時間（秒）。")]
+            public float LaunchProjectileDelay = 0f;                              // 遅延
 
-            public List<AudioClip> LaunchProjectileSoundsList = new List<AudioClip>();
+            [Header("ランチ時サウンド候補リスト")]
+            public List<AudioClip> LaunchProjectileSoundsList = new List<AudioClip>(); // 発射音
 
             [Space(15)]
-            [Tooltip("Controls the effect that happens after the projectile has collided with a target or surface.")]
-            public GameObject ImpactEffect;
+
+            [Header("着弾（Impact）エフェクト")]
+            [Tooltip("投射体が対象またはサーフェスに衝突した後のエフェクト。")]
+            public GameObject ImpactEffect;                                       // 着弾エフェクト
+
+            [Header("着弾エフェクトの寿命（秒）")]
             [Range(1, 15)]
-            [Tooltip("Controls the time (in seconds) before the Impact Projectile Effect is disabled after it has been spawned.")]
-            public float ImpactTimeoutSeconds = 6;
-            public List<AudioClip> ImpactSoundsList = new List<AudioClip>();
+            [Tooltip("着弾エフェクトがスポーン後に無効化されるまでの時間（秒）。")]
+            public float ImpactTimeoutSeconds = 6;                                // 寿命
+
+            [Header("着弾サウンド候補リスト")]
+            public List<AudioClip> ImpactSoundsList = new List<AudioClip>();      // 着弾音
 
             /// <summary>
-            /// Spawns a Launch Effect at the specified location.
+            /// 指定位置にランチ（発射開始）エフェクトをスポーンします。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Launch Effect.</param>
+            /// <param name="Owner">アビリティの所有者。</param>
+            /// <param name="SpawnPosition">ランチエフェクトのスポーン位置。</param>
             public void SpawnLaunchProjectileEffect(GameObject Owner, Vector3 SpawnPosition)
             {
                 if (Enabled)
@@ -206,10 +289,10 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Spawns a Spawn Effect at the specified location when the projectile is being created.
+            /// 投射体の生成時（作成時）にスポーンするエフェクト。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Spawn Effect.</param>
+            /// <param name="Owner">アビリティの所有者。</param>
+            /// <param name="SpawnPosition">スポーン位置。</param>
             public void SpawnEffect(GameObject Owner, Vector3 SpawnPosition)
             {
                 if (Enabled)
@@ -236,10 +319,10 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Spawns a Spawn Effect at the specified location when the projectile is being created.
+            /// 着弾時にスポーンするエフェクト。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Spawn Effect.</param>
+            /// <param name="Owner">アビリティの所有者。</param>
+            /// <param name="SpawnPosition">スポーン位置。</param>
             public void SpawnImpactEffect(GameObject Owner, Vector3 SpawnPosition)
             {
                 if (Enabled)
@@ -266,67 +349,110 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【GeneralProjectileData】投射一般性能（速度/角度/弾数/連射間隔/刺さり挙動）
+        /// </summary>
         [System.Serializable]
         public class GeneralProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
+
+            [Header("投射速度")]
             [Range(1, 100)]
-            [Tooltip("Controls the speed of the projectile.")]
+            [Tooltip("投射体の速度を制御します。")]
             public int ProjectileSpeed = 30;
+
+            [Header("発射角度上限（度）")]
             [Range(10, 360)]
-            [Tooltip("Controls the launching cap for the projectile.")]
+            [Tooltip("投射体の打ち上げ上限角度を制御します。")]
             public int ProjectileMaxLaunchAngle = 140;
+
+            [Header("同時生成する投射数")]
             [Range(1, 40)]
-            [Tooltip("Controls the number of projectiles that will be created when the ability is created.")]
+            [Tooltip("アビリティ生成時に作成する投射体の総数を制御します。")]
             public int TotalProjectiles = 2;
+
+            [Header("投射生成間隔（秒）")]
             [Range(0, 1)]
-            [Tooltip("Controls the time (in seconds) between each created projectile, given there's more than 1.")]
+            [Tooltip("複数生成する場合の、各投射間の時間（秒）を制御します。")]
             public float TimeBetweenProjectiles = 0.2f;
-            [Tooltip("Controls whether or not this projectile will stick into what it hits.\n\nNote: The length in which a projectile stays stuck is based on this ability's " +
-                "Collision Timeout value (from the Collider Module). For best results, use with AI targets who have a Location Based Damage component.")]
+
+            [Header("命中時に対象へ刺さる（Stick）挙動")]
+            [Tooltip("この投射体が命中時に対象へ刺さるかどうかを制御します。\n\n注意: 刺さりが持続する時間は Collider モジュールの Collision Timeout に基づきます。AIの Location Based Damage と組み合わせると効果的です。")]
             public bool AttachToTarget = false;
         }
 
+        /// <summary>
+        /// 【GrenadeData】手榴弾系（投擲物）設定
+        /// </summary>
         [System.Serializable]
         public class GrenadeData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("Controls object used as the grenade.")]
+
+            [Header("使用する手榴弾オブジェクト")]
+            [Tooltip("手榴弾として使用するオブジェクトを指定します。")]
             public GameObject GrenadeObject;
-            [Tooltip("Controls the layer that this grenade will be assigned.\n\nNote: In order for AI to dodge this grenade, ensure that this layer is included on their Projectile Layers. By default this is Ignore Layermask.")]
+
+            [Header("手榴弾に割り当てるレイヤー")]
+            [Tooltip("手榴弾に割り当てるレイヤーを制御します。\n\n注意: AIが手榴弾を回避できるようにするには、AIの Projectile Layers にこのレイヤーが含まれている必要があります。デフォルトは Ignore Layermask。")]
             [Layer] public int GrenadeLayer = 2;
+
+            [Header("投擲高さ")]
             [Range(1, 8)]
-            [Tooltip("Controls the throwing height of the grenade.")]
+            [Tooltip("投擲時の高さ（アーチ量）を制御します。")]
             public float ThrowHeight = 5f;
-            [Tooltip("Controls the sound used when throwing the grenade.")]
+
+            [Header("投擲サウンド")]
+            [Tooltip("手榴弾を投げる際に再生するサウンドを指定します。")]
             public AudioClip ThrowSound;
-            [Tooltip("Controls whether or not the grenade will dynamically rotate in the air after being thrown.\n\nNote: This process stops as soon as the grenade collides with something.")]
+
+            [Header("空中回転（投擲後の見栄え）")]
+            [Tooltip("投擲後、着弾まで動的に回転させるかどうかを制御します。衝突時に停止します。")]
             public bool RotateOnThrow;
-            [Tooltip("Controls the sounds that play when the grenade collides with surfaces.")]
+
+            [Header("衝突時サウンド候補（地面/壁など）")]
+            [Tooltip("手榴弾が表面に衝突した際に再生するサウンド候補です。")]
             public List<AudioClip> ImpactSoundsList = new List<AudioClip>();
 
             [Space(15)]
-            [Tooltip("Controls the layers that the grenade can affect when exploding. If a rigidbody component is detected, force will be added to the rigidbody.\n\nNote: Damage is automatically applied to any AI with an Enemy relation from the thrower (unless Can Damage Friendlies is enabled). The layer for this is based off of the thrower's Detection Layers within its Detection Component.")]
+
+            [Header("爆発の影響対象レイヤー（Rigidbodyがあれば力を加える）")]
+            [Tooltip("爆発で影響を与えるレイヤー。Rigidbody が検出された場合、爆発力を付与します。\n\n注意: ダメージは投擲者から見た敵対関係に自動適用（味方にも与える場合は Can Damage Friendlies を有効化）。対象レイヤーは投擲者の Detection Component の Detection Layers に依存します。")]
             public LayerMask RigidbodyLayers = 0;
+
+            [Header("爆発半径")]
             [Range(1, 15)]
-            [Tooltip("Controls the radius of the explosion. Anything within this radius will be affected by the grenade.")]
+            [Tooltip("爆発の半径。半径内の対象へ影響を与えます。")]
             public int ExplosionRadius = 4;
+
+            [Header("爆発までの遅延（秒）")]
             [Range(0, 10)]
-            [Tooltip("Controls the time (in seconds) it takes for the grenade to explode.")]
+            [Tooltip("手榴弾が爆発するまでの時間（秒）。")]
             public float ExplosionTime = 2.5f;
+
+            [Header("爆発エフェクト")]
             public GameObject ExplosionEffect;
+
+            [Header("爆発エフェクトの寿命（秒）")]
             [Range(1, 15)]
-            [Tooltip("Controls the time (in seconds) the Explosion Effect will time out.")]
+            [Tooltip("爆発エフェクトがタイムアウトするまでの時間（秒）。")]
             public float ExplosionTimeoutSeconds = 3;
-            [Tooltip("Controls whether or not this grenade can damage friendly targets as well as the thrower.")]
+
+            [Header("味方や投擲者もダメージ対象に含める")]
+            [Tooltip("爆発で味方および投擲者自身にダメージを与えるかどうか。")]
             public bool CanDamageFriendlies = false;
+
+            [Header("爆発サウンド候補リスト")]
             public List<AudioClip> ExplosionSoundsList = new List<AudioClip>();
 
             /// <summary>
-            /// Spawns an explosion effect and sound at the specified location.
+            /// 指定位置で爆発エフェクトとサウンドを再生します。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the explosion effect and sound.</param>
+            /// <param name="Owner">アビリティの所有者。</param>
+            /// <param name="SpawnPosition">爆発の発生位置。</param>
             public void ExplodeGrenade(GameObject Owner, Vector3 SpawnPosition)
             {
                 if (Enabled)
@@ -353,91 +479,146 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【BulletProjectileData】銃弾系の設定（命中効果/弾道/マズルフラッシュ/デフォルト着弾 等）
+        /// </summary>
         [System.Serializable]
         public class BulletProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("The layers that bullets will ignore. This is useful for bypassing collisions with certain object or colliders that you don't want interfering with the bullets.")]
+
+            [Header("無視するレイヤー（弾の衝突検出を回避）")]
+            [Tooltip("弾が無視するレイヤー。特定のコライダー等との不要な衝突を回避します。")]
             public LayerMask IgnoreLayers;
-            [Tooltip("The game object used for the bullet.\n\nNote: This object should have no colliders attached as collision detection is handled internally. Users can have a Trail Renderer attached to act as a bullet trail effect.")]
+
+            [Header("弾として使用するオブジェクト（コライダー不要）")]
+            [Tooltip("弾として用いるGameObject。コライダーは不要（内部で衝突検出）。Trail Renderer は弾の軌跡として使用可。")]
             public GameObject BulletObject;
+
+            [Header("弾オブジェクトの寿命（秒、未衝突時）")]
             [Range(1, 10)]
-            [Tooltip("Controls the length (in seconds) for the Bullet Object to despawn, given that it never collided with anything.")]
+            [Tooltip("何にも衝突しなかった場合に弾オブジェクトが消えるまでの時間（秒）。")]
             public int BulletObjectTimeout = 4;
+
+            [Header("衝突後の表示猶予（秒）")]
             [Range(0.05f, 0.75f)]
-            [Tooltip("Controls the length (in seconds) for the Bullet Object to despawn after successfully colliding with something. This can give additional time for bullet trails to finish playing, if needed.")]
+            [Tooltip("衝突後に弾オブジェクトを消すまでの時間（秒）。トレイル再生完了の猶予に。")]
             public float BulletCollisionTimeout = 0.15f;
+
+            [Header("弾速")]
             [Range(20, 75)]
-            [Tooltip("Controls the speed of the bullets.")]
+            [Tooltip("弾の速度を制御します。")]
             public int BulletSpeed = 50;
+
+            [Header("衝突チェック周期（秒・小さいほど高精度）")]
             [Range(0, 0.006f)]
-            [Tooltip("Controls the speed that checks are made for a collision. Lower values are more accurate." +
-                "\n\nNote: The higher the Bullet Speed, the more checks need to be made to ensure collisions are not missed. If you find bullets not colliding, slowly decrease this setting until you find a value that works for your bullets.")]
+            [Tooltip("衝突判定を行う周期（秒）。小さいほど見逃しにくい。\n\n注意: 弾速が高いほど見逃し防止のためチェックを増やす必要があります。すり抜ける場合は値を少しずつ下げて調整してください。")]
             public float CollisionCheckSpeed = 0.003f;
+
+            [Header("弾の拡散（X軸）")]
             [Range(0, 100)]
-            [Tooltip("Controls the spread of the bullets on the X axis. The higher the vlaue, the more inaccurate an AI will be.")]
+            [Tooltip("X軸方向の拡散量。値が高いほど命中が不正確になります。")]
             public int BulletSpreadX = 5;
+
+            [Header("弾の拡散（Y軸）")]
             [Range(0, 100)]
-            [Tooltip("Controls the spread of the bullets on the Y axis. The higher the vlaue, the more inaccurate an AI will be.")]
+            [Tooltip("Y軸方向の拡散量。値が高いほど命中が不正確になります。")]
             public int BulletSpreadY = 5;
+
+            [Header("連射時の総弾数")]
             [Range(1, 40)]
-            [Tooltip("Controls the number of bullets that will be created when the ability is created. This can be used for auto or semi-auto weapons.")]
+            [Tooltip("アビリティ生成時に発射される弾丸の総数（オート/セミオート表現に使用）。")]
             public int TotalBullets = 1;
+
+            [Header("弾生成間隔（秒）")]
             [Range(0, 1)]
-            [Tooltip("Controls the time (in seconds) between each created bullet, given there's more than 1.")]
+            [Tooltip("複数弾を発射する際の各弾間の時間（秒）。")]
             public float TimeBetweenBullets = 0.2f;
 
             [Space(15)]
-            [Tooltip("Controls the effect that happens when the bullet is fired.\n\nNote: The Muzzle Flash position will be taken from the AI's current Attack Transfrom.")]
+
+            [Header("マズルフラッシュ（発砲時エフェクト）")]
+            [Tooltip("発砲時に再生するエフェクト。\n\n注意: マズル位置はAIの現在の Attack Transform を使用します。")]
             public GameObject MuzzleFlashEffect;
+
+            [Header("マズルフラッシュ寿命（秒）")]
             [Range(1, 10)]
-            [Tooltip("Controls the time (in seconds) before the Muzzle Flash Effect is disabled after it has been spawned.")]
+            [Tooltip("マズルフラッシュが無効化されるまでの時間（秒）。")]
             public float MuzzleFlashEffectTimeoutSeconds = 2;
+
+            [Header("発砲音量（0〜1）")]
             [Range(0, 1)]
-            [Tooltip("Controls the volume of the Fire Sounds.")]
+            [Tooltip("発砲サウンドの音量を制御します。")]
             public float FireSoundsVolume = 1;
-            [Tooltip("The sounds that play each time a projectile is fired.")]
+
+            [Header("発砲サウンド候補リスト")]
+            [Tooltip("発射ごとに再生されるサウンド候補。")]
             public List<AudioClip> FireSoundsList = new List<AudioClip>();
 
             [Space(15)]
-            [Tooltip("The default impact effect that will happen if no impact data is used or found.")]
+
+            [Header("デフォルト着弾エフェクト（タグ個別設定が無い場合）")]
+            [Tooltip("個別の着弾設定が無い・見つからない場合に使用されるデフォルトの着弾エフェクト。")]
             public GameObject DefaultImpactEffect;
+
+            [Header("デフォルト着弾エフェクト寿命（秒）")]
             [Range(1, 20)]
-            [Tooltip("Controls the time (in seconds) before the Default Impact Effect is disabled after it has been spawned.")]
+            [Tooltip("デフォルト着弾エフェクトが無効化されるまでの時間（秒）。")]
             public float DefaultImpactEffectTimeoutSeconds = 8;
+
+            [Header("デフォルト着弾サウンド音量（0〜1）")]
             [Range(0, 1)]
-            [Tooltip("Controls the volume of the Default Impact Sounds.")]
+            [Tooltip("デフォルト着弾サウンドの音量。")]
             public float DefaultImpactSoundsVolume = 1;
-            [Tooltip("The default impact sounds that will happen if no impact data is used or found.")]
+
+            [Header("デフォルト着弾サウンド候補")]
+            [Tooltip("個別設定がない場合に使用されるデフォルトの着弾サウンド。")]
             public List<AudioClip> DefaultImpactSounds = new List<AudioClip>();
 
+            /// <summary>
+            /// 【BulletImpactClass】タグ別の着弾効果設定
+            /// </summary>
             [System.Serializable]
             public class BulletImpactClass
             {
-                [Tooltip("The tag for identifying this impact.")]
+                [Header("表面識別用タグ")]
+                [Tooltip("この着弾設定を適用するためのタグ。")]
                 [Tag] public string SurfaceTag = "Untagged";
-                [Tooltip("The impact effect that will happen if impacted with the above tag.")]
+
+                [Header("該当タグへの着弾エフェクト")]
+                [Tooltip("上記タグに着弾した際に再生されるエフェクト。")]
                 public GameObject ImpactEffect;
+
+                [Header("着弾エフェクト寿命（秒）")]
                 [Range(1, 20)]
-                [Tooltip("Controls the time (in seconds) before the Impact Effect is disabled after it has been spawned.")]
+                [Tooltip("着弾エフェクトが無効化されるまでの時間（秒）。")]
                 public float ImpactEffectTimeoutSeconds = 8;
+
+                [Header("着弾サウンド音量（0〜1）")]
                 [Range(0, 1)]
-                [Tooltip("Controls the volume of the Impact Sounds.")]
+                [Tooltip("着弾サウンドの音量。")]
                 public float ImpactSoundsVolume = 1;
-                [Tooltip("The impact sounds that will happen if impacted with the above tag.")]
+
+                [Header("着弾サウンド候補")]
+                [Tooltip("上記タグに着弾した場合のサウンド候補。")]
                 public List<AudioClip> ImpactSounds = new List<AudioClip>();
-                //public List<GameObject> ImpactDecals = new List<GameObject>();
+
+                // public List<GameObject> ImpactDecals = new List<GameObject>(); // ※将来的なデカール対応のためのコメントアウト
             }
+
             [Space(15)]
             [SerializeField]
-            [Tooltip("Bullet Impact Data allows users to have different impact effects and sounds to play depending on the tag the bullet collides with.\n\nNote: If no impact data is used or if no impact data was found, the Default Impact Effect and Default Impact Sounds will be used instead.")]
+            [Header("タグ別 着弾データリスト")]
+            [Tooltip("弾が衝突したタグに応じて、異なる着弾エフェクト/サウンドを再生できます。\n\n注意: マッチするデータがない場合はデフォルトの着弾エフェクト/サウンドが使用されます。")]
             public List<BulletImpactClass> BulletImpactData = new List<BulletImpactClass>();
 
             /// <summary>
-            /// Spawns a Muzzle Flash Effect and bullet sound at the specified location.
+            /// マズルフラッシュと発砲音を再生します。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Muzzle Effect and bullet sound.</param>
+            /// <param name="Owner">所有者。</param>
+            /// <param name="SpawnPosition">発砲音の座標。</param>
+            /// <param name="AttackTransform">マズル位置/回転。</param>
             public void SpawnBulletEffect(GameObject Owner, Vector3 SpawnPosition, Transform AttackTransform)
             {
                 if (Enabled)
@@ -464,10 +645,12 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Spawns an impact effect and sound at the specified location.
+            /// タグ別設定に基づく着弾エフェクト/サウンドの再生。
             /// </summary>
-            /// <param name="Target">The target hit by the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Muzzle Effect and bullet sound.</param>
+            /// <param name="Target">ヒット対象。</param>
+            /// <param name="ImpactData">タグ別の着弾データ。</param>
+            /// <param name="SpawnPosition">発生位置。</param>
+            /// <param name="HitNormal">命中面法線（向き合わせに使用）。</param>
             public void SpawnBulletImpact(GameObject Target, BulletImpactClass ImpactData, Vector3 SpawnPosition, Vector3 HitNormal)
             {
                 if (Enabled)
@@ -477,8 +660,9 @@ namespace EmeraldAI
                         GameObject SpawnedEffect = EmeraldObjectPool.SpawnEffect(ImpactData.ImpactEffect, SpawnPosition, ImpactData.ImpactEffect.transform.rotation, ImpactData.ImpactEffectTimeoutSeconds);
                         SpawnedEffect.name = ImpactData.ImpactEffect.name;
                         SpawnedEffect.transform.localScale = ImpactData.ImpactEffect.transform.localScale;
+                        // 衝突面に向けてエフェクトのForwardを合わせる
                         SpawnedEffect.transform.rotation = Quaternion.FromToRotation(SpawnedEffect.transform.forward, HitNormal) * SpawnedEffect.transform.rotation;
-                        SpawnedEffect.transform.SetParent(Target.transform);
+                        SpawnedEffect.transform.SetParent(Target.transform); // 対象に追従
                     }
 
                     if (ImpactData.ImpactSounds.Count > 0)
@@ -494,6 +678,7 @@ namespace EmeraldAI
                     }
 
                     /*
+                    // ★デカールの将来対応（現在はコメントアウトのまま）
                     if (ImpactData.ImpactDecals.Count > 0)
                     {
                         GameObject RandomDecal = ImpactData.ImpactDecals[Random.Range(0, ImpactData.ImpactDecals.Count)];
@@ -509,10 +694,11 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Spawns an impact effect and sound at the specified location.
+            /// デフォルトの着弾エフェクト/サウンドの再生。
             /// </summary>
-            /// <param name="Target">The target hit by the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the Muzzle Effect and bullet sound.</param>
+            /// <param name="Target">ヒット対象。</param>
+            /// <param name="SpawnPosition">発生位置。</param>
+            /// <param name="HitNormal">命中面法線。</param>
             public void SpawnDefaultBulletImpact(GameObject Target, Vector3 SpawnPosition, Vector3 HitNormal)
             {
                 if (Enabled)
@@ -541,60 +727,93 @@ namespace EmeraldAI
             }
         }
 
-
-
+        /// <summary>
+        /// 【ArrowProjectileData】矢などの刺突系投射（速度/刺さり）
+        /// </summary>
         [System.Serializable]
         public class ArrowProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
+
+            [Header("投射速度")]
             [Range(1, 100)]
-            [Tooltip("Controls the speed of the projectile.")]
+            [Tooltip("投射体の速度を制御します。")]
             public int ProjectileSpeed = 30;
-            [Tooltip("Controls whether or not this projectile will stick into what it hits.\n\nNote: The length in which a projectile stays stuck is based on this ability's " +
-            "Collision Timeout value (from the Collider Module). For best results, use with AI targets who have a Location Based Damage component.")]
+
+            [Header("命中時の刺さり挙動")]
+            [Tooltip("投射体が命中対象に刺さるかどうか。\n\n注意: 刺さり時間は Collider モジュールの Collision Timeout に依存。Location Based Damage 併用を推奨。")]
             public bool AttachToTarget = true;
         }
 
+        /// <summary>
+        /// 【AerialProjectileData】上空から落下/降下するタイプ（上方発生/半径/追尾等）
+        /// </summary>
         [System.Serializable]
         public class AerialProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("Controls the effect that will happen at the Spawn Source position.")]
+
+            [Header("発生源位置エフェクト（上空）")]
+            [Tooltip("Spawn Source 位置で再生されるエフェクト。")]
             public GameObject AerialEffect;
+
+            [Header("発生源エフェクトの寿命（秒）")]
             [Range(0.5f, 15)]
             public float AerialEffectTimeoutSeconds = 2;
+
             public enum SpawnSources { AboveSelf, AboveTarget }
-            [Tooltip("Controls the source in which the aerial ability will spawn from.")]
+
+            [Header("発生源（自分の上/対象の上）")]
+            [Tooltip("上空系アビリティのスポーン起点を制御します。")]
             public SpawnSources SpawnSource = SpawnSources.AboveSelf;
+
             public enum AimSources { TargetPosition, GroundPosition }
-            [Tooltip("Controls the projectile's aim source.\n\nNote: If Homing Seconds is set to a value higher than 0 (and is enabled), the Ground Position option be ignored.")]
+
+            [Header("狙いの基準（対象位置/地面位置）")]
+            [Tooltip("投射体の照準基準。\n\n注意: Homing Seconds が 0 より大きく有効な場合、GroundPosition は無視されます。")]
             public AimSources AimSource = AimSources.TargetPosition;
 
             [Space(15)]
+
+            [Header("発生位置の高さオフセット")]
             [Range(0f, 30f)]
-            [Tooltip("Controls the extra height in which the aerial ability will spawn from its Spawn Source.")]
+            [Tooltip("Spawn Source からさらに加算する高さ。")]
             public float HeightOffset = 12;
+
+            [Header("初期のばらつき角（度）")]
             [Range(0f, 45f)]
-            [Tooltip("Controls the max randomized angle in which the projectile will rotate towards its Aim Source.")]
+            [Tooltip("投射体が照準に回頭する際の最大ランダム角。")]
             public float LaunchAngle = 0;
+
+            [Header("スポーン半径（円形散布）")]
             [Range(0f, 30f)]
-            [Tooltip("Controls the maximum radius an aerial projectile can spawned from its Spawn Source.")]
+            [Tooltip("Spawn Source からの最大半径（円内ランダム）。")]
             public float Radius = 4;
 
             [Space(15)]
+
+            [Header("投射速度")]
             [Range(1, 100)]
-            [Tooltip("Controls the speed of the projectile.")]
+            [Tooltip("投射体の速度。")]
             public int ProjectileSpeed = 30;
+
+            [Header("同時生成数")]
             [Range(1, 40)]
-            [Tooltip("Controls the number of projectiles that will be created when the ability is created.")]
+            [Tooltip("アビリティ生成時に作成する投射体の数。")]
             public int TotalProjectiles = 2;
+
+            [Header("生成間隔（秒）")]
             [Range(0, 1)]
-            [Tooltip("Controls the time (in seconds) between each created projectile, given there's more than 1.")]
+            [Tooltip("複数生成時の投射間隔（秒）。")]
             public float TimeBetweenProjectiles = 0.2f;
+
+            [Header("命中時に刺さる（Stick）")]
             public bool AttachToTarget = false;
 
             /// <summary>
-            /// Spawns an Aerial Effect at the specified location when the aerial projectile is being created.
+            /// 上空発生エフェクトを生成します（自分の上/対象の上）。
             /// </summary>
             public void SpawnAerialEffect(GameObject Owner, Transform Target)
             {
@@ -612,109 +831,173 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【BarrageProjectileData】連続射出・弾幕系（速度/総数/間隔）
+        /// </summary>
         [System.Serializable]
         public class BarrageProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
+
+            [Header("投射速度")]
             [Range(1, 100)]
-            [Tooltip("Controls the speed of the projectile.")]
+            [Tooltip("投射体の速度。")]
             public int ProjectileSpeed = 30;
+
+            [Header("総投射数")]
             [Range(1, 40)]
-            [Tooltip("Controls the number of projectiles that will be created when the ability is created.")]
+            [Tooltip("アビリティ生成時に作成する投射体の数。")]
             public int TotalProjectiles = 2;
+
+            [Header("生成間隔（秒）")]
             [Range(0, 1)]
-            [Tooltip("Controls the time (in seconds) between each created projectile, given there's more than 1.")]
+            [Tooltip("複数生成時の投射間隔（秒）。")]
             public float TimeBetweenProjectiles = 0.2f;
         }
 
-
+        /// <summary>
+        /// 【GroundProjectileData】地表追従型（地面アライン/距離/角度/速度/散布）
+        /// </summary>
         [System.Serializable]
         public class GroundProjectileData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("The layers the ability will use to align itself.\n\nNote: This should only be surface layers like the ground and environment. This should exclude target layers like players and AI.")]
+
+            [Header("アライン対象レイヤー（地面/環境のみ推奨）")]
+            [Tooltip("移動中に地形へ追従させる際の対象レイヤー。\n\n注意: プレイヤーやAI等のターゲットレイヤーは除外してください。")]
             public LayerMask AllignmentLayers;
+
+            [Header("アライン速度")]
             [Range(1, 50)]
-            [Tooltip("The speed the ability will use to align itself while moving.")]
+            [Tooltip("移動中の地形追従速度。")]
             public float AlignmentSpeed = 10;
+
+            [Header("追従する最大傾斜角")]
             [Range(1, 90)]
-            [Tooltip("The max angle the ability will align to while moving.")]
+            [Tooltip("移動中に追従可能な最大角度。")]
             public float MaxAlignmentAngle = 45;
+
+            [Header("移動停止しうる傾斜角（Kill角）")]
             [Range(5, 90)]
-            [Tooltip("The angle (that if met while traveling) will stop the ability.")]
+            [Tooltip("移動中にこの角度に達した場合、アビリティを停止させる角度。")]
             public float KillAngle = 90;
+
+            [Header("高さオフセット")]
             [Range(-5, 5)]
-            [Tooltip("The height offset the ability will use while moving. This can help better position an effect if it is too high or too low to the ground.")]
+            [Tooltip("移動中の高さオフセット。高/低すぎる場合の微調整に使用します。")]
             public float HeightOffset = 0f;
 
             [Space(15)]
+
+            [Header("最大移動距離")]
             [Range(1, 50)]
-            [Tooltip("Controls the max distance the Ground Effect will travel before stopping.")]
+            [Tooltip("地表エフェクトが停止するまでの最大移動距離。")]
             public float MaxTravelDistance = 10;
+
+            [Header("散布角（複数発射時の扇形角度）")]
             [Range(0, 360)]
-            [Tooltip("Controls the angle the projectiles will be eveny spread across, given there's more than 1 Total Projectiles.")]
+            [Tooltip("Total Projectiles が複数の場合に均等に散らす角度。")]
             public float AngleSpread = 45;
 
             [Space(15)]
+
+            [Header("投射速度")]
             [Range(1, 100)]
-            [Tooltip("Controls the speed of the projectile.")]
+            [Tooltip("投射体の速度。")]
             public int ProjectileSpeed = 30;
+
+            [Header("同時生成数")]
             [Range(1, 40)]
-            [Tooltip("Controls the number of projectiles that will be created when the ability is created.")]
+            [Tooltip("アビリティ生成時に作成する投射体の数。")]
             public int TotalProjectiles = 2;
+
+            [Header("生成間隔（秒）")]
             [Range(0, 1)]
-            [Tooltip("Controls the time (in seconds) between each created projectile, given there's more than 1.")]
+            [Tooltip("複数生成時の投射間隔（秒）。")]
             public float TimeBetweenProjectiles = 0.2f;
         }
 
+        /// <summary>
+        /// 【HomingData】追尾設定（追尾時間/最小追尾距離/回頭速度）
+        /// </summary>
         [System.Serializable]
         public class HomingData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled;
+
+            [Header("追尾時間（秒）")]
             [Range(0, 15)]
-            [Tooltip("Controls the length (in seconds) a projectile will follow its target.")]
+            [Tooltip("投射体が対象を追尾する時間（秒）。")]
             public float HomingSeconds = 0;
+
+            [Header("最小追尾距離")]
             [Range(0, 10)]
-            [Tooltip("Controls the minimum distance a projectile will follow its target.\n\nNote:A value of 0 can be used to disable this setting.")]
+            [Tooltip("投射体が対象を追尾する最小距離。\n\n注意: 0 を指定すると無効化できます。")]
             public float MinimumHomingDistance = 0;
+
+            [Header("回頭速度")]
             [Range(1, 10)]
-            [Tooltip("Controls the speed in which a projectiles will rotate towards its target.")]
+            [Tooltip("投射体が対象へ回頭する速度。")]
             public float HomingSpeed = 4;
         }
 
+        /// <summary>
+        /// 【AreaOfEffectData】範囲効果（半径/遅延/ヒット時演出/効果音）
+        /// </summary>
         [System.Serializable]
         public class AreaOfEffectData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            //Coming with update
-            //public enum LocationTypes { Self, RandomWithinRadiusOfSelf }
-            //public LocationTypes LocationType = LocationTypes.Self;
-            [Tooltip("Controls the visual effect used for the Area of Effect ability.")]
+
+            // Coming with update
+            // public enum LocationTypes { Self, RandomWithinRadiusOfSelf }
+            // public LocationTypes LocationType = LocationTypes.Self;
+
+            [Header("AOEの視覚エフェクト")]
+            [Tooltip("範囲効果で使用される視覚エフェクト。")]
             public GameObject VisualEffect;
+
+            [Header("視覚エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
-            [Tooltip("Controls the time (in seconds) the Visual Effect will be disabled after it has been spawned.")]
+            [Tooltip("視覚エフェクトがスポーン後に無効化されるまでの時間（秒）。")]
             public float VisualEffectTimeoutSeconds = 6;
+
+            [Header("高さオフセット")]
             [Range(-5, 5)]
-            [Tooltip("Controls the height offset the Visual Effect will be spawned.")]
+            [Tooltip("視覚エフェクトのスポーン時の高さオフセット。")]
             public float HeightOffset = 0;
+
+            [Header("ダメージ半径")]
             [Range(1, 20)]
-            [Tooltip("Controls the damage radius of the Area of Effect ability.")]
+            [Tooltip("範囲効果の半径。")]
             public float Radius = 3;
+
+            [Header("判定までの遅延（秒）")]
             [Range(0f, 5f)]
-            [Tooltip("Controls the delay it takes for the AOE target detection to trigger.")]
+            [Tooltip("AOEのターゲット検出が発動するまでの遅延時間（秒）。")]
             public float Delay = 0;
-            [Tooltip("The effect that will happen when a valid target is hit with this ability.")]
+
+            [Header("ヒット時の視覚エフェクト")]
+            [Tooltip("有効ターゲットにヒットした際に再生されるエフェクト。")]
             public GameObject HitTargetEffect;
+
+            [Header("ヒット時エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
             public float HitTargetEffectTimeoutSeconds = 2;
-            [Tooltip("The list of possible sounds that will play when the Visual Effect is spawned.")]
+
+            [Header("AOE再生時サウンド候補リスト")]
+            [Tooltip("視覚エフェクト再生時に鳴るサウンドの候補。")]
             public List<AudioClip> AOESoundsList = new List<AudioClip>();
 
             /// <summary>
-            /// Spawns a AOE Effect at the specified location.
+            /// 指定位置にAOEエフェクトをスポーンします。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the AOE Effect.</param>
+            /// <param name="Owner">所有者。</param>
+            /// <param name="SpawnPosition">スポーン位置。</param>
             public GameObject SpawnAOEEffect(GameObject Owner, Vector3 SpawnPosition)
             {
                 GameObject SpawnedVisualEffect = null;
@@ -745,65 +1028,95 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【SummonData】召喚系（キャスト/召喚演出・音/数・半径・寿命・デスポーン）
+        /// </summary>
         [System.Serializable]
         public class SummonData
         {
+            [Header("Editor用の折り畳み状態（非表示）")]
             [HideInInspector] public bool Foldout = true;
+
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
 
-            [Tooltip("Controls the visual effect used when casting the ability.")]
+            [Header("キャスト時エフェクト")]
+            [Tooltip("アビリティ詠唱（キャスト）時に使用する視覚エフェクト。")]
             public GameObject CastEffect;
+
+            [Header("キャストエフェクト寿命（秒）")]
             [Range(0.5f, 10)]
-            [Tooltip("Controls the time (in seconds) the Summon Effect will be disabled after it has been spawned.")]
+            [Tooltip("召喚時エフェクトが無効化されるまでの時間（秒）。")]
             public float CastEffectTimeoutSeconds = 4;
-            [Tooltip("Controls the sound that will play when the abiliy is casted.")]
+
+            [Header("キャストサウンド候補")]
+            [Tooltip("アビリティがキャストされたときに再生されるサウンド。")]
             public List<AudioClip> CastSounds = new List<AudioClip>();
 
-            [Tooltip("Controls the visual effect used when the summong ability is first created.")]
+            [Header("召喚開始時エフェクト")]
+            [Tooltip("召喚アビリティが生成されたときに使用する視覚エフェクト。")]
             public GameObject SummonEffect;
+
+            [Header("召喚エフェクト寿命（秒）")]
             [Range(0.5f, 10)]
-            [Tooltip("Controls the time (in seconds) the Summon Effect will be disabled after it has been spawned.")]
+            [Tooltip("召喚エフェクトが無効化されるまでの時間（秒）。")]
             public float SummonEffectTimeoutSeconds = 4;
+
+            [Header("召喚エフェクト高さオフセット")]
             [Range(-3f, 3f)]
-            [Tooltip("Controls the Y position offset for the SummonEffect.")]
+            [Tooltip("召喚エフェクトのY座標オフセット。")]
             public float SummonEffectHeightOffset = 0f;
-            [Tooltip("Controls the sound that will play when an AI is summoned.")]
+
+            [Header("召喚時サウンド候補")]
+            [Tooltip("AIが召喚された際に再生されるサウンド。")]
             public List<AudioClip> SummonSounds = new List<AudioClip>();
 
-            [Tooltip("Controls how many AI will be summoned when using this ability.")]
+            [Header("召喚数")]
+            [Tooltip("このアビリティで召喚されるAIの数。")]
             [Range(1, 6)]
             public int SummonAmount = 1;
+
             public enum SummonPositions { Self, Target };
-            [Tooltip("Controls the position in which the AI will be summoned to." +
-                "\n\nSelf - Summons AI around the caster." +
-                "\n\nTarget - Summons AI around the caster's current target.")]
+
+            [Header("召喚位置（自分/ターゲット周辺）")]
+            [Tooltip("AIを召喚する基準位置。\n\nSelf - 召喚者の周囲\nTarget - 現在のターゲットの周囲")]
             public SummonPositions SummonPosition = SummonPositions.Self;
-            [Tooltip("Controls the radius in which summoned AI will spawn around the Summon Position.")]
+
+            [Header("召喚半径（スポーン円半径）")]
+            [Tooltip("召喚位置を中心としたスポーン半径。")]
             [Range(2f, 12f)]
             public float SummonRadius = 4f;
+
+            [Header("召喚までの遅延（秒）")]
             [Range(0f, 1f)]
-            [Tooltip("Controls the delay length (in seconds) of when the AI will be summoned after the ability has been casted.")]
+            [Tooltip("アビリティキャスト後にAIが召喚されるまでの遅延（秒）。")]
             public float SummonDelay = 0;
-            [Tooltip("A list of possible AI prefabs that will be picked when the caster is using this ability. The total amount of AI spawned is determined by the Summon Amount.")]
+
+            [Header("召喚AIプレハブ候補リスト")]
+            [Tooltip("召喚に使用されるAIプレハブの候補。Summon Amount の数だけスポーンします。")]
             public List<GameObject> AIPrefabs = new List<GameObject>();
 
-            [Tooltip("Controls whether or not this AI will be automatically killed after a certain amount of time.")]
+            [Header("時間制限付き召喚（寿命で自動Kill）")]
+            [Tooltip("一定時間後に召喚AIを自動的にKillするか。")]
             public bool IsTimedSummon = false;
+
+            [Header("召喚寿命（秒）")]
             [Range(10, 180)]
-            [Tooltip("Controls the length (in seconds) until the AI is killed.")]
+            [Tooltip("AIがKillされるまでの時間（秒）。")]
             public int SummonLength = 20;
 
-            [Tooltip("Controls whether or not this AI's body (after it has died) will be despawned (through Object Pooling) so it can be reused. The AI object will automatically be reset to its starting state during this process.")]
+            [Header("死亡後にオブジェクトプールへ戻す（Despawn）")]
+            [Tooltip("召喚AIの死体をデスポーン（オブジェクトプールへ返却）するかどうか。返却時に初期状態へリセットされます。")]
             public bool DespawnAfterKilled = false;
+
+            [Header("死亡後デスポーンまでの時間（秒）")]
             [Range(5, 120)]
-            [Tooltip("Controls the length (in seconds) until the AI is despawned back to the Object Pool after it has been killed.")]
+            [Tooltip("Kill後にオブジェクトプールへ返却するまでの時間（秒）。")]
             public int DespawnLength = 20;
 
             /// <summary>
-            /// A universal function for spawning various sounds and effects for this ability.
+            /// 汎用のサウンド/エフェクト生成関数（召喚・キャスト等で共用）
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position for the effect.</param>
             public GameObject SpawnEffect(GameObject Owner, Vector3 SpawnPosition, GameObject VisualEffect, float TimeoutSeconds, List<AudioClip> EffectSounds, bool SkipSound)
             {
                 GameObject SpawnedVisualEffect = null;
@@ -834,71 +1147,95 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【HealingData】回復系（対象/方式/HoT/半径/遅延/演出）
+        /// </summary>
         [System.Serializable]
         public class HealingData
         {
+            [Header("Editor用の折り畳み状態（非表示）")]
             [HideInInspector] public bool Foldout = true;
+
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
 
-            [Tooltip("Controls the visual effect used when the healing ability is first created.")]
+            [Header("回復エフェクト（生成時）")]
+            [Tooltip("回復アビリティ生成時に使用される視覚エフェクト。")]
             public GameObject HealingEffect;
+
+            [Header("回復エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
-            [Tooltip("Controls the time (in seconds) the Healing Effect will be disabled after it has been spawned.")]
+            [Tooltip("回復エフェクトが無効化されるまでの時間（秒）。")]
             public float HealingEffectTimeoutSeconds = 6;
 
             public enum TargetTypes { Self, Target, Area };
-            [Tooltip("Controls the type of target this ability will affect." +
-                "\n\nSelf - The healing will only affect the caster." +
-                "\n\nTarget - The healing will affect a single friendly target with the lowest amount of health within radius of the caster." +
-                "\n\nArea - The healing will affect any friendly targets within radius of the caster. The layer for this is based off of the caster's Detection Layers from its Detection Component.")]
+
+            [Header("回復対象タイプ（自分/単体/範囲）")]
+            [Tooltip("このアビリティが影響する対象の種類を制御します。\n\nSelf - 施術者自身のみ\nTarget - 半径内の味方のうち最もHPが低い1体\nArea - 半径内の味方全員（Detection Layers に依存）")]
             public TargetTypes TargetType = TargetTypes.Self;
 
-            public enum HealingTypes { Instant, OverTime};
-            [Tooltip("Controls the type of healing this ability will use." +
-                "\n\nInstant - Instantly heals the target according to the Base Heal Amount." +
-                "\n\nOver Time - Instantly heals the target according to the Base Heal Amount AND over time based on the amount and rate. " +
-                "Base Heal Amount can be set to 0 if no initial heal is desired.")]
+            public enum HealingTypes { Instant, OverTime };
+
+            [Header("回復方式（即時/継続）")]
+            [Tooltip("回復方式を制御します。\n\nInstant - Base Heal Amount に従って即時回復\nOver Time - Base Heal Amount に加え、時間経過でも回復（初回回復を不要にする場合は Base Heal Amount=0も可）")]
             public HealingTypes HealingType = HealingTypes.Instant;
 
-            //Base Heals
-            [Tooltip("Controls the base healing or initial healing amount for this ability.")]
+            // Base Heals
+            [Header("基本回復量（初回の即時回復）")]
+            [Tooltip("このアビリティの基本回復量、または初回即時回復量です。")]
             public int BaseHealAmount = 20;
-            //Base Heals
+            // Base Heals
 
-            //Heals Over Time
-            [Tooltip("Controls the length (in seconds) how often Heal Over Time is applied.")]
+            // Heals Over Time
+            [Header("HoTのティック間隔（秒）")]
+            [Tooltip("継続回復（HoT）を適用する間隔（秒）。")]
             [Range(0.1f, 10f)]
             public float TickRate = 1;
-            [Tooltip("Controls the amount of heals that happens per Tick Rate.")]
-            public int HealsPerTick = 5;
-            [Range(0f, 10f)]
-            [Tooltip("Controls the length (in seconds) the Heal Over Time effect will last.")]
-            public float HealOverTimeLength = 3;
-            [Tooltip("Controls the sound that will play each heal tick.")]
-            public List<AudioClip> HealTickSounds = new List<AudioClip>();
-            //Heals Over Time
 
+            [Header("ティックごとの回復量")]
+            [Tooltip("ティック間隔ごとに回復する量。")]
+            public int HealsPerTick = 5;
+
+            [Header("HoTの継続時間（秒）")]
+            [Range(0f, 10f)]
+            [Tooltip("継続回復の合計継続時間（秒）。")]
+            public float HealOverTimeLength = 3;
+
+            [Header("ティック時サウンド候補リスト")]
+            [Tooltip("各ティック時に再生するサウンド候補。")]
+            public List<AudioClip> HealTickSounds = new List<AudioClip>();
+            // Heals Over Time
+
+            [Header("エフェクトの高さオフセット")]
             [Range(-5, 5)]
-            [Tooltip("Controls the height offset the Healing Effect will be spawned.")]
+            [Tooltip("回復エフェクトの高さオフセット。")]
             public float EffectHeightOffset = 0;
+
+            [Header("回復半径")]
             [Range(1, 20)]
-            [Tooltip("Controls the healing radius of the healing ability.")]
+            [Tooltip("回復アビリティの半径。")]
             public float Radius = 3;
+
+            [Header("検出遅延（秒）")]
             [Range(0f, 5f)]
-            [Tooltip("Controls the delay it takes for the target detection to trigger for area healing.")]
+            [Tooltip("範囲回復のターゲット検出までの遅延。")]
             public float Delay = 0;
-            [Tooltip("The visual effect that will happen when a valid target is healed with this ability.")]
+
+            [Header("対象回復時エフェクト")]
+            [Tooltip("有効ターゲットが回復した際の視覚エフェクト。")]
             public GameObject HealTargetEffect;
+
+            [Header("対象回復時エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
             public float HealTargetEffectTimeoutSeconds = 2;
-            [Tooltip("The list of possible sounds that will play when the Visual Effect is spawned.")]
+
+            [Header("回復再生時サウンド候補リスト")]
+            [Tooltip("回復エフェクト再生時のサウンド候補。")]
             public List<AudioClip> HealingSoundsList = new List<AudioClip>();
 
             /// <summary>
-            /// A universal function for spawning various sounds and effects for healing abilities.
+            /// 回復系の汎用エフェクト/サウンド生成関数。
             /// </summary>
-            /// <param name="Owner">The owner of the ability.</param>
-            /// <param name="SpawnPosition">The spawn position of the AOE Effect.</param>
             public GameObject SpawnHealingEffect(GameObject Owner, Vector3 SpawnPosition, GameObject VisualEffect, float TimeoutSeconds, List<AudioClip> EffectSounds)
             {
                 GameObject SpawnedVisualEffect = null;
@@ -929,202 +1266,312 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【ConditionData】発動条件（自己/味方の低HP、対象距離、召喚数など）
+        /// </summary>
         [System.Serializable]
         public class ConditionData
         {
+            [Header("Editor用の折り畳み状態（非表示）")]
             [HideInInspector] public bool Foldout = true;
+
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled;
-            [Tooltip("Controls the condition that is needed in order for this ability to trigger. Enable High Priority to allow this ability to be picked before other abilities." +
-                "\n\nSelf Low Health - Triggers when an AI's own health reaches the Low Health Percentage threshold." +
-                "\n\nTarget Low Health - Triggers when a nearby Friendly AI reaches the Low Health Percentage threshold." +
-                "\n\nNo Current Summons - Triggers when an AI has 0 currently summoned AI.")] 
+
+            [Header("条件種別（自己低HP/味方低HP/対象距離/召喚数ゼロ）")]
+            [Tooltip("アビリティ発動に必要な条件を制御します。High Priority を有効にすると他アビリティより優先して選択されます。\n\nSelf Low Health - 自身のHPがしきい値以下\nTarget Low Health - 近くの味方のHPがしきい値以下\nNo Current Summons - 現在の召喚数が0")]
             public ConditionTypes ConditionType = ConditionTypes.SelfLowHealth;
+
             public enum ValueCompareTypes { GreaterThan, LessThan };
-            [Tooltip("Controls the type of value comparison.")]
+
+            [Header("比較方法（以上/以下）")]
+            [Tooltip("値比較の方法を制御します。")]
             public ValueCompareTypes ValueCompareType = ValueCompareTypes.LessThan;
-            [Tooltip("Controls whether or not this condition is High Priority. A High Priority ability will take priority over other abilities and will ignore an AI's Pick Type, given the condition is met. This is especially helpful for support abiltiies such as healing." +
-                "\n\nNote: If High Priority is disabled, this ability will follow an AI's Pick Type, but the condition will need to be met. If the condition is not met, the ability will be skipped.")]
+
+            [Header("高優先度（Pick Type を無視して優先発動）")]
+            [Tooltip("この条件が満たされたとき、他のアビリティより優先して実行します（AIのPick Typeを無視）。特に支援系（回復等）で有効。\n\n注意: 無効の場合は通常のPick Typeに従いますが、条件未達ならスキップされます。")]
             public bool HighPriority = false;
+
+            [Header("対象との距離しきい値（Distance From Target）")]
             [Range(1, 40)]
-            [Tooltip("Controls the distance threshold needed to meet the Distance from Target condition.")]
+            [Tooltip("Distance from Target 条件のための距離しきい値。")]
             public float DistanceFromTarget = 3f;
+
+            [Header("低HPしきい値（％）")]
             [Range(1, 99)]
-            [Tooltip("Controls the low health amount (in percentage) needed to trigger this condition.")]
+            [Tooltip("低HPと見なす割合（%）。")]
             public float LowHealthPercentage = 60f;
         }
 
+        /// <summary>
+        /// 【ColliderData】投射の衝突判定（コリジョン対象/レイヤー/タイムアウト/半径/前方オフセット）
+        /// </summary>
         [System.Serializable]
         public class ColliderData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("Controls the layers that this projectile can collide with.\n\nNote: Ensure target layers (as well as Location Based Damage layers) are included or they will be ignored by the projectile.")]
+
+            [Header("衝突可能レイヤー")]
+            [Tooltip("この投射体が衝突可能なレイヤーを制御します。\n\n注意: ターゲットレイヤー（および Location Based Damage のレイヤー）を含めないと無視されます。")]
             public LayerMask CollidableLayers = ~0;
-            [Tooltip("Controls the layer that this projectile will be assigned.\n\nNote: It is recommended that projectiles ignore each other to avoid unintended collisions with other projectiles.")]
+
+            [Header("投射体が属するレイヤー")]
+            [Tooltip("投射体に割り当てるレイヤー。\n\n注意: 投射体同士の意図しない衝突を避けるため、互いに無視する設定を推奨。")]
             [Layer] public int ProjectileLayer = 2;
+
+            [Header("衝突後にオブジェクトを無効化するまでの時間（秒）")]
             [Range(0f, 30f)]
-            [Tooltip("Controls the time (in seconds) it will take to disable the projectile object after it has collided with a target or object.")]
+            [Tooltip("ターゲット/オブジェクトに衝突後、投射本体を無効化するまでの時間（秒）。")]
             public float CollisionTimeout = 3;
 
+            [Header("自動生成SphereColliderの半径")]
             [Range(0, 1)]
-            [Tooltip("Controls the radius of the projectile's Sphere Collider.")]
+            [Tooltip("投射体の Sphere Collider 半径。")]
             [DrawIf("AutoCreateSphereCollider", true)]
             public float ColliderRadius = 0.05f;
+
+            [Header("自動生成SphereColliderの前方オフセット（Z）")]
             [Range(-2, 2)]
-            [Tooltip("Controls the forward position offset of the projectile's Sphere Collider.")]
+            [Tooltip("投射体の Sphere Collider の前方位置オフセット。")]
             public float ZOffet = 0;
-            
         }
 
+        /// <summary>
+        /// 【SpreadData】散布パターン（ランダム/扇形）と各パラメータ
+        /// </summary>
         [System.Serializable]
         public class SpreadData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled;
-            [Tooltip("Controls how projectiles are spread.")]
+
+            [Header("散布方式（ランダム/水平半径）")]
+            [Tooltip("投射体の散布方式を制御します。")]
             public SpreadTypes SpreadType = SpreadTypes.Random;
+
+            [Header("ランダム散布：X最小角")]
             [CompareEnumWithRange("SpreadType", 0f, 180f, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.Random)]
             public float MinSpreadX = 0;
+
+            [Header("ランダム散布：X最大角")]
             [CompareEnumWithRange("SpreadType", -180f, 0, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.Random)]
             public float MaxSpreadX = 0;
+
+            [Header("ランダム散布：Y最小角")]
             [CompareEnumWithRange("SpreadType", 0f, 180f, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.Random)]
             public float MinSpreadY = 0;
+
+            [Header("ランダム散布：Y最大角")]
             [CompareEnumWithRange("SpreadType", -180f, 0, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.Random)]
             public float MaxSpreadY = 0;
 
-            [Tooltip("Controls the horizontal angle for spreading projectiles. This will be evently distributed based on the total amount of projectiles and the given angle.")]
+            [Header("水平半径散布：水平角（X）")]
+            [Tooltip("投射体を水平に均等配分する角度。総投射数に応じて均等分割されます。")]
             [CompareEnumWithRange("SpreadType", 0f, 360f, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.HorizontalRadius)]
             public float SpreadAngleX = 180;
-            [Tooltip("Controls the vertical tilt angle for spreading projectiles evenly.")]
+
+            [Header("水平半径散布：傾き角（Y）")]
+            [Tooltip("上下方向の傾き角（均等配分）。")]
             [CompareEnumWithRange("SpreadType", 0f, 90f, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.HorizontalRadius)]
             public float TiltAngleY = 0;
-            [Tooltip("Controls the distance the projectiles will spawn away from the owner.")]
+
+            [Header("スポーン距離（所有者からの距離）")]
+            [Tooltip("投射体を所有者からどれだけ離してスポーンさせるか。")]
             [CompareEnumWithRange("SpreadType", 0f, 6f, CompareEnumWithRangeAttribute.StyleType.FloatSlider, SpreadTypes.HorizontalRadius)]
             public float SpawnDistance = 0.5f;
         }
 
+        /// <summary>
+        /// 【TargetTypeData】ターゲット選択（現在/複数 等）
+        /// </summary>
         [System.Serializable]
         public class TargetTypeData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("Controls how this ability will pick its target.\n\nNote: The Multiple option will allow an ability to affect and target more than 1 target. If you are unsure, it's best to stick with the default option of Current Target.")]
+
+            [Header("ターゲット選択方式")]
+            [Tooltip("アビリティのターゲット選択方法を制御します。\n\n注意: Multiple を選ぶと複数の対象に影響/ターゲット可能になります。不明な場合は Current Target を推奨。")]
             public TargetTypes TargetType = TargetTypes.CurrentTarget;
         }
 
+        /// <summary>
+        /// 【CooldownData】クールダウン設定
+        /// </summary>
         [System.Serializable]
         public class CooldownData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled;
+
+            [Header("クールダウン長（秒）")]
             [Range(0, 60)]
-            [Tooltip("Controls the length (in seconds) it will take before this ability can be used again. This is useful to help keep certain abilities from being used too often or in a row." +
-                "\n\nNote: This setting is ignored if an ability is overriden through an Create Ability (Animation Event).")]
+            [Tooltip("このアビリティを再使用可能になるまでの時間（秒）。連続使用を抑制するのに有効。\n\n注意: アニメーションイベント経由の Create Ability により上書きされる場合、この設定は無視されます。")]
             public float CooldownLength = 1;
-            
         }
 
-        //TODO: Will add this feature with a future update
+        // TODO: 将来のアップデートで分岐（Branch）機能を追加予定
         /*
         [System.Serializable]
         public class BranchData
         {
-            [Tooltip("Controls whether or not this module is enabled.")]
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
+            [Tooltip("このモジュールを有効にするかどうかを制御します。")]
             [HideInInspector] public bool Enabled;
-            [Tooltip("Controls the type of target this ability will affect.")]
+
+            [Header("ターゲットの種類")]
+            [Tooltip("このアビリティが影響するターゲットの種類を制御します。")]
             public TargetTypes TargetType = TargetTypes.CurrentTarget;
+
+            [Header("分岐の検出半径")]
             [Range(0.25f, 10)]
-            [Tooltip("Controls the radius used for detecting targets to branch to.")]
+            [Tooltip("分岐に使用するターゲット検出半径を制御します。")]
             public float BranchRadius = 1f;
+
+            [Header("分岐成功の確率（%）")]
             [Range(1, 100)]
-            [Tooltip("Controls the odds for a successful branch.")]
+            [Tooltip("分岐が成功する確率を制御します。")]
             public int BranchOdds = 20;
+
+            [Header("1つの投射につき最大分岐数")]
             [Range(1, 25)]
-            [Tooltip("Controls the cap for a successful branch for a sinlge projecile.")]
+            [Tooltip("1つの投射が分岐できる上限回数。")]
             public int BranchCap = 5;
         }
         */
 
+        /// <summary>
+        /// 【TeleportData】テレポート演出（消失/再出現/遅延/半径/回避可能通知）
+        /// </summary>
         [System.Serializable]
         public class TeleportData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
-            [Tooltip("Controls the effect that happens when the AI disappears when teleporting.")]
+
+            [Header("消失エフェクト")]
+            [Tooltip("テレポート時にAIが消える際のエフェクト。")]
             public GameObject DisappearEffect;
+
+            [Header("消失エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
             public float DisappearEffectTimeoutSeconds = 2;
+
+            [Header("消失時サウンド候補")]
             public List<AudioClip> DisappearSoundsList = new List<AudioClip>();
 
-            [Tooltip("Controls whether or not this ability will trigger an avoidable call when reappearing.\n\nNote: An avoidable call will allow nearby targets to attempt to dodge or block, given they have the needed combat actions.")]
+            [Header("再出現前の回避可能通知（Avoidable Call）")]
+            [Tooltip("再出現時に回避可能通知を送るかどうか。\n\n注意: 近くのターゲットに回避/ブロックの機会を与えます（対応アクションが必要）。")]
             public bool ReappearTriggersAvoidable;
-            [Tooltip("Controls the effect that happens when the AI is about to reappear.\n\nNote: This can be used to briefly show where an AI will reappear before it's visible.")]
+
+            [Header("再出現インジケータ（事前表示）")]
+            [Tooltip("AIが再出現する直前に表示する目印用エフェクト。現れる位置の予告に使用。")]
             public GameObject ReappearIndicatorEffect;
+
+            [Header("再出現インジケータ寿命（秒）")]
             [Range(0.5f, 15)]
             public float ReappearIndicatorEffectTimeoutSeconds = 2;
+
+            [Header("再出現までの遅延（秒）")]
             [Range(0f, 2.5f)]
-            [Tooltip("The length (in seconds) the reappear functionality will be delayed.")]
+            [Tooltip("再出現処理が遅延する時間（秒）。")]
             public float ReappearDelay = 0.15f;
+
+            [Header("再出現インジケータ サウンド候補")]
             public List<AudioClip> ReappearIndicatorSoundsList = new List<AudioClip>();
 
             [Space(10)]
-            [Tooltip("Controls the effect that happens when the AI reappears when teleporting.")]
+
+            [Header("再出現エフェクト")]
+            [Tooltip("テレポート後にAIが再出現する際のエフェクト。")]
             public GameObject ReappearEffect;
+
+            [Header("再出現エフェクト寿命（秒）")]
             [Range(0.5f, 15)]
             public float ReappearEffectTimeoutSeconds = 2;
+
+            [Header("再出現サウンド候補")]
             public List<AudioClip> ReappearSoundsList = new List<AudioClip>();
 
             [Space(10)]
+
+            [Header("テレポートに要する時間（秒）")]
             [Range(0f, 10)]
-            [Tooltip("The length (in seconds) it takes for an AI to reappear after teleporting.")]
+            [Tooltip("AIが消えてから再出現するまでの時間。")]
             public float TeleportTime = 1;
 
+            [Header("再出現位置の生成半径")]
             [Range(0f, 10)]
-            [Tooltip("Controls the radius used when generating a teleport destination. The destination is based on the Target Type.")]
+            [Tooltip("テレポート先の生成半径。先の基準は Target Type に依存します。")]
             public float TeleportRadius = 3;
         }
 
+        /// <summary>
+        /// 【StunnedData】スタン付与設定（確率/時間）
+        /// </summary>
         [System.Serializable]
         public class StunnedData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = false;
+
+            [Header("スタン発生確率（%）")]
             [Range(0, 100)]
-            [Tooltip("Controls the odds for triggering a stun when this ability hits an enemy target.")]
+            [Tooltip("敵対象にヒットした際、スタンが発生する確率（%）。")]
             public float OddsToStun = 50;
+
+            [Header("スタン継続時間（秒）")]
             [Range(1, 15)]
-            [Tooltip("Controls the length (in seconds) of how long a target will be stunned.")]
+            [Tooltip("対象がスタンする時間（秒）。")]
             public float StunLength = 3;
 
             /// <summary>
-            /// Rolls for a stun (using the odds through an ability) and returns true if successful.
+            /// スタンの成否を確率で判定して返します。
             /// </summary>
-            /// <returns></returns>
-            public bool RollForStun ()
+            public bool RollForStun()
             {
                 int Roll = Random.Range(1, 101);
                 return (Roll <= OddsToStun);
             }
         }
 
+        /// <summary>
+        /// 【KnockbackData】ノックバック設定（確率/距離/時間/プレイヤー影響可否）
+        /// </summary>
         [System.Serializable]
         public class KnockbackData
         {
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = false;
+
+            [Header("ノックバック発生確率（%）")]
             [Range(0, 100)]
-            [Tooltip("Controls the odds for triggering a knockback when this ability hits an enemy target.")]
+            [Tooltip("敵対象にヒットした際、ノックバックが発生する確率（%）。")]
             public float OddsToKnockback = 100;
+
+            [Header("ノックバック距離")]
             [Range(1f, 8f)]
-            [Tooltip("Controls the how far back the target will be knocked back. This is also based off of the attacker's forward facing direction.")]
+            [Tooltip("ターゲットが押し戻される距離。攻撃者のForward方向を基準にします。")]
             public float KnockbackDistance = 2.5f;
+
+            [Header("ノックバック所要時間（秒）")]
             [Range(0.1f, 1f)]
-            [Tooltip("Controls the length (in seconds) of how long a target will take to reach its knockback destination.")]
+            [Tooltip("ノックバック移動にかかる時間（秒）。")]
             public float KnockbackDuration = 0.25f;
+
+            [Header("移動再開までの遅延（秒、AI対象）")]
             [Range(0.0f, 1f)]
-            [Tooltip("Controls the length (in seconds) of how long it takes an Emerald AI target to resume its movement after being knocked back.")]
+            [Tooltip("ノックバック後、Emerald AI ターゲットが移動を再開するまでの遅延（秒）。")]
             public float MovementDelay = 0.25f;
-            [Tooltip("Controls whether or not the knockback effect will affect player targets. This will only work if your player will automatically update its own height to a surface or ground after being knockedback." +
-                "\n\nNote: If your player target goes through the ground or floats in the air after being knocked back, your player will not be able to use the Knockback feature, unless you manually update its height to its knocked back y position. " +
-                "If your player target uses NavMesh, this setting can be ignored as the NavMesh can be used to set the player's height automatically.")]
+
+            [Header("プレイヤー対象にも適用する")]
+            [Tooltip("ノックバックをプレイヤーにも適用するか。プレイヤーがノックバック後に地面高さを自動更新できる環境が必要。\n\n注意: プレイヤーが地面貫通/空中停止となる場合は使用不可。NavMesh使用のプレイヤーなら無視可能（NavMeshで高さ調整）。")]
             public bool AffectsPlayerTargets = false;
 
-            public IEnumerator KnockbackSequence (Vector3 Direction, Transform Target, ICombat TargetICombat)
+            public IEnumerator KnockbackSequence(Vector3 Direction, Transform Target, ICombat TargetICombat)
             {
-                //If the target is blocking, cancel the knockback
+                // ブロック/回避中ならノックバックを無効化
                 if (TargetICombat.IsBlocking() || TargetICombat.IsDodging())
                 {
                     yield break;
@@ -1136,14 +1583,15 @@ namespace EmeraldAI
                 Vector3 destination = Target.position + Direction * KnockbackDistance;
                 destination.y = Target.position.y;
 
+                // 死亡状態なら終了
                 if (TargetEmeraldComponent && TargetEmeraldComponent.AnimationComponent.IsDead)
                 {
                     yield break;
                 }
 
-                //Do not allow the AI to be knocked back if the direction is obstructed.
+                // 進行方向が障害物で塞がれている場合はノックバックを中止
                 Ray ray = new Ray(Target.position + Vector3.up * 1f, Direction * KnockbackDistance);
-                //Debug.DrawRay(Target.position + Vector3.up * 1f, Direction * KnockbackDistance, Color.red, 10f);
+                // Debug.DrawRay(Target.position + Vector3.up * 1f, Direction * KnockbackDistance, Color.red, 10f);
                 if (Physics.Raycast(ray, out RaycastHit hit, KnockbackDistance, TargetEmeraldComponent.MovementComponent.AlignmentLayerMask))
                 {
                     yield break;
@@ -1164,7 +1612,7 @@ namespace EmeraldAI
 
                     elapsed += Time.deltaTime;
 
-                    //If the target dies, cancel the knockback
+                    // ノックバック中に死亡したら中断
                     if (TargetEmeraldComponent && TargetEmeraldComponent.AnimationComponent.IsDead)
                     {
                         yield break;
@@ -1178,7 +1626,7 @@ namespace EmeraldAI
                 if (navMeshAgent) navMeshAgent.isStopped = false;
 
                 /// <summary>
-                /// Returns the position aligned with the ground using raycast.
+                /// レイキャストで地面に合わせた位置を返す補助関数
                 /// </summary>
                 Vector3 GetGroundedPosition(Vector3 position)
                 {
@@ -1199,9 +1647,8 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Rolls for a knockback (using the odds through an ability) and returns true if successful.
+            /// ノックバックの成否を確率で判定して返します。
             /// </summary>
-            /// <returns></returns>
             public bool RollForKnockback()
             {
                 int Roll = Random.Range(1, 101);
@@ -1210,10 +1657,8 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Spawns a Spawn Effect at the specified location when the projectile is being created.
+        /// 汎用の「エフェクト+サウンド」生成ユーティリティ（任意の場面で使用可）
         /// </summary>
-        /// <param name="Owner">The owner of the ability.</param>
-        /// <param name="SpawnPosition">The spawn position of the Spawn Effect.</param>
         public static void SpawnEffectAndSound(GameObject Owner, Vector3 SpawnPosition, GameObject Effect, float TimeoutSeconds, List<AudioClip> SoundsList)
         {
             if (Effect != null)
@@ -1236,79 +1681,126 @@ namespace EmeraldAI
             }
         }
 
+        /// <summary>
+        /// 【DamageData】ダメージ設定（基本/クリティカル/DoT）
+        /// </summary>
         [System.Serializable]
         public class DamageData
         {
+            [Header("Editor用の折り畳み状態（非表示）")]
             [HideInInspector] public bool Foldout;
+
+            [Header("モジュールの有効/無効（インスペクタ非表示）")]
             [HideInInspector] public bool Enabled = true;
 
             [Space(10)]
-            [Tooltip("Controls whether or not Critical Hits are used for this ability.")]
+
+            [Header("クリティカルヒットを使用")]
+            [Tooltip("このアビリティでクリティカルヒットを使用するかどうか。")]
             public bool UseCriticalHits;
+
             [Space(10)]
-            [Tooltip("Controls whether or not Damage Over Time is used for this ability.")]
+
+            [Header("ダメージ継続（DoT）を使用")]
+            [Tooltip("このアビリティで継続ダメージ（Damage Over Time）を使用するか。")]
             public bool UseDamageOverTime;
 
+            [Header("基本ダメージ設定（固定/ランダム/ラグドール押し出し）")]
             public BaseDamageClass BaseDamageSettings;
 
+            /// <summary>
+            /// 【BaseDamageClass】基本ダメージ（固定orランダム）とラグドール力
+            /// </summary>
             [System.Serializable]
             public class BaseDamageClass
             {
-                [Tooltip("Controls whether or not Randomized Damage is used for this ability.")]
+                [Header("ダメージ量をランダム化")]
+                [Tooltip("このアビリティでダメージ量のランダム化を使用するかどうか。")]
                 public bool UseRandomAmounts;
+
+                [Header("固定ダメージ量（ランダム無効時）")]
                 [DrawIf("UseRandomAmounts", false)]
-                [Tooltip("Controls the base damage for this ability.")]
+                [Tooltip("ランダムを使用しない場合の基本ダメージ量。")]
                 public int BaseAmount = 5;
+
+                [Header("最小ダメージ量（ランダム有効時）")]
                 [DrawIf("UseRandomAmounts", true)]
-                [Tooltip("Controls the minimum damage that can be generated for this ability.")]
+                [Tooltip("ランダム生成される最小ダメージ量。")]
                 public int MinAmount = 5;
+
+                [Header("最大ダメージ量（ランダム有効時）")]
                 [DrawIf("UseRandomAmounts", true)]
-                [Tooltip("Controls the maxmimum damage that can be generated for this ability.")]
+                [Tooltip("ランダム生成される最大ダメージ量。")]
                 public int MaxAmount = 10;
-                [Tooltip("Controls the force that will be applied to AI using ragdolls at the time of death.")]
+
+                [Header("ラグドールへの押し出し力")]
+                [Tooltip("死亡時にラグドールへ加える力。")]
                 public int RagdollForce = 50;
             }
 
+            [Header("クリティカル設定（確率/倍率/サウンド）")]
             public CriticalHitClass CriticalHitSettings;
 
+            /// <summary>
+            /// 【CriticalHitClass】クリティカル確率・倍率・サウンド
+            /// </summary>
             [System.Serializable]
             public class CriticalHitClass
             {
-                [Tooltip("Controls the odds for a critical hit.")]
+                [Header("クリティカル発生確率（%）")]
+                [Tooltip("クリティカルヒットの発生確率。")]
                 [Range(0f, 100f)]
                 public float CriticalHitOdds = 6.25f;
-                [Tooltip("Controls the multiplier for a critical hit (GeneratedDamage + (GeneratedDamage * (%)CriticalHitMultiplier) = MultipliedDamage).")]
+
+                [Header("クリティカル倍率（%加算）")]
+                [Tooltip("クリティカル時の倍率（GeneratedDamage + (GeneratedDamage * (%)CriticalHitMultiplier) = 最終ダメージ）。")]
                 public float CriticalHitMultiplier = 1.1f;
-                [Tooltip("Controls the sound that will play when a critical hit is successful.")]
+
+                [Header("クリティカル時サウンド候補")]
+                [Tooltip("クリティカルヒット成功時に再生されるサウンド。")]
                 public List<AudioClip> CriticalHitSounds = new List<AudioClip>();
             }
 
+            [Header("DoT設定（エフェクト/ティック/合計時間/サウンド）")]
             public DamageOverTimeClass DamageOverTimeSettings;
 
+            /// <summary>
+            /// 【DamageOverTimeClass】継続ダメージ（DOT）の詳細
+            /// </summary>
             [System.Serializable]
             public class DamageOverTimeClass
             {
-                [Tooltip("Controls the effect that is spawned each tick.")]
+                [Header("ティック毎にスポーンするエフェクト")]
+                [Tooltip("各ティックでスポーンするエフェクト。")]
                 public GameObject DamageOverTimeEffect;
+
+                [Header("ティックエフェクト寿命（秒）")]
                 [Range(0.5f, 5)]
                 public float OverTimeEffectTimeOutSeconds = 1.5f;
-                [Tooltip("Controls the length (in seconds) how often Damage Over Time is applied.")]
+
+                [Header("ティック間隔（秒）")]
+                [Tooltip("継続ダメージの適用間隔（秒）。")]
                 [Range(0.1f, 10f)]
                 public float TickRate = 1;
-                [Tooltip("Controls the amount of damage that happens per Tick Rate.")]
+
+                [Header("ティック毎のダメージ量")]
+                [Tooltip("ティックごとに与えるダメージ量。")]
                 public int DamagePerTick = 1;
+
+                [Header("継続時間（秒）")]
                 [Range(0f, 10f)]
-                [Tooltip("Controls the length (in seconds) the Damage Over Time effect will last.")]
+                [Tooltip("継続ダメージの合計時間（秒）。")]
                 public float DamageOverTimeLength = 3;
-                [Tooltip("Controls the sound that will play each tick.")]
+
+                [Header("ティック時サウンド候補")]
+                [Tooltip("各ティックで再生されるサウンドの候補。")]
                 public List<AudioClip> OverTimeSounds = new List<AudioClip>();
             }
 
             /// <summary>
-            /// Generates the initial damage dealt by an ability (including base damage, randomized damage, and/or critical Hits). Note: This calculation excludes damage over time.
+            /// 初期ダメージを生成します（基本/ランダム/クリティカルを考慮。DoTは除外）。
             /// </summary>
-            /// <returns></returns>
-            public int GenerateDamage (bool IsCritHit)
+            public int GenerateDamage(bool IsCritHit)
             {
                 int DamageAmount = 0;
                 if (!BaseDamageSettings.UseRandomAmounts) DamageAmount = BaseDamageSettings.BaseAmount;
@@ -1319,7 +1811,7 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// (Uses the AbilityData.DamageData class) Initializes a damage over time component to continuously damage the target, given the ability uses damage overtime.
+            /// DoTを初期化し、対象へ継続ダメージを与えます（アビリティがDoTを使用する場合）。
             /// </summary>
             public void DamageTargetOverTime(EmeraldAbilityObject AbilityObject, DamageData DamageDataInfo, GameObject Owner, GameObject Target)
             {
@@ -1327,7 +1819,8 @@ namespace EmeraldAI
                 {
                     if (IDamageableHelper.CheckAbilityActiveEffects(Target, AbilityObject))
                     {
-                        IDamageableHelper.AddAbilityActiveEffect(Target, AbilityObject); //Add the ability data to the target's ActiveEffect list, given that it doesn't already exist.
+                        // 既存ActiveEffectに無い場合は追加
+                        IDamageableHelper.AddAbilityActiveEffect(Target, AbilityObject);
                         GameObject SpawnedDamageOverTimeComponent = EmeraldObjectPool.Spawn(Resources.Load("Damage Over Time Component") as GameObject, Target.transform.position, Quaternion.identity);
                         SpawnedDamageOverTimeComponent.GetComponent<EmeraldDamageOverTime>().Initialize(AbilityObject, DamageDataInfo, Target.transform, Owner.transform);
                     }
@@ -1335,7 +1828,7 @@ namespace EmeraldAI
             }
 
             /// <summary>
-            /// Returns true if the hit was a critical hit (uses CriticalHitOdds from the Damage Module).
+            /// クリティカルヒット判定を行います（CriticalHitOdds に基づく）。
             /// </summary>
             public bool GenerateCritHit()
             {
@@ -1352,25 +1845,30 @@ namespace EmeraldAI
             }
         }
 
+        // ===== 列挙型（ターゲット元/ターゲット種別/散布方式） =====
+
+        //[Header("ターゲットの敵味方種別（列挙型）")]
         public enum TargetSources { Enemy, Ally }
 
+        //[Header("ターゲット選択方式（列挙型）")]
         public enum TargetTypes
         {
-            CurrentTarget,
-            ClosestEnemy,
-            SingleRandomEnemy,
-            MultipleRandomEnemies,
-            //TODO: Will add with update
-            //ClosestAlly,
-            //SingleRandomAlly,
-            //MultipleRandomAllies,
-            //RandomGroundPosition,
+            CurrentTarget,              // 現在のターゲット
+            ClosestEnemy,               // 最も近い敵
+            SingleRandomEnemy,          // ランダムな敵（単体）
+            MultipleRandomEnemies,      // ランダムな敵（複数）
+            // TODO: 将来追加
+            // ClosestAlly,
+            // SingleRandomAlly,
+            // MultipleRandomAllies,
+            // RandomGroundPosition,
         }
 
+        //[Header("散布方式（列挙型）")]
         public enum SpreadTypes
         {
-            Random,
-            HorizontalRadius,
+            Random,                     // ランダム散布
+            HorizontalRadius,           // 水平半径での均等散布
         }
     }
 }

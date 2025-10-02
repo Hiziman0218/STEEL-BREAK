@@ -11,32 +11,67 @@ namespace EmeraldAI
     [RequireComponent(typeof(Rigidbody))]
     public class GeneralProjectile : MonoBehaviour, IAvoidable
     {
-        #region Variables
+        #region 変数
+        [Header("現在のアビリティデータ（GeneralProjectileAbility）")]
         GeneralProjectileAbility CurrentAbilityData;
+
+        [Header("所有者の EmeraldSystem 参照")]
         EmeraldSystem EmeraldComponent;
+
+        [Header("現在のターゲット（Transform）")]
         Transform CurrentTarget;
+
         public Transform AbilityTarget { get => CurrentTarget; set => CurrentTarget = value; }
+
+        [Header("初期ターゲット位置（ダメージ位置のキャッシュ）")]
         Vector3 InitialTargetPosition;
+
+        [Header("ターゲット側の ICombat 参照（ダメージ位置取得に使用）")]
         ICombat StartingICombat;
+
+        [Header("自分自身の AudioSource 参照")]
         AudioSource m_AudioSource;
+
+        [Header("移動音などのサウンドエフェクト（Resources からロード）")]
         GameObject m_SoundEffect;
+
+        [Header("当たり判定に使用する Collider（Trigger）")]
         Collider m_Collider;
+
+        [Header("必要に応じて生成される SphereCollider（Trigger）")]
         SphereCollider m_SphereCollider;
+
+        [Header("自分自身の Rigidbody 参照")]
         Rigidbody m_Rigidbody;
+
+        [Header("このプロジェクタイルの所有者（発射元）")]
         GameObject Owner;
+
+        [Header("衝突判定を無視するコライダー一覧（LBD 内部コライダー等）")]
         List<Collider> IgnoredColliders = new List<Collider>();
+
+        [Header("発射（初期化）された時間（秒）")]
         float StartTime;
+
+        [Header("ホーミング経過時間（秒）")]
         float HomingTimer;
+
+        [Header("初期化が完了したか（内部フラグ）")]
         bool Initialized;
+
+        [Header("ホーミングの最小距離に到達したか（内部フラグ）")]
         bool MinHomingDistMet;
+
+        [Header("ターゲットとの角度（内部参照用）")]
         float TargetAngle;
 
+        [Header("プロジェクタイルに関連する見た目/エフェクトのキャッシュ")]
         [SerializeField]
         public List<ProjectileEffectsClass> m_ProjectileObjects = new List<ProjectileEffectsClass>();
         #endregion
 
         /// <summary>
-        /// Used to initialize the needed components and settings the first time the projectile is used.
+        /// 最初にプロジェクタイルが使用される際に、必要なコンポーネントや設定を初期化します。
         /// </summary>
         void Awake()
         {
@@ -46,21 +81,21 @@ namespace EmeraldAI
             m_AudioSource.spatialBlend = 1;
             m_AudioSource.maxDistance = 20;
 
-            //If a collider already exists on the projectile object, use it as the projectile's collider.
+            // すでにコライダーが付いている場合は、それをプロジェクタイルのコライダーとして使用する。
             m_Collider = GetComponent<Collider>();
             if (m_Collider != null)
             {
                 m_Collider.isTrigger = true;
                 m_Collider.enabled = false;
             }
-            //If not, create a SphereCollider.
+            // 付いていない場合は SphereCollider を生成する。
             else
             {
                 m_Collider = gameObject.AddComponent<SphereCollider>();
                 m_SphereCollider = gameObject.GetComponent<SphereCollider>();
                 m_Collider.isTrigger = true;
                 m_Collider.enabled = false;
-            }  
+            }
 
             m_Rigidbody = GetComponent<Rigidbody>();
             m_Rigidbody.useGravity = true;
@@ -68,9 +103,9 @@ namespace EmeraldAI
             m_Rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             m_SoundEffect = Resources.Load("Emerald Sound") as GameObject;
 
-            //Go through all effect objects on Awake and cache them to be used through the Projectile Module.
+            // Awake 時に全エフェクトオブジェクトを走査し、Projectile Module で使用できるようキャッシュする。
             m_ProjectileObjects.Add(new ProjectileEffectsClass(gameObject.GetComponent<ParticleSystemRenderer>(), gameObject));
-            
+
             foreach (Transform child in transform)
             {
                 m_ProjectileObjects.Add(new ProjectileEffectsClass(child.GetComponent<ParticleSystemRenderer>(), child.gameObject));
@@ -78,17 +113,17 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Initialize the projectile with the passed information.
+        /// 渡された情報でプロジェクタイルを初期化します。
         /// </summary>
-        /// <param name="owner">The owner of this projectile.</param>
-        /// <param name="currentTarget">The current target for this projectile.</param>
-        /// <param name="abilityData">The current ability data for this projectile.</param>
-        public void Initialize (GameObject owner, Transform currentTarget, GeneralProjectileAbility abilityData)
+        /// <param name="owner">このプロジェクタイルの所有者。</param>
+        /// <param name="currentTarget">このプロジェクタイルの現在のターゲット。</param>
+        /// <param name="abilityData">このプロジェクタイルのアビリティデータ。</param>
+        public void Initialize(GameObject owner, Transform currentTarget, GeneralProjectileAbility abilityData)
         {
             StartCoroutine(InitializeInternal(owner, currentTarget, abilityData));
         }
 
-        IEnumerator InitializeInternal (GameObject owner, Transform currentTarget, GeneralProjectileAbility abilityData)
+        IEnumerator InitializeInternal(GameObject owner, Transform currentTarget, GeneralProjectileAbility abilityData)
         {
             Owner = owner;
             CurrentTarget = currentTarget;
@@ -100,9 +135,9 @@ namespace EmeraldAI
 
             EmeraldComponent = Owner.GetComponent<EmeraldSystem>();
             CurrentAbilityData = abilityData;
-            m_Collider.enabled = false; //Don't enable colliders until after they have launched
+            m_Collider.enabled = false; // 発射されるまではコライダーを有効化しない
 
-            GetLBDColliders(); //Get a reference to the Owner's LBD component so internal colliders can be ignored.
+            GetLBDColliders(); // Owner の LBD コンポーネントを参照し、内部コライダーを無視対象に設定する。
 
             if (m_SphereCollider != null)
             {
@@ -115,13 +150,13 @@ namespace EmeraldAI
             MinHomingDistMet = false;
             HomingTimer = 0;
 
-            if (CurrentAbilityData.ProjectileSettings.EffectsToDisable.Count > 0) SetEffectsState(true); //Enable the specified effects by comparing the names from the EffectsToDisable list.
-            InitializeProjectile(); //Intialize the projectile's settings.
+            if (CurrentAbilityData.ProjectileSettings.EffectsToDisable.Count > 0) SetEffectsState(true); // EffectsToDisable の名前と一致するエフェクトを有効化
+            InitializeProjectile(); // プロジェクタイルの設定を初期化
 
             yield return new WaitForSeconds(CurrentAbilityData.ProjectileSettings.LaunchProjectileDelay);
 
             StartTime = Time.time;
-            m_Collider.enabled = true; //Enable the collider now this is has launched
+            m_Collider.enabled = true; // 発射後にコライダーを有効化
             if (CurrentAbilityData.ProjectileSettings.TravelSound != null) m_AudioSource.PlayOneShot(CurrentAbilityData.ProjectileSettings.TravelSound);
             CurrentAbilityData.ProjectileSettings.SpawnLaunchProjectileEffect(Owner, transform.position);
             Initialized = true;
@@ -129,7 +164,7 @@ namespace EmeraldAI
 
         void GetLBDColliders()
         {
-            //Get a reference to the Owner's LBD component so internal colliders can be ignored.
+            // Owner の LBD コンポーネントを参照し、内部コライダーを無視対象に設定する。
             LocationBasedDamage LBDComponent = Owner.GetComponent<LocationBasedDamage>();
             if (LBDComponent)
             {
@@ -141,7 +176,7 @@ namespace EmeraldAI
             }
         }
 
-        void InitializeProjectile ()
+        void InitializeProjectile()
         {
             if (CurrentAbilityData.SpreadSettings.Enabled && CurrentAbilityData.SpreadSettings.SpreadType == EmeraldAI.AbilityData.SpreadTypes.HorizontalRadius)
                 transform.position += transform.forward * CurrentAbilityData.SpreadSettings.SpawnDistance;
@@ -164,19 +199,19 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used to move and track the time since the projectile has been spawned.
+        /// プロジェクタイル生成後の経過時間の追跡と移動処理を行います。
         /// </summary>
         void Update()
         {
-            ProjectileTimeout(); //Track the time since the projectile has been active.
-            MoveProjectile(); //Move the projectile towards its current target.
+            ProjectileTimeout(); // アクティブになってからの時間を追跡
+            MoveProjectile();    // 現在のターゲット方向へ移動
         }
 
         /// <summary>
-        /// Track the time since the projectile has been active. Once the time ProjectileTimeoutSeconds 
-        /// has been met, despawn the projectile and spawn an impact effect from its current position.
+        /// アクティブになってからの時間を追跡します。ProjectileTimeoutSeconds を超えたら
+        /// 現在位置でインパクトエフェクトを再生し、プロジェクタイルをデスポーンします。
         /// </summary>
-        void ProjectileTimeout ()
+        void ProjectileTimeout()
         {
             if (!Initialized) return;
 
@@ -190,9 +225,9 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Move the projectile towards its current target, but only if the ability is initialized.
+        /// アビリティが初期化済みのときに、ターゲットへ向かってプロジェクタイルを移動させます。
         /// </summary>
-        void MoveProjectile ()
+        void MoveProjectile()
         {
             if (Initialized)
             {
@@ -229,69 +264,69 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Rotate towards the projectile's Current Target's position.
+        /// 現在のターゲットの位置へ向けて回転させます。
         /// </summary>
-        void RotateTowardsTarget ()
+        void RotateTowardsTarget()
         {
-            //Determine which direction to rotate towards
+            // 回転すべき方向を算出
             Vector3 targetDirection = StartingICombat.DamagePosition() - transform.position;
             //Vector3 targetDirection = CurrentTarget.position - transform.position;
 
-            //The step size is equal to speed times frame time.
+            // ステップサイズ（= 速度 × フレーム時間）
             float singleStep = Time.deltaTime * CurrentAbilityData.HomingSettings.HomingSpeed;
 
-            //Rotate the forward vector towards the target direction by one step
+            // forward ベクトルを、ターゲット方向へ 1 ステップ分だけ回転
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
-            //Calculate a rotation a step closer to the target and applies rotation to this object
+            // 1 ステップ分近づいた回転を適用
             transform.rotation = Quaternion.LookRotation(newDirection);
         }
 
         /// <summary>
-        /// Handles the impact functionality, given the collision object is not this or another projectile.
+        /// 衝突時の処理（自分自身や他のプロジェクタイル以外との衝突に対して処理）。
         /// </summary>
         void OnTriggerEnter(Collider other)
         {
-            if (!this.enabled) return; //Only allow trigger collisions to work if the script is active
+            if (!this.enabled) return; // スクリプトが有効なときのみ衝突判定を許可
             if (((1 << other.gameObject.layer) & CurrentAbilityData.ColliderSettings.CollidableLayers) != 0 && other.gameObject != Owner && !IgnoredColliders.Contains(other)) Impact(other.gameObject);
         }
 
         /// <summary>
-        /// Handles all impact related functionality.
+        /// 衝突関連の全機能を処理します。
         /// </summary>
-        void Impact (GameObject TargetHit)
+        void Impact(GameObject TargetHit)
         {
-            m_Collider.enabled = false; //Disable the ability's collider so unintended collisions don't happen.
-            Initialized = false; //Disable initialization so the projectile stops operating.
-            CurrentAbilityData.ProjectileSettings.SpawnImpactEffect(Owner, transform.position); //Spawns the ability's impact effect and impact sound.
-            Invoke(nameof(ImpactDespawn), CurrentAbilityData.ColliderSettings.CollisionTimeout); //Despawn the projectile according to its CollisionTimeout. This gives the projectile extra time to finish before being despawned.
-            DamageTarget(TargetHit); //Damages the projectile's Target. If a LocationBasedDamageArea is detected, damage it. If not, damage the target's IDamageable component.
+            m_Collider.enabled = false; // 予期しない衝突を防ぐため、コライダーを無効化
+            Initialized = false;        // 初期化フラグを下ろしてプロジェクタイルの動作を停止
+            CurrentAbilityData.ProjectileSettings.SpawnImpactEffect(Owner, transform.position); // インパクトエフェクトとサウンドを再生
+            Invoke(nameof(ImpactDespawn), CurrentAbilityData.ColliderSettings.CollisionTimeout); // CollisionTimeout 後にデスポーン（演出終了猶予）
+            DamageTarget(TargetHit); // ヒット対象にダメージを与える（LBD があれば部位ダメージ、なければ IDamageable へ）
 
             if (CurrentAbilityData.ProjectileSettings.EffectsToDisable.Count > 0)
             {
-                if (!CurrentAbilityData.GeneralProjectileSettings.AttachToTarget) SetEffectsState(false); //Disables the specified effects by comparing the names from the EffectsToDisable list.
-                else if (TargetHit.activeSelf) StartCoroutine(SetEffectsStateDelay(false)); //Disables the specified effects by comparing the names from the EffectsToDisable list (with delay).
+                if (!CurrentAbilityData.GeneralProjectileSettings.AttachToTarget) SetEffectsState(false); // EffectsToDisable の名前と一致するエフェクトを無効化
+                else if (TargetHit.activeSelf) StartCoroutine(SetEffectsStateDelay(false)); // （遅延ありで）エフェクトを無効化
             }
         }
 
         /// <summary>
-        /// Delay the SetEffectsState call.
+        /// SetEffectsState 呼び出しを遅延させます。
         /// </summary>
-        IEnumerator SetEffectsStateDelay (bool State)
+        IEnumerator SetEffectsStateDelay(bool State)
         {
             if (!State) yield return new WaitForSeconds(1);
             SetEffectsState(State);
         }
 
-        void OnDisable ()
+        void OnDisable()
         {
             StopAllCoroutines();
         }
 
         /// <summary>
-        /// Sets the specified effects' state by comparing the names from the EffectsToDisable list.
+        /// EffectsToDisable の名前と一致するエフェクトの有効/無効を切り替えます。
         /// </summary>
-        void SetEffectsState (bool State)
+        void SetEffectsState(bool State)
         {
             for (int i = 0; i < m_ProjectileObjects.Count; i++)
             {
@@ -307,34 +342,34 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Damages the projectile's Target. If a LocationBasedDamageArea is detected, damage it. If not, damage the target's IDamageable component.
+        /// ヒット対象にダメージを与えます。LocationBasedDamageArea があれば部位ダメージ、なければ IDamageable にダメージ。
         /// </summary>
         void DamageTarget(GameObject Target)
         {
             LocationBasedDamageArea m_LocationBasedDamageArea = Target.GetComponent<LocationBasedDamageArea>();
 
-            //Only damage layers that are in the AI's DetectionLayerMask or if the target has a LBD component on it.
+            // AI の DetectionLayerMask に含まれるレイヤー、または対象に LBD がある場合のみダメージ可。
             if (!m_LocationBasedDamageArea && ((1 << Target.layer) & EmeraldComponent.DetectionComponent.DetectionLayerMask) == 0) return;
 
-            //Return if the target is teleporting.
+            // テレポート中の対象は除外。
             if (m_LocationBasedDamageArea != null && m_LocationBasedDamageArea.EmeraldComponent.transform.localScale == Vector3.one * 0.003f || Target.transform.localScale == Vector3.one * 0.003f) return;
 
             var m_ICombat = Target.GetComponentInParent<ICombat>();
 
-            //If knockbacks are enabled, roll for a knowckback
+            // ノックバックが有効なら、確率でノックバックを適用。
             if (CurrentAbilityData.KnockbackSettings.Enabled && CurrentAbilityData.KnockbackSettings.RollForKnockback())
             {
                 Vector3 Direction = transform.forward;
                 if (m_ICombat != null) Owner.gameObject.GetComponent<MonoBehaviour>().StartCoroutine(CurrentAbilityData.KnockbackSettings.KnockbackSequence(Direction, m_ICombat.TargetTransform(), m_ICombat));
             }
 
-            //If stuns are enabled, roll for a stun
+            // スタンが有効なら、確率でスタンを付与。
             if (CurrentAbilityData.StunnedSettings.Enabled && CurrentAbilityData.StunnedSettings.RollForStun())
             {
                 if (m_ICombat != null) m_ICombat.TriggerStun(CurrentAbilityData.StunnedSettings.StunLength);
             }
 
-            //Only cause damage if it's enabled
+            // ダメージが無効化されている場合はここで終了。
             if (!CurrentAbilityData.DamageSettings.Enabled) return;
 
             if (m_LocationBasedDamageArea == null)
@@ -349,7 +384,7 @@ namespace EmeraldAI
                 }
                 else
                 {
-                    Debug.Log(Target.gameObject + " is missing IDamageable Component, apply one");
+                    Debug.Log(Target.gameObject + " には IDamageable コンポーネントがありません。追加してください。");
                 }
             }
             else if (m_LocationBasedDamageArea != null)
@@ -367,7 +402,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Attaches the projectile to the passed collider.
+        /// 指定されたコライダー（Transform）にプロジェクタイルを取り付けます。
         /// </summary>
         void AttachToCollider(Transform Target)
         {
@@ -375,11 +410,11 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Despawns the impact effect after the CollisionTimeout has been met.
+        /// CollisionTimeout 経過後にインパクトエフェクトをデスポーンします。
         /// </summary>
-        void ImpactDespawn ()
+        void ImpactDespawn()
         {
-            this.enabled = false; //Disable the script so it doesn't interfere with other objects that may use the same object through Object Pooling
+            this.enabled = false; // 同一プールオブジェクトの他用途で干渉しないよう、スクリプトを無効化
             EmeraldObjectPool.Despawn(gameObject);
         }
     }

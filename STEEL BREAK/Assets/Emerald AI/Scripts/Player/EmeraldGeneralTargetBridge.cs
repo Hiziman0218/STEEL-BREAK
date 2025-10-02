@@ -10,20 +10,39 @@ namespace EmeraldAI
     [HelpURL("https://black-horizon-studios.gitbook.io/emerald-ai-wiki/getting-started/setting-up-a-player-with-emerald-ai")]
     public class EmeraldGeneralTargetBridge : MonoBehaviour, IDamageable, ICombat
     {
+        [Header("開始時の体力（初期HP）")]
         public int StartingHealth = 50;
+
+        [Header("不死（ダメージを受けても死亡しない）")]
         public bool Immortal = false;
+
+        [Header("ダメージを受けたときのイベント")]
         public UnityEvent OnTakeDamage;
+
+        [Header("死亡時に発火するイベント")]
         public UnityEvent OnDeath;
-        
+
+        [Header("死亡時にデバッグログを出力する")]
         public bool DebugLogDeath = true;
+
+        [Header("設定折りたたみを隠す（エディタ用）")]
         public bool HideSettingsFoldout;
+
+        [Header("ヘルス設定の折りたたみ（エディタ用）")]
         public bool HealthSettingsFoldout = true;
 
         public int StartHealth { get => StartingHealth; set => StartingHealth = value; }
+
+        [field: Header("現在の体力（実行時に更新されます）")]
         [field: SerializeField] public int Health { get; set; }
+
+        [field: Header("アクティブな効果一覧（文字列）")]
         [field: SerializeField] public List<string> ActiveEffects { get; set; }
 
+        [Header("照準位置補正用の参照（TargetPositionModifier）")]
         TargetPositionModifier m_TargetPositionModifier;
+
+        [Header("自身のコライダー参照")]
         Collider m_Collider;
 
         void Start()
@@ -37,17 +56,17 @@ namespace EmeraldAI
         {
             DefaultDamage(DamageAmount, AttackerTransform);
 
-            //Creates damage text on the target's position, if enabled.
+            // 有効な場合、ターゲット位置にコンバットテキスト（与ダメージ）を生成します。
             if (CombatTextSystem.Instance != null) CombatTextSystem.Instance.CreateCombatText(DamageAmount, DamagePosition(), CriticalHit, false, false);
         }
 
-        void OnEnable ()
+        void OnEnable()
         {
             if (Health <= 0) ResetTarget();
         }
 
         /// <summary>
-        /// Used for referencing the damage position for this object when an AI takes damage from external sources.
+        /// 外部ソースからダメージを受けた際の、このオブジェクトのダメージ位置を参照するために使用します。
         /// </summary>
         public Vector3 DamagePosition()
         {
@@ -67,7 +86,7 @@ namespace EmeraldAI
             if (Health <= 0)
             {
                 if (DebugLogDeath)
-                    Debug.Log("The Non-AI Target has died.");
+                    Debug.Log("非AIターゲットは死亡しました。");
 
                 if (m_Collider != null) m_Collider.enabled = false;
                 gameObject.layer = 0;
@@ -77,9 +96,9 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Resets this Non-AI target to its default settings before it was killed. This includes health, layer, and tag.
+        /// この Non-AI ターゲットを、死亡前のデフォルト設定にリセットします（体力、レイヤー、タグなど）。
         /// </summary>
-        public void ResetTarget ()
+        public void ResetTarget()
         {
             Health = StartingHealth;
             if (m_Collider != null) m_Collider.enabled = true;
@@ -91,7 +110,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is attacking.
+        /// このターゲットが攻撃中かどうかの検出に使用します。
         /// </summary>
         public bool IsAttacking()
         {
@@ -99,7 +118,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is blocking.
+        /// このターゲットが防御中かどうかの検出に使用します。
         /// </summary>
         public bool IsBlocking()
         {
@@ -107,7 +126,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Used for detecting when this target is dodging.
+        /// このターゲットが回避中かどうかの検出に使用します。
         /// </summary>
         public bool IsDodging()
         {
@@ -116,7 +135,7 @@ namespace EmeraldAI
 
         public void TriggerStun(float StunLength)
         {
-            //Custom trigger mechanics can go here, but are not required
+            // 任意：ここにカスタムのスタン付与処理を記述できます（必須ではありません）
         }
     }
 }

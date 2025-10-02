@@ -6,36 +6,67 @@ using System.Linq;
 
 namespace EmeraldAI
 {
-    [CreateAssetMenu(fileName = "Arrow Projectile Ability", menuName = "Emerald AI/Ability/Arrow Projectile Ability")]
+    /// <summary>
+    /// 【ArrowProjectileAbility】
+    /// 矢（Arrow）系プロジェクタイルのアビリティ定義。
+    /// ・チャージ演出、生成演出
+    /// ・プロジェクタイル挙動、ノックバック、スタン、ダメージ などの設定を一括管理
+    /// </summary>
+    [CreateAssetMenu(fileName = "矢プロジェクタイル アビリティ", menuName = "Emerald AI/アビリティ/矢プロジェクタイル アビリティ")]
     public class ArrowProjectileAbility : EmeraldAbilityObject
     {
+        [Header("チャージ時の設定（エフェクト等）")]
         public AbilityData.ChargeSettingsData ChargeSettings;
+
+        [Header("生成直前の設定（エフェクト等）")]
         public AbilityData.CreateSettingsData CreateSettings;
+
+        [Header("プロジェクタイル全般の設定（エフェクト/速度/タイムアウト等）")]
         public AbilityData.ProjectileData ProjectileSettings;
+
+        [Header("矢プロジェクタイル固有の設定（速度/付着/その他挙動）")]
         public AbilityData.ArrowProjectileData ArrowProjectileSettings;
+
+        [Header("コライダー設定（半径/レイヤー/衝突タイムアウト等）")]
         public AbilityData.ColliderData ColliderSettings;
+
+        [Header("ノックバック設定（有効/確率/力/時間等）")]
         public AbilityData.KnockbackData KnockbackSettings;
+
+        [Header("スタン付与設定（有効/確率/時間等）")]
         public AbilityData.StunnedData StunnedSettings;
+
+        [Header("ダメージ設定（基礎ダメージ/DoT/クリティカル等）")]
         public AbilityData.DamageData DamageSettings;
 
+        /// <summary>
+        /// アビリティのチャージ処理（チャージエフェクトの再生など）。
+        /// </summary>
         public override void ChargeAbility(GameObject Owner, Transform AttackTransform = null)
         {
             ChargeSettings.SpawnChargeEffect(Owner, AttackTransform);
         }
 
-        public override void InvokeAbility(GameObject Owner, Transform AttackTransform = null) 
+        /// <summary>
+        /// アビリティの実行処理：生成エフェクト再生後、プロジェクタイル生成を行う。
+        /// </summary>
+        public override void InvokeAbility(GameObject Owner, Transform AttackTransform = null)
         {
             CreateSettings.SpawnCreateEffect(Owner, AttackTransform);
             SpawnProjectiles(Owner, AttackTransform);
         }
 
-        void SpawnProjectiles (GameObject Owner, Transform AttackTransform)
+        /// <summary>
+        /// プロジェクタイル（矢）を生成し、ターゲットへ向けて初期化する。
+        /// </summary>
+        void SpawnProjectiles(GameObject Owner, Transform AttackTransform)
         {
             Transform Target = GetTarget(Owner, AbilityData.TargetTypes.CurrentTarget);
 
             EmeraldSystem EmeraldComponent = Owner.GetComponent<EmeraldSystem>();
             if (EmeraldComponent != null)
             {
+                // 回避中または被弾中は発射しない
                 if (EmeraldComponent.AnimationComponent.IsDodging || EmeraldComponent.AnimationComponent.IsGettingHit) return;
             }
 
@@ -48,7 +79,7 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// Assign the ArrowProjectile script on the newly spawned projectile.
+        /// 生成したプロジェクタイルに ArrowProjectile スクリプトを割り当てる。
         /// </summary>
         public ArrowProjectile AssignScript(GameObject SpawnedProjectile)
         {

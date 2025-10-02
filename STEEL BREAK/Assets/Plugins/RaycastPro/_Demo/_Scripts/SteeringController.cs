@@ -2,6 +2,7 @@ using RaycastPro.Detectors;
 
 namespace Plugins.RaycastPro.Demo.Scripts
 {
+    using global::RaycastPro.Detectors2D;
     using UnityEngine;
 
     [RequireComponent(typeof(Rigidbody))]
@@ -11,17 +12,21 @@ namespace Plugins.RaycastPro.Demo.Scripts
         public SteeringDetector detector;
 
         public float accelerationSpeed = 4f;
-        [Header("ï¿½ß‚Ã‚ï¿½ï¿½ï¿½ï¿½ï¿½")]
         public float arriveDistance = 2f;
-        [Header("ï¿½ï¿½ï¿½ñ‘¬“x")]
         public float turnRate = 15;
 
         [SerializeField] private bool movable = true;
         [SerializeField] private bool rotatable = true;
         [SerializeField] private bool fixRotate = true;
 
-        [Header("ï¿½Ú“ï¿½ï¿½ï¿½ï¿½x")]
         [Range(2f, 50)] public float speed = 10;
+
+        // ’âŽ~”»’è
+        public bool isStopped { get; private set; }
+        // Žc‚è‹——£
+        public float remainingDistance { get; private set; }
+
+
 
         private void Start()
         {
@@ -30,6 +35,14 @@ namespace Plugins.RaycastPro.Demo.Scripts
 
         public void Update()
         {
+
+            // Žc‚è‹——£‚ðŒvŽZ
+            remainingDistance = Vector3.Distance(transform.position, detector.destination.position);
+
+            // ’âŽ~”»’è
+            isStopped = remainingDistance <= detector.stoppingDistance;
+
+
             if (movable)
             {
                 var inArriveDistance = Vector3.Distance(transform.position, detector.destination.position) < arriveDistance;
