@@ -9,6 +9,6 @@ public class GunStatusData : ScriptableObject
     public float Speed;      //弾速
     public float Damage;     //与えるダメージ量
     public int MaxAmmo;      //最大弾数
-    public Bullet BulletPrefab;       //弾丸プレハブ
+    public Bullet BulletPrefab; //弾丸プレハブ
     public GameObject MuzzleFlashEffect; //マズルフラッシュエフェクト
 }

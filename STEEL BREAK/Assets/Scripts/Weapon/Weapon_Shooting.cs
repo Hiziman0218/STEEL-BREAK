@@ -5,10 +5,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     [Header("設定")]
     [Tooltip("銃の性能(GunStatusDataを設定)")]
     [SerializeField] private GunStatusData m_statusData;  //銃の性能(インスペクタで設定)
-
     [Tooltip("弾丸が生成される銃口")]
     [SerializeField] private Transform m_muzzleTransform; //発射口
-
     [Tooltip("持つ位置を調整するオフセット値")]
     [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用
 
