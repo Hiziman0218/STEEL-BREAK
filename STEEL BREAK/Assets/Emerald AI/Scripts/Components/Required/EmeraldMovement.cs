@@ -244,6 +244,9 @@ namespace EmeraldAI
         [Header("プレイヤーをタグで取得（内部 個人改造）")]
         Transform m_Player;
 
+        [Header("レイキャストプロのバック歩行の為の位置参照オブジェクト（内部 個人改造）")]
+        Transform m_backupDummy;
+
         [Header("主要コンポーネント EmeraldSystem 参照（内部）")]
         EmeraldSystem EmeraldComponent;
 
@@ -257,7 +260,7 @@ namespace EmeraldAI
         GameObject m_RayCastPro;
 
         [Header("取得したRayCastPro のコントローラー（内部 個人改造）")]
-        SteeringController m_RCController;
+        public SteeringController m_RCController;
 
         [Header("現在計算済みの NavMesh 経路（内部）")]
         NavMeshPath AIPath;
@@ -369,11 +372,17 @@ namespace EmeraldAI
             StationaryIdleSeconds = Random.Range(StationaryIdleSecondsMin, StationaryIdleSecondsMax + 1);
             StartingWanderingType = (int)WanderType;
             StartingDestination = transform.position;
-            //今回はナビメッシュを使わないのでコメント化
-            //地上戦、空中戦どっちもすることになると多分使うので一旦置いておく
-            //SetupNavMeshAgent();
-            //レイキャストプロのセットアップ（個人改造）
-            SetupRayCastPro();
+
+            //レイキャストプロかナビメッシュのセットアップ（個人改造）
+            //タイプがRayCastProでないなら
+            if (WanderType != WanderTypes.RayCastPro)
+            {
+                SetupNavMeshAgent();
+            }
+            else
+            {
+                SetupRayCastPro();
+            }
 
             if (AlignmentQuality == AlignmentQualities.Low)
             {
@@ -1128,7 +1137,7 @@ namespace EmeraldAI
             else if (WanderType == WanderTypes.RayCastPro && !ReachedDestination && m_RCController.remainingDistance <= StoppingDistance && MovementInitialized && !AnimationComponent.IsSwitchingWeapons)
             {
                 //とりあえず他のタイプがナビメッシュ依存なので避難させる
-                //特に徘徊する必要性がないのでreturn処理だけ
+                //今は特に徘徊する必要性がないのでreturn処理だけ
                 //今後徘徊処理を使うのならナビメッシュとレイキャストプロで分ける必要がありそう（検討ポイント）
                 return;
             }
@@ -1285,27 +1294,35 @@ namespace EmeraldAI
             //RayCastPro用（個人改造）
             if (MovementType == MovementTypes.RayCastPro)
             {
-                if (EmeraldComponent.CombatTarget == null) return;
+                // ターゲットがいないなら停止
+                if (EmeraldComponent.CombatTarget == null)
+                {
+                    m_RCController.detector.destination = transform;
+                    return;
+                }
 
+                //ターゲットとの距離チェック
                 float dist = Vector3.Distance(transform.position, EmeraldComponent.CombatTarget.position);
 
-                // 近すぎる場合はバック歩行
+                //近ければバック処理
                 if (dist < EmeraldComponent.CombatComponent.TooCloseDistance)
                 {
-                    // RayCastPro 用のバック処理を書く
                     BackupState();
+                    return;
                 }
-                // 攻撃距離外なら前進
                 else if (dist > EmeraldComponent.CombatComponent.AttackDistance)
                 {
-                    // RayCastPro 用の前進処理を書く（例：transform.Translate など）
+                    // 遠ければ追跡
+                    m_RCController.detector.destination = EmeraldComponent.CombatTarget;
                 }
                 else
                 {
-                    // 攻撃可能距離内なら停止
+                    // 攻撃距離内なら停止
+                    m_RCController.detector.destination = transform;
                 }
 
                 return; // NavMeshAgent 用の処理はスキップ
+
             }
 
 
@@ -1405,8 +1422,34 @@ namespace EmeraldAI
             BackingUpTimer += Time.deltaTime;
 
             //Generates a backup destination that's in the opposite direction of the AI's current target.
-            if (EmeraldComponent.m_NavMeshAgent.hasPath)
-                EmeraldComponent.m_NavMeshAgent.destination = GetBackupDestination();
+            if (MovementType == MovementTypes.RayCastPro)
+            {
+                // ターゲットがいなければ停止
+                if (EmeraldComponent.CombatTarget == null)
+                {
+                    m_RCController.detector.destination = transform;
+                    return;
+                }
+
+                // 後退先の座標を計算（NavMeshAgent 用の GetBackupDestination を流用）
+                Vector3 backupPos = GetBackupDestination();
+
+                // 一時的なダミーTransformを使う
+                if (m_backupDummy == null)
+                {
+                    GameObject go = new GameObject("BackupDummy");
+                    m_backupDummy = go.transform;
+                }
+                m_backupDummy.position = backupPos;
+
+                m_RCController.detector.destination = m_backupDummy;
+            }
+            else
+            {
+
+                if (EmeraldComponent.m_NavMeshAgent.hasPath)
+                    EmeraldComponent.m_NavMeshAgent.destination = GetBackupDestination();
+            }
         }
 
         IEnumerator BackupDelay(float DelayTime)
@@ -1451,7 +1494,24 @@ namespace EmeraldAI
                             {
                                 OnBackup?.Invoke(); //Invoke the backup callback
                                 EmeraldComponent.AIAnimator.SetBool("Walk Backwards", true);
-                                EmeraldComponent.m_NavMeshAgent.destination = GetBackupDestination(); //Generates a backup destination that's in the opposite direction of the AI's current target.
+                                if (MovementType == MovementTypes.RayCastPro)
+                                {
+                                    Vector3 backupPos = GetBackupDestination();
+
+                                    if (m_backupDummy == null)
+                                    {
+                                        GameObject go = new GameObject("BackupDummy");
+                                        go.hideFlags = HideFlags.HideInHierarchy;
+                                        m_backupDummy = go.transform;
+                                    }
+
+                                    m_backupDummy.position = backupPos;
+                                    m_RCController.detector.destination = m_backupDummy;
+                                }
+                                else
+                                {
+                                    EmeraldComponent.m_NavMeshAgent.destination = GetBackupDestination();
+                                }
 
                             }
                         }

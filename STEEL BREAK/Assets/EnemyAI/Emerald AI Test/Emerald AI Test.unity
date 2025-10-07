@@ -3255,6 +3255,7 @@ MonoBehaviour:
   MovementFoldout: 0
   AlignmentFoldout: 0
   TurnFoldout: 0
+  m_RCController: {fileID: 0}
 --- !u!114 &389257078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3824,6 +3825,7 @@ MonoBehaviour:
   MovementFoldout: 0
   AlignmentFoldout: 0
   TurnFoldout: 0
+  m_RCController: {fileID: 0}
 --- !u!114 &393728185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5464,6 +5466,7 @@ MonoBehaviour:
   MovementFoldout: 0
   AlignmentFoldout: 0
   TurnFoldout: 0
+  m_RCController: {fileID: 0}
 --- !u!114 &495759609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6020,63 +6023,6 @@ Transform:
   - {fileID: 1000889672}
   m_Father: {fileID: 662155768}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &509505870
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1784983378}
-    m_Modifications:
-    - target: {fileID: 2013358881194347142, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_Name
-      value: "\u30C6\u30B9\u30C8\u5263"
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.07
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.000031488482
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.0002271838
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.0000015659766
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
 --- !u!1 &514583467
 GameObject:
   m_ObjectHideFlags: 0
@@ -6449,7 +6395,7 @@ Animator:
   m_GameObject: {fileID: 565582531}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d3b9a1746d4e5c148bc18550bffca58d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4a7752f91b85736489977554d0846f9d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 13b312c01fc4b9741a485bb6802236dd, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -6606,13 +6552,14 @@ MonoBehaviour:
   ReturningToStartInProgress: 0
   AIAgentActive: 0
   HideSettingsFoldout: 0
-  WanderFoldout: 0
+  WanderFoldout: 1
   WaypointsFoldout: 1
   WaypointsListFoldout: 0
   BackupFoldout: 0
-  MovementFoldout: 0
+  MovementFoldout: 1
   AlignmentFoldout: 0
   TurnFoldout: 0
+  m_RCController: {fileID: 0}
 --- !u!114 &565582539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6675,6 +6622,38 @@ MonoBehaviour:
     ActionLengthTimer: 0
     Timer: 0
     TimesUsed: 0
+  - emeraldAction: {fileID: 11400000, guid: e7b374ca0b9a9644aa99a72b98374e95, type: 2}
+    Enabled: 1
+    IsActive: 0
+    CooldownLengthTimer: 0
+    ActionLength: 0
+    ActionLengthTimer: 0
+    Timer: 0
+    TimesUsed: 0
+  - emeraldAction: {fileID: 11400000, guid: 1180a21f374979740ad44d4bbdee43fd, type: 2}
+    Enabled: 1
+    IsActive: 0
+    CooldownLengthTimer: 0
+    ActionLength: 0
+    ActionLengthTimer: 0
+    Timer: 0
+    TimesUsed: 0
+  - emeraldAction: {fileID: 11400000, guid: 629b97adf4dbf9147af6cf85b511313d, type: 2}
+    Enabled: 1
+    IsActive: 0
+    CooldownLengthTimer: 0
+    ActionLength: 0
+    ActionLengthTimer: 0
+    Timer: 0
+    TimesUsed: 0
+  - emeraldAction: {fileID: 11400000, guid: ac2c5f21871598b44a694ce94d6f6dac, type: 2}
+    Enabled: 1
+    IsActive: 0
+    CooldownLengthTimer: 0
+    ActionLength: 0
+    ActionLengthTimer: 0
+    Timer: 0
+    TimesUsed: 0
   Type2CombatActions: []
   AttackPosition: {x: 0, y: 0, z: 0}
   MitigationAmount: 50
@@ -6689,25 +6668,11 @@ MonoBehaviour:
     AttackListIndex: 0
     AttackPickType: 2
     AttackDataList:
-    - AbilityObject: {fileID: 11400000, guid: 933ead3544de5c04699e885c7ee2fa79, type: 2}
-      AttackAnimation: 0
-      AttackOdds: 0
-      AttackDistance: 3
-      TooCloseDistance: 0.5
-      CooldownIgnored: 0
-      CooldownTimeStamp: 0
-    - AbilityObject: {fileID: 11400000, guid: 0478eca4853a3a34395c682169278ca5, type: 2}
-      AttackAnimation: 0
-      AttackOdds: 0
-      AttackDistance: 3
-      TooCloseDistance: 0.5
-      CooldownIgnored: 0
-      CooldownTimeStamp: 0
     - AbilityObject: {fileID: 11400000, guid: 220340a4f9ffae645b3b50675811006c, type: 2}
       AttackAnimation: 0
       AttackOdds: 0
-      AttackDistance: 3
-      TooCloseDistance: 0.5
+      AttackDistance: 20
+      TooCloseDistance: 10
       CooldownIgnored: 0
       CooldownTimeStamp: 0
   Type2Attacks:
@@ -6717,7 +6682,8 @@ MonoBehaviour:
   SwitchWeaponTypesCooldown: 10
   SwitchWeaponTypesDistance: 8
   CurrentAttackTransform: {fileID: 0}
-  WeaponType1AttackTransforms: []
+  WeaponType1AttackTransforms:
+  - {fileID: 1596097118}
   WeaponType2AttackTransforms: []
   SwitchWeaponType: 1
   SwitchWeaponTimeMin: 10
@@ -6859,7 +6825,7 @@ MonoBehaviour:
   IsMoving: 0
   IsDead: 0
   m_IdleAnimaionIndexOverride: 0
-  m_AnimationProfile: {fileID: 11400000, guid: 2508436eb10f47c49a3ddd30167beca2, type: 2}
+  m_AnimationProfile: {fileID: 11400000, guid: a757422b966e3064783f8b6f77e05583, type: 2}
   AnimatorControllerGenerated: 0
   AnimationListsChanged: 0
   MissingRuntimeController: 0
@@ -6871,16 +6837,8 @@ MonoBehaviour:
   BusyBetweenStates: 0
   CurrentAnimationState: 2
   Type1AttackEnumAnimations:
-  - 2Hand-Sword-Attack1
-  - 2Hand-Sword-Attack2
-  - 2Hand-Sword-Attack3
-  - 2Hand-Sword-Attack5
-  - 2Hand-Sword-Attack7
-  - 2Hand-Sword-Attack1
-  - 2Hand-Sword-Attack2
-  - 2Hand-Sword-Attack3
-  - 2Hand-Sword-Attack5
-  - 2Hand-Sword-Attack7
+  - EllenGunShoot
+  - Unarmed-Attack-L3
   Type2AttackEnumAnimations: []
   Type1AttackBlankOptions:
   - No Type 1 Attack Animations
@@ -12900,6 +12858,11 @@ Transform:
   - {fileID: 147309864}
   m_Father: {fileID: 1337767122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1082304422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+  m_PrefabInstance: {fileID: 1743452352}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1084567574
 GameObject:
   m_ObjectHideFlags: 0
@@ -13697,11 +13660,6 @@ Transform:
   - {fileID: 1605813061}
   m_Father: {fileID: 269162098}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1213268342 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3348330188125078184, guid: f1990b9c7d902d14eb38ab0c4e698db9, type: 3}
-  m_PrefabInstance: {fileID: 509505870}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1215765514
 GameObject:
   m_ObjectHideFlags: 0
@@ -15140,13 +15098,14 @@ MonoBehaviour:
   ReturningToStartInProgress: 0
   AIAgentActive: 0
   HideSettingsFoldout: 0
-  WanderFoldout: 0
+  WanderFoldout: 1
   WaypointsFoldout: 1
   WaypointsListFoldout: 0
   BackupFoldout: 0
-  MovementFoldout: 0
+  MovementFoldout: 1
   AlignmentFoldout: 0
   TurnFoldout: 0
+  m_RCController: {fileID: 0}
 --- !u!114 &1401800394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15989,6 +15948,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1632993161}
+  - {fileID: 1082304422}
   m_Father: {fileID: 1784983378}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1499778389
@@ -16668,6 +16628,11 @@ Transform:
   - {fileID: 1366364719}
   m_Father: {fileID: 1211011336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1596097118 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7073140621963695276, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+  m_PrefabInstance: {fileID: 1743452352}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1599511678
 GameObject:
   m_ObjectHideFlags: 0
@@ -17829,6 +17794,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2032745625}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1743452352
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1497116140}
+    m_Modifications:
+    - target: {fileID: 6637677821210090531, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_Name
+      value: "\u30C6\u30B9\u30C8\u9283"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.049
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.088
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.012
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.000034917928
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.016667133
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.00000058206257
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.9998611
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 1.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682635642348131950, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 179.996
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fec66e26f2fa0b34997d67f5fd94b73a, type: 3}
 --- !u!1 &1744680221
 GameObject:
   m_ObjectHideFlags: 0
@@ -17990,7 +18012,6 @@ Transform:
   - {fileID: 2111988423}
   - {fileID: 516227862}
   - {fileID: 1497116140}
-  - {fileID: 1213268342}
   m_Father: {fileID: 840831924}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1802288716 stripped

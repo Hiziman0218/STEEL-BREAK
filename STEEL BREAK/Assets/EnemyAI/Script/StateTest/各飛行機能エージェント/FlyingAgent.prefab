@@ -73,7 +73,7 @@ MonoBehaviour:
   groundRay: {fileID: 0}
   colliderSize: 1
   radius: 20
-  stoppingDistance: 0
+  stoppingDistance: 1.5
   local: 1
   angleX: 360
   angleY: 360
