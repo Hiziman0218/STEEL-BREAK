@@ -8,13 +8,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     [Tooltip("弾丸が生成される銃口")]
     [SerializeField] private Transform m_muzzleTransform; //発射口
     [Tooltip("持つ位置を調整するオフセット値")]
-    [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用
+    [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用オフセット
 
     private float m_elapsedTime; //経過時間計測用
 
-    private bool m_isFireInternal = false; //発射可能フラグ(内部管理)
-    private bool m_isFireExternal = true;  //発射可能フラグ(外部管理)
+    private bool m_isFireInternal = false;    //発射可能フラグ(内部管理)
+    private bool m_isFireExternal = false;    //発射可能フラグ(外部管理)
+    private bool m_isExternalControl = false; //発射可否を外部管理をするか
     private bool m_isReloading;  //リロード中フラグ
+    private bool m_isUsing;      //使用中フラグ
     private bool m_isIKFinished; //IKが完了しているかフラグ
 
     private string m_myTeam;     //武器の所有者が所属するチーム
@@ -67,6 +69,12 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         }
     }
 
+    private void LateUpdate()
+    {
+        //使用中フラグ更新
+        m_isUsing = false;
+    }
+
     /// <summary>
     /// 武器を手に持ち、装備させる
     /// </summary>
@@ -91,9 +99,25 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// </summary>
     public void Use()
     {
-        // 発射可否チェック
-        if (!m_isFireInternal || !m_isFireExternal || !m_isIKFinished)
+        //使用中フラグ更新
+        m_isUsing = true;
+
+        //内部管理の発射可否チェック
+        if (!m_isFireInternal || !m_isIKFinished)
+        {
+            if (!m_isFireInternal) Debug.Log("内部処理的に発射できない");
             return;
+        }
+
+        //外部管理をしているなら、外部管理の発射可否チェック
+        if(m_isExternalControl)
+        {
+            if (!m_isFireExternal)
+            {
+                Debug.Log("外部処理的に発射できない");
+                return;
+            }
+        }
 
         Vector3 shootDir;
 
@@ -155,9 +179,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         Rigidbody rb = Dummy.GetComponent<Rigidbody>();
         rb.linearVelocity = shootDir * m_status.GetSpeed();
 
-        //弾に力を加えて移動させる(AddForse)
-        //Dummy.GetComponent<Rigidbody>().AddForce(Dummy.transform.forward * 1000.0f);
-
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);
 
@@ -208,6 +229,23 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
+    /// 発射可否を外部管理する
+    /// </summary>
+    public void ExternalControl()
+    {
+        m_isExternalControl = true;
+    }
+
+    /// <summary>
+    /// 発射できるかを設定(外部管理)
+    /// </summary>
+    /// <param name="isFire"></param>
+    public void SetIsFire(bool isFire)
+    {
+        m_isFireExternal = isFire;
+    }
+
+    /// <summary>
     /// リロード処理
     /// </summary>
     public void Reload()
@@ -230,6 +268,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
+    /// 使用されているか
+    /// </summary>
+    /// <returns></returns>
+    public bool GetIsUsing()
+    {
+        return m_isUsing;
+    }
+
+    /// <summary>
     /// IKの設定が終了したか設定(終了している場合のみ弾を発射できる)
     /// </summary>
     /// <param name="IKFinished"></param>
@@ -245,15 +292,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void SetTeam(string team)
     {
         m_myTeam = team;
-    }
-
-    /// <summary>
-    /// 発射できるかを設定(外部管理)
-    /// </summary>
-    /// <param name="isFire"></param>
-    public void SetIsFire(bool isFire)
-    {
-        m_isFireExternal = isFire;
     }
 
     /// <summary>
