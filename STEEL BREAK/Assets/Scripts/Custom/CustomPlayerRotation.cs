@@ -1,20 +1,21 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CustomPlayerRotation : MonoBehaviour
 {
-    [Header("‰ñ“]İ’è")]
+    [Header("å›è»¢è¨­å®š")]
     public float rotationSpeed = 5f;
 
-    [Header("ƒY[ƒ€İ’è")]
+    [Header("ã‚ºãƒ¼ãƒ è¨­å®š")]
     public Camera playerCamera;
     public float zoomSpeed = 2f;
     public float minZoomDistance = 2f;
     public float maxZoomDistance = 10f;
 
-    [Header("ƒJƒƒ‰ˆÚ“®İ’è")]
-    public float moveSpeed = 5f; // ƒJƒƒ‰‚ªƒ^[ƒQƒbƒg‚ÉŠñ‚é‘¬‚³
+    [Header("ã‚«ãƒ¡ãƒ©ç§»å‹•è¨­å®š")]
+    public float moveSpeed = 5f;
 
-    // Še•”ˆÊ‚ÌƒJƒƒ‰ƒ|ƒCƒ“ƒgiEmptyƒIƒuƒWƒFƒNƒg‚ğƒvƒŒƒCƒ„[•t‹ß‚É”z’u‚µ‚Äw’èj
+    // ã‚«ãƒ¡ãƒ©ãƒã‚¤ãƒ³ãƒˆç¾¤ï¼ˆä¸­ã« CameraPoint å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚ã‚Šï¼‰
+    public Transform defaultPoint;
     public Transform headPoint;
     public Transform bodyPoint;
     public Transform lArmPoint;
@@ -23,60 +24,101 @@ public class CustomPlayerRotation : MonoBehaviour
     public Transform boosterPoint;
 
     private float currentZoomDistance;
-    private Transform currentTargetPoint = null; // Œ»İ’‹’†‚Ìƒ|ƒCƒ“ƒg
+    private Transform currentTargetPoint = null;   // ã‚«ãƒ¡ãƒ©ãŒç§»å‹•ã™ã‚‹ä½ç½®
+    private Transform currentRotateCenter = null;  // å›è»¢ãƒ»ã‚ºãƒ¼ãƒ ã®ä¸­å¿ƒï¼ˆCameraPointï¼‰
+    private bool isDefaultView = true;             // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚«ãƒ¡ãƒ©è¦–ç‚¹ã‹ï¼Ÿ
 
     void Start()
     {
         if (playerCamera == null)
             playerCamera = Camera.main;
 
+        // åˆæœŸä½ç½®è¨­å®š
+        if (defaultPoint != null)
+        {
+            playerCamera.transform.position = defaultPoint.position;
+            playerCamera.transform.rotation = defaultPoint.rotation;
+            currentTargetPoint = defaultPoint;
+        }
+
         currentZoomDistance = Vector3.Distance(transform.position, playerCamera.transform.position);
     }
 
     void Update()
     {
+        bool isRotatingOrZooming = Input.GetKey(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") != 0f;
+
+        // å›è»¢å‡¦ç†
         if (Input.GetKey(KeyCode.E))
         {
-            HandleRotation();
+            if (isDefaultView)
+                HandleModelRotation(); // ãƒ¢ãƒ‡ãƒ«å…¨ä½“ã‚’å›è»¢
+            else
+                HandleCameraRotationY(); // ã‚«ãƒ¡ãƒ©ã‚’Yè»¸ã§å›è»¢
+
             HandleZoom();
         }
 
-        // ƒJƒƒ‰ƒ|ƒCƒ“ƒg‚ÖˆÚ“®
-        if (currentTargetPoint != null)
+        // Qã‚­ãƒ¼ã§ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚«ãƒ¡ãƒ©ã«æˆ»ã™
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ResetToDefaultView();
+        }
+
+        // å›è»¢ãƒ»ã‚ºãƒ¼ãƒ ä¸­ã¯è£œé–“ã‚’æ­¢ã‚ã‚‹
+        if (currentTargetPoint != null && !isRotatingOrZooming)
         {
             MoveCameraToTarget();
         }
     }
 
-    void HandleRotation()
+    // ===== ãƒ¢ãƒ‡ãƒ«å›è»¢ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ™‚ï¼‰ =====
+    void HandleModelRotation()
     {
         float mouseX = Input.GetAxis("Mouse X");
         transform.Rotate(Vector3.up * -mouseX * rotationSpeed);
     }
 
+    // ===== ã‚«ãƒ¡ãƒ©Yè»¸å›è»¢ =====
+    void HandleCameraRotationY()
+    {
+        if (currentRotateCenter == null) return;
+
+        float mouseX = Input.GetAxis("Mouse X");
+
+        // CameraPointã®Yè»¸ã‚’ä¸­å¿ƒã«å›è»¢
+        playerCamera.transform.RotateAround(
+            currentRotateCenter.position,
+            Vector3.up,
+            mouseX * rotationSpeed
+        );
+    }
+
+    // ===== ã‚ºãƒ¼ãƒ å‡¦ç† =====
     void HandleZoom()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0f)
-        {
-            currentZoomDistance -= scroll * zoomSpeed;
-            currentZoomDistance = Mathf.Clamp(currentZoomDistance, minZoomDistance, maxZoomDistance);
+        if (scroll == 0f) return;
 
-            Vector3 direction = (playerCamera.transform.position - transform.position).normalized;
-            playerCamera.transform.position = transform.position + direction * currentZoomDistance;
-        }
+        currentZoomDistance -= scroll * zoomSpeed;
+        currentZoomDistance = Mathf.Clamp(currentZoomDistance, minZoomDistance, maxZoomDistance);
+
+        Vector3 center = isDefaultView ? transform.position :
+                          (currentRotateCenter != null ? currentRotateCenter.position : transform.position);
+
+        Vector3 direction = (playerCamera.transform.position - center).normalized;
+        playerCamera.transform.position = center + direction * currentZoomDistance;
     }
 
+    // ===== ã‚«ãƒ¡ãƒ©ä½ç½®è£œé–“ =====
     void MoveCameraToTarget()
     {
-        // ƒJƒƒ‰ˆÊ’u‚ğ•âŠÔiƒXƒ€[ƒY‚ÉˆÚ“®j
         playerCamera.transform.position = Vector3.Lerp(
             playerCamera.transform.position,
             currentTargetPoint.position,
             Time.deltaTime * moveSpeed
         );
 
-        // ƒJƒƒ‰‚ªƒ^[ƒQƒbƒg‚ğŒü‚­
         playerCamera.transform.rotation = Quaternion.Lerp(
             playerCamera.transform.rotation,
             currentTargetPoint.rotation,
@@ -84,7 +126,17 @@ public class CustomPlayerRotation : MonoBehaviour
         );
     }
 
-    // ==== ˆÈ‰º‚ÍUIƒ{ƒ^ƒ“‚©‚çŒÄ‚Ño‚·ƒƒ\ƒbƒh ====
+    // ===== ã‚«ãƒ¡ãƒ©ã‚’åˆæœŸçŠ¶æ…‹ã«æˆ»ã™ =====
+    void ResetToDefaultView()
+    {
+        if (defaultPoint == null) return;
+
+        currentTargetPoint = defaultPoint;
+        currentRotateCenter = null;
+        isDefaultView = true;
+    }
+
+    // ===== UIãƒœã‚¿ãƒ³ç”¨ =====
     public void FocusHead() => SetCameraTarget(headPoint);
     public void FocusBody() => SetCameraTarget(bodyPoint);
     public void FocusLArm() => SetCameraTarget(lArmPoint);
@@ -92,9 +144,15 @@ public class CustomPlayerRotation : MonoBehaviour
     public void FocusLeg() => SetCameraTarget(legPoint);
     public void FocusBooster() => SetCameraTarget(boosterPoint);
 
-    void SetCameraTarget(Transform target)
+    void SetCameraTarget(Transform point)
     {
-        if (target != null)
-            currentTargetPoint = target;
+        if (point == null) return;
+
+        currentTargetPoint = point;
+        isDefaultView = false;
+
+        // å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ã€ŒCameraPointã€ãŒã‚ã‚Œã°ãã‚Œã‚’ä¸­å¿ƒç‚¹ã«ã™ã‚‹
+        Transform childCenter = point.Find("CameraPoint");
+        currentRotateCenter = childCenter != null ? childCenter : point;
     }
 }
