@@ -82,6 +82,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// <param name="left">左手か(右手か左手の二択なのでフラグ管理)</param>
     public void AttachToHand(Transform hand, bool left)
     {
+        /*
         //GripPointを検索し、見つからなければ以降の処理を行わない
         Transform grip = transform.Find("GripPoint");
         if (grip == null) return;
@@ -92,6 +93,37 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         offsetPos.x *= left ? -1f : 1f;
         transform.localPosition = offsetPos;
         transform.localRotation = Quaternion.Inverse(grip.localRotation);
+        */
+
+        //GripPointを検索
+        Transform grip = transform.Find("GripPoint");
+        if (grip == null)
+        {
+            Debug.LogWarning($"{name} に GripPoint が見つかりません。");
+            return;
+        }
+
+        //手のTransformを親に設定
+        //SetParentの第2引数falseにより、ワールド座標を維持せずローカル座標を手基準に再計算
+        transform.SetParent(hand, false);
+
+        //GripPointのローカル回転を打ち消す(★重要★)
+        //GripPointのローカル回転を逆にかけることで、GripPointの向きを手の向きと一致
+        transform.localRotation = Quaternion.Inverse(grip.localRotation);
+
+        //GripPointのローカル位置を打ち消す
+        //GripPointがPivotからどれだけ離れているか(ローカル位置)を反転して適用することで、
+        //GripPointの位置が手の原点(hand.position)と一致するよう補正
+        transform.localPosition = -grip.localPosition;
+
+        //左右のオフセットを適用
+        //左右の手で対称にしたい場合、x軸方向を反転
+        Vector3 offsetPos = m_attachOffsetPos;
+        offsetPos.x *= left ? -1f : 1f;
+
+        //最終的に補正を加える
+        //上記の打ち消し＋回転補正を行ったあとで微調整値を加算
+        transform.localPosition += offsetPos;
     }
 
     /// <summary>

@@ -66,7 +66,7 @@ public class PlayerBase : CharaBase
                 m_righthandWeapon = weapon;
                 weapon.AttachToHand(m_rightHandTransform, false);
                 if(m_status != null) { 
-                m_righthandWeapon.SetTeam(m_status.GetTeam());
+                    m_righthandWeapon.SetTeam(m_status.GetTeam());
                 }
                 if(IK != null)
                 {
@@ -77,7 +77,7 @@ public class PlayerBase : CharaBase
                 m_lefthandWeapon = weapon;
                 weapon.AttachToHand(m_leftHandTransform, true);
                 if(m_status != null) { 
-                m_lefthandWeapon.SetTeam(m_status.GetTeam());
+                    m_lefthandWeapon.SetTeam(m_status.GetTeam());
                 }
                 if(IK != null)
                 {

@@ -3957,7 +3957,7 @@ Transform:
   m_GameObject: {fileID: 6225482779715760953}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 1.267, y: -0.189, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3978,17 +3978,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: "\u30B7\u30E7\u30C3\u30C8\u30AC\u30F3"
-  m_bulletPrefab: {fileID: 0}
-  m_bulletPrefab_: {fileID: -7883066180421967020, guid: 970a525a80976e64cb524b02f837953a, type: 3}
-  m_muzzleTransform: {fileID: 8766916547092660701}
-  m_muzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}
-  m_rate: 0.8
-  m_maxAmmo: 20
-  m_reloadTime: 2
   m_statusData: {fileID: 11400000, guid: 644c086b6f3424849898b1b367d2429a, type: 2}
-  m_attachOffsetPos: {x: 0, y: 0, z: 0}
-  m_ammo: 0
+  m_muzzleTransform: {fileID: 8766916547092660701}
+  m_attachOffsetPos: {x: 0.065, y: 0, z: 0.076}
 --- !u!1 &6427270961120857104
 GameObject:
   m_ObjectHideFlags: 0

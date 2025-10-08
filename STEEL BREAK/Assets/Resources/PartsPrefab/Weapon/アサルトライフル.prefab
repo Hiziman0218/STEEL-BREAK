@@ -88,7 +88,7 @@ Transform:
   m_GameObject: {fileID: 8649659716965726947}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.76648, y: 1.381167, z: 0.004387961}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -111,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: 227357dc7da03a24781541844dbeac24, type: 2}
   m_muzzleTransform: {fileID: 4589789557783379333}
-  m_attachOffsetPos: {x: 0.05, y: 0.006, z: 0.062}
+  m_attachOffsetPos: {x: 0.06, y: -0.03, z: 0.05}
 --- !u!1001 &4127177693331508248
 PrefabInstance:
   m_ObjectHideFlags: 0
