@@ -37,7 +37,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         m_elapsedTime = m_status.GetRate();
         m_isFireInternal = true;
 
-        // プレイヤーにアタッチされたLockOnを取得
+        //最上位の親オブジェクトのプレイヤーにアタッチされたLockOnを取得
         lockOn = transform.root.GetComponent<LockOn>();
     }
 
@@ -105,7 +105,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //内部管理の発射可否チェック
         if (!m_isFireInternal || !m_isIKFinished)
         {
-            if (!m_isFireInternal) Debug.Log("内部処理的に発射できない");
+            //if (!m_isFireInternal) Debug.Log("内部処理的に発射できない");
             return;
         }
 
@@ -114,7 +114,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             if (!m_isFireExternal)
             {
-                Debug.Log("外部処理的に発射できない");
+                //Debug.Log("外部処理的に発射できない");
                 return;
             }
         }
