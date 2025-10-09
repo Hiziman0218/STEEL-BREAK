@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float initialAscendSpeed = 20f;       //単押しで瞬間的に与える初速
     [SerializeField] private float ascendBrake = 10f;              //ホバー中の垂直慣性ブレーキ
     [SerializeField] private float shortAscendThreshold = 0.15f;   //単押しと長押しのしきい値
-    [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度（短押し含む）
+    [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度(短押し含む)
 
     [SerializeField] private Camera cameraController;    //Inspector でセット
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Enum;
+using UnityEngine;
 
 public class Weapon_Shooting : MonoBehaviour, IWeapon
 {
@@ -8,7 +9,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     [Tooltip("弾丸が生成される銃口")]
     [SerializeField] private Transform m_muzzleTransform; //発射口
     [Tooltip("持つ位置を調整するオフセット値")]
-    [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用オフセット
+    [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用オフセット(不要？現在は全ての武器が0, 0, 0)
 
     private float m_elapsedTime; //経過時間計測用
 
@@ -79,21 +80,11 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// 武器を手に持ち、装備させる
     /// </summary>
     /// <param name="hand">手のトランスフォーム</param>
-    /// <param name="left">左手か(右手か左手の二択なのでフラグ管理)</param>
-    public void AttachToHand(Transform hand, bool left)
+    /// <param name="heldHand">どちらの手に持つか</param>
+    public void AttachToHand(Transform hand, HandSide heldHand)
     {
-        /*
-        //GripPointを検索し、見つからなければ以降の処理を行わない
-        Transform grip = transform.Find("GripPoint");
-        if (grip == null) return;
-
-        //各種設定
-        transform.SetParent(hand, false);
-        Vector3 offsetPos = m_attachOffsetPos;
-        offsetPos.x *= left ? -1f : 1f;
-        transform.localPosition = offsetPos;
-        transform.localRotation = Quaternion.Inverse(grip.localRotation);
-        */
+        //持たせる手が左手か判定
+        bool isLeft = (heldHand == HandSide.Left);
 
         //GripPointを検索
         Transform grip = transform.Find("GripPoint");
@@ -119,11 +110,29 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //左右のオフセットを適用
         //左右の手で対称にしたい場合、x軸方向を反転
         Vector3 offsetPos = m_attachOffsetPos;
-        offsetPos.x *= left ? -1f : 1f;
+        offsetPos.x *= isLeft ? -1f : 1f;
 
         //最終的に補正を加える
         //上記の打ち消し＋回転補正を行ったあとで微調整値を加算
         transform.localPosition += offsetPos;
+
+        //反転機能を使う銃モデルなら
+        if (m_status.GetUseMirror())
+        {
+            //反転条件が一致していればモデルのスケールと座標のxを反転
+            if (m_status.GetMirrorWhenHeld() == heldHand)
+            {
+                // モデル反転
+                Vector3 scale = transform.localScale;
+                scale.x *= -1f;
+                transform.localScale = scale;
+
+                // 位置補正
+                Vector3 pos = transform.localPosition;
+                pos.x *= -1f;
+                transform.localPosition = pos;
+            }
+        }
     }
 
     /// <summary>
@@ -203,13 +212,22 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             Dummy.SetTarget(lockOn.CurrentTarget);
         }
-        //マズルフラッシュのエフェクトを有効化
-        GameObject MuzzleFlash = Instantiate(m_status.GetMuzzleFlashEffect(), m_muzzleTransform.position, m_muzzleTransform.rotation);
-        Destroy(MuzzleFlash, 0.1f);
 
         //弾の初速を velocity で設定
         Rigidbody rb = Dummy.GetComponent<Rigidbody>();
         rb.linearVelocity = shootDir * m_status.GetSpeed();
+
+        //マズルフラッシュのエフェクトを有効化
+        GameObject MuzzleFlash = Instantiate(m_status.GetMuzzleFlashEffect(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+        Destroy(MuzzleFlash, 0.1f);
+
+        //発射音を再生
+        AudioClip se = m_status.GetFireSE();
+        if (se != null)
+        {
+            // 銃口位置でSEを再生
+            AudioSource.PlayClipAtPoint(se, m_muzzleTransform.position);
+        }
 
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);

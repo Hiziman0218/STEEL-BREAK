@@ -16,7 +16,7 @@ public class IK_Control : MonoBehaviour
         public float Counter = 0f;          //IKのウェイト調整用カウンター
         public bool isIKFinished = false;   //IKの反映が完了したか
         public IWeapon Weapon;              //このIKと対応した手に持つ武器
-        [Tooltip("手首回転のオフセット（Inspectorで調整可）")]
+        [Tooltip("手首回転のオフセット(Inspectorで調整可)")]
         public Vector3 rotationOffsetEuler = Vector3.zero; //回転オフセット
     }
 

@@ -1,3 +1,4 @@
+using Game.Enum;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,19 +58,54 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
     /// <summary>
     /// 武器を手に持ち、装備させる
     /// </summary>
-    /// <param name="hand"></param>
-    /// <param name="left"></param>
-    public void AttachToHand(Transform hand, bool left)
+    /// <param name="hand">手のトランスフォーム</param>
+    /// <param name="heldHand">どちらの手に持つか</param>
+    public void AttachToHand(Transform hand, HandSide heldHand)
     {
-        Transform grip = transform.Find("GripPoint");
-        if (grip == null) return;
+        //持たせる手が左手か判定
+        bool isLeft = (heldHand == HandSide.Left);
 
+        /* m_statusを実装してから
+        //反転機能を使う銃モデルなら
+        if (m_status.GetUseMirror())
+        {
+            //反転条件が一致していればモデルを反転
+            if (m_status.GetMirrorWhenHeld() == heldHand)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+        */
+
+        //GripPointを検索
+        Transform grip = transform.Find("GripPoint");
+        if (grip == null)
+        {
+            Debug.LogWarning($"{name} に GripPoint が見つかりません。");
+            return;
+        }
+
+        //手のTransformを親に設定
+        //SetParentの第2引数falseにより、ワールド座標を維持せずローカル座標を手基準に再計算
         transform.SetParent(hand, false);
-        //transform.localPosition = -grip.localPosition;
-        Vector3 offsetPos = m_attachOffsetPos;
-        offsetPos.x *= left ? -1f : 1f;
-        transform.localPosition = offsetPos;
+
+        //GripPointのローカル回転を打ち消す(★重要★)
+        //GripPointのローカル回転を逆にかけることで、GripPointの向きを手の向きと一致
         transform.localRotation = Quaternion.Inverse(grip.localRotation);
+
+        //GripPointのローカル位置を打ち消す
+        //GripPointがPivotからどれだけ離れているか(ローカル位置)を反転して適用することで、
+        //GripPointの位置が手の原点(hand.position)と一致するよう補正
+        transform.localPosition = -grip.localPosition;
+
+        //左右のオフセットを適用
+        //左右の手で対称にしたい場合、x軸方向を反転
+        Vector3 offsetPos = m_attachOffsetPos;
+        offsetPos.x *= isLeft ? -1f : 1f;
+
+        //最終的に補正を加える
+        //上記の打ち消し＋回転補正を行ったあとで微調整値を加算
+        transform.localPosition += offsetPos;
     }
 
     public void Use()

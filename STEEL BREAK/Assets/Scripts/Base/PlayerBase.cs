@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Enum;
 
 public class PlayerBase : CharaBase
 {
@@ -34,15 +35,6 @@ public class PlayerBase : CharaBase
 
     protected IK_Control IK; //IK
 
-    //‘•”õ‚Å‚«‚é‰ÓŠ
-    public enum WeaponSlot
-    {
-        RightHand,
-        LeftHand,
-        //‰E”w–Ê
-        //¶”w–Ê
-    }
-
     protected override void Initialize()
     {
         base.Initialize();
@@ -51,7 +43,7 @@ public class PlayerBase : CharaBase
     }
 
     /// <summary>
-    /// •‘•‚ğİ’è
+    /// •‘•‚ğ‘•”õ
     /// </summary>
     /// <param name="weapon">İ’è‚·‚é•‘•</param>
     /// <param name="slot">İ’è‚µ‚½‚¢•”ˆÊ</param>
@@ -64,7 +56,7 @@ public class PlayerBase : CharaBase
         {
             case WeaponSlot.RightHand:
                 m_righthandWeapon = weapon;
-                weapon.AttachToHand(m_rightHandTransform, false);
+                weapon.AttachToHand(m_rightHandTransform, HandSide.Right);
                 if(m_status != null) { 
                     m_righthandWeapon.SetTeam(m_status.GetTeam());
                 }
@@ -75,7 +67,7 @@ public class PlayerBase : CharaBase
                 break;
             case WeaponSlot.LeftHand:
                 m_lefthandWeapon = weapon;
-                weapon.AttachToHand(m_leftHandTransform, true);
+                weapon.AttachToHand(m_leftHandTransform, HandSide.Left);
                 if(m_status != null) { 
                     m_lefthandWeapon.SetTeam(m_status.GetTeam());
                 }

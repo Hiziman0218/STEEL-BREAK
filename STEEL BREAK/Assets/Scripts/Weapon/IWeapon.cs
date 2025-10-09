@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Enum;
 
 public interface IWeapon
 {
@@ -6,8 +7,8 @@ public interface IWeapon
     /// 手に持ち、装備させる
     /// </summary>
     /// <param name="hand">手のトランスフォーム</param>
-    /// <param name="left">左手か(右手か左手の二択なのでフラグ管理)</param>
-    public void AttachToHand(Transform hand, bool left);
+    /// <param name="heldHand">どちらの手に持つか</param>
+    public void AttachToHand(Transform hand, HandSide heldHand);
 
     ///<summary>
     ///武装使用

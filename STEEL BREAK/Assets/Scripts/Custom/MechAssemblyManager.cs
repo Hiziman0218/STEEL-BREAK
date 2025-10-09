@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Game.Enum;
 
 // 装備データ
 public class EquippedData
@@ -241,11 +242,11 @@ public class MechAssemblyManager : MonoBehaviour
                 {
                     if (partType == PartType.Weapon)
                     {
-                        customPlayer.EquipWeapon(weapon, PlayerBase.WeaponSlot.RightHand);
+                        customPlayer.EquipWeapon(weapon, WeaponSlot.RightHand);
                     }
                     else if (partType == PartType.WeaponL)
                     {
-                        customPlayer.EquipWeapon(weapon, PlayerBase.WeaponSlot.LeftHand);
+                        customPlayer.EquipWeapon(weapon, WeaponSlot.LeftHand);
                     }
                 }
                 else

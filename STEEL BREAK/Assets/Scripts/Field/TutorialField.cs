@@ -4,11 +4,15 @@ using UnityEngine;
 public class TutorialField : MonoBehaviour
 {
     [Header("出現位置")]
+    [Tooltip("プレイヤーの出現位置")]
     [SerializeField] private Transform m_playerSpawnPoint;       //プレイヤーの出現位置
+    [Tooltip("敵の出現位置")]
     [SerializeField] private List<Transform> m_enemySpawnPoints; //敵の出現位置
 
     [Header("プレハブ")]
+    [Tooltip("プレイヤープレハブ")]
     [SerializeField] private GameObject m_playerPrefab; //プレイヤーのプレハブ
+    [Tooltip("敵プレハブ")]
     [SerializeField] private GameObject m_enemyPrefab;  //敵のプレハブ
 
     private GameObject m_playerInstance; //プレイヤーのインスタンス

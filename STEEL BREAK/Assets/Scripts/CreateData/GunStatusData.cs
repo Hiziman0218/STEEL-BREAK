@@ -1,14 +1,31 @@
 using UnityEngine;
+using Game.Enum;
 
 [CreateAssetMenu(fileName = "NewGunStatusData", menuName = "Game/GunStatusData")]
 public class GunStatusData : ScriptableObject
 {
-    public string Name;      //武器名
+    [Tooltip("武装の名前")]
+    public string Name;      //武装名
+    [Tooltip("発射レート")]
     public float Rate;       //発射レート
-    public float ReloadTime; //リロードに必要な時間
+    [Tooltip("リロードに必要な時間")]
+    public float ReloadTime; //リロード時間
+    [Tooltip("弾速")]
     public float Speed;      //弾速
-    public float Damage;     //与えるダメージ量
+    [Tooltip("与えるダメージ量")]
+    public float Damage;     //ダメージ量
+    [Tooltip("最大弾数")]
     public int MaxAmmo;      //最大弾数
+    [Tooltip("反転機能を使うか(使うならtrue)")]
+    public bool UseMirror;   //反転機能を使うか
+    [Tooltip("どの手で持った時に反転させるか")]
+    public HandSide MirrorHand; //どの手で持った時に反転させるか
+    [Tooltip("弾丸のプレハブ")]
     public Bullet BulletPrefab; //弾丸プレハブ
+    [Tooltip("マズルフラッシュのエフェクト")]
     public GameObject MuzzleFlashEffect; //マズルフラッシュエフェクト
+    [Tooltip("発射時の効果音")]
+    public AudioClip FireSE;     //発射音
+    [Tooltip("リロード時の効果音")]
+    public AudioClip ReloadSE;   //リロード音
 }

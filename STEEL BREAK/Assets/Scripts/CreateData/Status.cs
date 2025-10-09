@@ -5,7 +5,7 @@ public class Status
     private float m_power;   //攻撃力
     private float m_defence; //防御力
     private float m_speed;   //移動速度
-    private string m_team;   //所属するチーム
+    private string m_team;   //所属チーム
 
     /// <summary>
     /// コンストラクタ 各種ステータスを設定
