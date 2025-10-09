@@ -25,7 +25,9 @@ public class GunStatusData : ScriptableObject
     [Tooltip("マズルフラッシュのエフェクト")]
     public GameObject MuzzleFlashEffect; //マズルフラッシュエフェクト
     [Tooltip("発射時の効果音")]
-    public AudioClip FireSE;     //発射音
+    public AudioClip FireSE;      //発射音
+    [Tooltip("空撃ちの効果音")]
+    public AudioClip EmptyFireSE; //空撃ち音
     [Tooltip("リロード時の効果音")]
-    public AudioClip ReloadSE;   //リロード音
+    public AudioClip ReloadSE;    //リロード音
 }

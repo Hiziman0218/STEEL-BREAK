@@ -15,6 +15,7 @@ public class GunStatus
     private Bullet BulletPrefab;          //弾丸プレハブ
     private GameObject MuzzleFlashEffect; //マズルフラッシュのエフェクト
     private AudioClip FireSE;             //発射音
+    private AudioClip EmptyFireSE;        //空撃ち音
     private AudioClip ReloadSE;           //リロード音
 
     /// <summary>
@@ -35,6 +36,7 @@ public class GunStatus
         BulletPrefab = data.BulletPrefab;
         MuzzleFlashEffect = data.MuzzleFlashEffect;
         FireSE = data.FireSE;
+        EmptyFireSE = data.EmptyFireSE;
         ReloadSE = data.ReloadSE;
     }
 
@@ -153,6 +155,15 @@ public class GunStatus
     public AudioClip GetFireSE()
     {
         return FireSE;
+    }
+
+    /// <summary>
+    /// 空撃ち音を取得
+    /// </summary>
+    /// <returns></returns>
+    public AudioClip GetEmptyFireSE()
+    {
+        return EmptyFireSE;
     }
 
     /// <summary>
