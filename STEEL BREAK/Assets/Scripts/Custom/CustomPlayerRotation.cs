@@ -22,11 +22,14 @@ public class CustomPlayerRotation : MonoBehaviour
     public Transform rArmPoint;
     public Transform legPoint;
     public Transform boosterPoint;
+    public Transform WlArmPoint;
+    public Transform WrArmPoint;
 
     private float currentZoomDistance;
     private Transform currentTargetPoint = null;   // カメラが移動する位置
     private Transform currentRotateCenter = null;  // 回転・ズームの中心（CameraPoint）
     private bool isDefaultView = true;             // デフォルトカメラ視点か？
+    private bool hasReachedTarget = false;
 
     void Start()
     {
@@ -48,8 +51,12 @@ public class CustomPlayerRotation : MonoBehaviour
     {
         bool isRotatingOrZooming = Input.GetKey(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") != 0f;
 
-        // 回転処理
-        if (Input.GetKey(KeyCode.E))
+        // デフォルトビューでは常に操作可能
+        // パーツビューでは到達後のみ操作可能
+        bool canControlCamera = isDefaultView || hasReachedTarget;
+
+        // 回転・ズーム処理
+        if (canControlCamera && Input.GetKey(KeyCode.E))
         {
             if (isDefaultView)
                 HandleModelRotation(); // モデル全体を回転
@@ -65,10 +72,22 @@ public class CustomPlayerRotation : MonoBehaviour
             ResetToDefaultView();
         }
 
-        // 回転・ズーム中は補間を止める
-        if (currentTargetPoint != null && !isRotatingOrZooming)
+        // 🟢 カメラ移動処理（ズーム中やEキー中は止める）
+        if (currentTargetPoint != null)
         {
-            MoveCameraToTarget();
+            if (isDefaultView)
+            {
+                // Eキーもマウスホイールも使っていないときだけ戻す
+                if (!isRotatingOrZooming)
+                    MoveCameraToTarget();
+            }
+            else if (!hasReachedTarget)
+            {
+                MoveCameraToTarget();
+
+                if (Vector3.Distance(playerCamera.transform.position, currentTargetPoint.position) < 0.05f)
+                    hasReachedTarget = true;
+            }
         }
     }
 
@@ -134,6 +153,7 @@ public class CustomPlayerRotation : MonoBehaviour
         currentTargetPoint = defaultPoint;
         currentRotateCenter = null;
         isDefaultView = true;
+        hasReachedTarget = false; // 🟢 デフォルトへ戻す際に再度補間を許可
     }
 
     // ===== UIボタン用 =====
@@ -143,6 +163,8 @@ public class CustomPlayerRotation : MonoBehaviour
     public void FocusRArm() => SetCameraTarget(rArmPoint);
     public void FocusLeg() => SetCameraTarget(legPoint);
     public void FocusBooster() => SetCameraTarget(boosterPoint);
+    public void FocusWLArm() => SetCameraTarget(WlArmPoint);
+    public void FocusWRArm() => SetCameraTarget(WrArmPoint);
 
     void SetCameraTarget(Transform point)
     {
@@ -150,6 +172,8 @@ public class CustomPlayerRotation : MonoBehaviour
 
         currentTargetPoint = point;
         isDefaultView = false;
+
+        hasReachedTarget = false; // 🟢 カメラ切り替え時に「到達前」状態に戻す
 
         // 子オブジェクトに「CameraPoint」があればそれを中心点にする
         Transform childCenter = point.Find("CameraPoint");

@@ -24,8 +24,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3739728359752591969}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.008951026, y: 0.0029319632, z: 0.73162675, w: 0.68164045}
-  m_LocalPosition: {x: -0.16013099, y: 14.784937, z: -0.017610146}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: -1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -61,13 +61,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5893923670224619235}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6990518, y: -0.106426805, z: -0.6990518, w: 0.106426805}
-  m_LocalPosition: {x: 0.061, y: 0.0013, z: -0}
+  m_LocalRotation: {x: -0.7068335, y: -0.0035270154, z: -0.70733345, w: 0.0073023476}
+  m_LocalPosition: {x: 0.032, y: 0.009, z: -0}
   m_LocalScale: {x: 0.2062752, y: 0.17427398, z: 0.26643893}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3219278904033730085}
-  m_LocalEulerAnglesHint: {x: -17.313, y: 90, z: -180}
+  m_LocalEulerAnglesHint: {x: -0.877, y: 89.957, z: -179.694}
 --- !u!114 &7196945424917580666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2320,7 +2320,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 11208
+  m_VersionIndex: 11217
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2339,14 +2339,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 3497742767551414274
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1577
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -2370,6 +2366,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

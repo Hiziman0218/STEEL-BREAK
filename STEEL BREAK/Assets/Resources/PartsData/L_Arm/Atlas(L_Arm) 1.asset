@@ -21,8 +21,15 @@ MonoBehaviour:
   - {fileID: 706241321016509838, guid: a4bce0e02bb5d3b4ca23e2589a75d597, type: 3}
   - {fileID: 3113304373565090333, guid: d8afe28125b64db42b1dac1599c1833c, type: 3}
   - {fileID: 8702122041208519367, guid: e0d1d988ddfa52448ab004f10f9dcba8, type: 3}
-  boneScales: []
-  scaleInfos: []
+  boneScales:
+  - boneName: B-forearm.L
+    scale: {x: 1, y: 3, z: 1}
+    offsetInfos: []
+  scaleInfos:
+  - prefab: {fileID: 3113304373565090333, guid: d8afe28125b64db42b1dac1599c1833c, type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
   stability: 0
   weight: 0

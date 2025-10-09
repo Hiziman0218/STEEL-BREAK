@@ -24,14 +24,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2042823711709927777}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.008887296, y: -0.005816512, z: -0.6149696, w: 0.7884793}
-  m_LocalPosition: {x: 0.160131, y: 14.784937, z: -0.01761003}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 149958976506928775}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0.393, y: -1.152, z: -75.908}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5647731491565674850
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,13 +61,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5647731491565674850}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6963646, y: 0.1227879, z: 0.6963638, w: 0.12278826}
-  m_LocalPosition: {x: -0.062, y: 0.02, z: 0}
+  m_LocalRotation: {x: -0.70744264, y: -0.0026215315, z: 0.7067267, w: -0.007455021}
+  m_LocalPosition: {x: -0.035, y: 0.007, z: 0.001}
   m_LocalScale: {x: 0.20627522, y: 0.17427395, z: 0.2664388}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6674471651287182444}
-  m_LocalEulerAnglesHint: {x: -20, y: -90, z: 180}
+  m_LocalEulerAnglesHint: {x: 0.817, y: -90.055, z: 180.391}
 --- !u!114 &5590627255860943167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2320,7 +2320,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 11208
+  m_VersionIndex: 11214
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2339,14 +2339,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 3497742767551414274
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1577
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -2370,6 +2366,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
