@@ -348,6 +348,9 @@ namespace EmeraldAI
 
         [Header("アクション（回避等）の一時方向（内部）")]
         Vector3 ActionDirection;
+
+        [Header("ラップ処理で統一する（個人改造）")]
+        IMovementAgent movement;
         #endregion
 
         void Start()
@@ -378,10 +381,28 @@ namespace EmeraldAI
             if (WanderType != WanderTypes.RayCastPro)
             {
                 SetupNavMeshAgent();
+                //ナビメッシュの機能を使って地面に整列
+                if (AlignAIOnStart == YesOrNo.Yes && AlignAIWithGround == YesOrNo.Yes)
+                {
+                    AlignOnStart();
+                }
             }
             else
             {
                 SetupRayCastPro();
+
+                // スポーン時に一度だけ地面に合わせる
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position + Vector3.up * 2, Vector3.down, out hit, 10f))
+                {
+                    transform.position = hit.point;
+                }
+                else
+                {
+                    Debug.LogWarning("RayCastPro: スポーン位置で地面が見つからなかった");
+                }
+
+
             }
 
             if (AlignmentQuality == AlignmentQualities.Low)
@@ -401,11 +422,6 @@ namespace EmeraldAI
             {
                 transform.rotation = Quaternion.AngleAxis(Random.Range(5, 360), Vector3.up);
             }
-
-            if (AlignAIOnStart == YesOrNo.Yes && AlignAIWithGround == YesOrNo.Yes)
-            {
-                AlignOnStart();
-            }
         }
 
         /// <summary>
@@ -415,9 +431,12 @@ namespace EmeraldAI
         public void SetupRayCastPro()
         {
             // NavMeshAgent は使わないので無効化
+            //次いでに経路探索だけするようにする
             if (m_NavMeshAgent != null)
             {
                 m_NavMeshAgent.enabled = false;
+                m_NavMeshAgent.updatePosition = false;
+                m_NavMeshAgent.updateRotation = false;
             }
 
             //プレイヤーを取得していなければ取得
@@ -457,6 +476,7 @@ namespace EmeraldAI
 
             //取得したエージェントのコントローラー取得
             m_RCController = m_RayCastPro.GetComponent<SteeringController>();
+
 
         }
 
@@ -1205,7 +1225,16 @@ namespace EmeraldAI
                         if (NavMesh.SamplePosition(GeneratedDestination, out DestinationHit, 4, m_NavMeshAgent.areaMask))
                         {
                             AIAnimator.SetBool("Idle Active", false);
-                            m_NavMeshAgent.SetDestination(DestinationHit.position);
+                            //レイ適応（個人改造）
+                            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                            {
+                                EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = DestinationHit.position;
+                            }
+                            else
+                            {
+                                m_NavMeshAgent.SetDestination(DestinationHit.position);
+                            }
+
                             OnGeneratedWaypoint?.Invoke();
                         }
                     }
@@ -1236,8 +1265,6 @@ namespace EmeraldAI
         /// </summary>
         public void MovementUpdate()
         {
-            Debug.Log("MoveAIRayCastPro 呼ばれた");
-
             // RayCastPro の場合は NavMeshAgent を参照しない(若干個人改造)
             if (MovementType != MovementTypes.RayCastPro)
             {
@@ -1268,7 +1295,6 @@ namespace EmeraldAI
             //RayCastProを選択した場合はMoveAIRayCastProを使う（個人改造）
             if (MovementType == MovementTypes.RayCastPro && !AnimationComponent.IsDead)
             {
-                Debug.Log("RayCastPro 分岐に入った");
                 MoveAIRayCastPro();
                 //RotateAIで不具合が起きるのでリターンでいったん対応
                 return;
@@ -1421,7 +1447,7 @@ namespace EmeraldAI
             //Track the time while backing up as the AI will only backup for according to its BackingUpSeconds.
             BackingUpTimer += Time.deltaTime;
 
-            //Generates a backup destination that's in the opposite direction of the AI's current target.
+            //レイキャストプロに対応させる後退処理（個人改造）
             if (MovementType == MovementTypes.RayCastPro)
             {
                 // ターゲットがいなければ停止
@@ -1440,13 +1466,15 @@ namespace EmeraldAI
                     GameObject go = new GameObject("BackupDummy");
                     m_backupDummy = go.transform;
                 }
-                m_backupDummy.position = backupPos;
 
+                //ダミーの位置を後退位置に決定
+                m_backupDummy.position = backupPos;
+                //位置指定
                 m_RCController.detector.destination = m_backupDummy;
             }
             else
             {
-
+                //Generates a backup destination that's in the opposite direction of the AI's current target.
                 if (EmeraldComponent.m_NavMeshAgent.hasPath)
                     EmeraldComponent.m_NavMeshAgent.destination = GetBackupDestination();
             }
@@ -1494,10 +1522,13 @@ namespace EmeraldAI
                             {
                                 OnBackup?.Invoke(); //Invoke the backup callback
                                 EmeraldComponent.AIAnimator.SetBool("Walk Backwards", true);
+
+                                //後退処理判定をレイキャストプロに対応（個人改造）
                                 if (MovementType == MovementTypes.RayCastPro)
                                 {
                                     Vector3 backupPos = GetBackupDestination();
 
+                                    //ダミーがなければ生成
                                     if (m_backupDummy == null)
                                     {
                                         GameObject go = new GameObject("BackupDummy");
@@ -1595,7 +1626,15 @@ namespace EmeraldAI
         /// <param name="Destination">設定したい目的地座標。</param>
         public void SetDestination(Vector3 Destination)
         {
-            m_NavMeshAgent.SetDestination(Destination);
+            //レイ適応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = Destination;
+            }
+            else
+            {
+                m_NavMeshAgent.SetDestination(Destination);
+            }
         }
 
         /// <summary>
@@ -1678,7 +1717,7 @@ namespace EmeraldAI
             // CombatTarget がいない場合は到達不可（個人改造）
             if (EmeraldComponent.CombatTarget == null)
             {
-                Debug.LogError("EmeraldComponent.CombatTargetが見つからない");
+                //Debug.LogError("EmeraldComponent.CombatTargetが見つからない");
                 return false;
             }
 

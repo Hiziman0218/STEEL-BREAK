@@ -827,7 +827,7 @@ GameObject:
   - component: {fileID: 100815595}
   - component: {fileID: 100815594}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: "\u6BB5\u5DEE"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -916,10 +916,11 @@ Transform:
   m_GameObject: {fileID: 100815593}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.86, y: 0.27, z: 17.37}
+  m_LocalPosition: {x: 1.86, y: 0.44, z: 17.37}
   m_LocalScale: {x: 7.7929997, y: 1.5586, z: 7.7929997}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 804315675}
   m_Father: {fileID: 2122769988}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &102226691
@@ -6230,8 +6231,8 @@ GameObject:
   - component: {fileID: 565582538}
   - component: {fileID: 565582537}
   - component: {fileID: 565582547}
-  - component: {fileID: 565582536}
   - component: {fileID: 565582545}
+  - component: {fileID: 565582536}
   - component: {fileID: 565582535}
   - component: {fileID: 565582533}
   - component: {fileID: 565582532}
@@ -6350,7 +6351,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 565582531}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: 1479372276
   m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
@@ -6552,11 +6553,11 @@ MonoBehaviour:
   ReturningToStartInProgress: 0
   AIAgentActive: 0
   HideSettingsFoldout: 0
-  WanderFoldout: 1
+  WanderFoldout: 0
   WaypointsFoldout: 1
   WaypointsListFoldout: 0
   BackupFoldout: 0
-  MovementFoldout: 1
+  MovementFoldout: 0
   AlignmentFoldout: 0
   TurnFoldout: 0
   m_RCController: {fileID: 0}
@@ -6668,7 +6669,7 @@ MonoBehaviour:
     AttackListIndex: 0
     AttackPickType: 2
     AttackDataList:
-    - AbilityObject: {fileID: 11400000, guid: 220340a4f9ffae645b3b50675811006c, type: 2}
+    - AbilityObject: {fileID: 11400000, guid: 8d84b71dfe300ba4793543c42c8123cf, type: 2}
       AttackAnimation: 0
       AttackOdds: 0
       AttackDistance: 20
@@ -6718,7 +6719,7 @@ MonoBehaviour:
   DamageSettingsFoldout: 0
   CombatActionSettingsFoldout: 0
   SwitchWeaponSettingsFoldout: 0
-  WeaponType1SettingsFoldout: 1
+  WeaponType1SettingsFoldout: 0
   WeaponType2SettingsFoldout: 0
 --- !u!114 &565582541
 MonoBehaviour:
@@ -6788,9 +6789,9 @@ MonoBehaviour:
     RelationType: 0
   AIFactionsList: 
   HideSettingsFoldout: 0
-  DetectionFoldout: 1
-  TagFoldout: 1
-  FactionFoldout: 1
+  DetectionFoldout: 0
+  TagFoldout: 0
+  FactionFoldout: 0
 --- !u!114 &565582543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6855,7 +6856,7 @@ Transform:
   m_GameObject: {fileID: 565582531}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.9953996, z: -0, w: 0.095810644}
-  m_LocalPosition: {x: 12.77, y: 0, z: 26.11}
+  m_LocalPosition: {x: 13.464, y: 0, z: 26.245}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8164,7 +8165,7 @@ GameObject:
   - component: {fileID: 734284018}
   - component: {fileID: 734284017}
   m_Layer: 6
-  m_Name: Example Player
+  m_Name: "\u30D7\u30EC\u30A4\u30E4\u30FC"
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9393,13 +9394,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 804315671}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.25696573, y: -0, z: -0, w: 0.9664206}
-  m_LocalPosition: {x: 1.86, y: -0.39, z: 12.52}
-  m_LocalScale: {x: 7.7929997, y: 1.5586, z: 3.1172}
+  m_LocalRotation: {x: -0.5577451, y: 0, z: 0, w: 0.83001226}
+  m_LocalPosition: {x: 0, y: 0.04, z: -0.508}
+  m_LocalScale: {x: 1, y: 0.33, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2122769988}
-  m_LocalEulerAnglesHint: {x: -29.78, y: 0, z: 0}
+  m_Father: {fileID: 100815597}
+  m_LocalEulerAnglesHint: {x: -67.8, y: 0, z: 0}
 --- !u!1 &809615418
 GameObject:
   m_ObjectHideFlags: 0
@@ -19823,7 +19824,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 100815597}
-  - {fileID: 804315675}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2125575641

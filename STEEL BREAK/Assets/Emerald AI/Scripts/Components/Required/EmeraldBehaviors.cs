@@ -244,9 +244,26 @@ namespace EmeraldAI
                 {
                     EmeraldComponent.MovementComponent.CombatMovement();
                 }
+                //レイ適応（個人改造
                 else if (!EmeraldComponent.MovementComponent.DefaultMovementPaused && CanReachTarget)
                 {
-                    EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position + transform.forward * 2);
+                    Vector3 forwardOffset = transform.position + transform.forward * 2;
+
+                    if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
+                    {
+                        if (EmeraldComponent.m_NavMeshAgent != null && EmeraldComponent.m_NavMeshAgent.isOnNavMesh)
+                        {
+                            EmeraldComponent.m_NavMeshAgent.SetDestination(forwardOffset);
+                        }
+                    }
+                    else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                    {
+                        if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                            EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                        {
+                            EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = forwardOffset;
+                        }
+                    }
                 }
 
                 // 戦闘行動の更新（有効化から2秒間は初期化待ちで抑制）
@@ -364,10 +381,24 @@ namespace EmeraldAI
             // 攻撃トリガ済みでも、ターゲットが射程外ならキャンセル
             if (AttackTimer >= EmeraldComponent.CombatComponent.CurrentAttackCooldown)
             {
-                if (EmeraldComponent.m_NavMeshAgent.remainingDistance > EmeraldComponent.m_NavMeshAgent.stoppingDistance && EmeraldComponent.AIAnimator.GetBool("Attack"))
+                //レイキャストプロ対応（個人改造）
+                if(EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
                 {
-                    EmeraldComponent.AIAnimator.ResetTrigger("Attack");
-                    AttackTimer = 0;
+                    //レイキャストで計算
+                    if (EmeraldComponent.MovementComponent.m_RCController.remainingDistance > EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance && EmeraldComponent.AIAnimator.GetBool("Attack"))
+                    {
+                        EmeraldComponent.AIAnimator.ResetTrigger("Attack");
+                        AttackTimer = 0;
+                    }
+                }
+                else
+                {
+                    //ナビメッシュにある機能で計算
+                    if (EmeraldComponent.m_NavMeshAgent.remainingDistance > EmeraldComponent.m_NavMeshAgent.stoppingDistance && EmeraldComponent.AIAnimator.GetBool("Attack"))
+                    {
+                        EmeraldComponent.AIAnimator.ResetTrigger("Attack");
+                        AttackTimer = 0;
+                    }
                 }
             }
         }
@@ -379,7 +410,25 @@ namespace EmeraldAI
         {
             EmeraldComponent.CombatComponent.ClearTarget();                                             // ターゲット解除
             EmeraldComponent.CombatComponent.DeathDelayActive = true;                                   // 短期的な抑止
-            EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position + EmeraldComponent.transform.forward * (EmeraldComponent.MovementComponent.StoppingDistance * 1.5f)); // 少し前進
+
+            //レイ適応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
+            {
+                //ナビならそのまま
+                if (EmeraldComponent.m_NavMeshAgent != null && EmeraldComponent.m_NavMeshAgent.isOnNavMesh)
+                {
+                    EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position + EmeraldComponent.transform.forward * (EmeraldComponent.MovementComponent.StoppingDistance * 1.5f)); // 少し前進
+                }
+            }
+            else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                    EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                {
+                    EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = transform.position + EmeraldComponent.transform.forward * (EmeraldComponent.MovementComponent.StoppingDistance * 1.5f);
+                }
+            }
+
             EmeraldComponent.AnimationComponent.ResetTriggers(0);                                       // 各種トリガをリセット
             ResetState();                                                                               // 状態初期化
         }
@@ -412,7 +461,12 @@ namespace EmeraldAI
         public virtual void OnDetectTarget()
         {
             BehaviorState = "Cautious";                                   // 警戒に遷移
-            if (isActiveAndEnabled) EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position); // いったん停止
+            //レイ適応（個人改造）プレイヤーがどっか行ってしまう
+            if(EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = transform.position;
+            }
+            else if (isActiveAndEnabled) EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position); // いったん停止
         }
 
         /// <summary>

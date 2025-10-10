@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using static EmeraldAI.EmeraldMovement;
 
 namespace EmeraldAI.Utility
 {
@@ -576,7 +577,15 @@ namespace EmeraldAI.Utility
         /// </summary>
         static bool WithinStoppingDistanceOfTarget(EmeraldSystem EmeraldComponent)
         {
-            return (EmeraldComponent.m_NavMeshAgent.remainingDistance <= EmeraldComponent.m_NavMeshAgent.stoppingDistance);
+            //レイキャストプロを使用しているならそれ用に対応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == MovementTypes.RayCastPro)
+            {
+                return(EmeraldComponent.MovementComponent.m_RCController.remainingDistance <= EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance);
+            }
+            else
+            {
+                return (EmeraldComponent.m_NavMeshAgent.remainingDistance <= EmeraldComponent.m_NavMeshAgent.stoppingDistance);
+            }
         }
 
         /// <summary>

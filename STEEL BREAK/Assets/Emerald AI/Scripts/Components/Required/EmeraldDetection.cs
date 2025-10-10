@@ -639,7 +639,23 @@ namespace EmeraldAI
         {
             DetectionRadius = StartingDetectionRadius;
             FieldOfViewAngle = StartingFieldOfViewAngle;
-            EmeraldComponent.m_NavMeshAgent.stoppingDistance = EmeraldComponent.CombatComponent.AttackDistance;
+            //レイキャストプロ対応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
+            {
+                if (EmeraldComponent.m_NavMeshAgent != null && EmeraldComponent.m_NavMeshAgent.isOnNavMesh)
+                {
+                    EmeraldComponent.m_NavMeshAgent.stoppingDistance = EmeraldComponent.CombatComponent.AttackDistance;
+                }
+            }
+            else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                    EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                {
+                    EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance = EmeraldComponent.CombatComponent.AttackDistance;
+                }
+            }
+
             EmeraldComponent.AnimationComponent.IsTurning = false;
             EmeraldComponent.CombatComponent.DeathDelayActive = false;
             EmeraldComponent.CombatComponent.DeathDelayTimer = 0;

@@ -593,14 +593,40 @@ namespace EmeraldAI.SoundDetection
                     UnityEngine.AI.NavMeshHit hit;
                     if (UnityEngine.AI.NavMesh.SamplePosition(NewDestination, out hit, 5f, EmeraldComponent.m_NavMeshAgent.areaMask))
                     {
-                        EmeraldComponent.m_NavMeshAgent.SetDestination(NewDestination);
+                        //レイ適応（個人改造）
+                        if(EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                        {
+                            EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = NewDestination;
+                        }
+                        else
+                        {
+                            EmeraldComponent.m_NavMeshAgent.SetDestination(NewDestination);
+                        }
+                        
                     }
                 }
             }
             // 目的地をそのまま使用
             else
             {
-                EmeraldComponent.m_NavMeshAgent.SetDestination(DestinationTransform.transform.position);
+                //レイ適応（個人改造）
+                if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                {
+                    if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                        EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                    {
+                        EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = DestinationTransform.position;
+                    }
+                }
+                else
+                {
+                    if (EmeraldComponent.m_NavMeshAgent != null &&
+                        EmeraldComponent.m_NavMeshAgent.isOnNavMesh)
+                    {
+                        EmeraldComponent.m_NavMeshAgent.SetDestination(DestinationTransform.position);
+                    }
+                }
+
             }
         }
 

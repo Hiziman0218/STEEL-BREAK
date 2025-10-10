@@ -225,11 +225,32 @@ namespace EmeraldAI                                 // EmeraldAI 名前空間
         {
             EmeraldComponent.CombatComponent.CancelAllCombatActions();                      // 戦闘アクションをキャンセル
             EmeraldComponent.MovementComponent.StopBackingUp();                             // バック移動停止
-            EmeraldComponent.m_NavMeshAgent.stoppingDistance = 0.25f;                       // 到達しやすい停止距離
+
+            //レイキャストプロ適応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance = 0.25f;
+            }
+            else
+            {
+                EmeraldComponent.m_NavMeshAgent.stoppingDistance = 0.25f;                       // 到達しやすい停止距離
+            }
 
             if (MovingToCoverCoroutine != null) StopCoroutine(MovingToCoverCoroutine);      // 既存移動の停止
-            EmeraldComponent.m_NavMeshAgent.ResetPath();                                    // 経路リセット
-            EmeraldComponent.m_NavMeshAgent.SetDestination(coverNode.position);             // 目的地設定
+            //レイキャストプロに適応（個人改造）
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+            {
+                if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                    EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                {
+                    EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = coverNode.position;
+                }
+            }
+            else
+            {
+                EmeraldComponent.m_NavMeshAgent.ResetPath();                                    // 経路リセット
+                EmeraldComponent.m_NavMeshAgent.SetDestination(coverNode.position);             // 目的地設定
+            }
             MovingToCoverCoroutine = StartCoroutine(MoveToCoverNode(coverNode.position));   // コルーチン開始
         }
 
