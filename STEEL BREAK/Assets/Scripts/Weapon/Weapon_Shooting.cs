@@ -21,6 +21,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isIKFinished; //IKが完了しているかフラグ
 
     private string m_myTeam;     //武器の所有者が所属するチーム
+    private string m_checkPoint = "GripPoint"; //装備するときに探索するポイント
 
     private GunStatus m_status;            //銃の性能(インスペクタで設定したものを代入)
     private BulletManager m_bulletManager; //発射処理を委譲するマネージャー(現在オブジェクトプール未使用)
@@ -28,9 +29,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private void Awake()
     {
-        //銃のステータスを設定
-        m_status = new GunStatus(m_statusData);
-
         //銃のステータスを設定
         m_status = new GunStatus(m_statusData);
 
@@ -77,20 +75,20 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
-    /// 武器を手に持ち、装備させる
+    /// 武装を装備させる
     /// </summary>
-    /// <param name="hand">手のトランスフォーム</param>
-    /// <param name="heldHand">どちらの手に持つか</param>
-    public void AttachToHand(Transform hand, HandSide heldHand)
+    /// <param name="point">装備させるポイント</param>
+    /// <param name="side">どちらに装備させるか</param>
+    public void AttachToPoint(Transform hand, AttachSide heldHand)
     {
         //持たせる手が左手か判定
-        bool isLeft = (heldHand == HandSide.Left);
+        bool isLeft = (heldHand == AttachSide.Left);
 
         //GripPointを検索
-        Transform grip = transform.Find("GripPoint");
+        Transform grip = transform.Find(m_checkPoint);
         if (grip == null)
         {
-            Debug.LogWarning($"{name} に GripPoint が見つかりません。");
+            Debug.LogWarning($"{name} に接続箇所が見つかりません。");
             return;
         }
 
@@ -342,6 +340,11 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void SetTeam(string team)
     {
         m_myTeam = team;
+    }
+
+    public void SetCheckPoint(string checkPoint)
+    {
+        m_checkPoint = checkPoint;
     }
 
     /// <summary>

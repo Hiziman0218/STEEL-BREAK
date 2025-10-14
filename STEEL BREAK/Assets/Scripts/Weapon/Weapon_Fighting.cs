@@ -56,14 +56,14 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
     }
 
     /// <summary>
-    /// 武器を手に持ち、装備させる
+    /// 武装を装備させる
     /// </summary>
-    /// <param name="hand">手のトランスフォーム</param>
-    /// <param name="heldHand">どちらの手に持つか</param>
-    public void AttachToHand(Transform hand, HandSide heldHand)
+    /// <param name="point">装備させるポイント</param>
+    /// <param name="side">どちらに装備させるか</param>
+    public void AttachToPoint(Transform hand, AttachSide heldHand)
     {
         //持たせる手が左手か判定
-        bool isLeft = (heldHand == HandSide.Left);
+        bool isLeft = (heldHand == AttachSide.Left);
 
         /* m_statusを実装してから
         //反転機能を使う銃モデルなら

@@ -19,7 +19,7 @@ public class GunStatusData : ScriptableObject
     [Tooltip("反転機能を使うか(使うならtrue)")]
     public bool UseMirror;   //反転機能を使うか
     [Tooltip("どの手で持った時に反転させるか")]
-    public HandSide MirrorHand; //どの手で持った時に反転させるか
+    public AttachSide MirrorHand; //どの手で持った時に反転させるか
     [Tooltip("弾丸のプレハブ")]
     public Bullet BulletPrefab; //弾丸プレハブ
     [Tooltip("マズルフラッシュのエフェクト")]

@@ -51,20 +51,39 @@ public class Player : PlayerBase
         if (inputManager.IsFireinRightHand)
         {
             //武装が設定されているかを確認し、使用
-            m_righthandWeapon?.Use();
+            m_rightHandWeapon?.Use();
         }
         //左手の攻撃入力を受け取っていたら
         if (inputManager.IsFireinLeftHand)
         {
             //武装が設定されているかを確認し、使用
-            m_lefthandWeapon?.Use();
+            m_leftHandWeapon?.Use();
         }
+        //右背面の攻撃入力を受け取ったら
+        if (inputManager.IsFireinRightBack)
+        {
+            //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
+            if (m_rightBackWeapon is MonoBehaviour comp)
+            {
+                comp.GetComponent<Weapon_Back>()?.FireRequest();
+            }
+        }
+        //左背面の攻撃入力を受け取ったら
+        if (inputManager.IsFireinLeftBack)
+        {
+            //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
+            if (m_leftBackWeapon is MonoBehaviour comp)
+            {
+                comp.GetComponent<Weapon_Back>()?.FireRequest();
+            }
+        }
+
         //手動リロード入力を受け取っていたら
         if (inputManager.IsReload)
         {
             //各武装が設定されているかを確認し、リロード
-            m_righthandWeapon?.Reload();
-            m_lefthandWeapon?.Reload();
+            m_rightHandWeapon?.Reload();
+            m_leftHandWeapon?.Reload();
         }
 
         //割合計算/反映

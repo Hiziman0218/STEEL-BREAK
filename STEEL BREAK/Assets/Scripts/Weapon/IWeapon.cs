@@ -4,11 +4,11 @@ using Game.Enum;
 public interface IWeapon
 {
     /// <summary>
-    /// 手に持ち、装備させる
+    /// 武装を装備させる
     /// </summary>
-    /// <param name="hand">手のトランスフォーム</param>
-    /// <param name="heldHand">どちらの手に持つか</param>
-    public void AttachToHand(Transform hand, HandSide heldHand);
+    /// <param name="point">装備させるポイント</param>
+    /// <param name="side">どちらに装備させるか</param>
+    public void AttachToPoint(Transform point, AttachSide side);
 
     ///<summary>
     ///武装使用
