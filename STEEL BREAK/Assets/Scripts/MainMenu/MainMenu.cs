@@ -89,7 +89,7 @@ public class Briefing : MonoBehaviour
                 SceneHistoryManager.LoadScene("Custom");
                 break;
             case 2:
-                Debug.Log("未定義のメニュー");
+                SceneHistoryManager.LoadScene("Title");
                 break;
             default:
                 Debug.Log("未定義のメニュー");
