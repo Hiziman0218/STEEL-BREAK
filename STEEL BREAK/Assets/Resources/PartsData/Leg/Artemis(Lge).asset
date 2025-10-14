@@ -27,8 +27,10 @@ MonoBehaviour:
   boneScales:
   - boneName: B-shin.L
     scale: {x: 1, y: 1.5, z: 1}
+    offsetInfos: []
   - boneName: B-shin.R
     scale: {x: 1, y: 1.5, z: 1}
+    offsetInfos: []
   scaleInfos:
   - prefab: {fileID: 7627176725698145530, guid: b0e2f0440f6db3d43b69428e96b6f91c, type: 3}
     scale: {x: 1, y: 0.1676614, z: -0.8728207}

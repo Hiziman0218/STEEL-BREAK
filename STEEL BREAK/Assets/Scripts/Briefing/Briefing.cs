@@ -78,7 +78,7 @@ public class MainMenu : MonoBehaviour
                 SceneHistoryManager.LoadScene("Mission");
                 break;
             default:
-                Debug.Log("–¢’è‹`‚Ìƒƒjƒ…[");
+                SceneHistoryManager.LoadScene("MainMenu");
                 break;
         }
     }
