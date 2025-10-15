@@ -1,8 +1,12 @@
-using System.Reflection;
 using UnityEngine;
 
 public class Weapon_Back : MonoBehaviour
 {
+    [Tooltip("発射前に回転機能を使うか")]
+    [SerializeField] private bool m_useRotate = true;
+    [Tooltip("発射前に減速機能を使うか")]
+    [SerializeField] private bool m_useDeceleration = true;
+
     private bool m_isTrigger;         //発射入力を受けたか
     private bool m_isRotated;         //敵方向への回転が完了したか
     private bool m_isDecelerated;     //減速が完了したか
@@ -11,7 +15,7 @@ public class Weapon_Back : MonoBehaviour
     private Quaternion m_targetRot;   //向きたい方向
     private float m_rotateSpeed = 5f; //向きを変える速さ
 
-    private float m_decelerateRate = 5f; //減速の速さ（大きいほど急減速）
+    private float m_decelerateRate = 5f; //減速の速さ(大きいほど急減速)
     private float m_minMoveThreshold = 0.05f; //減速完了とみなす速度閾値
 
     private Weapon_Shooting m_shooting;
@@ -20,13 +24,18 @@ public class Weapon_Back : MonoBehaviour
 
     private void Start()
     {
+        //各参照取得
         m_shooting = GetComponent<Weapon_Shooting>();
         m_inputManager = transform.root.GetComponent<InputManager>();
         m_lockOn = transform.root.GetComponent<LockOn>();
 
+        //各機能を使うかでフラグを管理(使わない機能のフラグは常にtrue)
+        if (!m_useRotate) m_isRotated = true;
+        if (!m_useDeceleration) m_isDecelerated = true;
+
         if (m_shooting != null)
         {
-            m_shooting.ExternalControl();
+            //武装セットの探索オブジェクト名を変更
             m_shooting.SetCheckPoint("AttachPoint");
         }
     }
@@ -36,23 +45,25 @@ public class Weapon_Back : MonoBehaviour
         //銃クラスが無い場合は、以降の処理を行わない
         if (m_shooting == null) return;
 
-        //発射前は常にfalseにしておく
-        m_shooting.SetIsFire(false);
-
+        //発射の入力を受け取っていたら
         if (m_isTrigger)
         {
             //敵方向へ向かせる
-            RotateTowardTarget();
-
+            if (m_useRotate) RotateTowardTarget();
             //減速させる
-            DecelerateMovement();
+            if (m_useDeceleration) DecelerateMovement();
 
             //両方完了したら射撃しフラグ管理
             if (m_isRotated && m_isDecelerated)
             {
-                m_shooting.SetIsFire(true);
+                m_shooting.SetWeaponBackReady(true);
                 m_shooting.Use();
-                m_isTrigger = false;
+                //発射が完了していたら、フラグ管理
+                if (m_shooting.GetIsFireComplete())
+                {
+                    m_shooting.SetWeaponBackReady(false);
+                    m_isTrigger = false;
+                }
             }
         }
     }
@@ -99,13 +110,17 @@ public class Weapon_Back : MonoBehaviour
         //既にリクエストされていた場合は、以降の処理を行わない
         if (m_isTrigger) return;
 
-        //フラグ設定
+        //フラグ設定(使わない機能のフラグは更新しない)
         m_isTrigger = true;
-        m_isRotated = false;
-        m_isDecelerated = false;
+        if(m_useRotate) m_isRotated = false;
+        if(m_useDeceleration) m_isDecelerated = false;
 
+        //ターゲットがいる場合、ターゲットの座標取得
         if (m_lockOn != null && m_lockOn.CurrentTarget != null)
             m_targetPos = m_lockOn.CurrentTarget.position;
+        //ターゲットがいない場合、前方をターゲットに設定
+        else
+            m_targetPos = transform.root.position + transform.root.forward * 10f;
 
         //敵方向の目標回転を計算
         Vector3 dir = (m_targetPos - transform.root.position).normalized;

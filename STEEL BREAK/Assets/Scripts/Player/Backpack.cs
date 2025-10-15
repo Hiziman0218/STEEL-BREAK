@@ -47,7 +47,6 @@ public class Backpack : MonoBehaviour
         if (m_currentBoostState != m_prevBoostState)
         {
             StartCoroutine(UpdateBoostEffect());
-            //UpdateBoostEffect();
             m_prevBoostState = m_currentBoostState;
         }
     }
@@ -137,58 +136,4 @@ public class Backpack : MonoBehaviour
             m_activeEffects.Add(effect);
         }
     }
-
-    /*
-    /// <summary>
-    /// 現在の移動状態に応じてエフェクトを切り替え
-    /// </summary>
-    private void UpdateBoostEffect()
-    {
-        // 既存のエフェクトを削除
-        foreach (var effect in m_activeEffects)
-        {
-            if (effect != null)
-                Destroy(effect);
-        }
-        m_activeEffects.Clear();
-
-        // 状態に応じて新しいエフェクトを生成
-        GameObject prefabToSpawn = null;
-        switch (m_currentBoostState)
-        {
-            case BoostState.Normal:
-                prefabToSpawn = m_normalBoostEffectPrefab;
-                break;
-            case BoostState.Dash:
-                prefabToSpawn = m_dashBoostEffectPrefab;
-                break;
-        }
-
-        if (prefabToSpawn == null)
-            return;
-
-        foreach (var point in m_boostPoints)
-        {
-            if (point == null) continue;
-            var effect = Instantiate(prefabToSpawn, point.position, point.rotation, point);
-            m_activeEffects.Add(effect);
-        }
-    }
-
-    /// <summary>
-    /// 指定エフェクトを全ブーストポイントに生成
-    /// </summary>
-    private void SpawnEffect(GameObject effectPrefab)
-    {
-        if (effectPrefab == null)
-            return;
-
-        foreach (var point in m_boostPoints)
-        {
-            if (point == null) continue;
-
-            var effect = Instantiate(effectPrefab, point.position, point.rotation, point);
-            m_activeEffects.Add(effect);
-        }
-    }*/
 }

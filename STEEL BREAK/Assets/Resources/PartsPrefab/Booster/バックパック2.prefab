@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5133860994193191711}
+  - component: {fileID: 106467275138560338}
   m_Layer: 0
   m_Name: "\u30D0\u30C3\u30AF\u30D1\u30C3\u30AF2"
   m_TagString: Untagged
@@ -29,15 +30,36 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 465787930129330931}
   - {fileID: 3365793722608715174}
   - {fileID: 37810443934304742}
-  - {fileID: 465787930129330931}
   - {fileID: 4631692208575179887}
   - {fileID: 309807836351245735}
   - {fileID: 8214199866596639681}
   - {fileID: 4525476403121292571}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &106467275138560338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2771715617333161016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64681b5b5a9748a4399fde8d4e9c8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rightAttachPoint: {fileID: 3365793722608715174}
+  m_leftAttachPoint: {fileID: 37810443934304742}
+  m_boostPoints:
+  - {fileID: 4631692208575179887}
+  - {fileID: 309807836351245735}
+  - {fileID: 8214199866596639681}
+  - {fileID: 4525476403121292571}
+  m_normalBoostEffectPrefab: {fileID: 492056557264270909, guid: 56273756be724bc40afeb0a9b2b213a3, type: 3}
+  m_dashBoostEffectPrefab: {fileID: 5831860615075932153, guid: 9685e520b6b516a438ef70d717969ce8, type: 3}
 --- !u!1 &3469487076040038474
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 37810443934304742}
   m_Layer: 0
-  m_Name: GripPointL
+  m_Name: AttachPointL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -172,7 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3365793722608715174}
   m_Layer: 0
-  m_Name: GripPointR
+  m_Name: AttachPointR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,7 +268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7924639509647191647, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7924639509647191647, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
       propertyPath: m_LocalPosition.y

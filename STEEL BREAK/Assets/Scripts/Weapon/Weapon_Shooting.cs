@@ -16,9 +16,13 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isFireInternal = false;    //発射可能フラグ(内部管理)
     private bool m_isFireExternal = false;    //発射可能フラグ(外部管理)
     private bool m_isExternalControl = false; //発射可否を外部管理をするか
-    private bool m_isReloading;  //リロード中フラグ
-    private bool m_isUsing;      //使用中フラグ
-    private bool m_isIKFinished; //IKが完了しているかフラグ
+    private bool m_isReloading;    //リロード中フラグ
+    private bool m_isUsing;        //使用中フラグ
+    private bool m_isFireComplete; //発射完了フラグ
+    private bool m_isIKFinished;   //IKが完了しているかフラグ
+
+    private bool m_isBackWeapon = false;   //自身が背面武装か
+    private bool m_isBackWeaponReady;      //背面武装の発射の準備が完了したか
 
     private string m_myTeam;     //武器の所有者が所属するチーム
     private string m_checkPoint = "GripPoint"; //装備するときに探索するポイント
@@ -31,6 +35,13 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     {
         //銃のステータスを設定
         m_status = new GunStatus(m_statusData);
+
+        //自身が背面武装か確認
+        var backComp = GetComponent<Weapon_Back>();
+        if (backComp != null)
+        {
+            m_isBackWeapon = true;
+        }
 
         //最初から撃てるように設定
         m_elapsedTime = m_status.GetRate();
@@ -79,10 +90,10 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// </summary>
     /// <param name="point">装備させるポイント</param>
     /// <param name="side">どちらに装備させるか</param>
-    public void AttachToPoint(Transform hand, AttachSide heldHand)
+    public void AttachToPoint(Transform point, AttachSide side)
     {
         //持たせる手が左手か判定
-        bool isLeft = (heldHand == AttachSide.Left);
+        bool isLeft = (side == AttachSide.Left);
 
         //GripPointを検索
         Transform grip = transform.Find(m_checkPoint);
@@ -94,7 +105,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
         //手のTransformを親に設定
         //SetParentの第2引数falseにより、ワールド座標を維持せずローカル座標を手基準に再計算
-        transform.SetParent(hand, false);
+        transform.SetParent(point, false);
 
         //GripPointのローカル回転を打ち消す(★重要★)
         //GripPointのローカル回転を逆にかけることで、GripPointの向きを手の向きと一致
@@ -118,7 +129,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         if (m_status.GetUseMirror())
         {
             //反転条件が一致していればモデルのスケールと座標のxを反転
-            if (m_status.GetMirrorWhenHeld() == heldHand)
+            if (m_status.GetMirrorWhenHeld() == side)
             {
                 // モデル反転
                 Vector3 scale = transform.localScale;
@@ -138,8 +149,9 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// </summary>
     public void Use()
     {
-        //使用中フラグ更新
+        //フラグ更新
         m_isUsing = true;
+        m_isFireComplete = false;
 
         //内部管理の発射可否チェック
         if (!m_isFireInternal || !m_isIKFinished)
@@ -156,6 +168,12 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
                 //Debug.Log("外部処理的に発射できない");
                 return;
             }
+        }
+
+        //自身が背面武装なら、発射準備ができているか確認
+        if(m_isBackWeapon)
+        {
+            if (!m_isBackWeaponReady) return;
         }
 
         Vector3 shootDir;
@@ -233,6 +251,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //既存の弾数減少／フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);
         m_isFireInternal = false;
+        m_isFireComplete = true;
         m_elapsedTime = 0f;
         if (m_status.GetAmmo() <= 0)
         {
@@ -241,7 +260,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
-    /// 敵の移動を考慮した迎撃方向を計算する
+    /// 敵の移動を考慮した発射方向を計算する
     /// </summary>
     /// <param name="shooterPos">銃口の位置</param>
     /// <param name="targetPos">敵の現在位置</param>
@@ -277,7 +296,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
-    /// 発射可否を外部管理する
+    /// 発射可否を外部管理するよう設定
     /// </summary>
     public void ExternalControl()
     {
@@ -342,9 +361,49 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         m_myTeam = team;
     }
 
+    /// <summary>
+    /// 装備時に確認するポイントの名称を設定
+    /// </summary>
+    /// <param name="checkPoint"></param>
     public void SetCheckPoint(string checkPoint)
     {
         m_checkPoint = checkPoint;
+    }
+
+    /// <summary>
+    /// 銃口を取得
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetMuzzle()
+    {
+        return m_muzzleTransform;
+    }
+
+    /// <summary>
+    /// 銃口を設定(銃口が複数ある場合に使用)
+    /// </summary>
+    /// <param name="nextMuzzle"></param>
+    public void SetMuzzle(Transform nextMuzzle)
+    {
+        m_muzzleTransform = nextMuzzle;
+    }
+
+    /// <summary>
+    /// 発射が完了したか取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetIsFireComplete()
+    {
+        return m_isFireComplete;
+    }
+
+    /// <summary>
+    /// 背面武装の発射準備ができているかを設定
+    /// </summary>
+    /// <param name="weaponBackReady"></param>
+    public void SetWeaponBackReady(bool weaponBackReady)
+    {
+        m_isBackWeaponReady = weaponBackReady;
     }
 
     /// <summary>

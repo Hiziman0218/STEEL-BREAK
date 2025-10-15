@@ -40,8 +40,8 @@ public class InputManager : MonoBehaviour
 
         IsFireinRightHand = Input.GetKey(KeyCode.E);     //Eキーを押している間は右手武装の使用
         IsFireinLeftHand = Input.GetKey(KeyCode.Q);      //Qキーを押している間は左手武装の使用
-        IsFireinRightBack = Input.GetKeyDown(KeyCode.C); //Cキーを押すと右背面武装の使用
-        IsFireinLeftBack = Input.GetKeyDown(KeyCode.Z);  //Zキーを押すと左背面武装の使用
+        IsFireinRightBack = Input.GetKey(KeyCode.C);     //Cキーを押すと右背面武装の使用
+        IsFireinLeftBack = Input.GetKey(KeyCode.Z);      //Zキーを押すと左背面武装の使用
         IsBoost = Input.GetMouseButton(1);               //右クリックを押している間はブースト(加速)
         IsBoostDash = Input.GetMouseButtonDown(1);       //右クリックを押した瞬間はブースト(初期加速)
         IsJump = Input.GetKey(KeyCode.Space);            //Spaceキーを押している間は上昇
