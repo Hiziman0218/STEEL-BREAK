@@ -9,4 +9,5 @@ public enum PartType
     WeaponL = 6, //左武器
     Booster = 7,  //バックパック
     BWeapon = 8, //バックパック武器
+    BWeaponL = 9, //左バックパック武器
 }

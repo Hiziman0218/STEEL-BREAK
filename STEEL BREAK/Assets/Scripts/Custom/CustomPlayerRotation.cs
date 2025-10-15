@@ -153,7 +153,7 @@ public class CustomPlayerRotation : MonoBehaviour
         currentTargetPoint = defaultPoint;
         currentRotateCenter = null;
         isDefaultView = true;
-        hasReachedTarget = false; // 🟢 デフォルトへ戻す際に再度補間を許可
+        hasReachedTarget = false;
     }
 
     // ===== UIボタン用 =====
@@ -166,18 +166,17 @@ public class CustomPlayerRotation : MonoBehaviour
     public void FocusWLArm() => SetCameraTarget(WlArmPoint);
     public void FocusWRArm() => SetCameraTarget(WrArmPoint);
 
-    //バックパック内のカメラポイントに移動
+    // 🟢 新規追加：バックパック内のカメラポイントに移動
     public void FocusBackpackLeft() => SetCameraToBackpackPoint("BWLArmPoint");
     public void FocusBackpackRight() => SetCameraToBackpackPoint("BWRArmPoint");
 
-    // ===== バックパック探索＆カメラ移動処理 =====
+    // ===== B-chest 探索 → バックパック → カメラポイント移動 =====
     void SetCameraToBackpackPoint(string pointName)
     {
-        // B-chestを探す
-        Transform bChest = transform.Find("B-chest");
+        Transform bChest = FindDeepChild(transform, "B-chest");
         if (bChest == null)
         {
-            Debug.LogWarning("B-chest が見つかりません。");
+            Debug.LogWarning("❌ B-chest が見つかりません。階層を確認してください。");
             return;
         }
 
@@ -188,7 +187,6 @@ public class CustomPlayerRotation : MonoBehaviour
         {
             if (child.name.StartsWith("バックパック"))
             {
-                // その中にBWLArmPointまたはBWRArmPointがあるか探す
                 Transform targetPoint = child.Find(pointName);
                 if (targetPoint != null)
                 {
@@ -205,8 +203,23 @@ public class CustomPlayerRotation : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{pointName} がバックパック内に見つかりませんでした。");
+            Debug.LogWarning($"❌ {pointName} がバックパック内に見つかりませんでした。");
         }
+    }
+
+    // ===== 階層の深い場所からオブジェクトを探す =====
+    Transform FindDeepChild(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                return child;
+
+            Transform result = FindDeepChild(child, name);
+            if (result != null)
+                return result;
+        }
+        return null;
     }
 
     // ===== カメラターゲット設定 =====

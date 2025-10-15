@@ -2,54 +2,59 @@
 using System.Collections.Generic;
 using Game.Enum;
 
-// 装備データ
+//========================================
+// 📦 EquippedData : 現在装着中のパーツ情報
+//========================================
 public class EquippedData
 {
-    public string partsDataName;
-    public List<GameObject> partObjs = new List<GameObject>();
-    public List<ModifierBoneData> modifiedData = new List<ModifierBoneData>();
+    public string partsDataName;                         // パーツデータ名（保存や復元用）
+    public List<GameObject> partObjs = new();            // 実際に装着されているプレハブオブジェクト群
+    public List<ModifierBoneData> modifiedData = new();  // このパーツで変更したボーン情報（リセット用）
 }
 
-// ボーンごとの変更データ
+//========================================
+// ⚙️ ModifierBoneData : ボーンの変更データ管理
+//========================================
 public class ModifierBoneData
 {
-    public ModifierData boneModifierData;
-    public List<ModifierData> childrenModifierData = new List<ModifierData>();
+    public ModifierData boneModifierData;                  // 変更されたボーンの情報
+    public List<ModifierData> childrenModifierData = new();// 子ボーンや子オブジェクトの変更情報
 
+    // 🔄 ボーンを元の状態に戻す処理
     public void ResetModifier()
     {
+        // 子データ（子Transform）をリセット
         foreach (var childData in childrenModifierData)
-        {
             childData.ResetModifier();
-        }
 
-        List<Transform> children = new List<Transform>();
+        // 現在の子を一時退避して親を変更（スケールリセットのため）
+        List<Transform> children = new();
         Transform boneTF = boneModifierData.modifiedTF;
         for (int i = 0; i < boneTF.childCount; i++)
-        {
             children.Add(boneTF.GetChild(i));
-        }
-        foreach (Transform child in children)
-        {
-            child.SetParent(boneTF.parent);
-        }
 
+        // 一時的に親から外す
+        foreach (Transform child in children)
+            child.SetParent(boneTF.parent);
+
+        // ボーン自体の位置・回転・スケールを初期値に戻す
         boneModifierData.ResetModifier();
 
+        // 子を再度戻す
         foreach (Transform child in children)
-        {
             child.SetParent(boneTF);
-        }
     }
 }
 
-// オブジェクトの変更前のデータ
+//========================================
+// 🧩 ModifierData : 1つのTransformの変更前情報
+//========================================
 public class ModifierData
 {
-    public Transform modifiedTF;
-    public Vector3 localPos;
-    public Quaternion localRot;
-    public Vector3 localScale;
+    public Transform modifiedTF;      // 対象のTransform
+    public Vector3 localPos;          // 元のローカル位置
+    public Quaternion localRot;       // 元のローカル回転
+    public Vector3 localScale;        // 元のローカルスケール
 
     public ModifierData(Transform tf)
     {
@@ -59,6 +64,7 @@ public class ModifierData
         localScale = tf.localScale;
     }
 
+    // 🧭 状態を元に戻す
     public void ResetModifier()
     {
         modifiedTF.localPosition = localPos;
@@ -67,42 +73,47 @@ public class ModifierData
     }
 }
 
-/// <summary>
-/// メカ組み立てを管理するマネージャー
-/// パーツの装着、取り外し、スケール補正、ボーンのスケーリングなどを処理
-/// </summary>
+// バック武装の左右を指定するための列挙
+public enum BackSide
+{
+    Right,
+    Left
+}
+
+//========================================
+// 🦾 MechAssemblyManager : メカ組み立ての中心管理クラス
+//========================================
 public class MechAssemblyManager : MonoBehaviour
 {
-    public static MechAssemblyManager instance;
+    public static MechAssemblyManager instance; // シングルトン（1つだけ存在）
 
     [Header("スロットの親（例：MechRoot）")]
-    [SerializeField] private Transform mechRoot;  // メカ全体のルートノード
+    [SerializeField] private Transform mechRoot;  // メカ全体のルート（Rigなど）
 
     [Header("各スロットのTransform（部位ごとに設定）")]
-    [SerializeField] private Transform headSlot;
-    [SerializeField] private Transform bodySlot;
-    [SerializeField] private Transform weaponSlot;
-    [SerializeField] private Transform weaponLSlot;
-    [SerializeField] private Transform boosterSlot;
+    [SerializeField] private Transform headSlot;     // 頭パーツの取付位置
+    [SerializeField] private Transform bodySlot;     // 胴パーツの取付位置
+    [SerializeField] private Transform weaponSlot;   // 右武器スロット
+    [SerializeField] private Transform weaponLSlot;  // 左武器スロット
+    [SerializeField] private Transform boosterSlot;  // ブースター位置
 
-    // 複数装着が可能な部位（例：腕や脚）
-    [SerializeField] private Transform[] lArmSlots;
-    [SerializeField] private Transform[] rArmSlots;
-    [SerializeField] private Transform[] legSlots;
+    // 複数装着できる部位（例：両腕、脚）
+    [SerializeField] private Transform[] lArmSlots;  // 左腕の装着位置
+    [SerializeField] private Transform[] rArmSlots;  // 右腕の装着位置
+    [SerializeField] private Transform[] legSlots;   // 脚の装着位置
 
-    [SerializeField] private PlayerBase customPlayer;
+    [SerializeField] private PlayerBase customPlayer; // 対象プレイヤー（メカ制御クラス）
 
-    // 装着中のパーツ一覧（PartTypeごとにリスト）
+    // 🔗 現在装着中のパーツを PartType ごとに管理
     private Dictionary<PartType, List<EquippedData>> equippedParts = new();
 
     private void Awake()
     {
         instance = this;
-        // 各 PartType に対して空のリストを初期化
+
+        // 各パーツ種別を初期化（空リスト作成）
         foreach (PartType type in System.Enum.GetValues(typeof(PartType)))
-        {
             equippedParts[type] = new List<EquippedData>();
-        }
     }
 
     private void Start()
@@ -112,19 +123,20 @@ public class MechAssemblyManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if(instance == this)
-        {
+        if (instance == this)
             instance = null;
-        }
     }
 
+    //========================================
+    // 🎮 プレイヤー設定（スロット情報をリンク）
+    //========================================
     public void SetPlayer(PlayerBase player)
     {
         if (player == null) return;
 
         customPlayer = player;
 
-        //各部位を設定
+        // プレイヤー内のスロットを同期
         mechRoot = customPlayer.mechRoot;
         headSlot = customPlayer.headSlot;
         bodySlot = customPlayer.bodySlot;
@@ -135,9 +147,13 @@ public class MechAssemblyManager : MonoBehaviour
         rArmSlots = customPlayer.rArmSlots;
         legSlots = customPlayer.legSlots;
 
+        // 保存データからパーツを復元
         ApplySaveData();
     }
 
+    //========================================
+    // 💾 セーブデータを読み込み・装着反映
+    //========================================
     private void ApplySaveData()
     {
         GameData.mechSaveData.Load();
@@ -147,106 +163,101 @@ public class MechAssemblyManager : MonoBehaviour
         {
             PartType type;
 
-            // スロット名を PartType に変換
+            // スロット名文字列 → Enum に変換
             if (!System.Enum.TryParse(slot.slotName, out type)) continue;
 
-            // Resources/Parts からプレハブを読み込む
+            // 該当パーツデータを Resources からロード
             PartData partData = Resources.Load<PartData>($"PartsData/{slot.slotName}/{slot.partsDataName}");
+
+            // 武器スロットの左右違いを考慮して再検索
             if (partData == null)
             {
                 if (type == PartType.Weapon)
-                {
-                    string slotName = PartType.WeaponL.ToString();
-                    partData = Resources.Load<PartData>($"PartsData/{slotName}/{slot.partsDataName}");
-                }
+                    partData = Resources.Load<PartData>($"PartsData/WeaponL/{slot.partsDataName}");
                 else if (type == PartType.WeaponL)
-                {
-                    string slotName = PartType.Weapon.ToString();
-                    partData = Resources.Load<PartData>($"PartsData/{slotName}/{slot.partsDataName}");
-                }
+                    partData = Resources.Load<PartData>($"PartsData/Weapon/{slot.partsDataName}");
 
                 if (partData == null)
                 {
-                    Debug.LogWarning($"プレハブ PartsData/{slot.slotName}/{slot.partsDataName} が読み込めませんでした");
+                    Debug.LogWarning($"PartsData/{slot.slotName}/{slot.partsDataName} が見つかりません");
                     continue;
                 }
             }
 
-            // ダミーの PartData を作成して装着
+            // 実際に装着処理
             AttachPart(partData, type);
         }
     }
 
-    /// <summary>
-    /// 指定されたパーツを対応するスロットに装着する
-    /// </summary>
+    //========================================
+    // 🧩 パーツ装着メイン処理
+    //========================================
     public void AttachPart(PartData partData, PartType tabType)
     {
         if (partData.partPrefab == null && partData.multiPrefabs.Count == 0)
         {
-            Debug.LogWarning("パーツプレハブが設定されていません");
+            Debug.LogWarning("⚠️ パーツプレハブが設定されていません");
             return;
         }
 
-
-        // 複数装着可能な部位（例：腕や脚）
+        // 複数装着パーツ（例：両腕・脚）
         if (partData.partType == PartType.L_Arm)
-        {
             AttachToMultipleSlots(partData, lArmSlots, PartType.L_Arm);
-        }
         else if (partData.partType == PartType.R_Arm)
-        {
             AttachToMultipleSlots(partData, rArmSlots, PartType.R_Arm);
-        }
         else if (partData.partType == PartType.Leg)
-        {
             AttachToMultipleSlots(partData, legSlots, PartType.Leg);
-        }
+
         else
         {
             PartType partType = partData.partType;
-            if (partType == PartType.Weapon)
-            {
-                if(tabType == PartType.WeaponL)
-                {
-                    partType = PartType.WeaponL;
-                }
-            }
 
-            // 単一スロットの場合
+            // 左右の武器スロットを調整
+            if (partType == PartType.Weapon && tabType == PartType.WeaponL)
+                partType = PartType.WeaponL;
+
+            // 対応スロット取得
             Transform slot = GetSlotTransform(partType);
             if (slot == null) return;
 
-            // 古いパーツを削除
+            // 旧パーツ削除
             foreach (var part in equippedParts[partType])
             {
                 ResetBoneScalesToPart(part.modifiedData);
                 foreach (var obj in part.partObjs)
-                {
                     Destroy(obj);
-                }
             }
             equippedParts[partType].Clear();
 
-            // プレハブをスロットに装着
+            // 新パーツ生成
             GameObject newPart = Instantiate(partData.partPrefab, slot);
             newPart.transform.localPosition = Vector3.zero;
             newPart.transform.localRotation = Quaternion.identity;
             newPart.transform.localScale = Vector3.one;
 
-            // ▶️ 武器パーツなら CustomPlayer に装着
-            if (partType == PartType.Weapon || partType == PartType.WeaponL)
+            // 🔫 武器なら CustomPlayer に登録
+            if (partType == PartType.Weapon || partType == PartType.WeaponL || partType == PartType.BWeapon || partType == PartType.BWeaponL)
             {
                 IWeapon weapon = newPart.GetComponent<IWeapon>();
                 if (weapon != null)
                 {
-                    if (partType == PartType.Weapon)
+                    switch (partType)
                     {
-                        customPlayer.EquipWeapon(weapon, WeaponSlot.RightHand);
-                    }
-                    else if (partType == PartType.WeaponL)
-                    {
-                        customPlayer.EquipWeapon(weapon, WeaponSlot.LeftHand);
+                        case PartType.Weapon:
+                            customPlayer.EquipWeapon(weapon, WeaponSlot.RightHand);
+                            break;
+
+                        case PartType.WeaponL:
+                            customPlayer.EquipWeapon(weapon, WeaponSlot.LeftHand);
+                            break;
+
+                        case PartType.BWeapon:
+                            customPlayer.EquipWeapon(weapon, WeaponSlot.RightBack);
+                            break;
+
+                        case PartType.BWeaponL:
+                            customPlayer.EquipWeapon(weapon, WeaponSlot.LeftBack);
+                            break;
                     }
                 }
                 else
@@ -255,44 +266,41 @@ public class MechAssemblyManager : MonoBehaviour
                 }
             }
 
-            EquippedData data = new EquippedData();
+            // パーツ情報を登録
+            EquippedData data = new()
+            {
+                partsDataName = partData.name
+            };
             data.partObjs.Add(newPart);
-            data.partsDataName = partData.name;
 
-            // 生成したパーツに限定してスケーリング
+            // 🔧 ボーンスケーリング適用
             ApplyBoneScalesToPart(partData, newPart, ref data.modifiedData);
 
-            // 🔧 スケール・位置・回転補正を適用
+            // 🔧 スケール・位置・回転補正
             ApplyPrefabScaleInfo(partData, newPart);
 
-
-            // 装着リストに登録
+            // 登録
             equippedParts[partType].Add(data);
         }
-
-        // 🔁 その他のボーンスケーリング（必要であれば）
-        //ApplyBoneScales(partData);
     }
 
-    /// <summary>
-    /// 複数スロットに対応したパーツを装着（例：両腕、脚）
-    /// </summary>
+    //========================================
+    // 🦿 複数スロット装着処理（両腕・脚）
+    //========================================
     private void AttachToMultipleSlots(PartData partData, Transform[] slots, PartType partType)
     {
-        // 既存のパーツを削除
+        // 旧パーツ削除
         foreach (var part in equippedParts[partType])
         {
             ResetBoneScalesToPart(part.modifiedData);
             foreach (var obj in part.partObjs)
-            {
                 Destroy(obj);
-            }
         }
         equippedParts[partType].Clear();
 
-        EquippedData data = new EquippedData();
-        data.partsDataName = partData.name;
-        // 各スロットにプレハブを装着
+        EquippedData data = new() { partsDataName = partData.name };
+
+        // 各スロットに順番にプレハブ生成
         for (int i = 0; i < slots.Length && i < partData.multiPrefabs.Count; i++)
         {
             GameObject prefab = partData.multiPrefabs[i];
@@ -305,21 +313,24 @@ public class MechAssemblyManager : MonoBehaviour
 
             data.partObjs.Add(newPart);
 
-            // 🔧 スケール・位置・回転補正を適用
+            // スケール補正
             ApplyMultiplePrefabScaleInfo(partData, prefab, newPart);
         }
-        // 装着済みリストに追加
+
         equippedParts[partType].Add(data);
     }
 
+    //========================================
+    // 🧾 現在装着中パーツを取得
+    //========================================
     public Dictionary<PartType, List<EquippedData>> GetEquippedParts()
     {
         return equippedParts;
     }
 
-    /// <summary>
-    /// 指定したパーツのスケール・位置・回転補正を適用する
-    /// </summary>
+    //========================================
+    // 📏 個別プレハブのスケール補正適用
+    //========================================
     private void ApplyMultiplePrefabScaleInfo(PartData partData, GameObject originPrefab, GameObject instantiatedPart)
     {
         if (partData.scaleInfos == null || partData.scaleInfos.Count == 0) return;
@@ -328,7 +339,6 @@ public class MechAssemblyManager : MonoBehaviour
         {
             if (scaleInfo.prefab == null) continue;
 
-            // 対象プレハブと一致するスケール情報を適用
             if (scaleInfo.prefab.name == originPrefab.name)
             {
                 instantiatedPart.transform.localScale = scaleInfo.scale;
@@ -336,13 +346,12 @@ public class MechAssemblyManager : MonoBehaviour
                 instantiatedPart.transform.localRotation = Quaternion.Euler(scaleInfo.rotationOffset);
                 break;
             }
-            
         }
     }
 
-    /// <summary>
-    /// 指定したパーツのスケール・位置・回転補正を適用する
-    /// </summary>
+    //========================================
+    // 📏 単一パーツのスケール補正適用
+    //========================================
     private void ApplyPrefabScaleInfo(PartData partData, GameObject instantiatedPart)
     {
         if (partData.scaleInfos == null || partData.scaleInfos.Count == 0) return;
@@ -351,7 +360,6 @@ public class MechAssemblyManager : MonoBehaviour
         {
             if (scaleInfo.prefab == null) continue;
 
-            // 対象プレハブと一致するスケール情報を適用
             if (scaleInfo.prefab.name == partData.partPrefab.name)
             {
                 instantiatedPart.transform.localScale = scaleInfo.scale;
@@ -362,9 +370,9 @@ public class MechAssemblyManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 指定した PartType に対応するスロット Transform を取得
-    /// </summary>
+    //========================================
+    // 🧩 パーツ種別 → スロット参照取得
+    //========================================
     private Transform GetSlotTransform(PartType partType)
     {
         return partType switch
@@ -378,43 +386,44 @@ public class MechAssemblyManager : MonoBehaviour
         };
     }
 
+    //========================================
+    // 🔄 ボーンスケールを元に戻す
+    //========================================
     private void ResetBoneScalesToPart(List<ModifierBoneData> modifiers)
     {
         foreach (var modifierBoneData in modifiers)
-        {
             modifierBoneData.ResetModifier();
-        }
     }
 
-    /// <summary>
-    /// このパーツを装着したGameObject内部のボーンのみをスケーリングする
-    /// </summary>
+    //========================================
+    // 🦴 ボーンスケール適用（装着パーツ内のみ）
+    //========================================
     private void ApplyBoneScalesToPart(PartData partData, GameObject instantiatedPart, ref List<ModifierBoneData> modifiers)
     {
         if (partData.boneScales == null) return;
 
         foreach (var boneScale in partData.boneScales)
         {
-            // パーツ GameObject 内部から探す
+            // メカルート以下から対象ボーンを探索
             Transform targetBone = FindChildTransformRecursive(mechRoot, boneScale.boneName);
             if (targetBone != null)
             {
-                List<Transform> children = new List<Transform>();
-                for(int i = 0; i < targetBone.childCount; i++)
-                {
+                // 子を一時的に外す（スケール反映のため）
+                List<Transform> children = new();
+                for (int i = 0; i < targetBone.childCount; i++)
                     children.Add(targetBone.GetChild(i));
-                }
-                foreach(Transform child in children)
-                {
-                    child.SetParent(targetBone.parent);
-                }
 
-                // 変更前の状態を記憶しておく
-                ModifierBoneData data = new ModifierBoneData();
+                foreach (Transform child in children)
+                    child.SetParent(targetBone.parent);
+
+                // 元データ記録
+                ModifierBoneData data = new();
                 data.boneModifierData = new ModifierData(targetBone);
 
+                // スケール適用
                 targetBone.localScale = boneScale.scale;
 
+                // 子を戻して位置補正
                 foreach (Transform child in children)
                 {
                     child.SetParent(targetBone);
@@ -436,26 +445,9 @@ public class MechAssemblyManager : MonoBehaviour
         }
     }
 
-    //private void ApplyBoneScales(PartData partData)
-    //{
-    //    foreach (var boneScale in partData.boneScales)
-    //    {
-    //        // メカルート以下から該当ボーンを探す
-    //        Transform targetBone = FindChildTransformRecursive(mechRoot, boneScale.boneName);
-    //        if (targetBone != null)
-    //        {
-    //            targetBone.localScale = boneScale.scale;
-    //        }
-    //        else
-    //        {
-    //            Debug.LogWarning($"スケーリング対象のボーン {boneScale.boneName} が見つかりませんでした。");
-    //        }
-    //    }
-    //}
-
-    /// <summary>
-    /// ボーン名で子オブジェクトを再帰的に探す
-    /// </summary>
+    //========================================
+    // 🔍 子階層からボーン名で検索
+    //========================================
     private Transform FindChildTransformRecursive(Transform parent, string name)
     {
         if (parent.name == name) return parent;
