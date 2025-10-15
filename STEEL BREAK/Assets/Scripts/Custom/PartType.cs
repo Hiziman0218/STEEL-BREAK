@@ -7,5 +7,6 @@ public enum PartType
     Leg = 4,     //足
     Weapon = 5, //武器
     WeaponL = 6, //左武器
-    Booster = 7  //バックパック
+    Booster = 7,  //バックパック
+    BWeapon = 8, //バックパック武器
 }
