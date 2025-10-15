@@ -109,7 +109,7 @@ public class Weapon_Back : MonoBehaviour
 
         //“G•ûŒü‚Ì–Ú•W‰ñ“]‚ğŒvZ
         Vector3 dir = (m_targetPos - transform.root.position).normalized;
-        //dir.y = 0f; //…•½•ûŒü‚¾‚¯Œü‚­‚æ‚¤‚É
+        dir.y = 0f; //…•½•ûŒü‚¾‚¯Œü‚­‚æ‚¤‚É
         m_targetRot = Quaternion.LookRotation(dir);
     }
 }
