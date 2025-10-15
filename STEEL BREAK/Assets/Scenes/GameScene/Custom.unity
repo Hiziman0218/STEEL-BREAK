@@ -4407,7 +4407,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 8350344943800042011}
         m_TargetAssemblyTypeName: CustomPlayerRotation, Assembly-CSharp
-        m_MethodName: FocusWLArm
+        m_MethodName: FocusBackpackLeft
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13547,7 +13547,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 8350344943800042011}
         m_TargetAssemblyTypeName: CustomPlayerRotation, Assembly-CSharp
-        m_MethodName: FocusWRArm
+        m_MethodName: FocusBackpackRight
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -166,14 +166,57 @@ public class CustomPlayerRotation : MonoBehaviour
     public void FocusWLArm() => SetCameraTarget(WlArmPoint);
     public void FocusWRArm() => SetCameraTarget(WrArmPoint);
 
+    //バックパック内のカメラポイントに移動
+    public void FocusBackpackLeft() => SetCameraToBackpackPoint("BWLArmPoint");
+    public void FocusBackpackRight() => SetCameraToBackpackPoint("BWRArmPoint");
+
+    // ===== バックパック探索＆カメラ移動処理 =====
+    void SetCameraToBackpackPoint(string pointName)
+    {
+        // B-chestを探す
+        Transform bChest = transform.Find("B-chest");
+        if (bChest == null)
+        {
+            Debug.LogWarning("B-chest が見つかりません。");
+            return;
+        }
+
+        Transform foundPoint = null;
+
+        // B-chest配下のすべての子を探索（バックパック1,2など）
+        foreach (Transform child in bChest)
+        {
+            if (child.name.StartsWith("バックパック"))
+            {
+                // その中にBWLArmPointまたはBWRArmPointがあるか探す
+                Transform targetPoint = child.Find(pointName);
+                if (targetPoint != null)
+                {
+                    foundPoint = targetPoint;
+                    break;
+                }
+            }
+        }
+
+        if (foundPoint != null)
+        {
+            SetCameraTarget(foundPoint);
+            Debug.Log($"✅ {pointName} にカメラ移動しました。");
+        }
+        else
+        {
+            Debug.LogWarning($"{pointName} がバックパック内に見つかりませんでした。");
+        }
+    }
+
+    // ===== カメラターゲット設定 =====
     void SetCameraTarget(Transform point)
     {
         if (point == null) return;
 
         currentTargetPoint = point;
         isDefaultView = false;
-
-        hasReachedTarget = false; // 🟢 カメラ切り替え時に「到達前」状態に戻す
+        hasReachedTarget = false;
 
         // 子オブジェクトに「CameraPoint」があればそれを中心点にする
         Transform childCenter = point.Find("CameraPoint");
