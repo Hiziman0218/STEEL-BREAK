@@ -71,6 +71,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4692645852791835020}
+  - component: {fileID: 6534696655916048080}
+  - component: {fileID: 1076510431050948878}
+  - component: {fileID: 4399957657627935584}
   m_Layer: 0
   m_Name: "\u30AC\u30C8\u30EA\u30F3\u30B0"
   m_TagString: Untagged
@@ -96,6 +99,50 @@ Transform:
   - {fileID: 1167720098073262543}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6534696655916048080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4273293237468571648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_statusData: {fileID: 0}
+  m_muzzleTransform: {fileID: 557451639171959772}
+  m_attachOffsetPos: {x: 0, y: 0, z: 0}
+--- !u!114 &1076510431050948878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4273293237468571648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556d062f8cfd4c740b828e9972f08db3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_useRotate: 1
+  m_useDeceleration: 1
+--- !u!114 &4399957657627935584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4273293237468571648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c705d16789e88749825059ffeda4e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gunBarrel: {fileID: 3761919109739903506}
+  m_gunBurrelNumber: 3
+  m_rotateSpeed: 900
 --- !u!1001 &1190026669028705587
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156,5 +203,10 @@ PrefabInstance:
 --- !u!4 &129315133921950774 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1245449387602966789, guid: a545e48c736596144bc0369d6c2269c3, type: 3}
+  m_PrefabInstance: {fileID: 1190026669028705587}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3761919109739903506 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2645538831205302049, guid: a545e48c736596144bc0369d6c2269c3, type: 3}
   m_PrefabInstance: {fileID: 1190026669028705587}
   m_PrefabAsset: {fileID: 0}
