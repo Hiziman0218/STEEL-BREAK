@@ -216,6 +216,10 @@ public class MechAssemblyManager : MonoBehaviour
             if (partType == PartType.Weapon && tabType == PartType.WeaponL)
                 partType = PartType.WeaponL;
 
+            // 左右の肩武器スロットを調整
+            if (partType == PartType.BWeapon && tabType == PartType.BWeaponL)
+                partType = PartType.BWeaponL;
+
             // 対応スロット取得
             Transform slot = GetSlotTransform(partType);
             if (slot == null) return;

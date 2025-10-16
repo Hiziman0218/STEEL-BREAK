@@ -50,6 +50,12 @@ public class AssemblyUIManager : MonoBehaviour
                 .Where(p => p.partType == PartType.WeaponL || p.partType == PartType.Weapon)
                 .ToArray();
         }
+        else if (currentTabType == PartType.BWeaponL)
+        {
+            filteredParts = allParts
+                .Where(p => p.partType == PartType.BWeaponL || p.partType == PartType.BWeapon)
+                .ToArray();
+        }
         else
         {
             // ③ 通常：選択されたタブと一致するタイプのパーツだけを抽出
