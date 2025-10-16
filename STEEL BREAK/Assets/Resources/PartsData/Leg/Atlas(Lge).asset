@@ -26,18 +26,18 @@ MonoBehaviour:
   - {fileID: 3609650416387194350, guid: a91892ec4e08a344a95ded22e90135bf, type: 3}
   boneScales:
   - boneName: B-shin.L
-    scale: {x: 1, y: 2, z: 1}
+    scale: {x: 1, y: 1.5, z: 1}
     offsetInfos: []
   - boneName: B-shin.R
-    scale: {x: 1, y: 2, z: 1}
+    scale: {x: 1, y: 1.5, z: 1}
     offsetInfos: []
   scaleInfos:
   - prefab: {fileID: 3648582523516357285, guid: 6863393e50d8b9a44867bf716ce0676e, type: 3}
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 1, y: 0.66, z: 1}
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
   - prefab: {fileID: 9119518472798925607, guid: effe9bc436a87024e835cf8867ed79dc, type: 3}
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 1, y: 0.69, z: 1}
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
