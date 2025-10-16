@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace StateMachineAI
 {
-    public class CeackGuard_Fairys : State<FairysAI>
+    public class CeackGuard_Fairys : State<GyardianFairysAI>
     {
         //コンストラクタ
-        public CeackGuard_Fairys(FairysAI owner) : base(owner) { }
+        public CeackGuard_Fairys(GyardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -40,13 +40,13 @@ namespace StateMachineAI
                 {
                     //ガードポインタ―を対象のガードポイントに紐づけ
                     owner.m_GuardPointer = guard.gameObject;
-                    owner.ChangeState(AIState_Fairys.Guard_Fairys);
+                    owner.ChangeState(AIState_Gyardian.Guard_Gyardian);
                     return;
                 }
             }
 
             //空きがなければ攻撃しに行く
-            owner.ChangeState(AIState_Fairys.Shot_Fairys);
+            owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
         }
 
         public override void Exit()

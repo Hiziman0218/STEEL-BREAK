@@ -77,11 +77,40 @@ namespace EmeraldAI
         bool CanExecute(EmeraldSystem EmeraldComponent, ActionsClass ActionClass)
         {
             var Conditions = (((int)EnterConditions) & ((int)EmeraldComponent.AnimationComponent.CurrentAnimationState)) != 0;
-            return (Mathf.Round(EmeraldComponent.CombatComponent.DistanceFromTarget * 10) / 10) <= (Mathf.Round(EmeraldComponent.m_NavMeshAgent.stoppingDistance * 10) / 10) + 0.1f && ActionClass.CooldownLengthTimer >= CooldownLength &&
-                (Mathf.Round(EmeraldComponent.m_NavMeshAgent.remainingDistance * 10) / 10) >= (Mathf.Round(EmeraldComponent.CombatComponent.TooCloseDistance * 10) / 10) / 2f &&
-                Conditions && !EmeraldComponent.AIAnimator.GetBool("Attack") && !EmeraldComponent.AIAnimator.GetBool("Walk Backwards") && !EmeraldComponent.AIAnimator.GetBool("Blocking") &&
-                !EmeraldComponent.AIAnimator.GetBool("Hit") && !EmeraldComponent.AIAnimator.GetBool("Dodge Triggered") && EmeraldComponent.DetectionComponent.ObstructionType != EmeraldDetection.ObstructedTypes.Other &&
-                EmeraldComponent.CombatComponent.TargetAngle < 60 && EmeraldComponent.CombatTarget.localScale != Vector3.one * 0.003f && EmeraldComponent.transform.localScale != Vector3.one * 0.003f;
+
+            float stoppingDist = EmeraldComponent.CombatComponent.AttackDistance;
+            float remainingDist;
+
+            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
+            {
+                if (EmeraldComponent.m_NavMeshAgent != null && EmeraldComponent.m_NavMeshAgent.isOnNavMesh)
+                    remainingDist = EmeraldComponent.m_NavMeshAgent.remainingDistance;
+                else
+                    remainingDist = Mathf.Infinity; // NavMeshにいないなら到達不能扱い
+            }
+            else // RayCastPro
+            {
+                if (EmeraldComponent.MovementComponent.m_RCController != null)
+                    remainingDist = EmeraldComponent.MovementComponent.m_RCController.remainingDistance;
+                else
+                    remainingDist = Mathf.Infinity;
+            }
+
+            return (Mathf.Round(EmeraldComponent.CombatComponent.DistanceFromTarget * 10) / 10)
+                        <= (Mathf.Round(stoppingDist * 10) / 10) + 0.1f
+                   && ActionClass.CooldownLengthTimer >= CooldownLength
+                   && (Mathf.Round(remainingDist * 10) / 10)
+                        >= (Mathf.Round(EmeraldComponent.CombatComponent.TooCloseDistance * 10) / 10) / 2f
+                   && Conditions
+                   && !EmeraldComponent.AIAnimator.GetBool("Attack")
+                   && !EmeraldComponent.AIAnimator.GetBool("Walk Backwards")
+                   && !EmeraldComponent.AIAnimator.GetBool("Blocking")
+                   && !EmeraldComponent.AIAnimator.GetBool("Hit")
+                   && !EmeraldComponent.AIAnimator.GetBool("Dodge Triggered")
+                   && EmeraldComponent.DetectionComponent.ObstructionType != EmeraldDetection.ObstructedTypes.Other
+                   && EmeraldComponent.CombatComponent.TargetAngle < 60
+                   && EmeraldComponent.CombatTarget.localScale != Vector3.one * 0.003f
+                   && EmeraldComponent.transform.localScale != Vector3.one * 0.003f;
         }
 
         /// <summary>

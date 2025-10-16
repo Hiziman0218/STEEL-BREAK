@@ -445,7 +445,19 @@ namespace EmeraldAI
                     OnKilledTarget?.Invoke();
                     DeathDelay = Random.Range(MinResumeWander, MaxResumeWander + 1);
                     DeathDelayActive = true;
-                    EmeraldComponent.m_NavMeshAgent.ResetPath();
+                    //移動位置のリセット適応（個人改造）
+                    if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                    {
+                        if (EmeraldComponent.MovementComponent.m_RCController != null && EmeraldComponent.MovementComponent.m_RCController.detector.destination == null)
+                        {
+                            GameObject dest = new GameObject("RC_Destination");
+                            EmeraldComponent.MovementComponent.m_RCController.detector.destination = dest.transform;
+                        }
+                    }
+                    else
+                    {
+                        EmeraldComponent.m_NavMeshAgent.ResetPath();
+                    }
                     Invoke(nameof(ClearTarget), 0.01f); // 以前は 0.75 秒
                 }
             }

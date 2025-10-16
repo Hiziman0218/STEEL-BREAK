@@ -2,19 +2,20 @@ using StateMachineAI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 
 public class SpawnFairys_T : MonoBehaviour
 {
     //一体一体生成していく
     public static IEnumerator SpawnWithInterval(
-    GameObject m_Fairys,
-    List<GameObject> m_SpawnPoints,
-    List<GameObject> spawnedEnemies,
-    float m_SpawnPer,
-    float m_waitSeconds,
-    int m_MaxFairys,
+    GameObject m_Fairys,                        //生成するモデル
+    List<GameObject> m_SpawnPoints,             //スポーンポイント
+    List<GameObject> spawnedEnemies,            //全体の生成数
+    List<GameObject> spawnedAttackEnemies,      //攻撃型の数
+    List<GameObject> spawnedDefensEnemies,      //防御型の数
+    float m_SpawnPer,                           //生成割合
+    float m_waitSeconds,                        //生成待ち時間
+    int m_MaxFairys,                            //ゲーム上で生成できる最大数
     System.Action onComplete
 )
     {
@@ -25,13 +26,16 @@ public class SpawnFairys_T : MonoBehaviour
 
             //フェアリーの生成
             GameObject enemy = GameObject.Instantiate(m_Fairys, point.transform.position, Quaternion.identity);
-            FairyAI fairyComponent = enemy.GetComponent<FairyAI>();
 
-            //コンポーネントがnullじゃなければ役職決め
-            if (fairyComponent != null)
+            if (Random.value < m_SpawnPer)
             {
-                //m_SpawnPerが低いほどソルジャーが多くなる　高いほどガーディアンが多くなる
-                fairyComponent.m_Role = (Random.value < m_SpawnPer) ? EnemyRole.Guardian : EnemyRole.Soldier;
+                var comp = enemy.AddComponent<GyardianFairysAI>();
+                spawnedDefensEnemies.Add(enemy);
+            }
+            else
+            {
+                var comp = enemy.AddComponent<SoldierFairysAI>();
+                spawnedAttackEnemies.Add(enemy);
             }
 
             //現在生成されている敵を記録

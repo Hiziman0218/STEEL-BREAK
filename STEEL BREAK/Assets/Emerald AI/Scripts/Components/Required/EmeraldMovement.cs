@@ -683,9 +683,10 @@ namespace EmeraldAI
             float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             AIAnimator.SetFloat("Direction", angle * MovementTurningSensitivity, DirectionDampTime, Time.deltaTime);
 
+            /*
             //Flyにy軸回転動を同期
             Quaternion yOnlyRotation = Quaternion.Euler(0, m_RayCastPro.transform.rotation.eulerAngles.y, 0);
-            transform.rotation = yOnlyRotation;
+            transform.rotation = yOnlyRotation;*/
 
             //FlyingAgentに追従
             transform.position = m_RayCastPro.transform.position;
@@ -822,71 +823,143 @@ namespace EmeraldAI
         }
 
         /// <summary>
-        /// （日本語）状態に応じた回転と地面整列を処理します。
+        /// （日本語）状態に応じた回転と地面整列を処理します。（個人改造）レイキャストプロに対応
         /// </summary>
         void RotateAI()
         {
+            // 死亡中、強制回転中、または NavMeshAgent が経路計算中なら処理しない
+            if (AnimationComponent.IsDead || RotateTowardsTarget ||
+                (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven
+                 && m_NavMeshAgent.pathPending)) return;
 
-            if (AnimationComponent.IsDead || RotateTowardsTarget || m_NavMeshAgent.pathPending) return;
-
-            //Rotate while stationary -  There's certain instances where steeringTarget, destination, or CurrentTarget need to be used.
-            if (!AnimationComponent.IsMoving && !AnimationComponent.IsDead && !RotateTowardsTarget || DestinationAdjustedAngle > 110)
+            // --- 停止中の回転処理 ---
+            if ((!AnimationComponent.IsMoving && !AnimationComponent.IsDead && !RotateTowardsTarget) || DestinationAdjustedAngle > 110)
             {
+                // 戦闘中かつターゲットが存在する場合
                 if (EmeraldComponent.CombatComponent.CombatState && EmeraldComponent.CombatTarget)
                 {
                     if (CanRotateStationary())
                     {
-                        if (CanReachTarget && !EmeraldComponent.AnimationComponent.IsStrafing && !BackupDelayActive || EmeraldComponent.BehaviorsComponent.CurrentBehaviorType == EmeraldBehaviors.BehaviorTypes.Coward)
+                        // 通常の回転条件を満たす場合
+                        if ((CanReachTarget && !EmeraldComponent.AnimationComponent.IsStrafing && !BackupDelayActive)
+                            || EmeraldComponent.BehaviorsComponent.CurrentBehaviorType == EmeraldBehaviors.BehaviorTypes.Coward)
                         {
-                            if (m_NavMeshAgent.remainingDistance > 1 && !EmeraldComponent.DetectionComponent.TargetObstructed)
+                            Vector3 Direction = Vector3.zero;
+
+                            if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
                             {
-                                Vector3 Direction = new Vector3(m_NavMeshAgent.steeringTarget.x, 0, m_NavMeshAgent.steeringTarget.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                                UpdateRotations(Direction);
+                                // NavMesh モード：経路が有効なら steeringTarget を向く
+                                if (m_NavMeshAgent != null && m_NavMeshAgent.isOnNavMesh && m_NavMeshAgent.remainingDistance > 1)
+                                {
+                                    Direction = m_NavMeshAgent.steeringTarget - transform.position;
+                                }
+                                else
+                                {
+                                    // 経路が無効ならターゲットを直接向く
+                                    Direction = EmeraldComponent.CombatTarget.position - transform.position;
+                                }
                             }
-                            else if (m_NavMeshAgent.remainingDistance > 1 && EmeraldComponent.DetectionComponent.TargetObstructed)
+                            else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
                             {
-                                Vector3 Direction = new Vector3(m_NavMeshAgent.steeringTarget.x, 0, m_NavMeshAgent.steeringTarget.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                                UpdateRotations(Direction);
+                                // RayCastPro モード：detector.destination を向く
+                                if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                                    EmeraldComponent.MovementComponent.m_RCController.detector != null &&
+                                    EmeraldComponent.MovementComponent.m_RCController.detector.destination != null)
+                                {
+                                    Direction = EmeraldComponent.MovementComponent.m_RCController.detector.destination.position - transform.position;
+                                }
+                                else
+                                {
+                                    Direction = EmeraldComponent.CombatTarget.position - transform.position;
+                                }
                             }
-                            else
-                            {
-                                Vector3 Direction = new Vector3(EmeraldComponent.CombatTarget.position.x, 0, EmeraldComponent.CombatTarget.position.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                                UpdateRotations(Direction);
-                            }
+
+                            UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
                         }
                         else
                         {
-                            Vector3 Direction = new Vector3(EmeraldComponent.CombatTarget.position.x, 0, EmeraldComponent.CombatTarget.position.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                            UpdateRotations(Direction);
+                            // 回転条件を満たさない場合はターゲットを直接向く
+                            Vector3 Direction = EmeraldComponent.CombatTarget.position - transform.position;
+                            UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
                         }
                     }
                 }
+                // 非戦闘時の回転処理
                 else if (!EmeraldComponent.CombatComponent.CombatState && !AnimationComponent.IsGettingHit)
                 {
-                    //Once our AI has returned to its stantionary positon, adjust its position so it rotates to its original rotation.
-                    if (ReturnToStationaryPosition && AIAgentActive && m_NavMeshAgent.remainingDistance <= m_NavMeshAgent.stoppingDistance)
+                    if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven)
                     {
-                        ReturnToStationaryPosition = false;
-                    }
+                        // NavMesh モード：元の位置に戻ったらフラグを解除
+                        if (ReturnToStationaryPosition && AIAgentActive &&
+                            m_NavMeshAgent != null && m_NavMeshAgent.isOnNavMesh &&
+                            m_NavMeshAgent.remainingDistance <= m_NavMeshAgent.stoppingDistance)
+                        {
+                            ReturnToStationaryPosition = false;
+                        }
 
-                    Vector3 Direction = new Vector3(m_NavMeshAgent.steeringTarget.x, 0, m_NavMeshAgent.steeringTarget.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                    UpdateRotations(Direction);
+                        if (m_NavMeshAgent != null && m_NavMeshAgent.isOnNavMesh)
+                        {
+                            Vector3 Direction = m_NavMeshAgent.steeringTarget - transform.position;
+                            UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
+                        }
+                    }
+                    else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
+                    {
+                        // RayCastPro モード：detector.destination を向く
+                        if (EmeraldComponent.MovementComponent.m_RCController != null &&
+                            EmeraldComponent.MovementComponent.m_RCController.detector != null &&
+                            EmeraldComponent.MovementComponent.m_RCController.detector.destination != null)
+                        {
+                            Vector3 Direction = EmeraldComponent.MovementComponent.m_RCController.detector.destination.position - transform.position;
+                            UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
+                        }
+                    }
                 }
 
+                // アニメーション用の回転計算
                 EmeraldComponent.AnimationComponent.CalculateTurnAnimations();
             }
 
-            //Rotate while moving
+            // --- 移動中の回転処理 ---
             if (CanRotateMoving() && DestinationAdjustedAngle < 110)
             {
-                Vector3 Direction = new Vector3(m_NavMeshAgent.steeringTarget.x, 0, m_NavMeshAgent.steeringTarget.z) - new Vector3(transform.position.x, 0, transform.position.z);
-                UpdateRotations(Direction);
+                Vector3 Direction = Vector3.zero;
+
+                if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven &&
+                    m_NavMeshAgent != null && m_NavMeshAgent.isOnNavMesh)
+                {
+                    Direction = m_NavMeshAgent.steeringTarget - transform.position;
+                }
+                else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro &&
+                         EmeraldComponent.MovementComponent.m_RCController != null &&
+                         EmeraldComponent.MovementComponent.m_RCController.detector != null &&
+                         EmeraldComponent.MovementComponent.m_RCController.detector.destination != null)
+                {
+                    Direction = EmeraldComponent.MovementComponent.m_RCController.detector.destination.position - transform.position;
+                }
+
+                UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
             }
-            //Rotate while backing up
+
+            // --- バック中の回転処理 ---
             if (AnimationComponent.IsBackingUp)
             {
-                Vector3 Direction = (new Vector3(m_NavMeshAgent.steeringTarget.x, 0, m_NavMeshAgent.steeringTarget.z) - new Vector3(transform.position.x, 0, transform.position.z)).normalized * -1;
-                UpdateRotations(Direction);
+                Vector3 Direction = Vector3.zero;
+
+                if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.NavMeshDriven &&
+                    m_NavMeshAgent != null && m_NavMeshAgent.isOnNavMesh)
+                {
+                    Direction = (m_NavMeshAgent.steeringTarget - transform.position).normalized * -1;
+                }
+                else if (EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro &&
+                         EmeraldComponent.MovementComponent.m_RCController != null &&
+                         EmeraldComponent.MovementComponent.m_RCController.detector != null &&
+                         EmeraldComponent.MovementComponent.m_RCController.detector.destination != null)
+                {
+                    Direction = (EmeraldComponent.MovementComponent.m_RCController.detector.destination.position - transform.position).normalized * -1;
+                }
+
+                UpdateRotations(new Vector3(Direction.x, 0, Direction.z));
             }
         }
 
@@ -936,20 +1009,44 @@ namespace EmeraldAI
             NormalRotation = Quaternion.FromToRotation(transform.up, SurfaceNormal) * transform.rotation;
             float AlignmentAngle = Quaternion.Angle(transform.rotation, NormalRotation);
 
-
-            if (!AnimationComponent.IsIdling && !AnimationComponent.IsAttacking && !AnimationComponent.IsSwitchingWeapons && !AnimationComponent.IsEquipping && !AnimationComponent.IsGettingHit)
+            //レイキャストプロに対応（個人改造）
+            //レイキャストプロでないならナビ依存の処理をそのまま使う
+            if (EmeraldComponent.MovementComponent.MovementType != EmeraldMovement.MovementTypes.RayCastPro)
             {
-                if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_NavMeshAgent.remainingDistance > m_NavMeshAgent.stoppingDistance)
+                //ナビメッシュの処理
+                if (!AnimationComponent.IsIdling && !AnimationComponent.IsAttacking && !AnimationComponent.IsSwitchingWeapons && !AnimationComponent.IsEquipping && !AnimationComponent.IsGettingHit)
                 {
-                    transform.rotation = Quaternion.Slerp(transform.rotation, qGround * qTarget, Time.deltaTime * 10);
+                    if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_NavMeshAgent.remainingDistance > m_NavMeshAgent.stoppingDistance)
+                    {
+                        transform.rotation = Quaternion.Slerp(transform.rotation, qGround * qTarget, Time.deltaTime * 10);
+                    }
+                }
+                else
+                {
+                    if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_NavMeshAgent.remainingDistance > m_NavMeshAgent.stoppingDistance)
+                    {
+                        Slope = Quaternion.Slerp(Slope, Quaternion.FromToRotation(transform.up, SurfaceNormal), Time.deltaTime * AlignmentSpeed);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Slope * transform.rotation, Time.deltaTime * 10);
+                    }
                 }
             }
             else
             {
-                if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_NavMeshAgent.remainingDistance > m_NavMeshAgent.stoppingDistance)
+                //レイキャストプロならナビ依存の場所をレイキャストプロに対応させて処理する
+                if (!AnimationComponent.IsIdling && !AnimationComponent.IsAttacking && !AnimationComponent.IsSwitchingWeapons && !AnimationComponent.IsEquipping && !AnimationComponent.IsGettingHit)
                 {
-                    Slope = Quaternion.Slerp(Slope, Quaternion.FromToRotation(transform.up, SurfaceNormal), Time.deltaTime * AlignmentSpeed);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Slope * transform.rotation, Time.deltaTime * 10);
+                    if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_RCController.remainingDistance > m_RCController.detector.stoppingDistance)
+                    {
+                        transform.rotation = Quaternion.Slerp(transform.rotation, qGround * qTarget, Time.deltaTime * 10);
+                    }
+                }
+                else
+                {
+                    if (EmeraldComponent.CombatComponent.CombatState || AnimationComponent.IsTurning || m_RCController.remainingDistance > m_RCController.detector.stoppingDistance)
+                    {
+                        Slope = Quaternion.Slerp(Slope, Quaternion.FromToRotation(transform.up, SurfaceNormal), Time.deltaTime * AlignmentSpeed);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Slope * transform.rotation, Time.deltaTime * 10);
+                    }
                 }
             }
         }
@@ -1296,8 +1393,6 @@ namespace EmeraldAI
             if (MovementType == MovementTypes.RayCastPro && !AnimationComponent.IsDead)
             {
                 MoveAIRayCastPro();
-                //RotateAIで不具合が起きるのでリターンでいったん対応
-                return;
             }
 
             //Calculates an AI's movement speed when using Root Motion
@@ -1670,9 +1765,23 @@ namespace EmeraldAI
 
             BackingUpTimer = 0;
 
+            //（個人改造）
+            if (WanderType == WanderTypes.RayCastPro)
+            {
+                if (EmeraldComponent.MovementComponent.m_RCController != null && EmeraldComponent.MovementComponent.m_RCController.detector != null)
+                {
+                    EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance = StoppingDistance;
+                }
+            }
             //Resets the AI's stopping distances.
-            if (WanderType != WanderTypes.Waypoints) m_NavMeshAgent.stoppingDistance = StoppingDistance;
-            else m_NavMeshAgent.stoppingDistance = 0.1f;
+            else if (WanderType != WanderTypes.Waypoints)
+            {
+                m_NavMeshAgent.stoppingDistance = StoppingDistance;
+            }
+            else
+            {
+                m_NavMeshAgent.stoppingDistance = 0.1f;
+            }
 
             //Return the AI to its starting destination to continue wandering based on it WanderType.
             ReturnToStartingDestination();

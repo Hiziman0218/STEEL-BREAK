@@ -1,49 +1,26 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
-using RaycastPro.Detectors;
-using Plugins.RaycastPro.Demo.Scripts;
-using static UnityEngine.GraphicsBuffer;
 
 namespace StateMachineAI
 {
-    /// <summary>
-    /// 生成時に割り振られる役割
-    /// Guardianはティターニアを守る
-    /// Soldierは攻撃部隊
-    /// </summary>
-    public enum FairysRole
-    {
-        Guardian,
-        Soldier
-    }
 
     /// <summary>
     /// 敵のステートリスト
     /// ここでステートを登録していない場合、
     /// 該当する行動が全くできない。
     /// </summary>
-    /// 
-    public enum AIState_Fairys
+    public enum AIState_Soldier
     {
-        Chase_Fairys,
-        Shot_Fairys,
-        RandamMove_Fairys,
-        Guard_Fairys,
-        CeackGuard_Fairys,
+        Chase_Soldier,
+        Shot_Soldier,
+        RandamMove_Soldier,
     }
 
-    public class FairysAI
-        : StatefulObjectBase<FairysAI, AIState_Fairys>
+    public class SoldierFairysAI
+        : StatefulObjectBase<SoldierFairysAI, AIState_Soldier>
     {
         [Header("プレイヤー")]
         public Transform m_Player;
@@ -71,15 +48,6 @@ namespace StateMachineAI
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
-        [HideInInspector]
-        //各役職用変数
-        public EnemyRole m_Role;
-        [HideInInspector]
-        //自分が守るポイント取得用
-        public GameObject m_GuardPointer;
-        [HideInInspector]
-        //守護位置のリスト
-        public List<Transform> m_GuardPoint;
 
         void Start()
         {
@@ -90,13 +58,6 @@ namespace StateMachineAI
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
-            //ガードポイントを取得
-            Transform parent = GameObject.Find("GuardPoint").transform;
-            foreach (Transform child in parent)
-            {
-                m_GuardPoint.Add(child);
-            }
-
             //センターポインターを個別に取得する
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
@@ -104,22 +65,18 @@ namespace StateMachineAI
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
 
             //存在していないクラスが指定されたら本体消滅
-            if (!AddStateByName("Chase_Fairys"))
+            if (!AddStateByName("Chase_Soldier"))
                 Destroy(gameObject);
-            if (!AddStateByName("Shot_Fairys"))
+            if (!AddStateByName("Shot_Soldier"))
                 Destroy(gameObject);
-            if (!AddStateByName("RandamMove_Fairys"))
-                Destroy(gameObject);
-            if (!AddStateByName("Guard_Fairys"))
-                Destroy(gameObject);
-            if (!AddStateByName("CeackGuard_Fairys"))
+            if (!AddStateByName("RandamMove_Soldier"))
                 Destroy(gameObject);
 
             //ステートマシーンを自身として設定
-            stateMachine = new StateMachine<FairysAI>();
+            stateMachine = new StateMachine<SoldierFairysAI>();
             
             // 追いかける
-            ChangeState(AIState_Fairys.Chase_Fairys);
+            ChangeState(AIState_Soldier.Chase_Soldier);
         }
 
         /// <summary>
@@ -141,7 +98,7 @@ namespace StateMachineAI
                 }
 
                 // 型が State<GunBattery_AI> かどうかをチェック
-                if (!typeof(State<FairysAI>).IsAssignableFrom(StateType))
+                if (!typeof(State<SoldierFairysAI>).IsAssignableFrom(StateType))
                 {
                     Debug.LogError($"{ClassName} は State<EnemyAI> 型ではありません。");
                     return true;
@@ -149,7 +106,7 @@ namespace StateMachineAI
 
                 // インスタンスを生成
                 System.Reflection.ConstructorInfo Constructor =
-                    StateType.GetConstructor(new[] { typeof(FairysAI) });
+                    StateType.GetConstructor(new[] { typeof(SoldierFairysAI) });
 
 
                 if (Constructor == null)
@@ -158,8 +115,8 @@ namespace StateMachineAI
                     return true;
                 }
 
-                State<FairysAI> StateInstance =
-                    Constructor.Invoke(new object[] { this }) as State<FairysAI>;
+                State<SoldierFairysAI> StateInstance =
+                    Constructor.Invoke(new object[] { this }) as State<SoldierFairysAI>;
 
                 if (StateInstance != null)
                 {

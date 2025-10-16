@@ -608,8 +608,18 @@ namespace EmeraldAI
         {
             if (!EmeraldComponent.CombatComponent.CombatState)
             {
-                return EmeraldComponent.MovementComponent.DestinationAdjustedAngle >= EmeraldComponent.MovementComponent.AngleToTurn && DestinationDirection != Vector3.zero &&
-                       EmeraldComponent.MovementComponent.AIAgentActive && EmeraldComponent.m_NavMeshAgent.remainingDistance > EmeraldComponent.m_NavMeshAgent.stoppingDistance;
+                //レイキャストプロに対応（個人改造）
+                if(EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro && !EmeraldComponent.AnimationComponent.IsDead)
+            {
+                    return EmeraldComponent.MovementComponent.DestinationAdjustedAngle >= EmeraldComponent.MovementComponent.AngleToTurn && DestinationDirection != Vector3.zero &&
+                      EmeraldComponent.MovementComponent.AIAgentActive && EmeraldComponent.MovementComponent.m_RCController.remainingDistance > EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance;
+                }
+                else
+                {
+                    return EmeraldComponent.MovementComponent.DestinationAdjustedAngle >= EmeraldComponent.MovementComponent.AngleToTurn && DestinationDirection != Vector3.zero &&
+                       EmeraldComponent.MovementComponent.AIAgentActive && EmeraldComponent.MovementComponent.m_RCController.remainingDistance > EmeraldComponent.MovementComponent.m_RCController.detector.stoppingDistance;
+
+                }
             }
             else
             {

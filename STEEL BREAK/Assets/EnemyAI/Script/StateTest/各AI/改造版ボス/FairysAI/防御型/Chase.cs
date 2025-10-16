@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace StateMachineAI
 {
     //ティターニアを守るフェアリー
-    public class Chase_Fairys : State<FairysAI>
+    public class Chase_Gyardian : State<GyardianFairysAI>
     {
         //コンストラクタ
-        public Chase_Fairys(FairysAI owner) : base(owner) { }
+        public Chase_Gyardian(GyardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -37,7 +34,7 @@ namespace StateMachineAI
             if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)
             {
                 // 攻撃
-                owner.ChangeState(AIState_Fairys.Shot_Fairys);
+                owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
             }
         }
 

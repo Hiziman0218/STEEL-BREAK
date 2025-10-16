@@ -138,55 +138,51 @@ namespace EmeraldAI
 
         IEnumerator Moving(EmeraldSystem EmeraldComponent, ActionsClass ActionClass)
         {
+            Transform targetTransform = (EmeraldComponent.MovementComponent.MovementType == MovementTypes.RayCastPro)
+                ? m_randomMoveDummy
+                : null;
+
+            // --- RayCastPro/共通の到達待ち ---
             while (!CanCancel(EmeraldComponent) && !EmeraldComponent.AnimationComponent.IsDead)
             {
-                float dist = Vector3.Distance(EmeraldComponent.transform.position, m_randomMoveDummy.position);
-                if (dist < 0.75f) break;
+                float dist;
+                if (EmeraldComponent.MovementComponent.MovementType == MovementTypes.RayCastPro)
+                {
+                    dist = Vector3.Distance(EmeraldComponent.transform.position, targetTransform.position);
+                    if (dist < 0.75f) break;
 
-                Vector3 Direction = m_randomMoveDummy.position - EmeraldComponent.transform.position;
-                EmeraldComponent.MovementComponent.UpdateRotations(Direction);
+                    Vector3 dir = targetTransform.position - EmeraldComponent.transform.position;
+                    EmeraldComponent.MovementComponent.UpdateRotations(dir);
+                }
+                else // NavMesh
+                {
+                    if (!EmeraldComponent.m_NavMeshAgent.enabled || !EmeraldComponent.m_NavMeshAgent.isOnNavMesh) break;
+                    dist = EmeraldComponent.m_NavMeshAgent.remainingDistance;
+                    if (dist < 0.75f) break;
+
+                    Vector3 dir = EmeraldComponent.m_NavMeshAgent.steeringTarget - EmeraldComponent.transform.position;
+                    EmeraldComponent.MovementComponent.UpdateRotations(dir);
+                }
 
                 yield return null;
             }
 
-
-            EmeraldComponent.MovementComponent.DefaultMovementPaused = true;
-            yield return new WaitForSeconds(0.5f);
-
-            while (!CanCancel(EmeraldComponent) && EmeraldComponent.m_NavMeshAgent.enabled && !EmeraldComponent.AnimationComponent.IsDead && EmeraldComponent.m_NavMeshAgent.remainingDistance >= 0.75f)
-            {
-                EmeraldComponent.m_NavMeshAgent.stoppingDistance = 0.5f;
-                Vector3 Direction = new Vector3(EmeraldComponent.m_NavMeshAgent.steeringTarget.x, 0, EmeraldComponent.m_NavMeshAgent.steeringTarget.z) - new Vector3(EmeraldComponent.transform.position.x, 0, EmeraldComponent.transform.position.z);
-                EmeraldComponent.MovementComponent.UpdateRotations(Direction);
-                yield return null;
-            }
-
-            if (!EmeraldComponent.m_NavMeshAgent.enabled || EmeraldComponent.AnimationComponent.IsDead)
-            {
-                EmeraldComponent.MovementComponent.DefaultMovementPaused = false;
-                ActionClass.IsActive = false;
-                yield break;
-            }
-
-            yield return new WaitForSeconds(0.5f);
-
-            // ランダムに生成した待機秒数のあいだ待機し、その間はターゲットの方向へ回転し続ける
-            float WaitSeconds = Random.Range(MinWaitSeconds, MaxWaitSeconds);
+            // --- 待機処理 ---
+            float wait = Random.Range(MinWaitSeconds, MaxWaitSeconds);
             float t = 0;
-
-            while (t < WaitSeconds && EmeraldComponent.CombatTarget != null)
+            while (t < wait && EmeraldComponent.CombatTarget != null)
             {
                 t += Time.deltaTime;
-
-                Vector3 Direction = new Vector3(EmeraldComponent.CombatTarget.position.x, 0, EmeraldComponent.CombatTarget.position.z) - new Vector3(EmeraldComponent.transform.position.x, 0, EmeraldComponent.transform.position.z);
-                EmeraldComponent.MovementComponent.UpdateRotations(Direction);
-
+                Vector3 dir = EmeraldComponent.CombatTarget.position - EmeraldComponent.transform.position;
+                EmeraldComponent.MovementComponent.UpdateRotations(dir);
                 yield return null;
             }
 
             ActionClass.IsActive = false;
             EmeraldComponent.MovementComponent.DefaultMovementPaused = false;
-            EmeraldComponent.m_NavMeshAgent.stoppingDistance = EmeraldComponent.CombatComponent.AttackDistance;
+
+            if (EmeraldComponent.MovementComponent.MovementType == MovementTypes.NavMeshDriven)
+                EmeraldComponent.m_NavMeshAgent.stoppingDistance = EmeraldComponent.CombatComponent.AttackDistance;
         }
 
         bool CanCancel(EmeraldSystem EmeraldComponent)

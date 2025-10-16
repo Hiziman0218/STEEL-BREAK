@@ -7,11 +7,11 @@ using UnityEngine;
 namespace StateMachineAI
 {
     //ソルジャーミサイルタイプ
-    public class Shot_Fairys : State<FairysAI>
+    public class Shot_Fairys : State<SoldierFairysAI>
     {
         public float m_TImes;
         //コンストラクタ
-        public Shot_Fairys(FairysAI owner) : base(owner) { }
+        public Shot_Fairys(SoldierFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -32,7 +32,7 @@ namespace StateMachineAI
             if (m_TImes <= 0)
             {
                 //ランダムに動く
-                owner.ChangeState(AIState_Fairys.RandamMove_Fairys);
+                owner.ChangeState(AIState_Soldier.RandamMove_Soldier);
             }
             else
             {

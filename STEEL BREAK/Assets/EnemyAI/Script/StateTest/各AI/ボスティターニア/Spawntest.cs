@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class Spawntest : MonoBehaviour
 {
     IEnumerator SpawnWithInterval(
@@ -40,4 +41,4 @@ public class Spawntest : MonoBehaviour
 
         Debug.Log("フェアリーをすべて徐々に生成しました！");
     }
-}
+}*/

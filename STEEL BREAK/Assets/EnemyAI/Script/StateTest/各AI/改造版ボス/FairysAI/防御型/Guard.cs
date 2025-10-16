@@ -6,10 +6,10 @@ using UnityEngine;
 namespace StateMachineAI
 {
     //ティターニアを守るフェアリー
-    public class Guard_Fairys : State<FairysAI>
+    public class Guard_Fairys : State<GyardianFairysAI>
     {
         //コンストラクタ
-        public Guard_Fairys(FairysAI owner) : base(owner) { }
+        public Guard_Fairys(GyardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -45,7 +45,7 @@ namespace StateMachineAI
             // 攻撃範囲内に入れば
             if (distance <= owner.m_AttackDistance)
             {
-                owner.ChangeState(AIState_Fairys.Shot_Fairys);
+                owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
             }
 
         }

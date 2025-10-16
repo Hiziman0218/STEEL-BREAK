@@ -461,10 +461,11 @@ namespace EmeraldAI
         public virtual void OnDetectTarget()
         {
             BehaviorState = "Cautious";                                   // 警戒に遷移
+
             //レイ適応（個人改造）プレイヤーがどっか行ってしまう
             if(EmeraldComponent.MovementComponent.MovementType == EmeraldMovement.MovementTypes.RayCastPro)
             {
-                EmeraldComponent.MovementComponent.m_RCController.detector.destination.position = transform.position;
+                EmeraldComponent.MovementComponent.m_RCController.detector.destination = transform;
             }
             else if (isActiveAndEnabled) EmeraldComponent.m_NavMeshAgent.SetDestination(transform.position); // いったん停止
         }

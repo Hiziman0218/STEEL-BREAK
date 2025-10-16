@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
+﻿using UnityEngine;
 
 public class PlayerLookAt : MonoBehaviour
 {
@@ -20,6 +17,7 @@ public class PlayerLookAt : MonoBehaviour
 
     /// <summary>
     /// 緩い追従
+    /// 砲台とかに使っている
     /// </summary>
     /// <param name="m_My">自分の位置</param>
     /// <param name="m_Player">プレイヤー</param>
@@ -32,6 +30,38 @@ public class PlayerLookAt : MonoBehaviour
 
         // 追従補正（補正の割合は0〜1で制御）
         m_My.transform.rotation = Quaternion.Slerp(m_My.transform.rotation, targetRotation, m_turnsmooth);
+    }
+
+    /// <summary>
+    /// 即座に水平方向だけ向く
+    ///PlayerLookAt.LookAtFlat(プレイヤー, 敵（自AIのモデル）);
+    /// 滑らかに水平方向だけ向く（0.05でゆっくり）
+    ///PlayerLookAt.LookAtFlat(プレイヤー, 敵（自AIのモデル）, 0.05f);
+    /// </summary>
+    /// <param name="m_Player"></param>
+    /// <param name="m_my"></param>
+    /// <param name="turnSmooth"></param>
+    public static void LookAtFlat(Transform m_Player, Transform m_my, float turnSmooth = 1f)
+    {
+        // ターゲット方向ベクトル
+        Vector3 dir = m_Player.position - m_my.position;
+        dir.y = 0f; // 高さ成分を無視して水平だけにする
+
+        if (dir.sqrMagnitude < 0.001f) return; // ゼロ割り防止
+
+        Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+
+        if (turnSmooth >= 1f)
+        {
+            // 即座に回転
+            m_my.rotation = targetRot;
+        }
+        else
+        {
+            // スムーズに回転
+            m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth);
+        }
+
     }
 
 }

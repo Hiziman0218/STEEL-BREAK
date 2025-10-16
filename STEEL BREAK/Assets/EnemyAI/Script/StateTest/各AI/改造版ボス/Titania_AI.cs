@@ -1,19 +1,8 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
-using RaycastPro.Detectors;
-using Plugins.RaycastPro.Demo.Scripts;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace StateMachineAI
 {
@@ -40,8 +29,11 @@ namespace StateMachineAI
         public List<GameObject> m_SpawnPoints = new List<GameObject>();
         [Header("雑魚敵のプレハブ")]
         public GameObject m_Fairys;
-        [Header("雑魚敵の場に残る生成上限")]
-        public int m_MaxAttackFairys = 5;
+        [Header("雑魚敵の場に残る上限数")]
+        [Range(10, 20)]
+        public int m_MaxFairys;
+        [Header("生成できる役職ごとの上限")]
+        [Range(1, 5)]
         public int m_MaxDefensFairys = 5;
         [Header("役職確率（0.0でソルジャー100%、1.0でガーディアン100%）")]
         [Range(0.0f, 1.0f)]
@@ -71,6 +63,9 @@ namespace StateMachineAI
         public List<GameObject> m_spawnedAttackEnemies = new List<GameObject>();
         [Header("防御型の敵管理")]
         public List<GameObject> m_spawnedDefensEnemies = new List<GameObject>();
+        [Header("全体の敵管理")]
+        public List<GameObject> m_spawnedEnemies = new List<GameObject>();
+
 
 
         [HideInInspector]
@@ -86,8 +81,6 @@ namespace StateMachineAI
         [HideInInspector]
         //コルーチンのフラグ管理用
         public bool isSpawningFairy = false;
-        //フェアリー側のコンポーネント
-        public FairysAI m_Fairys_Component;
         public float waitSeconds;
         //フェアリーに指定用
         public GameObject m_Guard_Point;
@@ -104,9 +97,6 @@ namespace StateMachineAI
             {
                 m_SpawnPoints.Add(child.gameObject);
             }
-
-            m_Fairys_Component = m_Fairys.GetComponent<FairysAI>();
-
 
             //agent生成
             //myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);

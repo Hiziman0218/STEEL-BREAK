@@ -7,10 +7,10 @@ using UnityEngine;
 namespace StateMachineAI
 {
     //ランダムな移動
-    public class RandamMove_Fairys : State<FairysAI>
+    public class RandamMove_Fairys : State<SoldierFairysAI>
     {
         //コンストラクタ
-        public RandamMove_Fairys(FairysAI owner) : base(owner) { }
+        public RandamMove_Fairys(SoldierFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -34,12 +34,12 @@ namespace StateMachineAI
                 if (chance < 0.3f)
                 {
                     // 30%の確率で射撃
-                    owner.ChangeState(AIState_Fairys.Shot_Fairys);
+                    owner.ChangeState(AIState_Soldier.Shot_Soldier);
                 }
                 else if (chance < 0.6f)
                 {
                     // 30%で追いかける
-                    owner.ChangeState(AIState_Fairys.Chase_Fairys);
+                    owner.ChangeState(AIState_Soldier.Chase_Soldier);
                 }
                 else
                 {
