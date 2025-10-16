@@ -141,4 +141,10 @@ public class Weapon_Back : MonoBehaviour
         dir.y = 0f; //…•½•ûŒü‚¾‚¯Œü‚­‚æ‚¤‚É
         m_targetRot = Quaternion.LookRotation(dir);
     }
+
+    private void OnDestroy()
+    {
+        var st = new System.Diagnostics.StackTrace(true);
+        Debug.LogError($"{name} OnDestroy. instanceID={GetInstanceID()}\n{st}");
+    }
 }

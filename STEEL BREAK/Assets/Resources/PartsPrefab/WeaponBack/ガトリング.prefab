@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 556d062f8cfd4c740b828e9972f08db3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_useRotate: 1
-  m_useDeceleration: 1
+  m_useRotate: 0
+  m_useDeceleration: 0
 --- !u!114 &4399957657627935584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_gunBarrel: {fileID: 3761919109739903506}
   m_gunBurrelNumber: 3
-  m_rotateSpeed: 900
+  m_rotateSpeed: 1200
 --- !u!1001 &1190026669028705587
 PrefabInstance:
   m_ObjectHideFlags: 0

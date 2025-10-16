@@ -41,6 +41,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         if (backComp != null)
         {
             m_isBackWeapon = true;
+            m_isIKFinished = true;
         }
 
         //最初から撃てるように設定
