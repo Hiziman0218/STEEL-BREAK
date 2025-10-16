@@ -382,6 +382,8 @@ public class MechAssemblyManager : MonoBehaviour
             PartType.Weapon => weaponSlot,
             PartType.WeaponL => weaponLSlot,
             PartType.Booster => boosterSlot,
+            PartType.BWeapon => customPlayer.rightBackTransform,
+            PartType.BWeaponL => customPlayer.leftBackTransform,
             _ => null,
         };
     }

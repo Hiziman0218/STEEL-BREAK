@@ -13,6 +13,9 @@ public class PlayerBase : CharaBase
     [Tooltip("左背面の武器を装備するオブジェクト(インスペクタで設定不可)")]
     [SerializeField] protected Transform m_leftBackTransform;  //左背面の武装装備ポイント
 
+    public Transform rightBackTransform { get { return m_rightBackTransform; } }
+    public Transform leftBackTransform { get { return m_leftBackTransform; } }
+
     [Tooltip("Root")]
     public Transform mechRoot; //メカ全体のルートノード
 

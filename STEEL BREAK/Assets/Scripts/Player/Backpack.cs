@@ -22,7 +22,7 @@ public class Backpack : MonoBehaviour
     private List<GameObject> m_activeEffects = new List<GameObject>(); //生成しているエフェクトのリスト
 
     private InputManager m_inputManager; //入力管理クラス
-    private Player m_player; //プレイヤー
+    private PlayerBase m_player; //プレイヤー
 
     private BoostState m_currentBoostState = BoostState.None; //現在の移動状態
     private BoostState m_prevBoostState = BoostState.None;    //前フレームの移動状態
@@ -65,7 +65,7 @@ public class Backpack : MonoBehaviour
     public void SettingAttachPoints()
     {
         //親にPlayerがいるか調べる
-        var player = transform.root.GetComponent<Player>();
+        var player = transform.GetComponentInParent<PlayerBase>();
 
         //見つかった場合 → プレイヤーに自分の装備ポイントを登録
         if (player != null)
