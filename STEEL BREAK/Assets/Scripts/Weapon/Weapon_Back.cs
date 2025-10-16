@@ -22,10 +22,22 @@ public class Weapon_Back : MonoBehaviour
     private InputManager m_inputManager;
     private LockOn m_lockOn;
 
-    private void Start()
+    private void Awake()
     {
         //各参照取得
         m_shooting = GetComponent<Weapon_Shooting>();
+
+        if (m_shooting != null)
+        {
+            //武装セットの探索オブジェクト名を変更
+            m_shooting.SetCheckPoint("AttachPoint");
+        }
+    }
+
+    private void Start()
+    {
+        //各参照取得
+        //m_shooting = GetComponent<Weapon_Shooting>();
         m_inputManager = transform.root.GetComponent<InputManager>();
         m_lockOn = transform.root.GetComponent<LockOn>();
 
@@ -33,11 +45,12 @@ public class Weapon_Back : MonoBehaviour
         if (!m_useRotate) m_isRotated = true;
         if (!m_useDeceleration) m_isDecelerated = true;
 
+        /*
         if (m_shooting != null)
         {
             //武装セットの探索オブジェクト名を変更
             m_shooting.SetCheckPoint("AttachPoint");
-        }
+        }*/
     }
 
     private void Update()
@@ -107,6 +120,7 @@ public class Weapon_Back : MonoBehaviour
     /// </summary>
     public void FireRequest()
     {
+        Debug.Log("肩武器発射");
         //既にリクエストされていた場合は、以降の処理を行わない
         if (m_isTrigger) return;
 

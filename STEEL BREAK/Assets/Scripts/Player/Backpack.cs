@@ -27,15 +27,15 @@ public class Backpack : MonoBehaviour
     private BoostState m_currentBoostState = BoostState.None; //現在の移動状態
     private BoostState m_prevBoostState = BoostState.None;    //前フレームの移動状態
 
+    private void Awake()
+    {
+        SettingAttachPoints();
+    }
+
     private void Start()
     {
         // プレイヤーのInputManagerを取得
         m_inputManager = transform.root.GetComponent<InputManager>();
-
-        if (m_inputManager == null)
-        {
-            Debug.LogError("InputManagerがルートオブジェクトに存在しません。");
-        }
     }
 
     private void Update()
@@ -53,9 +53,16 @@ public class Backpack : MonoBehaviour
 
     /// <summary>
     /// 親が変わったときに呼ばれる処理
-    /// プレイヤーに装備ポイントを設定
     /// </summary>
     private void OnTransformParentChanged()
+    {
+        SettingAttachPoints();
+    }
+
+    /// <summary>
+    /// プレイヤーに自身のアタッチポイントを設定
+    /// </summary>
+    public void SettingAttachPoints()
     {
         //親にPlayerがいるか調べる
         var player = transform.root.GetComponent<Player>();

@@ -99,7 +99,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         Transform grip = transform.Find(m_checkPoint);
         if (grip == null)
         {
-            Debug.LogWarning($"{name} に接続箇所が見つかりません。");
+            Debug.LogError($"{name} に接続箇所が見つかりません。");
             return;
         }
 

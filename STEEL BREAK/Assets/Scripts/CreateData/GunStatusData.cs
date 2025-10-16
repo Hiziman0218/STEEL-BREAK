@@ -18,8 +18,8 @@ public class GunStatusData : ScriptableObject
     public int MaxAmmo;      //最大弾数
     [Tooltip("反転機能を使うか(使うならtrue)")]
     public bool UseMirror;   //反転機能を使うか
-    [Tooltip("どの手で持った時に反転させるか")]
-    public AttachSide MirrorHand; //どの手で持った時に反転させるか
+    [Tooltip("どちらで装備した時に反転させるか")]
+    public AttachSide MirrorHand; //どちらで装備した時に反転させるか
     [Tooltip("弾丸のプレハブ")]
     public Bullet BulletPrefab; //弾丸プレハブ
     [Tooltip("マズルフラッシュのエフェクト")]

@@ -781,6 +781,8 @@ MonoBehaviour:
   m_statusData: {fileID: 11400000, guid: 5e4a24108ae46fb46afca6967ca8fff5, type: 2}
   m_rightHandTransform: {fileID: 8858160888479745029}
   m_leftHandTransform: {fileID: 4811688370399680533}
+  m_rightBackTransform: {fileID: 0}
+  m_leftBackTransform: {fileID: 0}
   mechRoot: {fileID: 6315808028450674509}
   headSlot: {fileID: 3082026601123965065}
   bodySlot: {fileID: 1214673692359708941}
@@ -805,6 +807,11 @@ MonoBehaviour:
   - {fileID: 5823301851654604002}
   - {fileID: 3958581410459130069}
   - {fileID: 4900137710243733126}
+  m_isDebug: 1
+  m_rightHandWeaponMono: {fileID: 0}
+  m_leftHandWeaponMono: {fileID: 0}
+  m_rightBackWeaponMono: {fileID: 4273293237468571648, guid: 0bc3bf0b96f9fb44f90b28d189540216, type: 3}
+  m_leftBackWeaponMono: {fileID: 4273293237468571648, guid: 0bc3bf0b96f9fb44f90b28d189540216, type: 3}
   PartsSet: {fileID: 5744882643590379773}
   m_destroyEffect: {fileID: 100010, guid: e0609132424a24844b1d53ad3d704fd9, type: 3}
 --- !u!114 &5841538993253739429

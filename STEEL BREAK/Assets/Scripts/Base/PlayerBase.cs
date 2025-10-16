@@ -63,7 +63,10 @@ public class PlayerBase : CharaBase
         {
             case WeaponSlot.RightHand:
                 m_rightHandWeapon = weapon;
-                weapon.AttachToPoint(m_rightHandTransform, AttachSide.Right);
+                if(m_rightHandTransform != null)
+                {
+                    m_rightHandWeapon.AttachToPoint(m_rightHandTransform, AttachSide.Right);
+                }
                 if(m_status != null) { 
                     m_rightHandWeapon.SetTeam(m_status.GetTeam());
                 }
@@ -74,8 +77,11 @@ public class PlayerBase : CharaBase
                 break;
             case WeaponSlot.LeftHand:
                 m_leftHandWeapon = weapon;
-                weapon.AttachToPoint(m_leftHandTransform, AttachSide.Left);
-                if(m_status != null) { 
+                if (m_leftHandTransform != null)
+                {
+                    m_leftHandWeapon.AttachToPoint(m_leftHandTransform, AttachSide.Left);
+                }
+                if (m_status != null) { 
                     m_leftHandWeapon.SetTeam(m_status.GetTeam());
                 }
                 if(IK != null)
@@ -87,7 +93,7 @@ public class PlayerBase : CharaBase
                 m_rightBackWeapon = weapon;
                 if(m_rightBackTransform != null)
                 {
-                    weapon.AttachToPoint(m_rightBackTransform, AttachSide.Right);
+                    m_rightBackWeapon.AttachToPoint(m_rightBackTransform, AttachSide.Right);
                 }
                 if (m_status != null)
                 {
@@ -98,7 +104,7 @@ public class PlayerBase : CharaBase
                 m_leftBackWeapon = weapon;
                 if (m_leftBackTransform != null)
                 {
-                    weapon.AttachToPoint(m_leftBackTransform, AttachSide.Left);
+                    m_leftBackWeapon.AttachToPoint(m_leftBackTransform, AttachSide.Left);
                 }
                 if (m_status != null)
                 {

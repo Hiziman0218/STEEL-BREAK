@@ -1,11 +1,16 @@
 using Ilumisoft.RadarSystem;
 using UnityEngine;
+using Game.Enum;
 
 public class Player : PlayerBase
 {
+    [Header("デバッグ設定")]
     //デバッグ用 武装をインスペクタで設定
-    //[SerializeField] private MonoBehaviour m_righthandWeaponMono; //右手武装(デバッグ)
-    //[SerializeField] private MonoBehaviour m_lefthandWeaponMono;  //左手武装(デバッグ)
+    [SerializeField] private bool m_isDebug = false; //デバッグか
+    [SerializeField] private GameObject m_rightHandWeaponMono; //右手武装(デバッグ)
+    [SerializeField] private GameObject m_leftHandWeaponMono;  //左手武装(デバッグ)
+    [SerializeField] private GameObject m_rightBackWeaponMono; //右背面武装(デバッグ)
+    [SerializeField] private GameObject m_leftBackWeaponMono;  //左背面武装(デバッグ)
 
     [Header("プレハブ設定")]
     [Tooltip("パーツ設定用オブジェクト")]
@@ -40,9 +45,11 @@ public class Player : PlayerBase
         movement = GetComponent<Movement>();
         IK = GetComponent<IK_Control>();
 
-        //インスペクタ上で設定したモノビヘイビア型の武装を武装クラスに変換し設定
-        //EquipWeapon(m_righthandWeaponMono as IWeapon, WeaponSlot.RightHand);
-        //EquipWeapon(m_lefthandWeaponMono as IWeapon, WeaponSlot.LeftHand);
+        //デバッグ中なら、デバッグ用の処理を行う
+        if (m_isDebug)
+        {
+            DebugWeaponAttach();
+        }
     }
 
     void Update()
@@ -148,5 +155,36 @@ public class Player : PlayerBase
     {
         m_radar = radar;
         m_radar.player = this;
+    }
+
+    /// <summary>
+    /// インスペクタで設定した武器を装備する(デバッグ)
+    /// </summary>
+    public void DebugWeaponAttach()
+    {
+        // 各装備を複製してEquip
+        if (m_rightHandWeaponMono != null)
+        {
+            var rightHandObj = Instantiate(m_rightHandWeaponMono.gameObject);
+            EquipWeapon(rightHandObj.GetComponent<IWeapon>(), WeaponSlot.RightHand);
+        }
+
+        if (m_leftHandWeaponMono != null)
+        {
+            var leftHandObj = Instantiate(m_leftHandWeaponMono.gameObject);
+            EquipWeapon(leftHandObj.GetComponent<IWeapon>(), WeaponSlot.LeftHand);
+        }
+
+        if (m_rightBackWeaponMono != null)
+        {
+            var rightBackObj = Instantiate(m_rightBackWeaponMono.gameObject);
+            EquipWeapon(rightBackObj.GetComponent<IWeapon>(), WeaponSlot.RightBack);
+        }
+
+        if (m_leftBackWeaponMono != null)
+        {
+            var leftBackObj = Instantiate(m_leftBackWeaponMono.gameObject);
+            EquipWeapon(leftBackObj.GetComponent<IWeapon>(), WeaponSlot.LeftBack);
+        }
     }
 }

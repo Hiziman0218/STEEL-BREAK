@@ -11,7 +11,7 @@ public class GunStatus
     private int MaxAmmo;      //最大弾数
     private int Ammo;         //現在の弾数
     private bool UseMirror;   //反転機能を使うか
-    private AttachSide MirrorWhenHeld;      //どの手で持った時に反転させるか
+    private AttachSide MirrorWhenHeld;    //どちらで装備した時に反転させるか
     private Bullet BulletPrefab;          //弾丸プレハブ
     private GameObject MuzzleFlashEffect; //マズルフラッシュのエフェクト
     private AudioClip FireSE;             //発射音
@@ -122,7 +122,7 @@ public class GunStatus
     }
 
     /// <summary>
-    /// どの手で持った時に反転させるかを取得
+    /// どちらで装備した時に反転させるかを取得
     /// </summary>
     /// <returns></returns>
     public AttachSide GetMirrorWhenHeld()
