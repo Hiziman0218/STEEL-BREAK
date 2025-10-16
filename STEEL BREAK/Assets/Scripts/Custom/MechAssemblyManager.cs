@@ -318,6 +318,7 @@ public class MechAssemblyManager : MonoBehaviour
             data.partObjs.Add(newPart);
 
             // スケール補正
+            ApplyBoneScalesToPart(partData, newPart, ref data.modifiedData);
             ApplyMultiplePrefabScaleInfo(partData, prefab, newPart);
         }
 

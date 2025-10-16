@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
-  m_Name: "\u30D0\u30BA\u30FC\u30AB"
+  m_Name: "\u30DF\u30B5\u30A4\u30EB"
   m_EditorClassIdentifier: 
-  partName: Bazooka
-  partType: 5
-  partIcon: {fileID: 21300000, guid: 981fe4bd080a605459b3df7346b22c22, type: 3}
-  partPrefab: {fileID: 3212595489810784232, guid: f7a99e8a92579d84f9b68ff71d3c914b, type: 3}
+  partName: Gatling
+  partType: 8
+  partIcon: {fileID: 21300000, guid: c858f3e1f5a7c8044968a456dc63bf89, type: 3}
+  partPrefab: {fileID: 8827363937480880442, guid: f36ed3bbf9015c94290783fb10ad2247, type: 3}
   multiPrefabs: []
   boneScales: []
   scaleInfos: []
