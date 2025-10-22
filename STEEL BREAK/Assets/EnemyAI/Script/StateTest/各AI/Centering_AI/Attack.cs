@@ -31,7 +31,6 @@ namespace StateMachineAI
 
                 //攻撃処理
                 Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
-
             }
             //クールダウン中攻撃範囲外なら
             else

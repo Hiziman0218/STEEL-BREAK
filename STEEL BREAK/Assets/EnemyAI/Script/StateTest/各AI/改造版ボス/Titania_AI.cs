@@ -10,6 +10,7 @@ namespace StateMachineAI
     {
         Idle_T,
         Spawn_T,
+        RandomMove_T,
         TurnBeam_T,
         LockBeam_T,
         RushBeam_T,
@@ -22,27 +23,35 @@ namespace StateMachineAI
         public Transform m_Player;
         [Header("エネミーモデル")]
         public Transform m_EnemyModel;
+        [Header("センターポイントの取得")]
+        public GameObject m_CenterMarker;
         [Header("ビーム発射口")]
         public Transform m_BeamPoint;
 
+        [Header("行動確率設定")]
+        [Range(0f, 10f)] public float m_probSpawn = 2f;
+        [Range(0f, 10f)] public float m_probRush = 2f;
+        [Range(0f, 10f)] public float m_probBeam = 2f;
+        [Range(0f, 10f)] public float m_probMove = 8f;
+
         [Header("雑魚敵のスポーン位置を取得")]
         public List<GameObject> m_SpawnPoints = new List<GameObject>();
+        [Header("雑魚敵の守護位置を取得")]
+        public GameObject m_Guard_Point;
         [Header("雑魚敵のプレハブ")]
         public GameObject m_Fairys;
+
         [Header("雑魚敵の場に残る上限数")]
         [Range(10, 20)]
         public int m_MaxFairys;
-        [Header("生成できる役職ごとの上限")]
+        [Header("生成できる守護雑魚の上限")]
         [Range(1, 5)]
         public int m_MaxDefensFairys = 5;
         [Header("役職確率（0.0でソルジャー100%、1.0でガーディアン100%）")]
         [Range(0.0f, 1.0f)]
         public float m_SpawnPer = 0.3f;
         [Header("生成するときの出現間隔")]
-        public float m_waitSeconds = 3f;
-
-        [Header("センターポイントの取得")]
-        public GameObject m_CenterMarker;
+        public float m_waitSeconds = 0.5f;
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 30;
@@ -66,8 +75,6 @@ namespace StateMachineAI
         [Header("全体の敵管理")]
         public List<GameObject> m_spawnedEnemies = new List<GameObject>();
 
-
-
         [HideInInspector]
         public CoolDown m_CoolDown;
         [HideInInspector]
@@ -81,10 +88,6 @@ namespace StateMachineAI
         [HideInInspector]
         //コルーチンのフラグ管理用
         public bool isSpawningFairy = false;
-        public float waitSeconds;
-        //フェアリーに指定用
-        public GameObject m_Guard_Point;
-
 
         void Start()
         {
@@ -98,24 +101,26 @@ namespace StateMachineAI
                 m_SpawnPoints.Add(child.gameObject);
             }
 
+            //センターポインターを個別に取得する
+            m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
+
             //agent生成
-            //myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);
+            myAgent = PoolManager.Instance.Get("Titania", transform.position + transform.forward, m_CenterMarker.transform);
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
             //存在していないクラスが指定されたら本体消滅
-            if (!AddStateByName("Idle_T"))
-                Destroy(gameObject);
-            if (!AddStateByName("Spawn_T"))
-                Destroy(gameObject);
-            if (!AddStateByName("TurnBeam_T"))
-                Destroy(gameObject);
-            if (!AddStateByName("LockBeam_T"))
-                Destroy(gameObject);
-            if (!AddStateByName("RushBeam_T"))
-                Destroy(gameObject);
+            foreach (AIState_Titania_T state in Enum.GetValues(typeof(AIState_Titania_T)))
+            {
+                if (!AddStateByName(state.ToString()))
+                {
+                    Debug.LogError($"{state} の追加に失敗したため、本体を削除します。");
+                    Destroy(gameObject);
+                    return;
+                }
+            }
 
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<Titania_T>();

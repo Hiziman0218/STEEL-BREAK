@@ -51,10 +51,8 @@ namespace StateMachineAI
         }
         public void Chak()
         {
-            /*
-            owner.m_MoveTarget.transform.Translate(new Vector3(10, 10, 10));
-            owner.m_Detector.destination = owner.m_MoveTarget.transform;
-            */
+            
+            owner.m_CenterMarker.transform.Translate(new Vector3(10, 10, 10));            
         }
     }
 }

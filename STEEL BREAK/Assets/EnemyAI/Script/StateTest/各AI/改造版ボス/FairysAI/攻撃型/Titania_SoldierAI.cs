@@ -1,8 +1,8 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 using System.Reflection;
+using RaycastPro.Detectors;
 
 namespace StateMachineAI
 {
@@ -26,6 +26,8 @@ namespace StateMachineAI
         public Transform m_Player;
         [Header("エネミーモデル")]
         public Transform m_EnemyModel;
+        [Header("射撃するためのコンポーネント")]
+        public Enemy m_Enemy;
         [Header("センターポイントの取得")]
         public GameObject m_CenterMarker;
 
@@ -48,11 +50,16 @@ namespace StateMachineAI
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
+        //エージェントのディテクター
+        public Detector m_Detector;
 
         void Start()
         {
             //プレイヤーをタグで検索して取得
             m_Player = GameObject.FindWithTag("Player")?.transform;
+
+            //自分のモデル位置を獲得
+            m_EnemyModel = this.transform;
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
@@ -63,6 +70,11 @@ namespace StateMachineAI
 
             //エージェントを取得
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
+            m_Detector = myAgent.GetComponent<Detector>();
+
+            //射撃用のスクリプトを取得
+            Enemy m_Enemy = GetComponent<Enemy>();
+
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Chase_Soldier"))
