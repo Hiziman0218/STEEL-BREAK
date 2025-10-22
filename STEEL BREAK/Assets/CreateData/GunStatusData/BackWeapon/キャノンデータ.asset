@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e576948516e6634db5370ed85bd45d3, type: 3}
-  m_Name: "\u30EC\u30FC\u30B6\u30FC\u30AC\u30F3\u30C7\u30FC\u30BF"
+  m_Name: "\u30AD\u30E3\u30CE\u30F3\u30C7\u30FC\u30BF"
   m_EditorClassIdentifier: 
-  Name: "\u30EC\u30FC\u30B6\u30FC\u30AC\u30F3"
-  Rate: 1
-  ReloadTime: 3
-  Speed: 150
-  Damage: 4
-  MaxAmmo: 40
+  Name: "\u30AD\u30E3\u30CE\u30F3"
+  Rate: 0
+  ReloadTime: 0
+  Speed: 0
+  Damage: 0
+  MaxAmmo: 4
   UseMirror: 0
   MirrorHand: 0
-  BulletPrefab: {fileID: 2992533592334213899, guid: 273c864a48085744ca20b04b22c483a8, type: 3}
-  MuzzleFlashEffect: {fileID: 100000, guid: 03a4a1935a9f4454c861dfa0aa6df562, type: 3}
-  FireSE: {fileID: 8300000, guid: 3c7c23f464a44244080ad7357d2178f9, type: 3}
+  BulletPrefab: {fileID: 0}
+  MuzzleFlashEffect: {fileID: 0}
+  FireSE: {fileID: 0}
   EmptyFireSE: {fileID: 0}
   ReloadSE: {fileID: 0}

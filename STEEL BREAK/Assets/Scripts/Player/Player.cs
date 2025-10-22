@@ -19,8 +19,13 @@ public class Player : PlayerBase
     [Tooltip("破壊時エフェクト")]
     [SerializeField] private GameObject m_destroyEffect;
 
+    [Header("基本設定")]
+    [SerializeField] private float m_lerpSpeed; //ラープのスピード
+
     private float m_HPRate;           //現在の耐久割合
     private float m_boostRate;        //現在のブースト割合
+
+    private bool m_isAutoHorizontal;  //水平に戻すか
 
     private InputManager inputManager; //入力受け取りクラス
     private Movement movement;         //コントローラーやキーによる移動
@@ -28,6 +33,12 @@ public class Player : PlayerBase
     private ProgressBar m_HPBar;      //HPバー
     private ProgressBar m_boostGauge; //ブーストゲージ
     private Radar m_radar;            //プレイヤーを中心とするレーダー
+
+    /*デバッグ武装保持用*/
+    IWeapon DebugWeaponRightH;
+    IWeapon DebugWeaponLeftH;
+    IWeapon DebugWeaponRightB;
+    IWeapon DebugWeaponLeftB;
 
     /// <summary>
     /// 初期化
@@ -54,27 +65,59 @@ public class Player : PlayerBase
 
     void Update()
     {
+        //フラグ管理
+        m_isAutoHorizontal = true;
+
         //右手の攻撃入力を受け取っていたら
         if (inputManager.IsFireinRightHand)
         {
-            //武装が設定されているかを確認し、使用
+            //武装が設定されているかを確認し、使用する
             m_rightHandWeapon?.Use();
         }
+        //受け取っていなかったら
+        else
+        {
+            //武装が設定されているかを確認し、使用しない
+            m_rightHandWeapon?.NotUse();
+        }
+
         //左手の攻撃入力を受け取っていたら
         if (inputManager.IsFireinLeftHand)
         {
             //武装が設定されているかを確認し、使用
             m_leftHandWeapon?.Use();
         }
+        //受け取っていなかったら
+        else
+        {
+            //武装が設定されているかを確認し、使用しない
+            m_leftHandWeapon?.NotUse();
+        }
+
         //右背面の攻撃入力を受け取ったら
         if (inputManager.IsFireinRightBack)
         {
             //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
             if (m_rightBackWeapon is MonoBehaviour comp)
             {
-                comp.GetComponent<Weapon_Back>()?.FireRequest();
+                Weapon_Back BackWeapon = comp.GetComponent<Weapon_Back>();
+                if(BackWeapon != null)
+                {
+                    BackWeapon.FireRequest();
+                    if (BackWeapon.GetUseRotate())
+                    {
+                        m_isAutoHorizontal = false;
+                    }
+                } 
             }
         }
+        //受け取っていなかったら
+        else
+        {
+            //武装が設定されているかを確認し、使用しない
+            m_rightBackWeapon?.NotUse();
+        }
+
         //左背面の攻撃入力を受け取ったら
         if (inputManager.IsFireinLeftBack)
         {
@@ -83,6 +126,12 @@ public class Player : PlayerBase
             {
                 comp.GetComponent<Weapon_Back>()?.FireRequest();
             }
+        }
+        //受け取っていなかったら
+        else
+        {
+            //武装が設定されているかを確認し、使用しない
+            m_leftBackWeapon?.NotUse();
         }
 
         //手動リロード入力を受け取っていたら
@@ -95,6 +144,9 @@ public class Player : PlayerBase
 
         //割合計算/反映
         UpdateRate();
+
+        //自動で水平に
+        if (m_isAutoHorizontal) AutoHorizontal();
 
         //HPが0以下なら、破壊エフェクトを再生し自身を削除、その後ゲームオーバー画面へ遷移
         if(m_status.GetHP() <= 0f)
@@ -127,6 +179,17 @@ public class Player : PlayerBase
             //ブーストゲージに反映
             m_boostGauge.BarValue = m_boostRate;
         }
+    }
+
+    /// <summary>
+    /// 自身を水平にラープ
+    /// </summary>
+    private void AutoHorizontal()
+    {
+        Vector3 euler = transform.eulerAngles;
+        euler.x = Mathf.LerpAngle(euler.x, 0f, m_lerpSpeed * Time.deltaTime);
+        euler.z = Mathf.LerpAngle(euler.z, 0f, m_lerpSpeed * Time.deltaTime);
+        transform.eulerAngles = euler;
     }
 
     /// <summary>
@@ -166,25 +229,29 @@ public class Player : PlayerBase
         if (m_rightHandWeaponMono != null)
         {
             var rightHandObj = Instantiate(m_rightHandWeaponMono.gameObject);
-            EquipWeapon(rightHandObj.GetComponent<IWeapon>(), WeaponSlot.RightHand);
+            DebugWeaponRightH = rightHandObj.GetComponent<IWeapon>();
+            EquipWeapon(DebugWeaponRightH, WeaponSlot.RightHand);
         }
 
         if (m_leftHandWeaponMono != null)
         {
             var leftHandObj = Instantiate(m_leftHandWeaponMono.gameObject);
-            EquipWeapon(leftHandObj.GetComponent<IWeapon>(), WeaponSlot.LeftHand);
+            DebugWeaponLeftH = leftHandObj.GetComponent<IWeapon>();
+            EquipWeapon(DebugWeaponLeftH, WeaponSlot.LeftHand);
         }
 
         if (m_rightBackWeaponMono != null)
         {
             var rightBackObj = Instantiate(m_rightBackWeaponMono.gameObject);
-            EquipWeapon(rightBackObj.GetComponent<IWeapon>(), WeaponSlot.RightBack);
+            DebugWeaponRightB = rightBackObj.GetComponent<IWeapon>();
+            EquipWeapon(DebugWeaponRightB, WeaponSlot.RightBack);
         }
 
         if (m_leftBackWeaponMono != null)
         {
             var leftBackObj = Instantiate(m_leftBackWeaponMono.gameObject);
-            EquipWeapon(leftBackObj.GetComponent<IWeapon>(), WeaponSlot.LeftBack);
+            DebugWeaponLeftB = leftBackObj.GetComponent<IWeapon>();
+            EquipWeapon(DebugWeaponLeftB, WeaponSlot.LeftBack);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using PixelPlay.Utils;
@@ -9,6 +8,8 @@ public class LockOn : MonoBehaviour
     [Header("索敵設定")]
     [Tooltip("ロックオン可能な最大距離")]
     public float detectionRange = 20f;
+    [Tooltip("ロックオン可能な最大角度")]
+    public float maxAngle = 60f;
 
     [Tooltip("敵のレイヤー")]
     public LayerMask enemyLayer;
@@ -85,13 +86,18 @@ public class LockOn : MonoBehaviour
     //範囲内の敵を検出し、距離順にソート
     private void RefreshCandidates()
     {
-        //検出前のコライダー数をログ
         var cols = Physics.OverlapSphere(transform.position, detectionRange, enemyLayer);
 
-        //Enemy & 生存フィルタ後の数をログ
         candidates = cols
             .Select(c => c.GetComponentInParent<Enemy>())
             .Where(e => e != null && e.IsAlive)
+            .Where(e =>
+            {
+                // 前方との角度チェック
+                Vector3 dirToEnemy = (e.transform.position - transform.position).normalized;
+                float angle = Vector3.Angle(transform.forward, dirToEnemy);
+                return angle < maxAngle; // プレイヤーの前方範囲のみ通す
+            })
             .Select(e => e.transform)
             .Distinct()
             .OrderBy(t => Vector3.Distance(transform.position, t.position))
@@ -243,11 +249,22 @@ public class LockOn : MonoBehaviour
     }
 
     /// <summary>
-    /// ギズモを表示
+    /// ギズモを表示(デバッグ)
     /// </summary>
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        // 前方視野を描画
+        Vector3 forward = transform.forward * detectionRange;
+        Quaternion leftRot = Quaternion.AngleAxis(-maxAngle, Vector3.up);
+        Quaternion rightRot = Quaternion.AngleAxis(maxAngle, Vector3.up);
+        Vector3 leftDir = leftRot * forward;
+        Vector3 rightDir = rightRot * forward;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + leftDir);
+        Gizmos.DrawLine(transform.position, transform.position + rightDir);
     }
 }

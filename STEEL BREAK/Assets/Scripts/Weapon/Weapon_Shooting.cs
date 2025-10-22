@@ -10,6 +10,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     [SerializeField] private Transform m_muzzleTransform; //発射口
     [Tooltip("持つ位置を調整するオフセット値")]
     [SerializeField] private Vector3 m_attachOffsetPos;   //銃を持つ位置の調整用オフセット(不要？現在は全ての武器が0, 0, 0)
+    [Tooltip("SE再生用(銃本体を設定)")]
+    [SerializeField] private AudioSource m_audioSource;   //音声データ
 
     private float m_elapsedTime; //経過時間計測用
 
@@ -20,6 +22,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isUsing;        //使用中フラグ
     private bool m_isFireComplete; //発射完了フラグ
     private bool m_isIKFinished;   //IKが完了しているかフラグ
+    private bool m_canPlayEmptySE = true; //空撃ち音声が鳴らせるか
 
     private bool m_isBackWeapon = false;   //自身が背面武装か
     private bool m_isBackWeaponReady;      //背面武装の発射の準備が完了したか
@@ -41,7 +44,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         if (backComp != null)
         {
             m_isBackWeapon = true;
-            m_isIKFinished = true;
+            m_isIKFinished = true; //背面武装はIKを使わない
         }
 
         //最初から撃てるように設定
@@ -158,6 +161,14 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         if (!m_isFireInternal || !m_isIKFinished)
         {
             //if (!m_isFireInternal) Debug.Log("内部処理的に発射できない");
+
+            //リロード中なら空撃ち音を再生
+            if (m_isReloading && m_canPlayEmptySE && m_elapsedTime >= m_status.GetRate())
+            {
+                PlayFireSE(m_status.GetEmptyFireSE());
+                m_canPlayEmptySE = false;
+            }
+
             return;
         }
 
@@ -239,12 +250,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         Destroy(MuzzleFlash, 0.1f);
 
         //発射音を再生
-        AudioClip se = m_status.GetFireSE();
-        if (se != null)
-        {
-            // 銃口位置でSEを再生
-            AudioSource.PlayClipAtPoint(se, m_muzzleTransform.position);
-        }
+        PlayFireSE(m_status.GetFireSE());
 
         //10秒後に削除
         Destroy(Dummy.gameObject, 10.0f);
@@ -258,6 +264,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             m_isReloading = true;
         }
+    }
+
+    /// <summary>
+    /// 武器不使用
+    /// </summary>
+    public void NotUse()
+    {
+        //フラグ管理
+        m_canPlayEmptySE = true;
     }
 
     /// <summary>
@@ -326,13 +341,28 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// <summary>
     /// リロード完了処理
     /// </summary>
-    void ReloadComplete()
+    private void ReloadComplete()
     {
         //各フラグをリロード前の状態の物に設定し、弾丸と経過時間を初期化
         m_isReloading = false;
         m_status.SetAmmo(m_status.GetMaxAmmo());
         m_isFireInternal = true;
+        m_canPlayEmptySE = true;
         m_elapsedTime = 0f;
+    }
+
+    /// <summary>
+    /// SEを再生
+    /// </summary>
+    /// <param name="PlaySE">再生したいSE</param>
+    private void PlayFireSE(AudioClip PlaySE)
+    {
+        //既に何かのSEを再生中なら、音声を再生しない
+        if (m_audioSource.isPlaying) return;
+
+        //音声保存用変数に再生したいSEを設定し、再生
+        m_audioSource.clip = PlaySE;
+        AudioSource.PlayClipAtPoint(m_audioSource.clip, m_muzzleTransform.position);
     }
 
     /// <summary>
@@ -405,6 +435,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public void SetWeaponBackReady(bool weaponBackReady)
     {
         m_isBackWeaponReady = weaponBackReady;
+    }
+
+    /// <summary>
+    /// 銃のステータスを取得
+    /// </summary>
+    /// <returns></returns>
+    public GunStatus GetGunStatus()
+    {
+        return m_status;
     }
 
     /// <summary>

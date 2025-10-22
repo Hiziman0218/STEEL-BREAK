@@ -50,6 +50,8 @@ public class Movement : MonoBehaviour
     //地面判定用のレイキャスト設定
     private float groundCheckDistance = 0.1f;
 
+    public bool m_externalControl = false; //外部管理用フラグ
+
     void Awake()
     {
         InitializeReferences();

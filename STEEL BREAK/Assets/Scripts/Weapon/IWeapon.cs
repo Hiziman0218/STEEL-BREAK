@@ -16,6 +16,11 @@ public interface IWeapon
     void Use();
 
     /// <summary>
+    /// 武器不使用
+    /// </summary>
+    void NotUse();
+
+    /// <summary>
     /// 武器リロード
     /// </summary>
     void Reload();

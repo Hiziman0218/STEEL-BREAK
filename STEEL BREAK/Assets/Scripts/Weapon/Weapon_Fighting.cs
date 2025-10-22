@@ -113,6 +113,11 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
         AttackStart();
     }
 
+    public void NotUse()
+    {
+
+    }
+
     public void Reload()
     {
 

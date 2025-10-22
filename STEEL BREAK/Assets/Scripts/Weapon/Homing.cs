@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Bazooka : MonoBehaviour
+public class Homing : MonoBehaviour
 {
     [Header("—U“±İ’è")]
     [Tooltip("—U“±—Í/ù‰ñ—Í")]

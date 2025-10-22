@@ -47,7 +47,7 @@ public class InputManager : MonoBehaviour
         IsJump = Input.GetKey(KeyCode.Space);            //Spaceキーを押している間は上昇
         IsJumpDown = Input.GetKeyDown(KeyCode.Space);    //Spaceキーを押した瞬間ジャンプ入力の計測開始
         IsJumpUp = Input.GetKeyUp(KeyCode.Space);        //Spaceキーを離した瞬間ジャンプ入力の計測終了
-        IsFall = Input.GetKeyDown(KeyCode.C);            //Cキーを押すと自由落下
+        IsFall = Input.GetKeyDown(KeyCode.X);            //Xキーを押すと自由落下
         IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);  //Tabキーを押すとロックオン機能を使わない
         IsTargetChange = Input.GetKeyDown(KeyCode.V);    //Vキーを押すとターゲット切り替え
         IsReload = Input.GetKeyDown(KeyCode.R);          //Rキーを押すと手動リロード

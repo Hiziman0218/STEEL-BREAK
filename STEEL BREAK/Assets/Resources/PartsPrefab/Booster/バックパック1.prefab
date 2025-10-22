@@ -95,8 +95,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5253718132780887357}
-  - {fileID: 1771782791339633527}
   - {fileID: 695206548086027224}
+  - {fileID: 1771782791339633527}
   - {fileID: 3792423699953205700}
   - {fileID: 1651174400051945638}
   - {fileID: 6248933033574469022}
@@ -115,8 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64681b5b5a9748a4399fde8d4e9c8809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rightAttachPoint: {fileID: 1771782791339633527}
-  m_leftAttachPoint: {fileID: 695206548086027224}
+  m_rightAttachPoint: {fileID: 695206548086027224}
+  m_leftAttachPoint: {fileID: 1771782791339633527}
   m_boostPoints:
   - {fileID: 3792423699953205700}
   - {fileID: 1651174400051945638}
@@ -163,7 +163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 695206548086027224}
   m_Layer: 0
-  m_Name: AttachPointL
+  m_Name: AttachPointR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,7 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1771782791339633527}
   m_Layer: 0
-  m_Name: AttachPointR
+  m_Name: AttachPointL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

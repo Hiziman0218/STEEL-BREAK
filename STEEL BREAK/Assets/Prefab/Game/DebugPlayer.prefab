@@ -807,13 +807,14 @@ MonoBehaviour:
   - {fileID: 5823301851654604002}
   - {fileID: 3958581410459130069}
   - {fileID: 4900137710243733126}
-  m_isDebug: 1
+  m_isDebug: 0
   m_rightHandWeaponMono: {fileID: 0}
   m_leftHandWeaponMono: {fileID: 0}
-  m_rightBackWeaponMono: {fileID: 4273293237468571648, guid: 0bc3bf0b96f9fb44f90b28d189540216, type: 3}
-  m_leftBackWeaponMono: {fileID: 4273293237468571648, guid: 0bc3bf0b96f9fb44f90b28d189540216, type: 3}
+  m_rightBackWeaponMono: {fileID: 0}
+  m_leftBackWeaponMono: {fileID: 0}
   PartsSet: {fileID: 5744882643590379773}
   m_destroyEffect: {fileID: 100010, guid: e0609132424a24844b1d53ad3d704fd9, type: 3}
+  m_lerpSpeed: 3
 --- !u!114 &5841538993253739429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -857,6 +858,7 @@ MonoBehaviour:
   shortAscendThreshold: 0.2
   ascendConsumptionRate: 15
   cameraController: {fileID: 3083660886234470096}
+  m_externalControl: 0
 --- !u!114 &5742647039142411501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -870,6 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 20
+  maxAngle: 60
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
