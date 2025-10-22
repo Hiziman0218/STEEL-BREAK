@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7179193609274629903}
   - component: {fileID: 649798475387452253}
   m_Layer: 2
-  m_Name: FlyingAgent
+  m_Name: Titania
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +73,7 @@ MonoBehaviour:
   groundRay: {fileID: 0}
   colliderSize: 1
   radius: 20
-  stoppingDistance: 1.5
+  stoppingDistance: 0
   local: 1
   angleX: 360
   angleY: 360

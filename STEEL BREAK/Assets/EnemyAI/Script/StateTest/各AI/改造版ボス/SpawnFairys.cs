@@ -16,9 +16,11 @@ public class SpawnFairys_T : MonoBehaviour
     float m_SpawnPer,                           //生成割合
     float m_waitSeconds,                        //生成待ち時間
     int m_MaxFairys,                            //ゲーム上で生成できる最大数
+    int m_MaxDefensFairys,                      //ボスを守る雑魚の上限
     System.Action onComplete
 )
     {
+        //場に存在できる最大数より少なければ処理が走る
         while (spawnedEnemies.Count < m_MaxFairys)
         {
             //スポーンポイントを取得
@@ -27,7 +29,8 @@ public class SpawnFairys_T : MonoBehaviour
             //フェアリーの生成
             GameObject enemy = GameObject.Instantiate(m_Fairys, point.transform.position, Quaternion.identity);
 
-            if (Random.value < m_SpawnPer)
+            //確率で攻撃型か防御型を選出（防御型は上限を設けている）
+            if (Random.value < m_SpawnPer && spawnedDefensEnemies.Count < m_MaxDefensFairys)
             {
                 var comp = enemy.AddComponent<GyardianFairysAI>();
                 spawnedDefensEnemies.Add(enemy);

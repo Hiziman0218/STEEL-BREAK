@@ -135,10 +135,6 @@ namespace StateMachineAI
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<FairyAI>();
 
-            GameObject Dummy = GameObject.Instantiate(FlyingAgentObject, transform.position, transform.rotation);
-            m_Detector = Dummy.GetComponent<SteeringDetector>();
-            m_Detector.destination = m_Player;
-
             // myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
             // 攻撃しに行く
             ChangeState(AIState_Fairy.Chase_Fairy);

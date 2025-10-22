@@ -27,6 +27,7 @@ namespace StateMachineAI
         //‚±‚ÌAI‚ª‹N“®’†‚Éí‚ÉÀs(Update‚Æ“¯‹`)
         public override void Stay()
         {
+            PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
             //’Ç]
             Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
 
