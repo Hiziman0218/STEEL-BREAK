@@ -176,6 +176,8 @@ public class MechAssemblyManager : MonoBehaviour
                     partData = Resources.Load<PartData>($"PartsData/WeaponL/{slot.partsDataName}");
                 else if (type == PartType.WeaponL)
                     partData = Resources.Load<PartData>($"PartsData/Weapon/{slot.partsDataName}");
+                else if (type == PartType.BWeaponL)
+                    partData = Resources.Load<PartData>($"PartsData/BWeapon/{slot.partsDataName}");
 
                 if (partData == null)
                 {
