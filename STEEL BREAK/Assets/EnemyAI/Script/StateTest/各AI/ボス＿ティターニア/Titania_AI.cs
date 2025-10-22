@@ -1,61 +1,57 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
-using RaycastPro.Detectors;
-using Plugins.RaycastPro.Demo.Scripts;
-using static UnityEngine.GraphicsBuffer;
 
 namespace StateMachineAI
 {
-    /// <summary>
-    /// 敵のステートリスト
-    /// ここでステートを登録していない場合、
-    /// 該当する行動が全くできない。
-    /// </summary>
-    /// 
-    public enum AIState_Titania
+    public enum AIState_Titania_T
     {
-        Idle,
-        Spawn,
-        TurnBeam,
-        LockBeam,
-        RushBeam,
+        Idle_T,
+        Spawn_T,
+        RandomMove_T,
+        TurnBeam_T,
+        LockBeam_T,
+        RushBeam_T,
     }
 
-    public class Titania
-        : StatefulObjectBase<Titania, AIState_Titania>
+    public class Titania_T
+        : StatefulObjectBase<Titania_T, AIState_Titania_T>
     {
         [Header("プレイヤー")]
         public Transform m_Player;
         [Header("エネミーモデル")]
         public Transform m_EnemyModel;
+        [Header("センターポイントの取得")]
+        public GameObject m_CenterMarker;
         [Header("ビーム発射口")]
         public Transform m_BeamPoint;
 
+        [Header("行動確率設定 0の行動はしない")]
+        [Range(0f, 10f)] public float wSpawn = 2f;
+        [Range(0f, 10f)] public float wRush = 2f;
+        [Range(0f, 10f)] public float wBeam = 2f;
+        [Range(0f, 10f)] public float wMove = 8f;
+
         [Header("雑魚敵のスポーン位置を取得")]
         public List<GameObject> m_SpawnPoints = new List<GameObject>();
+        [Header("雑魚敵の守護位置を取得")]
+        public GameObject m_Guard_Point;
         [Header("雑魚敵のプレハブ")]
         public GameObject m_Fairys;
-        [Header("雑魚敵の場に残る生成上限")]
-        public int m_MaxAttackFairys = 5;
+
+        [Header("雑魚敵の場に残る上限数")]
+        [Range(10, 20)]
+        public int m_MaxFairys;
+        [Header("生成できる守護雑魚の上限")]
+        [Range(1, 5)]
         public int m_MaxDefensFairys = 5;
         [Header("役職確率（0.0でソルジャー100%、1.0でガーディアン100%）")]
         [Range(0.0f, 1.0f)]
         public float m_SpawnPer = 0.3f;
         [Header("生成するときの出現間隔")]
-        public float m_waitSeconds = 3f;
-
-        [Header("センターポイントの取得")]
-        public GameObject m_CenterMarker;
+        public float m_waitSeconds = 0.5f;
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 30;
@@ -76,7 +72,8 @@ namespace StateMachineAI
         public List<GameObject> m_spawnedAttackEnemies = new List<GameObject>();
         [Header("防御型の敵管理")]
         public List<GameObject> m_spawnedDefensEnemies = new List<GameObject>();
-
+        [Header("全体の敵管理")]
+        public List<GameObject> m_spawnedEnemies = new List<GameObject>();
 
         [HideInInspector]
         public CoolDown m_CoolDown;
@@ -92,9 +89,6 @@ namespace StateMachineAI
         //コルーチンのフラグ管理用
         public bool isSpawningFairy = false;
 
-        public GameObject m_DefensEnemySenterObject;
-
-
         void Start()
         {
             //プレイヤーをタグで検索して取得
@@ -107,30 +101,32 @@ namespace StateMachineAI
                 m_SpawnPoints.Add(child.gameObject);
             }
 
+            //センターポインターを個別に取得する
+            m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
+
             //agent生成
-            //myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);
+            myAgent = PoolManager.Instance.Get("Titania", transform.position + transform.forward, m_CenterMarker.transform);
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
             //存在していないクラスが指定されたら本体消滅
-            if (!AddStateByName("Idle"))
-                Destroy(gameObject);
-            if (!AddStateByName("Spawn"))
-                Destroy(gameObject);
-            if (!AddStateByName("TurnBeam"))
-                Destroy(gameObject);
-            if (!AddStateByName("LockBeam"))
-                Destroy(gameObject);
-            if (!AddStateByName("RushBeam"))
-                Destroy(gameObject);
+            foreach (AIState_Titania_T state in Enum.GetValues(typeof(AIState_Titania_T)))
+            {
+                if (!AddStateByName(state.ToString()))
+                {
+                    Debug.LogError($"{state} の追加に失敗したため、本体を削除します。");
+                    Destroy(gameObject);
+                    return;
+                }
+            }
 
             //ステートマシーンを自身として設定
-            stateMachine = new StateMachine<Titania>();
+            stateMachine = new StateMachine<Titania_T>();
 
             //初期起動時は、行動決め状態に移行させる
-            ChangeState(AIState_Titania.Idle);
+            ChangeState(AIState_Titania_T.Idle_T);
         }
 
         /// <summary>
@@ -151,8 +147,8 @@ namespace StateMachineAI
                     return true;
                 }
 
-                // 型が State<GunBattery_AI> かどうかをチェック
-                if (!typeof(State<Titania>).IsAssignableFrom(StateType))
+                // 型が State<Titania_T> かどうかをチェック
+                if (!typeof(State<Titania_T>).IsAssignableFrom(StateType))
                 {
                     Debug.LogError($"{ClassName} は State<EnemyAI> 型ではありません。");
                     return true;
@@ -160,7 +156,7 @@ namespace StateMachineAI
 
                 // インスタンスを生成
                 System.Reflection.ConstructorInfo Constructor =
-                    StateType.GetConstructor(new[] { typeof(Titania) });
+                    StateType.GetConstructor(new[] { typeof(Titania_T) });
 
 
                 if (Constructor == null)
@@ -169,8 +165,8 @@ namespace StateMachineAI
                     return true;
                 }
 
-                State<Titania> StateInstance =
-                    Constructor.Invoke(new object[] { this }) as State<Titania>;
+                State<Titania_T> StateInstance =
+                    Constructor.Invoke(new object[] { this }) as State<Titania_T>;
 
                 if (StateInstance != null)
                 {
