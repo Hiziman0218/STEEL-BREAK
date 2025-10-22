@@ -277,11 +277,13 @@ public class MechAssemblyManager : MonoBehaviour
             };
             data.partObjs.Add(newPart);
 
+            // 🔧 スケール・位置・回転補正
+            ApplyPrefabScaleInfo(partData, newPart);
+
             // 🔧 ボーンスケーリング適用
             ApplyBoneScalesToPart(partData, newPart, ref data.modifiedData);
 
-            // 🔧 スケール・位置・回転補正
-            ApplyPrefabScaleInfo(partData, newPart);
+
 
             // 登録
             equippedParts[partType].Add(data);

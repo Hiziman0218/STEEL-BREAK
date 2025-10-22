@@ -23,15 +23,14 @@ MonoBehaviour:
   - {fileID: 8702122041208519367, guid: e0d1d988ddfa52448ab004f10f9dcba8, type: 3}
   boneScales:
   - boneName: B-forearm.L
-    scale: {x: 1, y: 1.5, z: 1}
-    offsetInfos: []
+    scale: {x: 1, y: 1.2, z: 1}
+    offsetInfos:
+    - childName: B-hand.L
+      offset: {x: 0, y: 0.04, z: 0}
   scaleInfos:
   - prefab: {fileID: 3113304373565090333, guid: d8afe28125b64db42b1dac1599c1833c, type: 3}
-    scale: {x: 1, y: 0.7, z: 1}
+    scale: {x: 1, y: 0.85, z: 1}
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 

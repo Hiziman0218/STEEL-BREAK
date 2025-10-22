@@ -104,8 +104,8 @@ public class TypeWriterEffect : MonoBehaviour
 
     private void Update()
     {
-        // スペースキーが押されたらクリック扱い
-        if (Input.GetKeyDown(KeyCode.Space))
+        // スペースキー または マウス左クリック でスキップ・次メッセージへ
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
             OnUserClicked();
         }

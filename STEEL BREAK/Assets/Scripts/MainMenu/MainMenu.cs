@@ -5,11 +5,18 @@ using UnityEngine.EventSystems;
 
 public class Briefing : MonoBehaviour
 {
+    [Header("メニュー項目")]
     public TextMeshProUGUI[] menuItems;  // UI上のメニュー項目
     public Color normalColor = Color.white;
     public Color selectedColor = Color.yellow;
 
+    [Header("SE設定")]
+    public AudioSource audioSource;      // AudioSource（Inspectorで割り当て）
+    public AudioClip moveSE;             // カーソル移動音
+    public AudioClip selectSE;           // 決定音
+
     private int currentIndex = 0;
+    private int previousIndex = -1;      // 前回選択中のインデックスを記録
 
     void Start()
     {
@@ -23,15 +30,14 @@ public class Briefing : MonoBehaviour
             // イベントトリガーを追加（存在しない場合）
             EventTrigger trigger = menuItems[i].gameObject.GetComponent<EventTrigger>();
             if (trigger == null)
-            {
                 trigger = menuItems[i].gameObject.AddComponent<EventTrigger>();
-            }
 
             // ホバー時の処理
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) =>
             {
+                if (currentIndex != index) PlayMoveSE();
                 currentIndex = index;
                 UpdateMenu();
             });
@@ -44,6 +50,7 @@ public class Briefing : MonoBehaviour
             {
                 currentIndex = index;
                 SelectMenu();
+                PlaySelectSE();
             });
             trigger.triggers.Add(entryClick);
         }
@@ -55,17 +62,20 @@ public class Briefing : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             currentIndex = (currentIndex - 1 + menuItems.Length) % menuItems.Length;
+            PlayMoveSE();
             UpdateMenu();
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             currentIndex = (currentIndex + 1) % menuItems.Length;
+            PlayMoveSE();
             UpdateMenu();
         }
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Z))
         {
+            PlaySelectSE();
             SelectMenu();
         }
     }
@@ -95,5 +105,18 @@ public class Briefing : MonoBehaviour
                 Debug.Log("未定義のメニュー");
                 break;
         }
+    }
+
+    // ====== SE再生メソッド ======
+    void PlayMoveSE()
+    {
+        if (audioSource != null && moveSE != null)
+            audioSource.PlayOneShot(moveSE);
+    }
+
+    void PlaySelectSE()
+    {
+        if (audioSource != null && selectSE != null)
+            audioSource.PlayOneShot(selectSE);
     }
 }
