@@ -22,11 +22,15 @@ MonoBehaviour:
   - {fileID: 251486645506778203, guid: 41a2b4d904c3ada478feae2e7c7902bd, type: 3}
   - {fileID: 5563646146537379157, guid: b76035958eca9254c99c84240adcba08, type: 3}
   boneScales:
-  - boneName: 
-    scale: {x: 0, y: 0, z: 0}
+  - boneName: B-forearm.R
+    scale: {x: 1, y: 1.2, z: 1}
     offsetInfos:
     - childName: B-hand.R
-      offset: {x: 0, y: 0, z: 0}
-  scaleInfos: []
+      offset: {x: 0, y: 0.03, z: 0}
+  scaleInfos:
+  - prefab: {fileID: 251486645506778203, guid: 41a2b4d904c3ada478feae2e7c7902bd, type: 3}
+    scale: {x: 1, y: 0.85, z: 1}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
   description: 

@@ -27,10 +27,14 @@ MonoBehaviour:
   boneScales:
   - boneName: B-shin.L
     scale: {x: 1, y: 1.5, z: 1}
-    offsetInfos: []
+    offsetInfos:
+    - childName: B-foot.L
+      offset: {x: 0, y: 0.03, z: 0}
   - boneName: B-shin.R
     scale: {x: 1, y: 1.5, z: 1}
-    offsetInfos: []
+    offsetInfos:
+    - childName: B-foot.R
+      offset: {x: 0, y: 0.03, z: 0}
   scaleInfos:
   - prefab: {fileID: 3648582523516357285, guid: 6863393e50d8b9a44867bf716ce0676e, type: 3}
     scale: {x: 1, y: 0.66, z: 1}
@@ -41,7 +45,4 @@ MonoBehaviour:
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 

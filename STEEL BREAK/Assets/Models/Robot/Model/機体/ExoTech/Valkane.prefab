@@ -267,14 +267,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351860
-  m_Size: {x: -0.122532606, y: 0.21141078, z: -0.08819789}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 927
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.061266303, y: 0.10570539, z: 0.044098943}
+  m_Size: {x: -0.122532606, y: 0.21141078, z: -0.08819789}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -298,6 +294,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -10419,14 +10418,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351858
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1061
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -10450,6 +10445,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -13030,14 +13028,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027392
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1173
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -13061,6 +13055,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -16448,14 +16445,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027403
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 708
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -16479,6 +16472,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -18095,14 +18091,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027396
-  m_Size: {x: -0.80198216, y: 0.23451172, z: -0.2683928}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1283
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.40099108, y: 0.11725586, z: 0.1341964}
+  m_Size: {x: -0.80198216, y: 0.23451172, z: -0.2683928}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -18126,6 +18118,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -19650,14 +19645,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351878
-  m_Size: {x: 0.2, y: 0.2, z: 0.2}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 796
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.1, y: 0.1, z: 0.1}
+  m_Size: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -19681,6 +19672,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -21203,14 +21197,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351878
-  m_Size: {x: 0.2, y: 0.2, z: 0.2}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 796
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.1, y: 0.1, z: 0.1}
+  m_Size: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -21234,6 +21224,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -24589,14 +24582,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027403
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 708
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -24620,6 +24609,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -25783,14 +25775,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027402
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 693
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -25814,6 +25802,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -29977,14 +29968,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351859
-  m_Size: {x: 0.3, y: 0.3, z: 0.3}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 856
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.15, y: 0.15, z: 0.15}
+  m_Size: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -30008,6 +29995,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -31171,14 +31161,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027402
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 693
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -31202,6 +31188,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -32280,14 +32269,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351877
-  m_Size: {x: 0.3, y: 0.3, z: 0.3}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1258
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.15, y: 0.15, z: 0.15}
+  m_Size: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -32311,6 +32296,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -33389,14 +33377,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027392
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 6106
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -33420,6 +33404,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -34462,14 +34449,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034890853351877
-  m_Size: {x: 0.3, y: 0.3, z: 0.3}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1258
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.15, y: 0.15, z: 0.15}
+  m_Size: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -34493,6 +34476,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -35971,66 +35957,66 @@ MonoBehaviour:
   - {x: 0.93775177, y: -0.3473063, z: 0, w: -1}
   - {x: 0.93775177, y: -0.3473063, z: 0, w: -1}
   - {x: 0.93775177, y: -0.3473063, z: 0, w: -1}
-  - {x: 0.00000028612303, y: 0.00000016036734, z: 1, w: -1}
-  - {x: 0.00000027540705, y: 0.0000001603673, z: 1, w: -1}
-  - {x: -0.0000036420108, y: 0.82752764, z: 0.561425, w: -1}
-  - {x: -0.0000034117206, y: 0.8275275, z: 0.5614251, w: -1}
-  - {x: -0.000003324343, y: 0.82752764, z: 0.561425, w: -1}
-  - {x: -0.0000035666649, y: 0.8275276, z: 0.5614251, w: -1}
-  - {x: -0.000003566665, y: 0.8275275, z: -0.56142515, w: -1}
-  - {x: -0.000003324343, y: 0.82752764, z: -0.561425, w: -1}
-  - {x: -0.0000034117204, y: 0.8275275, z: -0.56142515, w: -1}
-  - {x: -0.0000036420115, y: 0.82752764, z: -0.56142503, w: -1}
-  - {x: 0.00000027540716, y: 0.00000009622038, z: -1, w: -1}
-  - {x: 0.00000028612325, y: 0.00000012829386, z: -1, w: -1}
-  - {x: -0.0000002646927, y: 0.00000012829385, z: -1, w: -1}
-  - {x: -0.0000002754088, y: 0.00000012829386, z: -1, w: -1}
-  - {x: 0.0000036420108, y: -0.82752764, z: -0.561425, w: -1}
-  - {x: 0.0000033876572, y: -0.82752776, z: -0.5614248, w: -1}
-  - {x: 0.0000033243427, y: -0.82752764, z: -0.561425, w: -1}
-  - {x: 0.0000035666653, y: -0.82752776, z: -0.56142485, w: -1}
-  - {x: 0.0000035666649, y: -0.82752776, z: 0.56142485, w: -1}
-  - {x: 0.0000033243425, y: -0.82752764, z: 0.561425, w: -1}
-  - {x: 0.0000033876574, y: -0.82752776, z: 0.5614248, w: -1}
-  - {x: 0.0000036420108, y: -0.82752764, z: 0.561425, w: -1}
-  - {x: -0.00000027540904, y: 0.00000016036734, z: 1, w: -1}
-  - {x: -0.0000002646927, y: 0.0000001603673, z: 1, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
+  - {x: -0.00000012341869, y: 0.00000016036734, z: 1, w: -1}
+  - {x: -0.00000013413486, y: 0.0000001603673, z: 1, w: -1}
+  - {x: -0.000004101865, y: 0.82752764, z: 0.561425, w: -1}
+  - {x: -0.000003871575, y: 0.82752764, z: 0.5614251, w: -1}
+  - {x: -0.0000000065187433, y: 0.82752764, z: 0.561425, w: -1}
+  - {x: -0.00000024884045, y: 0.8275276, z: 0.5614251, w: -1}
+  - {x: -0.00000024884034, y: 0.8275275, z: -0.56142515, w: -1}
+  - {x: -0.0000000065187433, y: 0.82752764, z: -0.561425, w: -1}
+  - {x: -0.000003258435, y: 0.8275275, z: -0.5614251, w: -1}
+  - {x: -0.0000035078874, y: 0.82752764, z: -0.56142503, w: -1}
+  - {x: 0.00000039485678, y: 0.00000009622038, z: -1, w: -1}
+  - {x: 0.00000038850857, y: 0.0000000962204, z: -1, w: -1}
+  - {x: 0.00000011072089, y: 0.00000009622039, z: -1, w: -1}
+  - {x: 0.000000117068936, y: 0.00000012829386, z: -1, w: -1}
+  - {x: 0.0000040827044, y: -0.82752764, z: -0.561425, w: -1}
+  - {x: 0.000003847511, y: -0.82752776, z: -0.5614248, w: -1}
+  - {x: 0.00000013612181, y: -0.82752764, z: -0.561425, w: -1}
+  - {x: 0.0000003784448, y: -0.82752776, z: -0.56142485, w: -1}
+  - {x: 0.00000037844467, y: -0.82752776, z: 0.56142485, w: -1}
+  - {x: 0.00000013612167, y: -0.82752764, z: 0.561425, w: -1}
+  - {x: 0.000003291855, y: -0.82752776, z: 0.5614248, w: -1}
+  - {x: 0.0000035174676, y: -0.82752764, z: 0.561425, w: -1}
+  - {x: -0.00000038632643, y: 0.00000016036734, z: 1, w: -1}
+  - {x: -0.0000004012068, y: 0.00000016036732, z: 1, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: -0.19185922, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: -0.19185922, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: -0.19185922, w: -1}
   - {x: 0.0000042288025, y: -1, z: 0, w: -1}
   - {x: 0.0000042288025, y: -1, z: 0, w: -1}
   - {x: 0.0000042288025, y: -1, z: 0, w: -1}
+  - {x: -0.000004123808, y: 0.9814226, z: 0.19185852, w: -1}
+  - {x: -0.000004123808, y: 0.9814226, z: 0.19185852, w: -1}
+  - {x: -0.000004123808, y: 0.9814226, z: 0.19185852, w: -1}
+  - {x: 0.0000041238086, y: -0.9814227, z: 0.19185802, w: -1}
+  - {x: 0.0000041238086, y: -0.9814227, z: 0.19185802, w: -1}
+  - {x: 0.0000041238086, y: -0.9814227, z: 0.19185802, w: -1}
+  - {x: -0.0000042288025, y: 1, z: 0.000000089394106, w: -1}
+  - {x: -0.0000042288025, y: 1, z: 0.000000089394106, w: -1}
+  - {x: -0.0000042288025, y: 1, z: 0.000000089394106, w: -1}
+  - {x: 0.000004123808, y: -0.98142236, z: -0.19185975, w: -1}
+  - {x: 0.000004123808, y: -0.98142236, z: -0.19185975, w: -1}
+  - {x: 0.000004123808, y: -0.98142236, z: -0.19185975, w: -1}
+  - {x: -0.0000041481867, y: 0.98142266, z: -0.19185826, w: -1}
+  - {x: -0.0000041481867, y: 0.98142266, z: -0.19185826, w: -1}
+  - {x: -0.0000041481867, y: 0.98142266, z: -0.19185826, w: -1}
+  - {x: 0.0000042018683, y: -1, z: 0.00000004037709, w: -1}
+  - {x: 0.0000042018683, y: -1, z: 0.00000004037709, w: -1}
+  - {x: 0.0000042018683, y: -1, z: 0.00000004037709, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: 0.19185936, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: 0.19185936, w: -1}
+  - {x: -0.0000041238086, y: 0.9814225, z: 0.19185936, w: -1}
+  - {x: 0.0000041238086, y: -0.9814224, z: 0.19185966, w: -1}
+  - {x: 0.0000041238086, y: -0.9814224, z: 0.19185966, w: -1}
+  - {x: 0.0000041238086, y: -0.9814224, z: 0.19185966, w: -1}
   - {x: -0.0000042018683, y: 1, z: 0.000000086514135, w: -1}
   - {x: -0.0000042018683, y: 1, z: 0.000000086514135, w: -1}
   - {x: -0.0000042018683, y: 1, z: 0.000000086514135, w: -1}
-  - {x: 0.0000042018683, y: -1, z: -0.000000086514135, w: -1}
-  - {x: 0.0000042018683, y: -1, z: -0.000000086514135, w: -1}
-  - {x: 0.0000042018683, y: -1, z: -0.000000086514135, w: -1}
-  - {x: -0.0000042288025, y: 1, z: 1.0113019e-15, w: -1}
-  - {x: -0.0000042288025, y: 1, z: 1.0113019e-15, w: -1}
-  - {x: -0.0000042288025, y: 1, z: 1.0113019e-15, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0.00000002122607, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0.00000002122607, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0.00000002122607, w: -1}
-  - {x: -0.0000042288025, y: 1, z: -0.000000021226075, w: -1}
-  - {x: -0.0000042288025, y: 1, z: -0.000000021226075, w: -1}
-  - {x: -0.0000042288025, y: 1, z: -0.000000021226075, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 1.2007473e-14, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 1.2007473e-14, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 1.2007473e-14, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0, w: -1}
-  - {x: 0.0000042018683, y: -1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: -0.0000042018683, y: 1, z: 0, w: -1}
-  - {x: 0.0000042288025, y: -1, z: 4.872889e-21, w: -1}
-  - {x: 0.0000042288025, y: -1, z: 4.872889e-21, w: -1}
-  - {x: 0.0000042288025, y: -1, z: 4.872889e-21, w: -1}
+  - {x: 0.0000041481867, y: -0.9814226, z: -0.19185863, w: -1}
+  - {x: 0.0000041481867, y: -0.9814226, z: -0.19185863, w: -1}
+  - {x: 0.0000041481867, y: -0.9814226, z: -0.19185863, w: -1}
   m_Colors: []
   m_UnwrapParameters:
     m_HardAngle: 88
@@ -36062,6 +36048,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -37400,14 +37389,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Shape:
     rid: 8117034894516027394
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Rotation: {x: 0, y: 0, z: 0, w: 1}
-  m_PivotLocation: 0
-  m_PivotPosition: {x: 0, y: 0, z: 0}
+  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
   m_UnmodifiedMeshVersion: 1997
-  m_ShapeBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
     RefIds:
@@ -37435,6 +37420,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -37585,7 +37573,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4340717068199411202, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -37798,7 +37786,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_SelectedVertices.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_Textures0.Array.data[160].x
@@ -37945,7 +37933,7 @@ PrefabInstance:
       value: -0.101785935
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 7486078323247766750, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -38105,7 +38093,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4340717068199411202, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -38318,7 +38306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_SelectedVertices.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_Textures0.Array.data[160].x
@@ -38465,7 +38453,7 @@ PrefabInstance:
       value: -0.101785935
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 7486078323247766750, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -38539,7 +38527,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4340717068199411202, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -38752,7 +38740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_SelectedVertices.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_Textures0.Array.data[160].x
@@ -38899,7 +38887,7 @@ PrefabInstance:
       value: -0.101785935
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 7486078323247766750, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -38973,7 +38961,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4340717068199411202, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
@@ -39186,7 +39174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_SelectedVertices.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_Textures0.Array.data[160].x
@@ -39333,7 +39321,7 @@ PrefabInstance:
       value: -0.101785935
       objectReference: {fileID: 0}
     - target: {fileID: 5565658438889001230, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
-      propertyPath: m_SelectedVertices.Array.data[0]
+      propertyPath: 'm_SelectedVertices.Array.data[0]'
       value: 181
       objectReference: {fileID: 0}
     - target: {fileID: 7486078323247766750, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
