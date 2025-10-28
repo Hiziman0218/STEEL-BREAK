@@ -18,8 +18,8 @@ MonoBehaviour:
   partPrefab: {fileID: 7380866125437075599, guid: c4ca66f2e8a796d40ae9e0fb6f8dd515, type: 3}
   multiPrefabs:
   - {fileID: 7380866125437075599, guid: c4ca66f2e8a796d40ae9e0fb6f8dd515, type: 3}
-  - {fileID: 3720410164951101562, guid: cd1bbcd160e65864f971196bde5ed422, type: 3}
   - {fileID: 3648582523516357285, guid: 6863393e50d8b9a44867bf716ce0676e, type: 3}
+  - {fileID: 3720410164951101562, guid: cd1bbcd160e65864f971196bde5ed422, type: 3}
   - {fileID: 2663358134960636496, guid: 32f81cb237383e84691596042e868ed8, type: 3}
   - {fileID: 5286392343564313632, guid: 54050a241ca430048ba79362d7f8389e, type: 3}
   - {fileID: 9119518472798925607, guid: effe9bc436a87024e835cf8867ed79dc, type: 3}
@@ -36,7 +36,7 @@ MonoBehaviour:
     - childName: B-foot.R
       offset: {x: 0, y: 0.03, z: 0}
   scaleInfos:
-  - prefab: {fileID: 3648582523516357285, guid: 6863393e50d8b9a44867bf716ce0676e, type: 3}
+  - prefab: {fileID: 3720410164951101562, guid: cd1bbcd160e65864f971196bde5ed422, type: 3}
     scale: {x: 1, y: 0.66, z: 1}
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
