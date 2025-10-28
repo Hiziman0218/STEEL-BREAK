@@ -68,8 +68,9 @@ public class Player : PlayerBase
         //フラグ管理
         m_isAutoHorizontal = true;
 
+        //武装の使用
         //右手の攻撃入力を受け取っていたら
-        if (inputManager.IsFireinRightHand)
+        if (inputManager.IsFireRightHand)
         {
             //武装が設定されているかを確認し、使用する
             m_rightHandWeapon?.Use();
@@ -82,7 +83,7 @@ public class Player : PlayerBase
         }
 
         //左手の攻撃入力を受け取っていたら
-        if (inputManager.IsFireinLeftHand)
+        if (inputManager.IsFireLeftHand)
         {
             //武装が設定されているかを確認し、使用
             m_leftHandWeapon?.Use();
@@ -95,7 +96,7 @@ public class Player : PlayerBase
         }
 
         //右背面の攻撃入力を受け取ったら
-        if (inputManager.IsFireinRightBack)
+        if (inputManager.IsFireRightBack)
         {
             //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
             if (m_rightBackWeapon is MonoBehaviour comp)
@@ -119,7 +120,7 @@ public class Player : PlayerBase
         }
 
         //左背面の攻撃入力を受け取ったら
-        if (inputManager.IsFireinLeftBack)
+        if (inputManager.IsFireLeftBack)
         {
             //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
             if (m_leftBackWeapon is MonoBehaviour comp)
@@ -134,13 +135,11 @@ public class Player : PlayerBase
             m_leftBackWeapon?.NotUse();
         }
 
-        //手動リロード入力を受け取っていたら
-        if (inputManager.IsReload)
-        {
-            //各武装が設定されているかを確認し、リロード
-            m_rightHandWeapon?.Reload();
-            m_leftHandWeapon?.Reload();
-        }
+        //手動リロード入力を受け取っていたら、対応するキーの武装を手動リロード
+        if (inputManager.IsReloadRightHand) m_rightHandWeapon?.Reload();
+        if (inputManager.IsReloadLeftHand) m_leftHandWeapon?.Reload();
+        if (inputManager.IsReloadRightBack) m_rightBackWeapon?.Reload();
+        if (inputManager.IsReloadLeftBack) m_leftBackWeapon?.Reload();
 
         //割合計算/反映
         UpdateRate();

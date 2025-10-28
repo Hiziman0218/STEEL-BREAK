@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class InputManager : MonoBehaviour
 {
@@ -6,10 +7,14 @@ public class InputManager : MonoBehaviour
     public Animator m_animator;   //アニメーター
     public Rigidbody m_rigidbody; //リジッドボディ
 
-    public bool IsFireinRightHand { get; private set; }  //右手武装の攻撃の攻撃の入力受け取り
-    public bool IsFireinLeftHand { get; private set; }   //左手武装の攻撃の入力受け取り
-    public bool IsFireinRightBack {  get; private set; } //右背面武装の攻撃の入力受け取り
-    public bool IsFireinLeftBack {  get; private set; }  //左背面武装の攻撃の入力受け取り
+    public bool IsFireRightHand { get; private set; }  //右手武装の攻撃の攻撃の入力受け取り
+    public bool IsFireLeftHand { get; private set; }   //左手武装の攻撃の入力受け取り
+    public bool IsFireRightBack {  get; private set; } //右背面武装の攻撃の入力受け取り
+    public bool IsFireLeftBack {  get; private set; }  //左背面武装の攻撃の入力受け取り
+    public bool IsReloadRightHand {  get; private set; } //右手武装のリロード入力受け取り
+    public bool IsReloadLeftHand {  get; private set; }  //左手武装のリロード入力受け取り
+    public bool IsReloadRightBack { get; private set; }  //右背面武装のリロード入力受け取り
+    public bool IsReloadLeftBack { get; private set; }   //左背面武装のリロード入力受け取り
     public bool IsBoost { get; private set; }            //ブーストの入力受け取り
     public bool IsBoostDash { get; private set; }        //ブーストダッシュの入力受け取り
     public bool IsJump { get; private set; }             //上昇の入力受け取り
@@ -38,19 +43,23 @@ public class InputManager : MonoBehaviour
         m_animator.SetFloat("X", m_MovePoint.x);
         m_animator.SetFloat("Y", m_MovePoint.z);
 
-        IsFireinRightHand = Input.GetKey(KeyCode.E);     //Eキーを押している間は右手武装の使用
-        IsFireinLeftHand = Input.GetKey(KeyCode.Q);      //Qキーを押している間は左手武装の使用
-        IsFireinRightBack = Input.GetKey(KeyCode.C);     //Cキーを押すと右背面武装の使用
-        IsFireinLeftBack = Input.GetKey(KeyCode.Z);      //Zキーを押すと左背面武装の使用
-        IsBoost = Input.GetMouseButton(1);               //右クリックを押している間はブースト(加速)
-        IsBoostDash = Input.GetMouseButtonDown(1);       //右クリックを押した瞬間はブースト(初期加速)
-        IsJump = Input.GetKey(KeyCode.Space);            //Spaceキーを押している間は上昇
-        IsJumpDown = Input.GetKeyDown(KeyCode.Space);    //Spaceキーを押した瞬間ジャンプ入力の計測開始
-        IsJumpUp = Input.GetKeyUp(KeyCode.Space);        //Spaceキーを離した瞬間ジャンプ入力の計測終了
-        IsFall = Input.GetKeyDown(KeyCode.X);            //Xキーを押すと自由落下
-        IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);  //Tabキーを押すとロックオン機能を使わない
-        IsTargetChange = Input.GetKeyDown(KeyCode.V);    //Vキーを押すとターゲット切り替え
-        IsReload = Input.GetKeyDown(KeyCode.R);          //Rキーを押すと手動リロード
+        IsFireRightHand = Input.GetMouseButton(1) && !IsReload;  //右クリックを押していてリロード入力をしていない間は右手武装の使用
+        IsFireLeftHand = Input.GetMouseButton(0) && !IsReload;   //左クリックを押していてリロード入力をしていない間は左手武装の使用
+        IsFireRightBack = Input.GetKey(KeyCode.E) && !IsReload;  //Eキーを押していてリロード入力をしていない間は右背面武装の使用
+        IsFireLeftBack = Input.GetKey(KeyCode.Q) && !IsReload;   //Qキーを押していてリロード入力をしていない間は左背面武装の使用
+        IsReloadRightHand = Input.GetMouseButton(1) && IsReload; //右クリックを押していてリロード入力をしている間は右手武装のリロード
+        IsReloadLeftHand = Input.GetMouseButton(0) && IsReload;  //左クリックを押していてリロード入力をしている間は左手武装のリロード
+        IsReloadRightBack = Input.GetKey(KeyCode.E) && IsReload; //Eキーを押していてリロード入力をしている間は右背面武装のリロード
+        IsReloadLeftBack = Input.GetKey(KeyCode.Q) && IsReload;  //Qキーを押していてリロード入力をしている間は左背面武装のリロード
+        IsBoost = Input.GetKey(KeyCode.LeftShift);         //左shiftを押している間はブースト(加速)
+        IsBoostDash = Input.GetKeyDown(KeyCode.LeftShift); //左shiftを押した瞬間はブースト(初期加速)
+        IsJump = Input.GetKey(KeyCode.Space);              //Spaceキーを押している間は上昇
+        IsJumpDown = Input.GetKeyDown(KeyCode.Space);      //Spaceキーを押した瞬間ジャンプ入力の計測開始
+        IsJumpUp = Input.GetKeyUp(KeyCode.Space);          //Spaceキーを離した瞬間ジャンプ入力の計測終了
+        IsFall = Input.GetKeyDown(KeyCode.LeftControl);    //左ctrlキーを押すと自由落下
+        IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);    //Tabキーを押すとロックオン機能使用/不使用を切り替え
+        IsTargetChange = Input.GetKeyDown(KeyCode.V);      //Vキーを押すとターゲット切り替え
+        IsReload = Input.GetKey(KeyCode.R);                //Rキーを押している間手動リロード待機
     }
 
     /// <summary>

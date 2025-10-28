@@ -70,6 +70,10 @@ MonoBehaviour:
   m_useDeceleration: 0
   m_rotateSpeed: 5
   m_decelerateRate: 5
+  m_maxPitch: 30
+  m_minPitch: -10
+  m_maxYaw: 45
+  m_minYaw: -45
 --- !u!82 &6721103986904855073
 AudioSource:
   m_ObjectHideFlags: 0

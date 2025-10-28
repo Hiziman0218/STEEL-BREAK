@@ -85,11 +85,12 @@ public class Bullet : MonoBehaviour
         m_prevPos = currentPos;
     }
 
+    /*
     // 命中可能か判定する
     public bool CanHit(GameObject other)
     {
         // 自分自身は無視
-        if (other == this.gameObject) return false;
+        if (other == gameObject) return false;
 
         //同じチームの弾なら当たらない
         var targetBullet = other.GetComponent<Bullet>();
@@ -100,8 +101,8 @@ public class Bullet : MonoBehaviour
 
         // 他にも「タグがEnvironmentならOK」とか自由に追加可能
         return true;
-    }
-
+    }*/
+    
     /// <summary>
     /// 弾丸の所属チームを取得
     /// </summary>

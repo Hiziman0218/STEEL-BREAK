@@ -3,21 +3,25 @@ using UnityEngine;
 public class Weapon_Back : MonoBehaviour
 {
     [Tooltip("発射前に機体回転機能を使うか")]
-    [SerializeField] private bool m_usePlayerRotate = true;
+    [SerializeField] private bool m_usePlayerRotate = false;
     [Tooltip("発射時に武器回転機能を使うか")]
     [SerializeField] private bool m_useWeaponRotate = false;
     [Tooltip("発射前に減速機能を使うか")]
-    [SerializeField] private bool m_useDeceleration = true;
+    [SerializeField] private bool m_useDeceleration = false;
     [Tooltip("向きを変える速さ")]
     [SerializeField] private float m_rotateSpeed = 5f;    //向きを変える速さ
     [Tooltip("減速の速さ")]
     [SerializeField] private float m_decelerateRate = 5f; //減速の速さ(大きいほど急減速)
 
     [Header("武器回転制限(上下左右)")]
-    [SerializeField] private float m_maxPitch = 30f;  // 上方向(+)
-    [SerializeField] private float m_minPitch = -10f; // 下方向(-)
-    [SerializeField] private float m_maxYaw = 45f;    // 右方向(+)
-    [SerializeField] private float m_minYaw = -45f;   // 左方向(-)
+    [Tooltip("上方向")]
+    [SerializeField] private float m_maxPitch = 30f;
+    [Tooltip("下方向")]
+    [SerializeField] private float m_minPitch = -10f;
+    [Tooltip("右方向")]
+    [SerializeField] private float m_maxYaw = 45f;
+    [Tooltip("左方向")]
+    [SerializeField] private float m_minYaw = -45f;
 
     private bool m_isTrigger;         //発射入力を受けたか
     private bool m_isRotated;         //敵方向への回転が完了したか
@@ -63,6 +67,12 @@ public class Weapon_Back : MonoBehaviour
     {
         //銃クラスが無い場合は、以降の処理を行わない
         if (m_shooting == null) return;
+
+        //リロード中なら、トリガーをfalseに
+        if (m_shooting.GetReloading())
+        {
+            m_isTrigger = false;
+        }
 
         //発射の入力を受け取ってるかつ、弾丸が0ではないなら
         if (m_isTrigger && m_shooting.GetGunStatus().GetAmmo() > 0)

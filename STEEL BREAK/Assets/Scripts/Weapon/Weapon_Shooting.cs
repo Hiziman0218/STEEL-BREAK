@@ -21,6 +21,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isReloading;    //リロード中フラグ
     private bool m_isUsing;        //使用中フラグ
     private bool m_isFireComplete; //発射完了フラグ
+    private bool m_isReloadComplete; //リロード完了フラグ
     private bool m_isIKFinished;   //IKが完了しているかフラグ
     private bool m_canPlayEmptySE = true; //空撃ち音声が鳴らせるか
 
@@ -29,6 +30,9 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private string m_myTeam;     //武器の所有者が所属するチーム
     private string m_checkPoint = "GripPoint"; //装備するときに探索するポイント
+
+    private Vector3 m_shootDir;        //発射角度保存用
+    private Transform m_currentTarget; //現在のターゲット保存用
 
     private GunStatus m_status;            //銃の性能(インスペクタで設定したものを代入)
     private BulletManager m_bulletManager; //発射処理を委譲するマネージャー(現在オブジェクトプール未使用)
@@ -66,6 +70,9 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             //リロード中の場合
             if (m_isReloading)
             {
+                //リロード完了フラグをfalseに設定
+                m_isReloadComplete = false;
+
                 //経過時間がリロード時間を超えていたら
                 if (m_elapsedTime >= m_status.GetReloadTime())
                 {
@@ -87,6 +94,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     {
         //使用中フラグ更新
         m_isUsing = false;
+        //発射完了フラグ更新
+        m_isFireComplete = false;
     }
 
     /// <summary>
@@ -165,7 +174,10 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             //リロード中なら空撃ち音を再生
             if (m_isReloading && m_canPlayEmptySE && m_elapsedTime >= m_status.GetRate())
             {
-                PlayFireSE(m_status.GetEmptyFireSE());
+                if (m_status.GetEmptyFireSE())
+                {
+                    PlayFireSE(m_status.GetEmptyFireSE());
+                }
                 m_canPlayEmptySE = false;
             }
 
@@ -193,6 +205,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //ターゲットがいる場合
         if (lockOn.CurrentTarget != null)
         {
+            //ターゲットを設定
+            m_currentTarget = lockOn.CurrentTarget;
             // 敵のBPを狙う
             Transform bp = lockOn.CurrentTarget.transform.Find("BP");
 
@@ -229,40 +243,53 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             shootDir = m_muzzleTransform.forward;
         }
 
+        //発射角度を保存
+        m_shootDir = shootDir;
+
         //弾を有効化
-        Bullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
-        //弾の所属チームとダメージ量と弾速を設定
-        Dummy.SetTeam(m_myTeam);
-        Dummy.SetDamage(m_status.GetDamage());
-        Dummy.SetSpeed(m_status.GetSpeed());
-        //ターゲットがいる場合、弾丸のターゲットに設定
-        if(lockOn.CurrentTarget != null)
+        if (m_status.GetBulletPrefab())
         {
-            Dummy.SetTarget(lockOn.CurrentTarget);
+            Bullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+            //弾の所属チームとダメージ量と弾速を設定
+            Dummy.SetTeam(m_myTeam);
+            Dummy.SetDamage(m_status.GetDamage());
+            Dummy.SetSpeed(m_status.GetSpeed());
+            //ターゲットがいる場合、弾丸のターゲットに設定
+            if (lockOn.CurrentTarget != null)
+            {
+                Dummy.SetTarget(lockOn.CurrentTarget);
+            }
+
+            //弾の初速を velocity で設定
+            Rigidbody rb = Dummy.GetComponent<Rigidbody>();
+            rb.linearVelocity = shootDir * m_status.GetSpeed();
+
+            //10秒後に削除
+            Destroy(Dummy.gameObject, 10.0f);
         }
 
-        //弾の初速を velocity で設定
-        Rigidbody rb = Dummy.GetComponent<Rigidbody>();
-        rb.linearVelocity = shootDir * m_status.GetSpeed();
-
         //マズルフラッシュのエフェクトを有効化
-        GameObject MuzzleFlash = Instantiate(m_status.GetMuzzleFlashEffect(), m_muzzleTransform.position, m_muzzleTransform.rotation);
-        Destroy(MuzzleFlash, 0.1f);
+        if (m_status.GetMuzzleFlashEffect())
+        {
+            GameObject MuzzleFlash = Instantiate(m_status.GetMuzzleFlashEffect(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+            Destroy(MuzzleFlash, 0.1f);
+        }
 
         //発射音を再生
-        PlayFireSE(m_status.GetFireSE());
+        if (m_status.GetFireSE())
+        {
+            PlayFireSE(m_status.GetFireSE());
+        }
+        
 
-        //10秒後に削除
-        Destroy(Dummy.gameObject, 10.0f);
-
-        //既存の弾数減少／フラグ更新
+        //既存の弾数減少/フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);
         m_isFireInternal = false;
         m_isFireComplete = true;
         m_elapsedTime = 0f;
         if (m_status.GetAmmo() <= 0)
         {
-            m_isReloading = true;
+            Reload();
         }
     }
 
@@ -333,9 +360,13 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// </summary>
     public void Reload()
     {
+        //既にリロード中か、弾数が既に最大なら、以下の処理を行わない
+        if(m_isReloading || m_status.GetAmmo() >= m_status.GetMaxAmmo()) return;
+
         //各フラグをリロード中の状態の物に設定
         m_isFireInternal = false;
         m_isReloading = true;
+        
     }
 
     /// <summary>
@@ -345,6 +376,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     {
         //各フラグをリロード前の状態の物に設定し、弾丸と経過時間を初期化
         m_isReloading = false;
+        m_isReloadComplete = true;
         m_status.SetAmmo(m_status.GetMaxAmmo());
         m_isFireInternal = true;
         m_canPlayEmptySE = true;
@@ -393,6 +425,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
+    /// 自身のチームを取得
+    /// </summary>
+    /// <returns></returns>
+    public string GetTeam()
+    {
+        return m_myTeam;
+    }
+
+    /// <summary>
     /// 装備時に確認するポイントの名称を設定
     /// </summary>
     /// <param name="checkPoint"></param>
@@ -438,12 +479,48 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
+    /// リロード中かを取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetReloading()
+    {
+        return m_isReloading;
+    }
+
+    /// <summary>
+    /// リロードが完了しているかを取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetReloadCompleat()
+    {
+        return m_isReloadComplete;
+    }
+
+    /// <summary>
     /// 銃のステータスを取得
     /// </summary>
     /// <returns></returns>
     public GunStatus GetGunStatus()
     {
         return m_status;
+    }
+
+    /// <summary>
+    /// 発射角度を取得
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetShootDir()
+    {
+        return m_shootDir;
+    }
+
+    /// <summary>
+    /// 現在のターゲットを取得
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetCurrentTarget()
+    {
+        return m_currentTarget;
     }
 
     /// <summary>
