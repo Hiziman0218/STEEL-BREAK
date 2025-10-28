@@ -1,15 +1,7 @@
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using RaycastPro.Detectors;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace StateMachineAI
 {
@@ -59,6 +51,8 @@ namespace StateMachineAI
         {
             //プレイヤーをタグで検索して取得
             m_Player = GameObject.FindWithTag("Player")?.transform;
+            //自分のモデルを取る
+            m_EnemyModel = this.transform;
 
             //センターポインターを個別に取得する
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);

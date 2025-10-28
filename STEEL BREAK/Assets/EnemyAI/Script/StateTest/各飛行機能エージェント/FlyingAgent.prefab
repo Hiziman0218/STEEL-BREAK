@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detector: {fileID: 6022895994269186505}
   accelerationSpeed: 4
-  arriveDistance: 2
+  arriveDistance: 0.5
   turnRate: 6
   movable: 1
   rotatable: 1

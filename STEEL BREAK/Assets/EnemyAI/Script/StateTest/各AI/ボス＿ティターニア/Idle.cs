@@ -4,6 +4,9 @@ namespace StateMachineAI
 {
     public class Idle_T : State<Titania_T>
     {
+        float total;
+        float rand;
+
         //コンストラクタ
         public Idle_T(Titania_T owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
@@ -12,6 +15,9 @@ namespace StateMachineAI
             Debug.Log("行動決め待機時間");
             //idle状態になった時の攻撃隙
             owner.m_CoolDown.StartCoolDown("Idle", 2f);
+
+            total = owner.wSpawn + owner.wRush + owner.wBeam + owner.wMove;
+            rand = Random.value * total;
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -19,17 +25,8 @@ namespace StateMachineAI
             //クールタイムがおわっていたら行動を開始
             if (!owner.m_CoolDown.IsCoolDown("Idle"))
             {
-                // 行動ごとの重み
-                float wSpawn = owner.m_probSpawn;
-                float wRush = owner.m_probRush;
-                float wBeam = owner.m_probBeam;
-                float wMove = owner.m_probMove;
-
-                float total = wSpawn + wRush + wBeam + wMove;
-                float rand = Random.value * total;
-
                 //重みによって確立が変わる
-                if (rand < wSpawn)
+                if (rand < owner.wSpawn)
                 {
                     if (!owner.m_CoolDown.IsCoolDown("Spawn"))
                     {
@@ -40,7 +37,7 @@ namespace StateMachineAI
                         owner.ChangeState(AIState_Titania_T.RandomMove_T);
                     }
                 }
-                else if (rand < wSpawn + wRush)
+                else if (rand < owner.wSpawn + owner.wRush)
                 {
                     if (!owner.m_CoolDown.IsCoolDown("Rush"))
                     {
@@ -51,7 +48,7 @@ namespace StateMachineAI
                         owner.ChangeState(AIState_Titania_T.RandomMove_T);
                     }
                 }
-                else if (rand < wSpawn + wRush + wBeam)
+                else if (rand < owner.wSpawn + owner.wRush + owner.wBeam)
                 {
                     if (!owner.m_CoolDown.IsCoolDown("Turn"))
                     {
