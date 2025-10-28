@@ -50,7 +50,7 @@ public class IK_Control : MonoBehaviour
     void Update()
     {
         //右手武装使用
-        if (inputManager.IsFireinRightHand)
+        if (inputManager.IsFireRightHand)
         {
             lastFireTimeRight = Time.time;
             targetWeightRight = 1f;
@@ -62,7 +62,7 @@ public class IK_Control : MonoBehaviour
         }
 
         //左手武装使用
-        if (inputManager.IsFireinLeftHand)
+        if (inputManager.IsFireLeftHand)
         {
             lastFireTimeLeft = Time.time;
             targetWeightLeft = 1f;
