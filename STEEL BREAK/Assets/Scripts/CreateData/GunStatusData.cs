@@ -30,4 +30,6 @@ public class GunStatusData : ScriptableObject
     public AudioClip EmptyFireSE; //空撃ち音
     [Tooltip("リロード時の効果音")]
     public AudioClip ReloadSE;    //リロード音
+    [Tooltip("武器の詳細")]
+    public string Detail;         //武器の詳細
 }

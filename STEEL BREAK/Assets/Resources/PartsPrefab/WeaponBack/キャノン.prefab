@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_statusData: {fileID: 11400000, guid: ec0d97660f18de940973d0b4e64ab777, type: 2}
+  m_statusData: {fileID: 11400000, guid: 2489f83a5749291499d313337822fe34, type: 2}
   m_muzzleTransform: {fileID: 7850413863570070725}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
   m_audioSource: {fileID: 714231380120809}
@@ -74,6 +74,10 @@ MonoBehaviour:
   m_useDeceleration: 0
   m_rotateSpeed: 500
   m_decelerateRate: 20
+  m_maxPitch: 30
+  m_minPitch: -10
+  m_maxYaw: 45
+  m_minYaw: -45
 --- !u!114 &2057791177221813394
 MonoBehaviour:
   m_ObjectHideFlags: 0

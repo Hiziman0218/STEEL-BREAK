@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 407969149520130960}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 3}
+  m_LocalPosition: {x: 0, y: 0.207, z: 1.377}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_statusData: {fileID: 0}
+  m_statusData: {fileID: 11400000, guid: 242c2124cbe505c4c9e2f72597bc124a, type: 2}
   m_muzzleTransform: {fileID: 2877816376054075462}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
   m_audioSource: {fileID: 2662105385365389897}
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_usePlayerRotate: 1
   m_useWeaponRotate: 0
   m_useDeceleration: 0
-  m_rotateSpeed: 5
+  m_rotateSpeed: 500
   m_decelerateRate: 5
   m_maxPitch: 30
   m_minPitch: -10

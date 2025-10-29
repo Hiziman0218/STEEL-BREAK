@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: "\u30DF\u30B5\u30A4\u30EB"
   Rate: 5
   ReloadTime: 5
-  Speed: 8
+  Speed: 10
   Damage: 4
   MaxAmmo: 4
   UseMirror: 0
@@ -25,3 +25,4 @@ MonoBehaviour:
   FireSE: {fileID: 0}
   EmptyFireSE: {fileID: 0}
   ReloadSE: {fileID: 0}
+  Detail: "\u8A98\u5C0E\u306E\u5F37\u3044\u30DF\u30B5\u30A4\u30EB"

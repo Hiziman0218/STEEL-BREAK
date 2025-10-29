@@ -4,6 +4,139 @@ using UnityEngine;
 
 namespace MagicArsenal
 {
+    public class MagicBeamStatic : MonoBehaviour
+    {
+        [Header("Prefabs")]
+        public GameObject beamLineRendererPrefab;
+        public GameObject beamStartPrefab;
+        public GameObject beamEndPrefab;
+
+        private GameObject beamStart;
+        private GameObject beamEnd;
+        private GameObject beam;
+        private LineRenderer line;
+
+        [Header("Beam Options")]
+        public bool beamCollides = true;
+        public float beamLength = 100f;
+        public float beamEndOffset = 0f;
+        public float textureScrollSpeed = 0f;
+        public float textureLengthScale = 1f;
+
+        [Header("Width Pulse Options")]
+        public float widthMultiplier = 1.5f;
+        private float customWidth;
+        private float originalWidth;
+        private float lerpValue = 0.0f;
+        public float pulseSpeed = 1.0f;
+        private bool pulseExpanding = true;
+
+        void Start()
+        {
+            SpawnBeam();
+            originalWidth = line.startWidth;
+            customWidth = originalWidth * widthMultiplier;
+        }
+
+        void FixedUpdate()
+        {
+            if (beam)
+            {
+                // スケールを取得
+                float scaleX = transform.lossyScale.x; // 太さ用
+                float scaleZ = transform.lossyScale.z; // 長さ用
+
+                // 長さをスケールに応じて補正
+                float scaledLength = beamLength * scaleZ;
+
+                // 始点
+                Vector3 startPos = transform.position;
+                line.SetPosition(0, startPos);
+
+                // 終点の算出
+                Vector3 end = startPos + (transform.forward * scaledLength);
+                RaycastHit hit;
+
+                if (beamCollides && Physics.Raycast(startPos, transform.forward, out hit))
+                {
+                    end = hit.point - (transform.forward * beamEndOffset);
+                    end = Vector3.Distance(startPos, end) > scaledLength
+                        ? startPos + (transform.forward * scaledLength)
+                        : end;
+                }
+
+                line.SetPosition(1, end);
+
+                // 始端と終端のエフェクト配置
+                if (beamStart)
+                {
+                    beamStart.transform.position = startPos;
+                    beamStart.transform.LookAt(end);
+                }
+
+                if (beamEnd)
+                {
+                    beamEnd.transform.position = end;
+                    beamEnd.transform.LookAt(startPos);
+                }
+
+                // テクスチャ調整
+                float distance = Vector3.Distance(startPos, end);
+                line.material.mainTextureScale = new Vector2(distance / textureLengthScale, 1);
+                line.material.mainTextureOffset -= new Vector2(Time.deltaTime * textureScrollSpeed, 0);
+
+                // パルス処理（太さの周期変化）
+                if (pulseExpanding)
+                    lerpValue += Time.deltaTime * pulseSpeed;
+                else
+                    lerpValue -= Time.deltaTime * pulseSpeed;
+
+                if (lerpValue >= 1.0f)
+                {
+                    pulseExpanding = false;
+                    lerpValue = 1.0f;
+                }
+                else if (lerpValue <= 0.0f)
+                {
+                    pulseExpanding = true;
+                    lerpValue = 0.0f;
+                }
+
+                // 太さ補正（Xスケール反映）
+                float currentWidth = Mathf.Lerp(originalWidth, customWidth, Mathf.Sin(lerpValue * Mathf.PI)) * scaleX;
+                line.startWidth = currentWidth;
+                line.endWidth = currentWidth;
+            }
+        }
+
+        public void SpawnBeam()
+        {
+            if (beamLineRendererPrefab)
+            {
+                beam = Instantiate(beamLineRendererPrefab, transform.position, transform.rotation, transform);
+                line = beam.GetComponent<LineRenderer>();
+                line.useWorldSpace = true;
+
+#if UNITY_5_5_OR_NEWER
+                line.positionCount = 2;
+#else
+                line.SetVertexCount(2);
+#endif
+
+                beamStart = beamStartPrefab ? Instantiate(beamStartPrefab, beam.transform) : null;
+                beamEnd = beamEndPrefab ? Instantiate(beamEndPrefab, beam.transform) : null;
+            }
+            else
+            {
+                Debug.LogError("A prefab with a line renderer must be assigned to the `beamLineRendererPrefab` field in the MagicBeamStatic script on " + gameObject.name);
+            }
+        }
+    }
+}
+
+/*改造前
+namespace MagicArsenal
+{
 
 public class MagicBeamStatic : MonoBehaviour
 {
@@ -125,4 +258,4 @@ public class MagicBeamStatic : MonoBehaviour
 	}
 
 }
-}
+}*/

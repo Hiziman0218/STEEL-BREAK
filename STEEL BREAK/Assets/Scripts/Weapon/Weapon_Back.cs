@@ -68,8 +68,8 @@ public class Weapon_Back : MonoBehaviour
         //銃クラスが無い場合は、以降の処理を行わない
         if (m_shooting == null) return;
 
-        //リロード中なら、トリガーをfalseに
-        if (m_shooting.GetReloading())
+        //リロード中もしくは発射レートのクールタイム中なら、トリガーをfalseに
+        if (m_shooting.GetReloading() || m_shooting.GetIsCoolTime())
         {
             m_isTrigger = false;
         }

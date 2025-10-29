@@ -661,13 +661,13 @@ PrefabInstance:
       addedObject: {fileID: 5742647039142411501}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2989979615990403608}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8667009439624803012}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5720429878876013111}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2989979615990403608}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8614227376836685229}
@@ -875,7 +875,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
---- !u!114 &2989979615990403608
+--- !u!114 &8667009439624803012
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -883,6 +883,49 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6024539278335420986}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee4478ba32bf6f14583722cc3c49b6ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hands:
+  - hand: 3
+    ikTarget: {fileID: 3139503708447861630}
+    ikPositionWeight: 0
+    ikRotationWeight: 0
+    Counter: 0
+    isIKFinished: 0
+    rotationOffsetEuler: {x: 0, y: 0, z: -90}
+  - hand: 2
+    ikTarget: {fileID: 5027624332380203307}
+    ikPositionWeight: 0
+    ikRotationWeight: 0.135
+    Counter: 0
+    isIKFinished: 0
+    rotationOffsetEuler: {x: 0, y: 0, z: 90}
+  disableDelay: 1.5
+  lerpSpeed: 2
+  maxIKAngle: 60
+--- !u!114 &5720429878876013111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6024539278335420986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2019af0943acd2e41a34769c9847657a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseSensitivity: 100
+--- !u!114 &2989979615990403608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6024539278335420986}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e86536d7fd8d42344a8cf3f3666d3cbc, type: 3}
   m_Name: 
@@ -970,49 +1013,6 @@ MonoBehaviour:
       m_Parts: {fileID: 4900137710243733126}
       m_Weight: {x: 0, y: 0, z: 0}
       m_newParts: {fileID: 0}
---- !u!114 &8667009439624803012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6024539278335420986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee4478ba32bf6f14583722cc3c49b6ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hands:
-  - hand: 3
-    ikTarget: {fileID: 3139503708447861630}
-    ikPositionWeight: 0
-    ikRotationWeight: 0
-    Counter: 0
-    isIKFinished: 0
-    rotationOffsetEuler: {x: 0, y: 0, z: -90}
-  - hand: 2
-    ikTarget: {fileID: 5027624332380203307}
-    ikPositionWeight: 0
-    ikRotationWeight: 0.135
-    Counter: 0
-    isIKFinished: 0
-    rotationOffsetEuler: {x: 0, y: 0, z: 90}
-  disableDelay: 1.5
-  lerpSpeed: 2
-  maxIKAngle: 60
---- !u!114 &5720429878876013111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6024539278335420986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2019af0943acd2e41a34769c9847657a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mouseSensitivity: 100
 --- !u!136 &8614227376836685229
 CapsuleCollider:
   m_ObjectHideFlags: 0

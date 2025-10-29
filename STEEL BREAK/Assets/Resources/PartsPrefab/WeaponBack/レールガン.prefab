@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782748f062243634394ff4ac821b519b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_statusData: {fileID: 0}
+  m_statusData: {fileID: 11400000, guid: b2e741fc62e9d16468dfd8ca62b0996e, type: 2}
   m_muzzleTransform: {fileID: 249547651791162658}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
   m_audioSource: {fileID: 6721103986904855073}

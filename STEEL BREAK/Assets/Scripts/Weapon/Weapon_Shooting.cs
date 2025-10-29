@@ -18,18 +18,19 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isFireInternal = false;    //発射可能フラグ(内部管理)
     private bool m_isFireExternal = false;    //発射可能フラグ(外部管理)
     private bool m_isExternalControl = false; //発射可否を外部管理をするか
-    private bool m_isReloading;    //リロード中フラグ
-    private bool m_isUsing;        //使用中フラグ
-    private bool m_isFireComplete; //発射完了フラグ
-    private bool m_isReloadComplete; //リロード完了フラグ
-    private bool m_isIKFinished;   //IKが完了しているかフラグ
+    private bool m_isReloading;      //リロード中フラグ(リロード中か)
+    private bool m_isCoolTime;       //発射レートのクールタイム中なら
+    private bool m_isUsing;          //使用中フラグ(発射したかに関わらず、使用されようとしたか)
+    private bool m_isFireComplete;   //発射完了フラグ(発射が完了した1フレームのみ)
+    private bool m_isReloadComplete; //リロード完了フラグ(リロードが完了した1フレームのみ)
+    private bool m_isIKFinished;     //IK完了フラグ
     private bool m_canPlayEmptySE = true; //空撃ち音声が鳴らせるか
 
-    private bool m_isBackWeapon = false;   //自身が背面武装か
-    private bool m_isBackWeaponReady;      //背面武装の発射の準備が完了したか
+    private bool m_isBackWeapon = false;  //自身が背面武装か
+    private bool m_isBackWeaponReady;     //背面武装の発射の準備が完了したか
 
-    private string m_myTeam;     //武器の所有者が所属するチーム
-    private string m_checkPoint = "GripPoint"; //装備するときに探索するポイント
+    private string m_myTeam; //武器の所有者が所属するチーム
+    private string m_checkPoint = "GripPoint"; //装備するときに探索するポイントの名称
 
     private Vector3 m_shootDir;        //発射角度保存用
     private Transform m_currentTarget; //現在のターゲット保存用
@@ -43,7 +44,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //銃のステータスを設定
         m_status = new GunStatus(m_statusData);
 
-        //自身が背面武装か確認
+        //自身が背面武装かを、Weapon_Backがアタッチされているかで確認
         var backComp = GetComponent<Weapon_Back>();
         if (backComp != null)
         {
@@ -70,9 +71,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             //リロード中の場合
             if (m_isReloading)
             {
-                //リロード完了フラグをfalseに設定
-                m_isReloadComplete = false;
-
                 //経過時間がリロード時間を超えていたら
                 if (m_elapsedTime >= m_status.GetReloadTime())
                 {
@@ -85,7 +83,13 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             {
                 //発射可能処理
                 m_isFireInternal = true;
+                m_isCoolTime = false;
                 m_elapsedTime = 0f;
+            }
+            //リロード中ではなく、発射レート中なら
+            else
+            {
+                m_isCoolTime = true;
             }
         }
     }
@@ -96,6 +100,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         m_isUsing = false;
         //発射完了フラグ更新
         m_isFireComplete = false;
+        //リロード完了フラグをfalseに設定
+        m_isReloadComplete = false;
     }
 
     /// <summary>
@@ -494,6 +500,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     public bool GetReloadCompleat()
     {
         return m_isReloadComplete;
+    }
+
+    /// <summary>
+    /// 発射レートのクールタイム中かを取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetIsCoolTime()
+    {
+        return m_isCoolTime;
     }
 
     /// <summary>

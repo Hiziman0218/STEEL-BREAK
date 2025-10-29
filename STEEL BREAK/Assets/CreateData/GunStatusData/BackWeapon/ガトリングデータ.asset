@@ -16,7 +16,7 @@ MonoBehaviour:
   Rate: 0
   ReloadTime: 5
   Speed: 250
-  Damage: 0
+  Damage: 1.5
   MaxAmmo: 150
   UseMirror: 1
   MirrorHand: 1
@@ -25,3 +25,4 @@ MonoBehaviour:
   FireSE: {fileID: 8300000, guid: 686fba72f8796bc40a885c6c6beab4af, type: 3}
   EmptyFireSE: {fileID: 8300000, guid: 3878defa783507c439f0c65cf16564a2, type: 3}
   ReloadSE: {fileID: 0}
+  Detail: "\u80A9\u6B66\u5668\u7248\u30DF\u30CB\u30AC\u30F3"
