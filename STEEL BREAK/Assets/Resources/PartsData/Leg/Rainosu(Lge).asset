@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
+  m_Name: Rainosu(Lge)
+  m_EditorClassIdentifier: 
+  partName: Rainosu
+  partType: 4
+  partIcon: {fileID: 21300000, guid: 970d0dd15d9e0e342987050bb5369e12, type: 3}
+  partPrefab: {fileID: 4257679117096884391, guid: 839300ad1b35b4b4ca56177c145472b5, type: 3}
+  multiPrefabs:
+  - {fileID: 4257679117096884391, guid: 839300ad1b35b4b4ca56177c145472b5, type: 3}
+  - {fileID: 4306367198441077293, guid: 1ad6db434464684409acd9e06e43e261, type: 3}
+  - {fileID: 8281329117079738249, guid: 048e0b03dbf337446856fc6034a9492c, type: 3}
+  - {fileID: 2096984893382260248, guid: 88d250be146c1244eabe3156fc706284, type: 3}
+  - {fileID: 379602952600466614, guid: ada0460154832af4dbc2a3290cd4520a, type: 3}
+  - {fileID: 2939824120189918241, guid: 324c91038118bcc499bda77cac302f2f, type: 3}
+  - {fileID: 8512313300742175749, guid: 6eabd38a4bf50da43b865e62b987b504, type: 3}
+  boneScales:
+  - boneName: B-shin.L
+    scale: {x: 1, y: 1, z: 1}
+    offsetInfos:
+    - childName: B-foot.L
+      offset: {x: 0, y: 0.01, z: 0}
+  - boneName: B-shin.R
+    scale: {x: 1, y: 1, z: 1}
+    offsetInfos:
+    - childName: B-foot.R
+      offset: {x: 0, y: 0.01, z: 0}
+  scaleInfos:
+  - prefab: {fileID: 8281329117079738249, guid: 048e0b03dbf337446856fc6034a9492c, type: 3}
+    scale: {x: 1, y: 1.3, z: 1}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  - prefab: {fileID: 2939824120189918241, guid: 324c91038118bcc499bda77cac302f2f, type: 3}
+    scale: {x: 1, y: 1.3, z: 1}
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  AP: 0
+  description: 

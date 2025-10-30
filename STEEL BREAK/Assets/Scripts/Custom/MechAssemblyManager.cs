@@ -402,8 +402,9 @@ public class MechAssemblyManager : MonoBehaviour
     //========================================
     private void ResetBoneScalesToPart(List<ModifierBoneData> modifiers)
     {
-        foreach (var modifierBoneData in modifiers)
-            modifierBoneData.ResetModifier();
+        for (int i = modifiers.Count - 1; i >= 0; i--) {
+            modifiers[i].ResetModifier();
+        };
     }
 
     //========================================
