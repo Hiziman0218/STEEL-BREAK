@@ -1,20 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using static UnityEngine.GraphicsBuffer;
 
 namespace StateMachineAI
 {
-    public class Hit_CenteringAI : State<CenteringAI>
+    public class Hit_HitAndAwayAI : State<HitAndAwayAI>
     {
         //コンストラクタ
-        public Hit_CenteringAI(CenteringAI owner) : base(owner) { }
+        public Hit_HitAndAwayAI(HitAndAwayAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
-            Debug.Log("ダメージを受けた");
             //一旦エージェント解除
             PoolManager.Instance.Return("FlyingFollowing", owner.myAgent);
 
@@ -22,7 +16,7 @@ namespace StateMachineAI
             if (owner.m_CoolDown.IsCoolDown("HitStun")) return;
 
             // 0.5秒間は再度Hitに入らない
-            owner.m_CoolDown.StartCoolDown("HitStun", 0.5f);
+            owner.m_CoolDown.StartCoolDown("HitStun", 0.1f);
 
         }
         //このAIが起動中に常に実行(Updateと同義)
@@ -33,7 +27,7 @@ namespace StateMachineAI
                 return;
 
             //ステート移行
-            owner.ChangeState(AIState_CenteringAI.Chase);
+            owner.ChangeState(AIState_HitAndAwayAI.Chase);
 
         }
         public override void Exit()

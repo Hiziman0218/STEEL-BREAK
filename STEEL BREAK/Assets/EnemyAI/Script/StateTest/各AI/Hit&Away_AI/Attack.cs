@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace StateMachineAI
 {
@@ -27,8 +24,7 @@ namespace StateMachineAI
                 //Attack_Shot.Execute(owner.transform, owner.m_CoolDown);
                 //敵から見てプレイヤーの後ろにセンターポイントを指定
                 Center_Rush.CenterRush(owner.m_CenterMarker, owner.transform, owner.m_Player, owner.m_AttackDistance);
-                //クールダウン設定
-                owner.m_CoolDown.StartCoolDown("Attack", 2);
+                owner.m_CoolDown.StartCoolDown("Attack", 4);
 
             }
             else

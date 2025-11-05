@@ -44,8 +44,6 @@ namespace StateMachineAI
         }
         public override void Exit()
         {
-            //追従飛行を解除
-            PoolManager.Instance.Return("FlyingFollowing", owner.myAgent);
         }
     }
 }

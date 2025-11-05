@@ -1,15 +1,6 @@
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
 using Plugins.RaycastPro.Demo.Scripts;
 
 namespace StateMachineAI
@@ -24,6 +15,7 @@ namespace StateMachineAI
     {
         Chase,
         Ramming,
+        Hit,
         Explosion,
     }
 
@@ -32,9 +24,14 @@ namespace StateMachineAI
     {
         [Header("プレイヤー")]
         public Transform m_Player;
+        [Header("攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
+        public float m_SideDotThreshold = 0.7f;
         [Header("自爆開始距離")]
         [Range(15f, 50f)]
         public float m_AttackDistance = 30;
+        [Header("移動速度")]
+        [Range(10f, 50f)]
+        public float m_speed = 20f;
         [Header("自爆前の最大突進スピード")]
         [Range(10f, 200f)]
         public float m_maxspeed = 100f;
@@ -52,13 +49,21 @@ namespace StateMachineAI
         [HideInInspector]
         public Rigidbody m_Rigidbody;
         [HideInInspector]
-        public BoxCollider m_BoxCollider;
+        public CapsuleCollider m_CapsuleCollider;
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
         [HideInInspector]
         // 現在速度を保持
         public float m_currentspeed = 0f;
+        [HideInInspector]
+        //エージェントのコントローラー取得用
+        public SteeringController m_RCController;
+        [HideInInspector]
+        public CoolDown m_CoolDown;
+        [HideInInspector]
+        private CharaBase charaBase;
+
 
 
         void OnCollisionEnter(Collision collision)
@@ -74,14 +79,31 @@ namespace StateMachineAI
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
+            //エージェント取得
+            myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
+            //エージェントのコンポーネント取得
+            m_RCController = myAgent.GetComponent<SteeringController>();
+            m_RCController.speed = m_speed;
+
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
+
 
             m_Rigidbody = GetComponent<Rigidbody>();
-            m_BoxCollider = GetComponent<BoxCollider>();
+            m_CapsuleCollider = GetComponent<CapsuleCollider>();
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Chase_BombAI"))
                 Destroy(gameObject);
             if (!AddStateByName("Ramming_BombAI"))
+                Destroy(gameObject);
+            if (!AddStateByName("Hit_BombAI"))
                 Destroy(gameObject);
             if (!AddStateByName("Explosion"))
                 Destroy(gameObject);
@@ -92,6 +114,19 @@ namespace StateMachineAI
             //初期起動時は、プレイヤーを追いかける状態に移行させる
             ChangeState(AIState_BombAI.Chase);
         }
+
+        private void HandleDamaged()
+        {
+            // 現在のステートが Ramming_BombAI 型なら無視
+            if (stateMachine.CurrentState is Ramming_BombAI)
+            {
+                Debug.Log("Ramming中なのでHitに遷移しない");
+                return;
+            }
+
+            ChangeState(AIState_BombAI.Hit);
+        }
+
 
         /// <summary>
         /// クラス名を元にステートを生成して追加する

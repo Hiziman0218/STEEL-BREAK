@@ -43,9 +43,10 @@ namespace StateMachineAI
         public Rigidbody m_Rigidbody;
         [HideInInspector]
         public BoxCollider m_BoxCollider;
-        
+        [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
+        [HideInInspector]
         private CharaBase charaBase;
 
         void Start()

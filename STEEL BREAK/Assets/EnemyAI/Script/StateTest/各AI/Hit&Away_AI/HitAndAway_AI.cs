@@ -1,18 +1,7 @@
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
-using RaycastPro.Detectors;
 using Plugins.RaycastPro.Demo.Scripts;
-using static UnityEngine.GraphicsBuffer;
 
 namespace StateMachineAI
 {
@@ -28,6 +17,7 @@ namespace StateMachineAI
         Attack,
         Away,
         Return,
+        Hit,
     }
 
     public class HitAndAwayAI
@@ -39,6 +29,10 @@ namespace StateMachineAI
         public Transform m_EnemyModel;
         [Header("センターポイントの取得")]
         public GameObject m_CenterMarker;
+
+        [Header("移動速度")]
+        [Range(10f, 50f)]
+        public float m_speed = 30f;
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 10;
         [Header("正面の攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
@@ -64,16 +58,37 @@ namespace StateMachineAI
         [HideInInspector]
         //現在スピード
         public float m_currentspeed = 0;
+        [HideInInspector]
+        private CharaBase charaBase;
+        [HideInInspector]
+        //エージェントのコントローラー取得用
+        public SteeringController m_RCController;
+
+
         void Start()
         {
             //プレイヤーをタグで検索して取得
             m_Player = GameObject.FindWithTag("Player")?.transform;
+            //自分のモデルを取る
+            m_EnemyModel = this.transform;
 
             //センターポインターを個別に取得する
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
             //agent生成
-            myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position + transform.forward, m_Player);
+            myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
+            //エージェントのコンポーネント取得
+            m_RCController = myAgent.GetComponent<SteeringController>();
+            m_RCController.speed = m_speed;
+
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
@@ -88,6 +103,8 @@ namespace StateMachineAI
                 Destroy(gameObject);
             if (!AddStateByName("Return"))
                 Destroy(gameObject);
+            if (!AddStateByName("Hit"))
+                Destroy(gameObject);
 
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<HitAndAwayAI>();
@@ -95,6 +112,12 @@ namespace StateMachineAI
             //初期起動時は、プレイヤーを追いかける状態に移行させる
             ChangeState(AIState_HitAndAwayAI.Chase);
         }
+
+        private void HandleDamaged()
+        {
+            ChangeState(AIState_HitAndAwayAI.Hit);
+        }
+
 
         /// <summary>
         /// クラス名を元にステートを生成して追加する

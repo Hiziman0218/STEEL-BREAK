@@ -1,10 +1,4 @@
-﻿using Plugins.RaycastPro.Demo.Scripts;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-//using Unity.VisualScripting;
-using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+﻿using UnityEngine;
 
 namespace StateMachineAI
 {
@@ -31,7 +25,7 @@ namespace StateMachineAI
             //Flyの回転動きを同期
             owner.transform.rotation = owner.myAgent.transform.rotation;
 
-            //プレイヤーを通り抜ける
+            //エージェントに追従
             Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
 
             // 攻撃可能範囲からでたら

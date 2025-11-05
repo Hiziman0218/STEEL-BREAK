@@ -8,6 +8,7 @@ public class Attack_Shot : MonoBehaviour
 {
     public static void Execute(Enemy m_Enemy, CoolDown m_CoolDown)
     {
+
         Debug.Log("射撃");
 
         //該当するコンポーネントがあれば

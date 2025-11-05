@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Center_Rush : MonoBehaviour
 {
@@ -18,7 +17,7 @@ public class Center_Rush : MonoBehaviour
         ///センターポイントの向きをNPCへ向けさせる
         CenterMarker.transform.LookAt(m_My.position);
         ///センターポイントをターゲットから指定分遠ざける(相対距離位置指定)
-        CenterMarker.transform.position = TargetPosition - CenterMarker.transform.forward * (m_AttackDistance + 5f);
+        CenterMarker.transform.position = TargetPosition - CenterMarker.transform.forward * (m_AttackDistance + 20f);
         ///その地点をNPCの目標地点とする
         return CenterMarker.transform.position;
     }
