@@ -48,7 +48,7 @@ public class PoolManager : MonoBehaviour
     /// </summary>
     /// <param name="key">取得したいプールマネージャの名前</param>
     /// <param name="position">どこに置くか</param>
-    /// <param name="target">生成したい位置</param>
+    /// <param name="target">誰をターゲットにして追いかけるか</param>
     /// <returns></returns>
     public GameObject Get(string key, Vector3 position, Transform target)
     {

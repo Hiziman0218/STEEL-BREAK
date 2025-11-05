@@ -56,4 +56,14 @@ public class CoolDown : MonoBehaviour
         Debug.Log($"[{actionName}] Œo‰ßŠÔ: {elapsedTime:F2} •b / c‚èŠÔ: {remainingTime:F2} •b");
     }
 
+    //c‚èŠÔ‚ğ•Ô‚·ˆ—
+    public float GetRemainingTime(string actionName)
+    {
+        if (!CoolDowns.ContainsKey(actionName) || !CoolTimes.ContainsKey(actionName))
+            return 0f;
+
+        float elapsed = Time.time - CoolTimes[actionName];
+        return Mathf.Max(0f, CoolDowns[actionName] - elapsed);
+    }
+
 }
