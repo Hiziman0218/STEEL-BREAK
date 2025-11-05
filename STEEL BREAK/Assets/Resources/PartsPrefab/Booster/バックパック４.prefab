@@ -40,6 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8454585551033278932}
+  - component: {fileID: -5880603498843915283}
   m_Layer: 0
   m_Name: "\u30D0\u30C3\u30AF\u30D1\u30C3\u30AF\uFF14"
   m_TagString: Untagged
@@ -60,15 +61,34 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3762547000936803880}
   - {fileID: 9037265664431366557}
   - {fileID: 2500100856097972601}
   - {fileID: 3704840338944038613}
   - {fileID: 1112816445112963372}
   - {fileID: 6559722420709790454}
   - {fileID: 8907051810595532978}
-  - {fileID: 3762547000936803880}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-5880603498843915283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670720986918730712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64681b5b5a9748a4399fde8d4e9c8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rightAttachPoint: {fileID: 9037265664431366557}
+  m_leftAttachPoint: {fileID: 2500100856097972601}
+  m_boostPoints:
+  - {fileID: 3704840338944038613}
+  - {fileID: 1112816445112963372}
+  m_normalBoostEffectPrefab: {fileID: 3003170136095214662, guid: d2a75945cd9541e439aa4db0ae60cd38, type: 3}
+  m_dashBoostEffectPrefab: {fileID: 492056557264270909, guid: 56273756be724bc40afeb0a9b2b213a3, type: 3}
 --- !u!1 &4896394098509541184
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +318,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7298754889733043748, guid: bf8eb154286b1cf4bbdf082e9abc32bc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7298754889733043748, guid: bf8eb154286b1cf4bbdf082e9abc32bc, type: 3}
       propertyPath: m_LocalPosition.y
