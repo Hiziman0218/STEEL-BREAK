@@ -7,6 +7,8 @@ public class CharaBase : MonoBehaviour
     [Tooltip("キャラのステータス(StatusDataを設定)")]
     [SerializeField] protected StatusData m_statusData; //インスペクタで設定
 
+    public System.Action OnDamage; //ダメージを受けた時のイベント
+
     protected Status m_status; //インスペクタで設定されたものを代入
 
     /// <summary>
@@ -30,6 +32,7 @@ public class CharaBase : MonoBehaviour
     public void GetDamage(float damage)
     {
         m_status.SetHP(m_status.GetHP() - damage);
+        OnDamage?.Invoke();
         Debug.Log("ダメージ量 : " + damage);
     }
 
