@@ -16,8 +16,8 @@ namespace StateMachineAI
         Chase,
         CenterPoint,
         Attack,
+        Hit,
     }
-
 
     public class CenteringAI
         : StatefulObjectBase<CenteringAI, AIState_CenteringAI>
@@ -43,9 +43,10 @@ namespace StateMachineAI
         public Rigidbody m_Rigidbody;
         [HideInInspector]
         public BoxCollider m_BoxCollider;
-        [HideInInspector]
+        
         // 自分専用ユニット
         public GameObject myAgent;
+        private CharaBase charaBase;
 
         void Start()
         {
@@ -57,13 +58,19 @@ namespace StateMachineAI
             //センターポインターを個別に取得する
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
-            //自分の位置にagent生成位置を設定
-            Vector3 spawnPos = transform.position + transform.forward;
             //agent生成
-            myAgent = PoolManager.Instance.Get("FlyingFollowing", spawnPos, m_Player);
+            myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
@@ -77,6 +84,8 @@ namespace StateMachineAI
                 Destroy(gameObject);
             if (!AddStateByName("Attack_CenteringAI"))
                 Destroy(gameObject);
+            if (!AddStateByName("Hit_CenteringAI"))
+                Destroy(gameObject);
 
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<CenteringAI>();
@@ -84,6 +93,12 @@ namespace StateMachineAI
             //初期起動時は、プレイヤーを追いかける状態に移行させる
             ChangeState(AIState_CenteringAI.Chase);
         }
+
+        private void HandleDamaged()
+        {
+            ChangeState(AIState_CenteringAI.Hit);
+        }
+
         /// <summary>
         /// クラス名を元にステートを生成して追加する
         /// </summary>

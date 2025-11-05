@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 using System.Reflection;
+using Plugins.RaycastPro.Demo.Scripts;
 
 namespace StateMachineAI
 {
@@ -28,11 +29,24 @@ namespace StateMachineAI
         [Header("ビーム発射口")]
         public Transform m_BeamPoint;
 
-        [Header("行動確率設定 0の行動はしない")]
-        [Range(0f, 10f)] public float wSpawn = 2f;
-        [Range(0f, 10f)] public float wRush = 2f;
-        [Range(0f, 10f)] public float wBeam = 2f;
-        [Range(0f, 10f)] public float wMove = 8f;
+
+        [System.Serializable]
+        public class ActionEntry
+        {
+            [Header("遷移するステート")]
+            public AIState_Titania_T state;
+            [Header("選ばれる確率設定 (0の行動はしない)")]
+            [Range(0f, 10f)] public float weight;
+            [Header("クールダウン用キー 必要ないなら空でok")]
+            public string cooldownKey;
+            // 追加: 条件チェック用
+            [Header("条件チェック用 必要ないなら空でok")]
+            public System.Func<Titania_T, bool> condition;
+
+        }
+
+        [Header("Idleから遷移する行動")]
+        public List<ActionEntry> actionEntries = new List<ActionEntry>();
 
         [Header("雑魚敵のスポーン位置を取得")]
         public List<GameObject> m_SpawnPoints = new List<GameObject>();
@@ -55,25 +69,38 @@ namespace StateMachineAI
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 30;
-        [Header("正面の攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
-        public float m_forwardDotThreshold = 0.8f;
-
+        [Header("最低でも保つ高度")]
+        [Range(30.0f, 70.0f)]
+        public float m_ground = 50;
+        [Header("旋回速度")]
+        [Range(5.0f, 15.0f)]
+        public float turnSpeed = 5f; 
         [Header("突撃時の最大突進スピード")]
-        [Range(10f, 40f)]
+        [Range(2f, 50f)]
         public float m_maxspeed = 10f;
+        [HideInInspector]
+        //コントローラーの元の速度記録用
+        public float m_speed;
         [Header("加速度")]
         [Range(10f, 100f)]
         public float m_acceleration = 40f;
         [Header("追従補正（値が小さいほど緩く追従する）")]
         [Range(0.001f, 0.1f)]
-        public float m_turnsmooth = 0.005f;
+        public float m_turnsmooth = 0.009f;
 
-        [Header("攻撃型の敵管理")]
-        public List<GameObject> m_spawnedAttackEnemies = new List<GameObject>();
-        [Header("防御型の敵管理")]
-        public List<GameObject> m_spawnedDefensEnemies = new List<GameObject>();
-        [Header("全体の敵管理")]
-        public List<GameObject> m_spawnedEnemies = new List<GameObject>();
+        [System.Serializable]
+        public class CurrentEnemy
+        {
+            [Header("攻撃型の敵管理")]
+            public List<GameObject> m_spawnedAttackEnemies = new List<GameObject>();
+            [Header("防御型の敵管理")]
+            public List<GameObject> m_spawnedDefensEnemies = new List<GameObject>();
+            [Header("全体の敵管理")]
+            public List<GameObject> m_spawnedEnemies = new List<GameObject>();
+        }
+
+        [Header("雑魚敵の現在生成数")]
+        public CurrentEnemy currentEnemy = new CurrentEnemy();
 
         [HideInInspector]
         public CoolDown m_CoolDown;
@@ -84,10 +111,16 @@ namespace StateMachineAI
         public GameObject myAgent;
         [HideInInspector]
         //現在スピード
-        public float m_currentspeed = 0;
+        public float m_currentspeed;
         [HideInInspector]
         //コルーチンのフラグ管理用
         public bool isSpawningFairy = false;
+        [HideInInspector]
+        // 突進方向を記録するための変数
+        public Vector3 m_RushDirection;
+        [HideInInspector]
+        //エージェントのコントローラー取得用
+        public SteeringController m_RCController;
 
         void Start()
         {
@@ -105,7 +138,11 @@ namespace StateMachineAI
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
             //agent生成
-            myAgent = PoolManager.Instance.Get("Titania", transform.position + transform.forward, m_CenterMarker.transform);
+            myAgent = PoolManager.Instance.Get("Titania", transform.position, m_CenterMarker.transform);
+            //エージェントのコンポーネント取得
+            m_RCController = myAgent.GetComponent<SteeringController>();
+            //デフォルトの速度を記憶
+            m_speed = m_RCController.speed;
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);

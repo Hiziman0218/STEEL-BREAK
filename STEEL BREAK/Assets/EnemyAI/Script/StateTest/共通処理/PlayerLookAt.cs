@@ -41,11 +41,11 @@ public class PlayerLookAt : MonoBehaviour
     /// <param name="m_Player"></param>
     /// <param name="m_my"></param>
     /// <param name="turnSmooth"></param>
-    public static void LookAtFlat(Transform m_Player, Transform m_my, float turnSmooth = 1f)
+    public static void LookAtFlat(Transform m_Player, Transform m_my, float turnSmooth)
     {
-        // ターゲット方向ベクトル
-        Vector3 dir = m_Player.position - m_my.position;
-        dir.y = 0f; // 高さ成分を無視して水平だけにする
+        // プレイヤーのXZ座標を使ってターゲット位置を作る
+        Vector3 targetPos = new Vector3(m_Player.position.x, m_my.position.y, m_Player.position.z);
+        Vector3 dir = targetPos - m_my.position;
 
         if (dir.sqrMagnitude < 0.001f) return; // ゼロ割り防止
 
@@ -58,10 +58,9 @@ public class PlayerLookAt : MonoBehaviour
         }
         else
         {
-            // スムーズに回転
-            m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth);
+            // スムーズに回転（Time.deltaTime を掛けると安定）
+            m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth * Time.deltaTime);
         }
-
     }
 
 }

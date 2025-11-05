@@ -21,13 +21,14 @@ public class Flying_Following : MonoBehaviour
         if (!m_Player)
             return;
 
-        //FlyingAgentに追従
-        m_My.position = myAgent.transform.position;
+        // ターゲットの位置を補足
+        Vector3 nextPos = myAgent.transform.position;
+        // Rigidbodyで追従(移動を止めた際に無重力状態みたいな変な挙動を防止)
+        m_Rigidbody.MovePosition(nextPos);
 
         //リジットボディとか重力を無効化して飛行できるようにする
-        if (m_Rigidbody.freezeRotation || m_Rigidbody.useGravity)
+        if (m_Rigidbody.useGravity)
         {
-            m_Rigidbody.freezeRotation = false;
             m_Rigidbody.useGravity = false;
         }
     }
