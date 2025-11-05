@@ -60,7 +60,7 @@ public class MissileLauncher : MonoBehaviour
                 missile.gameObject.SetActive(false);
 
                 Quaternion missileRotation = missile.parent.rotation * Quaternion.Euler(0f, -90f, 0f);
-                Bullet Dummy = Instantiate(m_shooting.GetGunStatus().GetBulletPrefab(), missile.position, missileRotation);
+                BulletBase Dummy = Instantiate(m_shooting.GetGunStatus().GetBulletPrefab(), missile.position, missileRotation);
 
                 Dummy.SetTeam(m_shooting.GetTeam());
                 Dummy.SetDamage(m_shooting.GetGunStatus().GetDamage());

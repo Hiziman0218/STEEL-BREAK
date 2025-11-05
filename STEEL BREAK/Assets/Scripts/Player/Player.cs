@@ -25,6 +25,8 @@ public class Player : PlayerBase
     private float m_HPRate;           //現在の耐久割合
     private float m_boostRate;        //現在のブースト割合
 
+    private int m_laserCount;         //使用しているレーザーの数
+
     private bool m_isAutoHorizontal;  //水平に戻すか
 
     private InputManager inputManager; //入力受け取りクラス
@@ -145,7 +147,7 @@ public class Player : PlayerBase
         UpdateRate();
 
         //自動で水平に
-        if (m_isAutoHorizontal) AutoHorizontal();
+        if (m_isAutoHorizontal && !IsFireLaser()) AutoHorizontal();
 
         //HPが0以下なら、破壊エフェクトを再生し自身を削除、その後ゲームオーバー画面へ遷移
         if(m_status.GetHP() <= 0f)
@@ -217,6 +219,31 @@ public class Player : PlayerBase
     {
         m_radar = radar;
         m_radar.player = this;
+    }
+
+    /// <summary>
+    /// レーザーを使用
+    /// </summary>
+    public void FireLaser()
+    {
+        m_laserCount++;
+    }
+
+    /// <summary>
+    /// レーザーの使用終了
+    /// </summary>
+    public void EndLaser()
+    {
+        m_laserCount = Mathf.Max(0, m_laserCount - 1);
+    }
+
+    /// <summary>
+    /// レーザーを使用中か(使用中ならtrue)
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFireLaser()
+    {
+        return m_laserCount != 0;
     }
 
     /// <summary>

@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: "\u30EC\u30FC\u30B6\u30FC\u7832"
   Rate: 0
-  ReloadTime: 0
+  ReloadTime: 7.5
   Speed: 0
   Damage: 0
-  MaxAmmo: 0
+  MaxAmmo: 1
   UseMirror: 0
   MirrorHand: 0
-  BulletPrefab: {fileID: 0}
+  BulletPrefab: {fileID: 7591469562123075025, guid: 6e165dada041e1f459948ff5e544a7bd, type: 3}
   MuzzleFlashEffect: {fileID: 0}
   FireSE: {fileID: 0}
   EmptyFireSE: {fileID: 0}

@@ -10,7 +10,7 @@ public class Homing : MonoBehaviour
 
     private Transform m_target; //追尾対象
     private Rigidbody m_rb;     //物理挙動
-    private Bullet m_bullet; //弾丸の基本機能
+    private Bullet m_bullet;    //弾丸の基本機能
 
     private void Awake()
     {

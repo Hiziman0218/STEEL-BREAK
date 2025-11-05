@@ -213,7 +213,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             //ターゲットを設定
             m_currentTarget = lockOn.CurrentTarget;
-            // 敵のBPを狙う
+            //敵のBPを狙う
             Transform bp = lockOn.CurrentTarget.transform.Find("BP");
 
             if (bp != null)
@@ -226,12 +226,12 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
                     m_status.GetSpeed()
                 );
 
-                // 銃口を敵に向ける
+                //銃口を敵に向ける
                 m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
             }
             else
             {
-                // BP が見つからない場合はとりあえず位置のみで狙う
+                //BP が見つからない場合はとりあえず位置のみで狙う
                 Vector3 targetPos = lockOn.CurrentTarget.transform.position;
                 shootDir = (targetPos - m_muzzleTransform.position).normalized;
                 m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
@@ -255,8 +255,9 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //弾を有効化
         if (m_status.GetBulletPrefab())
         {
-            Bullet Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
-            //弾の所属チームとダメージ量と弾速を設定
+            BulletBase Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+            //弾の要素を設定
+            Dummy.SetShooting(this);
             Dummy.SetTeam(m_myTeam);
             Dummy.SetDamage(m_status.GetDamage());
             Dummy.SetSpeed(m_status.GetSpeed());
@@ -268,10 +269,10 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
             //弾の初速を velocity で設定
             Rigidbody rb = Dummy.GetComponent<Rigidbody>();
-            rb.linearVelocity = shootDir * m_status.GetSpeed();
-
-            //10秒後に削除
-            Destroy(Dummy.gameObject, 10.0f);
+            if(rb != null)
+            {
+                rb.linearVelocity = shootDir * m_status.GetSpeed();
+            }
         }
 
         //マズルフラッシュのエフェクトを有効化
@@ -286,7 +287,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             PlayFireSE(m_status.GetFireSE());
         }
-        
 
         //既存の弾数減少/フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);

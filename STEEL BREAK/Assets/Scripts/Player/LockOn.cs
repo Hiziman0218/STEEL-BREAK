@@ -236,7 +236,7 @@ public class LockOn : MonoBehaviour
     /// <param name="target"></param>
     private void OnLock(Transform target)
     {
-        Debug.Log($"ロックオン対象を発見 : {target.name}");
+        //Debug.Log($"ロックオン対象を発見 : {target.name}");
     }
 
     /// <summary>
@@ -245,7 +245,7 @@ public class LockOn : MonoBehaviour
     /// <param name="target"></param>
     private void OnUnlock(Transform target)
     {
-        Debug.Log($"ロックオン対象を喪失 : {target.name}");
+        //Debug.Log($"ロックオン対象を喪失 : {target.name}");
     }
 
     /// <summary>

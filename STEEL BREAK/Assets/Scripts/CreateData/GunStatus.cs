@@ -12,7 +12,7 @@ public class GunStatus
     private int Ammo;         //現在の弾数
     private bool UseMirror;   //反転機能を使うか
     private AttachSide MirrorWhenHeld;    //どちらで装備した時に反転させるか
-    private Bullet BulletPrefab;          //弾丸プレハブ
+    private BulletBase BulletPrefab;          //弾丸プレハブ
     private GameObject MuzzleFlashEffect; //マズルフラッシュのエフェクト
     private AudioClip FireSE;             //発射音
     private AudioClip EmptyFireSE;        //空撃ち音
@@ -134,7 +134,7 @@ public class GunStatus
     /// 弾丸プレハブを取得
     /// </summary>
     /// <returns></returns>
-    public Bullet GetBulletPrefab()
+    public BulletBase GetBulletPrefab()
     {
         return BulletPrefab;
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MagicArsenal
 {
+    // スケール反映 + 自己当たり判定を除外したビームエフェクト
     public class MagicBeamStatic : MonoBehaviour
     {
         [Header("Prefabs")]
@@ -31,6 +32,9 @@ namespace MagicArsenal
         public float pulseSpeed = 1.0f;
         private bool pulseExpanding = true;
 
+        [SerializeField] private Transform m_hitCollider;  //当たり判定用シリンダー
+        [SerializeField] private LayerMask fieldLayerMask; //フィールドのレイヤー
+
         void Start()
         {
             SpawnBeam();
@@ -40,96 +44,123 @@ namespace MagicArsenal
 
         void FixedUpdate()
         {
-            if (beam)
+            if (!beam) return;
+
+            // スケール反映
+            float scaleX = transform.lossyScale.x; // 太さ
+            float scaleZ = transform.lossyScale.z; // 長さ
+            float scaledLength = beamLength * scaleZ;
+
+            Vector3 startPos = transform.position;
+            Vector3 end = startPos + (transform.forward * scaledLength);
+
+            // ---- 当たり判定による短縮処理 ----
+            if (beamCollides)
             {
-                // スケールを取得
-                float scaleX = transform.lossyScale.x; // 太さ用
-                float scaleZ = transform.lossyScale.z; // 長さ用
+                var hits = Physics.RaycastAll(startPos, transform.forward, scaledLength, fieldLayerMask);
+                float nearestDist = scaledLength;
+                bool hitFound = false;
+                Vector3 hitPoint = end;
 
-                // 長さをスケールに応じて補正
-                float scaledLength = beamLength * scaleZ;
-
-                // 始点
-                Vector3 startPos = transform.position;
-                line.SetPosition(0, startPos);
-
-                // 終点の算出
-                Vector3 end = startPos + (transform.forward * scaledLength);
-                RaycastHit hit;
-
-                if (beamCollides && Physics.Raycast(startPos, transform.forward, out hit))
+                foreach (var h in hits)
                 {
-                    end = hit.point - (transform.forward * beamEndOffset);
-                    end = Vector3.Distance(startPos, end) > scaledLength
-                        ? startPos + (transform.forward * scaledLength)
-                        : end;
+                    // 自身の当たり判定を除外
+                    if (m_hitCollider && h.collider.transform == m_hitCollider)
+                        continue;
+
+                    float dist = Vector3.Distance(startPos, h.point);
+                    if (dist < nearestDist)
+                    {
+                        nearestDist = dist;
+                        hitFound = true;
+                        hitPoint = h.point - (transform.forward * beamEndOffset);
+                    }
                 }
 
-                line.SetPosition(1, end);
+                if (hitFound)
+                    end = hitPoint;
+            }
 
-                // 始端と終端のエフェクト配置
-                if (beamStart)
-                {
-                    beamStart.transform.position = startPos;
-                    beamStart.transform.LookAt(end);
-                }
+            // ---- LineRenderer更新 ----
+            line.SetPosition(0, startPos);
+            line.SetPosition(1, end);
 
-                if (beamEnd)
-                {
-                    beamEnd.transform.position = end;
-                    beamEnd.transform.LookAt(startPos);
-                }
+            // 始端エフェクト
+            if (beamStart)
+            {
+                beamStart.transform.position = startPos;
+                beamStart.transform.LookAt(end);
+            }
 
-                // テクスチャ調整
-                float distance = Vector3.Distance(startPos, end);
-                line.material.mainTextureScale = new Vector2(distance / textureLengthScale, 1);
-                line.material.mainTextureOffset -= new Vector2(Time.deltaTime * textureScrollSpeed, 0);
+            // 終端エフェクト
+            if (beamEnd)
+            {
+                beamEnd.transform.position = end;
+                beamEnd.transform.LookAt(startPos);
+            }
 
-                // パルス処理（太さの周期変化）
-                if (pulseExpanding)
-                    lerpValue += Time.deltaTime * pulseSpeed;
-                else
-                    lerpValue -= Time.deltaTime * pulseSpeed;
+            // ---- テクスチャ処理 ----
+            float distance = Vector3.Distance(startPos, end);
+            line.material.mainTextureScale = new Vector2(distance / textureLengthScale, 1);
+            line.material.mainTextureOffset -= new Vector2(Time.deltaTime * textureScrollSpeed, 0);
 
-                if (lerpValue >= 1.0f)
-                {
-                    pulseExpanding = false;
-                    lerpValue = 1.0f;
-                }
-                else if (lerpValue <= 0.0f)
-                {
-                    pulseExpanding = true;
-                    lerpValue = 0.0f;
-                }
+            // ---- パルス（太さの周期変化）----
+            if (pulseExpanding)
+                lerpValue += Time.deltaTime * pulseSpeed;
+            else
+                lerpValue -= Time.deltaTime * pulseSpeed;
 
-                // 太さ補正（Xスケール反映）
-                float currentWidth = Mathf.Lerp(originalWidth, customWidth, Mathf.Sin(lerpValue * Mathf.PI)) * scaleX;
-                line.startWidth = currentWidth;
-                line.endWidth = currentWidth;
+            if (lerpValue >= 1.0f)
+            {
+                pulseExpanding = false;
+                lerpValue = 1.0f;
+            }
+            else if (lerpValue <= 0.0f)
+            {
+                pulseExpanding = true;
+                lerpValue = 0.0f;
+            }
+
+            float currentWidth = Mathf.Lerp(originalWidth, customWidth, Mathf.Sin(lerpValue * Mathf.PI)) * scaleX;
+            line.startWidth = currentWidth;
+            line.endWidth = currentWidth;
+
+            // ---- 当たり判定コライダーをビームに合わせて伸縮 ----
+            if (m_hitCollider != null)
+            {
+                float length = Vector3.Distance(startPos, end);
+
+                // シリンダーを前方向に伸ばす
+                Vector3 localScale = m_hitCollider.localScale;
+                localScale.z = length;
+                m_hitCollider.localScale = localScale;
+
+                // 中央に配置
+                m_hitCollider.position = startPos + (transform.forward * length * 0.5f);
+                m_hitCollider.rotation = transform.rotation;
             }
         }
 
         public void SpawnBeam()
         {
-            if (beamLineRendererPrefab)
+            if (!beamLineRendererPrefab)
             {
-                beam = Instantiate(beamLineRendererPrefab, transform.position, transform.rotation, transform);
-                line = beam.GetComponent<LineRenderer>();
-                line.useWorldSpace = true;
+                Debug.LogError($"LineRenderer付きのPrefabを設定してください: {gameObject.name}");
+                return;
+            }
+
+            beam = Instantiate(beamLineRendererPrefab, transform.position, transform.rotation, transform);
+            line = beam.GetComponent<LineRenderer>();
+            line.useWorldSpace = true;
 
 #if UNITY_5_5_OR_NEWER
-                line.positionCount = 2;
+            line.positionCount = 2;
 #else
-                line.SetVertexCount(2);
+            line.SetVertexCount(2);
 #endif
 
-                beamStart = beamStartPrefab ? Instantiate(beamStartPrefab, beam.transform) : null;
-                beamEnd = beamEndPrefab ? Instantiate(beamEndPrefab, beam.transform) : null;
-            }
-            else
-            {
-                Debug.LogError("A prefab with a line renderer must be assigned to the `beamLineRendererPrefab` field in the MagicBeamStatic script on " + gameObject.name);
-            }
+            beamStart = beamStartPrefab ? Instantiate(beamStartPrefab, beam.transform) : null;
+            beamEnd = beamEndPrefab ? Instantiate(beamEndPrefab, beam.transform) : null;
         }
     }
 }

@@ -21,7 +21,7 @@ public class GunStatusData : ScriptableObject
     [Tooltip("どちらで装備した時に反転させるか")]
     public AttachSide MirrorHand; //どちらで装備した時に反転させるか
     [Tooltip("弾丸のプレハブ")]
-    public Bullet BulletPrefab; //弾丸プレハブ
+    public BulletBase BulletPrefab; //弾丸プレハブ
     [Tooltip("マズルフラッシュのエフェクト")]
     public GameObject MuzzleFlashEffect; //マズルフラッシュエフェクト
     [Tooltip("発射時の効果音")]

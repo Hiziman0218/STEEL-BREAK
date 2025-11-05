@@ -15,8 +15,8 @@ public class Enemy : CharaBase
         base.Initialize();
 
         //自身の武器のチームを設定
-        weaponR.SetTeam(m_status.GetTeam());
-        weaponL.SetTeam(m_status.GetTeam());
+        if (weaponR) weaponR.SetTeam(m_status.GetTeam());
+        if (weaponL) weaponL.SetTeam(m_status.GetTeam());
     }
 
     private void Update()
@@ -57,7 +57,10 @@ public class Enemy : CharaBase
 
         //フラグをfalseにし、エフェクトを再生した後削除
         IsAlive = false;
-        Instantiate(DestructionEffect, transform.position, transform.rotation);
+        if (DestructionEffect)
+        {
+            Instantiate(DestructionEffect, transform.position, transform.rotation);
+        }
         Destroy(gameObject);
         StageCount();
     }
