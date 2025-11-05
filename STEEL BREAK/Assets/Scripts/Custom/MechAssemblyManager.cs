@@ -239,7 +239,11 @@ public class MechAssemblyManager : MonoBehaviour
             GameObject newPart = Instantiate(partData.partPrefab, slot);
             newPart.transform.localPosition = Vector3.zero;
             newPart.transform.localRotation = Quaternion.identity;
-            newPart.transform.localScale = Vector3.one;
+            Vector3 partScale;
+            partScale.x = 1f / slot.transform.localScale.x;
+            partScale.y = 1f / slot.transform.localScale.y;
+            partScale.z = 1f / slot.transform.localScale.z;
+            newPart.transform.localScale = partScale;
 
             // 🔫 武器なら CustomPlayer に登録
             if (partType == PartType.Weapon || partType == PartType.WeaponL || partType == PartType.BWeapon || partType == PartType.BWeaponL)
