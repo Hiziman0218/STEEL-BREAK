@@ -283,9 +283,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2718969792858964277}
     m_Modifications:
+    - target: {fileID: 269882721291274297, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 983004731456731606, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820037522435827556, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016756621295520686, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2955881311533890254, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
       propertyPath: m_Name
       value: Backpack3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3271256632842875494, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127212240174145706, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6937104583599434277, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7787145302500797051, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
       propertyPath: m_LocalScale.x
@@ -337,6 +365,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7787145302500797051, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8439194603554649235, guid: 410ce5ef4b3026c44850c22cce3a2489, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

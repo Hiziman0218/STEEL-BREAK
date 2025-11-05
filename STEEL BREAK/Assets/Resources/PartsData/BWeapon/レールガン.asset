@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
   m_Name: "\u30EC\u30FC\u30EB\u30AC\u30F3"
   m_EditorClassIdentifier: 
-  partName: Gatling
+  partName: Railgun
   partType: 8
   partIcon: {fileID: 21300000, guid: 0a5df01cfe5520e438fff42c3dd7bea2, type: 3}
   partPrefab: {fileID: 2454051965070268078, guid: 02e339b29427adf4cae882c521962c1a, type: 3}
@@ -20,7 +20,4 @@ MonoBehaviour:
   boneScales: []
   scaleInfos: []
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 

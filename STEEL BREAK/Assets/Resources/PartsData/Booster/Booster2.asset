@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
   m_Name: Booster2
   m_EditorClassIdentifier: 
-  partName: Artemis
+  partName: Booster2
   partType: 7
   partIcon: {fileID: 21300000, guid: b3e159d756431b84d99056f791db5898, type: 3}
   partPrefab: {fileID: 2771715617333161016, guid: 53c041440590e264aa05b4c2508b3edc, type: 3}
@@ -20,7 +20,4 @@ MonoBehaviour:
   boneScales: []
   scaleInfos: []
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 

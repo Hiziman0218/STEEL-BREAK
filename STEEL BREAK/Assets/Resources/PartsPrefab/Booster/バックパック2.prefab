@@ -382,9 +382,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5133860994193191711}
     m_Modifications:
+    - target: {fileID: 222839197360692419, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332371604978479938, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2744812772095239561, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
       propertyPath: m_Name
       value: Backpack2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2913502771109564099, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4482866065607429185, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7924639509647191647, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
       propertyPath: m_LocalScale.y
@@ -433,6 +449,10 @@ PrefabInstance:
     - target: {fileID: 7924639509647191647, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 4.067
+      objectReference: {fileID: 0}
+    - target: {fileID: 9170789649047087220, guid: 423686cff8c3b324f9e607efc9969b52, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

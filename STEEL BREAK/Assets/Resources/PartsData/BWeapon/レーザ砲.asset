@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32e9a1bcb55f1b478afa62916c1b0c0, type: 3}
   m_Name: "\u30EC\u30FC\u30B6\u7832"
   m_EditorClassIdentifier: 
-  partName: Gatling
+  partName: LaserCannon
   partType: 8
   partIcon: {fileID: 21300000, guid: 2d189725bda23094bb808b33b7e8d9ce, type: 3}
   partPrefab: {fileID: 8145968622668307068, guid: e94ef06c135285448aa57c236dced213, type: 3}
@@ -20,7 +20,4 @@ MonoBehaviour:
   boneScales: []
   scaleInfos: []
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 

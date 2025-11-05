@@ -360,6 +360,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Backpack4
       objectReference: {fileID: 0}
+    - target: {fileID: 8237167674032234077, guid: bf8eb154286b1cf4bbdf082e9abc32bc, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
