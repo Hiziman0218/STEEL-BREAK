@@ -19,19 +19,16 @@ MonoBehaviour:
   multiPrefabs: []
   boneScales:
   - boneName: B-chest
-    scale: {x: 1.5, y: 1, z: 1}
+    scale: {x: 1, y: 1, z: 1}
     offsetInfos:
     - childName: B-shoulder.L
-      offset: {x: -0.1, y: 0, z: 0}
+      offset: {x: -0.2, y: 0, z: 0}
     - childName: B-shoulder.R
-      offset: {x: 0.1, y: 0, z: 0}
+      offset: {x: 0.2, y: 0, z: 0}
   scaleInfos:
   - prefab: {fileID: 8785395886197111941, guid: 6add8c720fefbf644ad43954755e74e1, type: 3}
     scale: {x: 1, y: 1, z: 1}
     positionOffset: {x: 0, y: 0, z: 0}
     rotationOffset: {x: 0, y: 0, z: 0}
   AP: 0
-  stability: 0
-  weight: 0
-  enLoad: 0
   description: 
