@@ -25,16 +25,29 @@ namespace StateMachineAI
             Lookhorizontal.Look_horizontal(owner.transform, owner.m_Player, owner.m_rotationSpeedH);
 
             //攻撃可能かのチェック
-            (float distance,_, _) = Distance_Check.Check(owner.transform, owner.m_Player);
+            (float distance, _, _) = Distance_Check.Check(owner.transform, owner.m_Player);
 
             //クールダウン中でなければ
             if (owner.m_CoolDown != null && !owner.m_CoolDown.IsCoolDown("Attack"))
             {
-                //攻撃範囲内なら
-                if (distance <= owner.m_AttackDistance)
+
+                foreach (Transform muzzle in owner.m_Muzzles)
                 {
-                    //攻撃
-                    Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
+                    // プレイヤー方向ベクトル
+                    Vector3 toPlayer = (owner.m_Player.position - muzzle.position).normalized;
+
+                    // 砲身 forward とプレイヤー方向の角度差を計算
+                    float angle = Vector3.Angle(muzzle.forward, toPlayer);
+
+                    // 例えば 5度以内なら「狙えている」と判定
+                    if (angle < 5f && Vector3.Distance(owner.m_Player.position, owner.transform.position) <= owner.m_AttackDistance)
+                    {
+                        if (distance <= owner.m_AttackDistance)
+                        {
+                            //攻撃
+                            Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
+                        }
+                    }
                 }
             }
 
