@@ -12,11 +12,15 @@ namespace StateMachineAI
             //一旦エージェント解除
             PoolManager.Instance.Return("FlyingFollowing", owner.myAgent);
 
+            // Rigidbodyの回転を止める
+            owner.m_Rigidbody.angularVelocity = Vector3.zero;
+            owner.m_Rigidbody.freezeRotation = true;
+
             //HitStunがクールダウン中ならreturn
             if (owner.m_CoolDown.IsCoolDown("HitStun")) return;
 
             // 0.5秒間は再度Hitに入らない
-            owner.m_CoolDown.StartCoolDown("HitStun", 0.1f);
+            owner.m_CoolDown.StartCoolDown("HitStun", 0.5f);
 
         }
         //このAIが起動中に常に実行(Updateと同義)
@@ -32,6 +36,9 @@ namespace StateMachineAI
         }
         public override void Exit()
         {
+            // 回転制御を戻す
+            owner.m_Rigidbody.freezeRotation = false;
+
             //エージェントがアクティブでなければアクティブにする
             if (!owner.myAgent.activeSelf)
             {

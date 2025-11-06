@@ -24,6 +24,9 @@ namespace StateMachineAI
     {
         [Header("プレイヤー")]
         public Transform m_Player;
+        [Header("攻撃判定を持った爆発エフェクト")]
+        public GameObject blastPrefab;
+
         [Header("攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
         public float m_SideDotThreshold = 0.7f;
         [Header("自爆開始距離")]
@@ -63,12 +66,12 @@ namespace StateMachineAI
         public CoolDown m_CoolDown;
         [HideInInspector]
         private CharaBase charaBase;
+        [HideInInspector]
+        public Enemy m_Enemy;
 
-
-
-        void OnCollisionEnter(Collision collision)
+        void OnTriggerEnter(Collider other)
         {
-            // プレイヤーか壁など、何かに当たったら自爆ステートに遷移
+            // プレイヤーや壁など、何かに当たったら自爆ステートに遷移
             ChangeState(AIState_BombAI.Explosion);
         }
 
@@ -93,7 +96,6 @@ namespace StateMachineAI
                 // ダメージイベントを購読
                 charaBase.OnDamage += HandleDamaged;
             }
-
 
             m_Rigidbody = GetComponent<Rigidbody>();
             m_CapsuleCollider = GetComponent<CapsuleCollider>();

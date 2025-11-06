@@ -15,8 +15,18 @@ namespace StateMachineAI
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
+            // 爆風を生成
+            if (owner.blastPrefab != null)
+            {
+                GameObject blastObj = Object.Instantiate(
+                    owner.blastPrefab,
+                    owner.transform.position,
+                    Quaternion.identity
+                );
+            }
+
             //オブジェクト削除
-            UnityEngine.Object.Destroy(owner.gameObject);
+            Object.Destroy(owner.gameObject);
 
         }
         //このAIが起動中に常に実行(Updateと同義)

@@ -63,7 +63,8 @@ namespace StateMachineAI
         [HideInInspector]
         //エージェントのコントローラー取得用
         public SteeringController m_RCController;
-
+        [HideInInspector]
+        public Enemy m_Enemy;
 
         void Start()
         {
@@ -80,6 +81,9 @@ namespace StateMachineAI
             //エージェントのコンポーネント取得
             m_RCController = myAgent.GetComponent<SteeringController>();
             m_RCController.speed = m_speed;
+
+            //エネミーのスクリプトを取得
+            Enemy m_Enemy = GetComponent<Enemy>();
 
             //キャラベース取得
             charaBase = GetComponent<CharaBase>();
@@ -103,7 +107,7 @@ namespace StateMachineAI
                 Destroy(gameObject);
             if (!AddStateByName("Return"))
                 Destroy(gameObject);
-            if (!AddStateByName("Hit"))
+            if (!AddStateByName("Hit_HitAndAwayAI"))
                 Destroy(gameObject);
 
             //ステートマシーンを自身として設定

@@ -1,15 +1,6 @@
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using UnityEngine.AI;
-//using Unity.VisualScripting;
-using static UnityEngine.UI.GridLayoutGroup;
-using UnityEditorInternal;
 
 namespace StateMachineAI
 {
@@ -23,6 +14,7 @@ namespace StateMachineAI
     {
         Caution,
         Attack,
+        Hit,
     }
 
     public class GunBatteryAI
@@ -47,23 +39,43 @@ namespace StateMachineAI
         public float m_rotationSpeedV;
 
         [Header("攻撃可能距離")]
-        public float m_AttackDistance = 10f;
+        public float m_AttackDistance = 30f;
 
-        [Header("アタッチするもの（設定する必要なし)")]
+        [HideInInspector]
         public CoolDown m_CoolDown;
+        [HideInInspector]
+        private CharaBase charaBase;
+        [HideInInspector]
+        public Enemy m_Enemy;
+
+
 
         void Start()
         {
             //プレイヤーをタグで検索して取得
             m_Player = GameObject.FindWithTag("Player")?.transform;
 
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
+
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
+
+            //コライダーを取得
+            Collider[] myColliders = GetComponents<Collider>();
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Caution"))
                 Destroy(gameObject);
             if (!AddStateByName("Attack_GunBatteryAI"))
+                Destroy(gameObject);
+            if (!AddStateByName("Hit_GunBatteryAI"))
                 Destroy(gameObject);
 
             //ステートマシーンを自身として設定
@@ -72,6 +84,12 @@ namespace StateMachineAI
             //初期起動時は、プレイヤーを追いかける状態に移行させる
             ChangeState(AIState_GunBatteryAI.Caution);
         }
+
+        private void HandleDamaged()
+        {
+            ChangeState(AIState_GunBatteryAI.Hit);
+        }
+
 
         /// <summary>
         /// クラス名を元にステートを生成して追加する

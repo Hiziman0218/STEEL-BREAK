@@ -21,11 +21,9 @@ namespace StateMachineAI
             {
                 Debug.Log("射撃");
                 //射撃
-                //Attack_Shot.Execute(owner.transform, owner.m_CoolDown);
+                Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
                 //敵から見てプレイヤーの後ろにセンターポイントを指定
                 Center_Rush.CenterRush(owner.m_CenterMarker, owner.transform, owner.m_Player, owner.m_AttackDistance);
-                owner.m_CoolDown.StartCoolDown("Attack", 4);
-
             }
             else
             {

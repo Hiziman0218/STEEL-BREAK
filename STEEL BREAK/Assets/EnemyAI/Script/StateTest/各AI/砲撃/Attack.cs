@@ -1,10 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-//using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using static UnityEngine.GraphicsBuffer;
 
 
 namespace StateMachineAI
@@ -40,7 +34,7 @@ namespace StateMachineAI
                 if (distance <= owner.m_AttackDistance)
                 {
                     //UŒ‚
-                    //Attack_Shot.Execute(owner.transform, owner.m_CoolDown);
+                    Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
                 }
             }
 
