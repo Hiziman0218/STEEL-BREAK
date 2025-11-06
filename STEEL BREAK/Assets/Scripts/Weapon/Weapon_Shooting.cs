@@ -19,7 +19,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     private bool m_isFireExternal = false;    //発射可能フラグ(外部管理)
     private bool m_isExternalControl = false; //発射可否を外部管理をするか
     private bool m_isReloading;      //リロード中フラグ(リロード中か)
-    private bool m_isCoolTime;       //発射レートのクールタイム中なら
+    private bool m_isCoolTime = false;  //発射レートのクールタイム中なら
     private bool m_isUsing;          //使用中フラグ(発射したかに関わらず、使用されようとしたか)
     private bool m_isFireComplete;   //発射完了フラグ(発射が完了した1フレームのみ)
     private bool m_isReloadComplete; //リロード完了フラグ(リロードが完了した1フレームのみ)
@@ -62,6 +62,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private void Update()
     {
+        /*
         //発射不可能の場合
         if (!m_isFireInternal)
         {
@@ -89,6 +90,36 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             //リロード中ではなく、発射レート中なら
             else
             {
+                m_isCoolTime = true;
+            }
+        }*/
+
+        // 毎フレーム時間を加算
+        m_elapsedTime += Time.deltaTime;
+
+        // リロード処理中
+        if (m_isReloading)
+        {
+            if (m_elapsedTime >= m_status.GetReloadTime())
+            {
+                ReloadComplete();
+            }
+            return;
+        }
+
+        // クールタイム管理
+        if (!m_isFireInternal)
+        {
+            if (m_elapsedTime >= m_status.GetRate())
+            {
+                // クールタイム終了
+                m_isFireInternal = true;
+                m_isCoolTime = false;
+                m_elapsedTime = 0f;
+            }
+            else
+            {
+                // クールタイム中
                 m_isCoolTime = true;
             }
         }
@@ -255,20 +286,18 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //弾を有効化
         if (m_status.GetBulletPrefab())
         {
-            BulletBase Dummy = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
+            BulletBase bullet = Instantiate(m_status.GetBulletPrefab(), m_muzzleTransform.position, m_muzzleTransform.rotation);
             //弾の要素を設定
-            Dummy.SetShooting(this);
-            Dummy.SetTeam(m_myTeam);
-            Dummy.SetDamage(m_status.GetDamage());
-            Dummy.SetSpeed(m_status.GetSpeed());
+            bullet.SetShooting(this);
+            bullet.SetTeam(m_myTeam);
+            bullet.SetDamage(m_status.GetDamage());
+            bullet.SetSpeed(m_status.GetSpeed());
+
             //ターゲットがいる場合、弾丸のターゲットに設定
-            if (lockOn.CurrentTarget != null)
-            {
-                Dummy.SetTarget(lockOn.CurrentTarget);
-            }
+            if (lockOn.CurrentTarget != null) bullet.SetTarget(lockOn.CurrentTarget);
 
             //弾の初速を velocity で設定
-            Rigidbody rb = Dummy.GetComponent<Rigidbody>();
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if(rb != null)
             {
                 rb.linearVelocity = shootDir * m_status.GetSpeed();
@@ -288,7 +317,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             PlayFireSE(m_status.GetFireSE());
         }
 
-        //既存の弾数減少/フラグ更新
+        //弾数減少/フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);
         m_isFireInternal = false;
         m_isFireComplete = true;
@@ -372,7 +401,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         //各フラグをリロード中の状態の物に設定
         m_isFireInternal = false;
         m_isReloading = true;
-        
+        m_isCoolTime = false;
     }
 
     /// <summary>
@@ -543,4 +572,14 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// </summary>
     /// <returns></returns>
     public string GetName() => m_status.GetName();
+
+    public int GetAmmo()
+    {
+        return m_status.GetAmmo();
+    }
+
+    public int GetMaxAmmo()
+    {
+        return m_status.GetMaxAmmo();
+    }
 }

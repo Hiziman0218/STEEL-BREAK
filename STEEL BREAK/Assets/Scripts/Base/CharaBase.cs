@@ -1,3 +1,4 @@
+using Game.Enum;
 using UnityEngine;
 
 public class CharaBase : MonoBehaviour

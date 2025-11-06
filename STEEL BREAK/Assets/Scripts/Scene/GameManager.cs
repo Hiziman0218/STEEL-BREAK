@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public ProgressBar m_playerBoostGauge;
     //プレイヤーが持つレーダー
     public Radar m_radar;
+    //プレイヤーの装備する武器の残弾数
+    public AmmoDisplay m_ammoDisplay;
 
     void Awake()
     {
@@ -29,5 +31,6 @@ public class GameManager : MonoBehaviour
         player.SetHPBar(m_playerHPBar);
         player.SetBoostGauge(m_playerBoostGauge);
         player.SetRadar(m_radar);
+        m_ammoDisplay.SetPlayer(player);
     }
 }

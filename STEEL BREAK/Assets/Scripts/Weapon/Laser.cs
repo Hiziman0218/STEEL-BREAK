@@ -34,8 +34,6 @@ public class Laser : BulletBase
 
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log(name + " OnTriggerStay with " + other.name);
-
         //自身は除外対象
         if (other == m_hitCollider) return;
 
@@ -53,10 +51,6 @@ public class Laser : BulletBase
         {
             //ダメージ処理
             chara.GetDamage(m_damage);
-
-            var hitStop = chara.GetComponent<HitStop>();
-            if (hitStop == null) hitStop = chara.gameObject.AddComponent<HitStop>();
-            hitStop.StartHitStop(10f);
 
             //タイマー更新
             m_hitTimer[chara] = now;

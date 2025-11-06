@@ -62,19 +62,18 @@ public class MissileLauncher : MonoBehaviour
                 Quaternion missileRotation = missile.parent.rotation * Quaternion.Euler(0f, -90f, 0f);
                 BulletBase Dummy = Instantiate(m_shooting.GetGunStatus().GetBulletPrefab(), missile.position, missileRotation);
 
+                Dummy.SetShooting(m_shooting);
                 Dummy.SetTeam(m_shooting.GetTeam());
                 Dummy.SetDamage(m_shooting.GetGunStatus().GetDamage());
                 Dummy.SetSpeed(m_shooting.GetGunStatus().GetSpeed());
 
-                if (m_shooting.GetCurrentTarget() != null)
-                    Dummy.SetTarget(m_shooting.GetCurrentTarget());
+                if (m_shooting.GetCurrentTarget() != null) Dummy.SetTarget(m_shooting.GetCurrentTarget());
 
                 Rigidbody rb = Dummy.GetComponent<Rigidbody>();
                 rb.linearVelocity = m_shooting.GetShootDir() * m_shooting.GetGunStatus().GetSpeed();
 
-                Destroy(Dummy.gameObject, 10.0f);
                 m_shooting.GetGunStatus().SetAmmo(m_shooting.GetGunStatus().GetAmmo() - 1);
-                m_shooting.Reload();
+                if (m_shooting.GetGunStatus().GetAmmo() > 0) m_shooting.Reload();
             }
         }
         //ÉtÉâÉOê›íË

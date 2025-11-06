@@ -21,6 +21,7 @@ public class Enemy : CharaBase
 
     private void Update()
     {
+        //デバッグ用
         //UseR();
         //UseL();
 
@@ -62,7 +63,7 @@ public class Enemy : CharaBase
             Instantiate(DestructionEffect, transform.position, transform.rotation);
         }
         Destroy(gameObject);
-        StageCount();
+        //StageCount();
     }
 
     /// <summary>

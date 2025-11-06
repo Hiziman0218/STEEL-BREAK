@@ -69,11 +69,8 @@ public class Weapon_Back : MonoBehaviour
         if (m_shooting == null) return;
 
         //リロード中もしくは発射レートのクールタイム中なら、トリガーをfalseに
-        if (m_shooting.GetReloading() || m_shooting.GetIsCoolTime())
-        {
-            m_isTrigger = false;
-        }
-
+        if (m_shooting.GetReloading() || m_shooting.GetIsCoolTime()) m_isTrigger = false;
+        
         //発射の入力を受け取ってるかつ、弾丸が0ではないなら
         if (m_isTrigger && m_shooting.GetGunStatus().GetAmmo() > 0)
         {
@@ -105,8 +102,8 @@ public class Weapon_Back : MonoBehaviour
         }
         else
         {
-            //正面へ回転
-            RotateForward();
+            //武装の回転を行う武装の場合、正面へ回転
+            if(m_useWeaponRotate) RotateForward();
         }
     }
 

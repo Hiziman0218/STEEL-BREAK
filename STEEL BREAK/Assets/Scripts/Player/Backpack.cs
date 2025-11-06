@@ -22,6 +22,7 @@ public class Backpack : MonoBehaviour
     private List<GameObject> m_activeEffects = new List<GameObject>(); //生成しているエフェクトのリスト
 
     private InputManager m_inputManager; //入力管理クラス
+    private Movement m_movement; //移動管理クラス
     private PlayerBase m_player; //プレイヤー
 
     private BoostState m_currentBoostState = BoostState.None; //現在の移動状態
@@ -36,6 +37,7 @@ public class Backpack : MonoBehaviour
     {
         // プレイヤーのInputManagerを取得
         m_inputManager = transform.root.GetComponent<InputManager>();
+        m_movement = transform.root.GetComponent<Movement>();
     }
 
     private void Update()
@@ -86,7 +88,7 @@ public class Backpack : MonoBehaviour
 
         //現在の移動状態を確認し設定
         bool isMoving = m_inputManager.IsMoving();
-        bool isBoosting = m_inputManager.IsBoost;
+        bool isBoosting = m_movement.IsBoosting;
 
         if (isBoosting)
             m_currentBoostState = BoostState.Dash;

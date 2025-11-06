@@ -42,4 +42,16 @@ public interface IWeapon
     /// </summary>
     /// <param name="team">Œ»İ‚Ìƒ`[ƒ€</param>
     void SetTeam(string team);
+
+    /// <summary>
+    /// c’e”‚ğæ“¾
+    /// </summary>
+    /// <returns></returns>
+    int GetAmmo();
+
+    /// <summary>
+    /// Å‘å’e”‚ğæ“¾
+    /// </summary>
+    /// <returns></returns>
+    int GetMaxAmmo();
 }

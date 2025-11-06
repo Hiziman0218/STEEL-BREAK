@@ -129,4 +129,26 @@ public class PlayerBase : CharaBase
         m_rightBackTransform = rightPoint;
         m_leftBackTransform = leftPoint;
     }
+
+    /// <summary>
+    /// 指定されたスロットの武器を返却
+    /// </summary>
+    /// <param name="slot"></param>
+    public IWeapon GetWeapon(WeaponSlot slot)
+    {
+        //対応する武器を返却
+        switch (slot)
+        {
+            case WeaponSlot.RightHand:
+                return m_rightHandWeapon;
+            case WeaponSlot.LeftHand:
+                return m_leftHandWeapon;
+            case WeaponSlot.RightBack:
+                return m_rightBackWeapon;
+            case WeaponSlot.LeftBack:
+                return m_leftBackWeapon;
+            default:
+                return null;
+        }
+    }
 }

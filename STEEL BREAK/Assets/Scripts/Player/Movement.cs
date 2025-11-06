@@ -39,6 +39,7 @@ public class Movement : MonoBehaviour
 
     public float GetMaxBoost => maxBoost; //最大ブースト(読み取り専用)
     public float GetBoost => boost;       //残りブースト(読み取り専用)
+    public bool IsBoosting => isBoosting; //ブーストしているか
 
     //上昇・滞空・落下関連
     private bool jumpPressed = false;      //ジャンプボタンを押しているか
@@ -96,6 +97,9 @@ public class Movement : MonoBehaviour
 
         //最終的な「維持用ブーストフラグ」を更新(Updateで上書きしている元の挙動を保持)
         UpdateBoostingFlag();
+
+        //ブーストが無い場合は強制的に落下
+        ForcedFall();
     }
 
     /// <summary>
@@ -144,6 +148,18 @@ public class Movement : MonoBehaviour
     // ----------------------------
     // Update 内の細かい処理
     // ----------------------------
+    private void ForcedFall()
+    {
+        // 滞空中かつブースト切れなら強制落下へ
+        if (hasStartedAscend && !isFalling && boost <= 0f && !IsGrounded())
+        {
+            isFalling = true;
+            hasStartedAscend = false;
+            jumpPressed = false;
+            rb.useGravity = true;
+        }
+    }
+
     private void EnsureCameraAssigned()
     {
         if (cameraController == null)
@@ -322,6 +338,13 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void RegenerateBoostIfNeeded()
     {
+        // ブーストが0になったらブースト解除
+        if (boost <= 0f)
+        {
+            boost = 0f;
+            isBoosting = false;
+        }
+
         if (!isBoosting && boost < maxBoost && !isDashing)
         {
             boost = Mathf.Min(maxBoost, boost + boostRegenRate * Time.fixedDeltaTime);

@@ -1,6 +1,7 @@
 using Ilumisoft.RadarSystem;
 using UnityEngine;
 using Game.Enum;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class Player : PlayerBase
 {
@@ -127,7 +128,15 @@ public class Player : PlayerBase
             //IWeapon型からWeapon_Backを取得し、できたら発射をリクエスト
             if (m_leftBackWeapon is MonoBehaviour comp)
             {
-                comp.GetComponent<Weapon_Back>()?.FireRequest();
+                Weapon_Back BackWeapon = comp.GetComponent<Weapon_Back>();
+                if (BackWeapon != null)
+                {
+                    BackWeapon.FireRequest();
+                    if (BackWeapon.GetUseRotate())
+                    {
+                        m_isAutoHorizontal = false;
+                    }
+                }
             }
         }
         //受け取っていなかったら

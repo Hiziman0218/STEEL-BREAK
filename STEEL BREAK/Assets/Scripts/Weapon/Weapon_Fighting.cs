@@ -134,4 +134,14 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
     }
 
     public string GetName() => m_name;
+
+    public int GetAmmo()
+    {
+        return 1;
+    }
+
+    public int GetMaxAmmo()
+    {
+        return 1;
+    }
 }
