@@ -5,6 +5,7 @@ public class Enemy : CharaBase
 {
     public bool IsAlive { get; private set; } = true; //生存中か
     public event Action<Enemy> OnDeath;  //死亡イベント
+    public event Action<Enemy> OnDiedField; //死亡時のフィールド用イベント
     public GameObject DestructionEffect; //破壊エフェクト
     public EnemyGun weaponR; //右武器
     public EnemyGun weaponL; //左武器
@@ -53,8 +54,9 @@ public class Enemy : CharaBase
     /// </summary>
     private void Die()
     {
-        //死亡イベントを通知
+        //死亡イベント
         OnDeath?.Invoke(this);
+        OnDiedField?.Invoke(this);
 
         //フラグをfalseにし、エフェクトを再生した後削除
         IsAlive = false;

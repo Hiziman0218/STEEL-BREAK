@@ -144,4 +144,9 @@ public class Wepon_Fighting : MonoBehaviour , IWeapon
     {
         return 1;
     }
+
+    public bool IsReloading()
+    {
+        return false;
+    }
 }

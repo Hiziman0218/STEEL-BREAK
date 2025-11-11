@@ -2,6 +2,7 @@ using Ilumisoft.RadarSystem;
 using UnityEngine;
 using Game.Enum;
 using static Unity.Burst.Intrinsics.X86.Avx;
+using System;
 
 public class Player : PlayerBase
 {
@@ -187,7 +188,7 @@ public class Player : PlayerBase
             //現在のブースト割合を計算
             m_boostRate = movement.GetBoost / movement.GetMaxBoost * 100f;
             //ブーストゲージに反映
-            m_boostGauge.BarValue = m_boostRate;
+            m_boostGauge.BarValue = MathF.Floor(m_boostRate);
         }
     }
 

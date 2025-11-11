@@ -54,4 +54,10 @@ public interface IWeapon
     /// </summary>
     /// <returns></returns>
     int GetMaxAmmo();
+
+    /// <summary>
+    /// ƒŠƒ[ƒh’†‚©æ“¾
+    /// </summary>
+    /// <returns></returns>
+    bool IsReloading();
 }

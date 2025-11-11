@@ -523,6 +523,15 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     }
 
     /// <summary>
+    /// リロード中かを取得
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReloading()
+    {
+        return m_isReloading;
+    }
+
+    /// <summary>
     /// リロードが完了しているかを取得
     /// </summary>
     /// <returns></returns>
