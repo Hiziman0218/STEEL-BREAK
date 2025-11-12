@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace StateMachineAI
 {
@@ -7,46 +8,56 @@ namespace StateMachineAI
         //コンストラクタ
         public Attack_CenteringAI(CenteringAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
-        public override void Enter()
-        {
-        }
+        private bool isAttacking = false;
 
-        //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
-            //攻撃可能かのチェック
+            //距離チェック
             (float distance, float direction, _) = Distance_Check.Check(owner.transform, owner.m_Player);
 
-            // クールダウン中でないかつ左右どちらかにいて攻撃範囲内なら
-            if (owner.m_CoolDown != null && !owner.m_CoolDown.IsCoolDown("Attack") && Mathf.Abs(direction) < owner.m_SideDotThreshold && distance <= owner.m_AttackDistance)
+            // 移動処理は常に実行
+            if (distance > owner.m_AttackDistance)
             {
-                //プレイヤーへ向く
-                PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
-
-                //攻撃処理
-                // コルーチンとして実行
-                owner.StartCoroutine(
-                    Attack_Shots.ExecuteRandomBurst(owner.m_Enemy, owner.m_CoolDown, 4f, owner.m_MaxRange, 0.5f)
-                );
+                owner.ChangeState(AIState_CenteringAI.Chase);
+                Debug.Log("追跡");
             }
-            //クールダウン中攻撃範囲外なら
             else
             {
-                //周りをグルグル回る
                 owner.ChangeState(AIState_CenteringAI.CenterPoint);
             }
 
-            //攻撃可能範囲から出た
+            //クールタイム中でないかつscriptが存在している＆プレイヤーの横に位置していれば
+            if (owner.m_CoolDown != null && !owner.m_CoolDown.IsCoolDown("Attack") &&
+                Mathf.Abs(direction) < owner.m_SideDotThreshold && distance <= owner.m_AttackDistance)
+            {
+                // まだ攻撃中でなければ
+                if (!isAttacking)
+                {
+                    //プレイヤーの方向へ向かせる
+                    PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
+                    //コルーチンを開始
+                    owner.StartCoroutine(AttackRoutine());
+                }
+            }
+
+            //攻撃可能距離から離れたら
             if (distance > owner.m_AttackDistance)
             {
-                //追跡開始
                 owner.ChangeState(AIState_CenteringAI.Chase);
                 Debug.Log("追跡");
             }
         }
-        public override void Exit()
-        {
 
+        private IEnumerator AttackRoutine()
+        {
+            isAttacking = true;
+            // ここで並行実行 → AttackRoutine はすぐ終わる
+            owner.StartCoroutine(
+                Attack_Shots.ExecuteRandomBurst(owner.m_Enemy, owner.m_CoolDown, 4f, owner.m_MaxRange, 0.5f)
+            );
+            // 少し待ってからフラグを解除（クールダウン終了に合わせる）
+            yield return new WaitForSeconds(4f);
+            isAttacking = false;
         }
     }
 }
