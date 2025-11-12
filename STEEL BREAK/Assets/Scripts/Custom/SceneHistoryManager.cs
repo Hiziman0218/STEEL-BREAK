@@ -1,111 +1,123 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 /// <summary>
-/// ƒV[ƒ“‘JˆÚ—š—ğ‚ğŠÇ—‚·‚éƒNƒ‰ƒXB
-/// u‘O‚ÌƒV[ƒ“ ¨ Œ»İ‚ÌƒV[ƒ“v‚Æ‚¢‚¤î•ñ‚ğ‹L˜^‚µA
-/// –ß‚éiGoBackjˆ—‚â—š—ğ•t‚«‚ÌLoadSceneˆ—‚ğ’ñ‹Ÿ‚·‚éB
+/// ã‚·ãƒ¼ãƒ³é·ç§»å±¥æ­´ã‚’ç®¡ç†ã™ã‚‹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã€‚
+/// è‡ªå‹•ç”Ÿæˆã•ã‚Œã€å±¥æ­´ä»˜ãã® LoadScene / GoBack ãŒåˆ©ç”¨å¯èƒ½ã€‚
 /// </summary>
 public class SceneHistoryManager : MonoBehaviour
 {
-    // ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒXi—Bˆê‚Ì‘¶İj
+    //=== ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ ===//
     public static SceneHistoryManager Instance;
 
-    // ˆê‚Â‘O‚É‚¢‚½ƒV[ƒ“–¼‚ğ•Û‘¶
-    private static string previousSceneName;
+    //=== ã‚·ãƒ¼ãƒ³å±¥æ­´ï¼ˆã‚¹ã‚¿ãƒƒã‚¯å½¢å¼ã§ç®¡ç†ï¼‰===//
+    private static Stack<string> sceneHistory = new Stack<string>();
 
-    // Œ»İ‚ÌƒV[ƒ“–¼‚ğ•Û‘¶
+    //=== ç¾åœ¨ã‚·ãƒ¼ãƒ³å ===//
     private static string currentSceneName;
 
+    //========================================
+    // ğŸš€ åˆæœŸåŒ–ï¼ˆã‚²ãƒ¼ãƒ èµ·å‹•æ™‚ã«è‡ªå‹•å®Ÿè¡Œï¼‰
+    //========================================
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Initialize()
+    {
+        Create();
+    }
+
     /// <summary>
-    /// ƒV[ƒ“ƒqƒXƒgƒŠ[ƒ}ƒl[ƒWƒƒ[‚ğ“®“I‚É¶¬‚·‚éB
-    /// ‚Ü‚¾‘¶İ‚µ‚È‚¢ê‡‚Ì‚İGameObject‚ğì¬‚·‚éB
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆï¼ˆå­˜åœ¨ã—ãªã„å ´åˆã®ã¿ï¼‰
     /// </summary>
     public static void Create()
     {
-        // Instance‚ª‚Ü‚¾‘¶İ‚µ‚È‚¢ê‡‚Ì‚İ¶¬
         if (Instance == null)
         {
-            // V‚µ‚¢‹ó‚ÌGameObject‚ğì¬
             GameObject obj = new GameObject("SceneHistoryManager");
-            // ‚±‚ÌƒNƒ‰ƒX‚ğƒAƒ^ƒbƒ`‚µ‚ÄÀs‰Â”\‚É‚·‚é
-            obj.AddComponent<SceneHistoryManager>();
+            Instance = obj.AddComponent<SceneHistoryManager>();
+            DontDestroyOnLoad(obj);
+            Debug.Log("[SceneHistoryManager] Created automatically.");
         }
     }
 
     private void Awake()
     {
-        // Awake‚ÍƒIƒuƒWƒFƒNƒg¶¬‚ÉÅ‰‚ÉŒÄ‚Î‚ê‚é
-
-        // ‚Ü‚¾Instance‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAŒ»İ‚ÌƒIƒuƒWƒFƒNƒg‚ğ“o˜^
         if (Instance == null)
         {
             Instance = this;
-            // ƒV[ƒ“‚ªØ‚è‘Ö‚í‚Á‚Ä‚à”jŠü‚³‚ê‚È‚¢‚æ‚¤‚Éİ’è
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (Instance != this)
         {
-            // ‚·‚Å‚É‘¶İ‚µ‚Ä‚¢‚éê‡‚Íd•¡–h~‚Ì‚½‚ßíœ
             Destroy(gameObject);
         }
     }
 
-    /// <summary>
-    /// ƒV[ƒ“‚ğ“Ç‚İ‚Şi—š—ğ‚ğ•Û‘¶‚µ‚Â‚ÂjB
-    /// SceneManager.LoadScene() ‚ğ’¼ÚŒÄ‚Ô‘ã‚í‚è‚É‚±‚ê‚ğg‚¤‚±‚Æ‚ÅA
-    /// ‘O‚ÌƒV[ƒ“–¼‚ğ©“®‚Å‹L˜^‚Å‚«‚éB
-    /// </summary>
+    //========================================
+    // ğŸ§­ ã‚·ãƒ¼ãƒ³é·ç§»ï¼ˆå±¥æ­´ã‚’è¨˜éŒ²ã—ã¤ã¤ï¼‰
+    //========================================
     public static void LoadScene(string sceneName)
     {
-        // ƒ}ƒl[ƒWƒƒ[‚ª‘¶İ‚µ‚È‚¢ê‡‚Íˆ—‚µ‚È‚¢
-        if (Instance == null) return;
+        if (Instance == null)
+            Create();
 
-        // ‚·‚Å‚ÉcurrentSceneName‚É‰½‚©“ü‚Á‚Ä‚¢‚éê‡i2‰ñ–ÚˆÈ~‚Ì‘JˆÚj
-        if (!string.IsNullOrEmpty(currentSceneName))
+        // ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³ã‚’å±¥æ­´ã«è¿½åŠ 
+        string activeScene = SceneManager.GetActiveScene().name;
+        if (!string.IsNullOrEmpty(activeScene))
         {
-            // Œ»İ‚ÌƒV[ƒ“‚ğ‘O‚ÌƒV[ƒ“‚Æ‚µ‚Ä•Û‘¶
-            previousSceneName = currentSceneName;
-        }
-        else
-        {
-            // ‰‰ñ‘JˆÚ‚Ìê‡‚ÍAŒ»İ‚ÌƒAƒNƒeƒBƒuƒV[ƒ“‚ğ‘O‚ÌƒV[ƒ“‚Æ‚µ‚Ä‹L˜^
-            previousSceneName = SceneManager.GetActiveScene().name;
+            sceneHistory.Push(activeScene);
         }
 
-        // ¡‚©‚ç‘JˆÚ‚·‚éƒV[ƒ“–¼‚ğuŒ»İ‚ÌƒV[ƒ“–¼v‚Æ‚µ‚Ä‹L˜^
         currentSceneName = sceneName;
-
-        // ÀÛ‚ÉƒV[ƒ“‚ğƒ[ƒh
-        SceneManager.LoadScene(currentSceneName);
+        Debug.Log($"[SceneHistoryManager] LoadScene â†’ {sceneName}");
+        SceneManager.LoadScene(sceneName);
     }
 
-    /// <summary>
-    /// Œ»İ‚ÌƒV[ƒ“‚ğ—š—ğ‚É•Û‘¶‚·‚é‚¾‚¯‚Ìƒƒ\ƒbƒhB
-    /// ‚·‚®‚É‘JˆÚ‚µ‚È‚¢‚ªAu–ß‚évæ‚ğw’è‚µ‚Ä‚¨‚«‚½‚¢ê‡‚È‚Ç‚Ég‚¤B
-    /// </summary>
-    public void SaveCurrentScene()
-    {
-        // Œ»İƒAƒNƒeƒBƒu‚ÈƒV[ƒ“–¼‚ğ•Û‘¶
-        previousSceneName = SceneManager.GetActiveScene().name;
-    }
-
-    /// <summary>
-    /// ’¼‘O‚É•Û‘¶‚µ‚½ƒV[ƒ“‚É–ß‚éB
-    /// previousSceneName ‚ª‹L˜^‚³‚ê‚Ä‚¢‚ê‚ÎA‚»‚ÌƒV[ƒ“‚ğ“Ç‚İ‚ŞB
-    /// </summary>
+    //========================================
+    // ğŸ”™ æˆ»ã‚‹å‡¦ç†
+    //========================================
     public static void GoBack()
     {
-        // –ß‚éæ‚ª‘¶İ‚·‚é‚©ƒ`ƒFƒbƒN
-        if (!string.IsNullOrEmpty(previousSceneName))
+        if (Instance == null)
+            Create();
+
+        if (sceneHistory.Count > 0)
         {
-            // ‘O‚ÌƒV[ƒ“‚É–ß‚é
-            LoadScene(previousSceneName);
+            string previous = sceneHistory.Pop();
+            currentSceneName = previous;
+            Debug.Log($"[SceneHistoryManager] GoBack â†’ {previous}");
+            SceneManager.LoadScene(previous);
         }
         else
         {
-            // ‹L˜^‚ª‚È‚¢ê‡‚ÍŒx‚ğ•\¦
-            Debug.LogWarning("–ß‚éæ‚ÌƒV[ƒ“‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+            Debug.LogWarning("[SceneHistoryManager] æˆ»ã‚‹å±¥æ­´ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
+        }
+    }
+
+    //========================================
+    // ğŸ§© ç¾åœ¨ãƒ»å±¥æ­´ã®ç¢ºèª
+    //========================================
+    public static void PrintHistory()
+    {
+        string current = SceneManager.GetActiveScene().name;
+        Debug.Log($"[SceneHistoryManager] ç¾åœ¨: {current}, å±¥æ­´æ•°: {sceneHistory.Count}");
+
+        foreach (var scene in sceneHistory)
+        {
+            Debug.Log($" â”— {scene}");
+        }
+    }
+
+    //========================================
+    // ğŸ§± ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³ã‚’å±¥æ­´ã«æ‰‹å‹•ã§ä¿å­˜ï¼ˆå¿…è¦æ™‚ã®ã¿ï¼‰
+    //========================================
+    public void SaveCurrentScene()
+    {
+        string current = SceneManager.GetActiveScene().name;
+        if (!string.IsNullOrEmpty(current))
+        {
+            sceneHistory.Push(current);
+            Debug.Log($"[SceneHistoryManager] SaveCurrentScene â†’ {current}");
         }
     }
 }
