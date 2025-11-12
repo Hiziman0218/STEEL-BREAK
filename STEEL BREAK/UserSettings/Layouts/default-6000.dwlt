@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Project
   m_RootView: {fileID: 3}
   m_MinSize: {x: 875, y: 321}
   m_MaxSize: {x: 10000, y: 10000}
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 114
+  controlID: 128
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 54
+  controlID: 53
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 55
+  controlID: 54
   draggingID: 0
 --- !u!114 &9
 MonoBehaviour:
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ConsoleWindow
+  m_Name: ProjectBrowser
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -272,15 +272,15 @@ MonoBehaviour:
     y: 448
     width: 1212.8
     height: 268.8
-  m_MinSize: {x: 101, y: 126}
-  m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 19}
+  m_MinSize: {x: 231, y: 276}
+  m_MaxSize: {x: 10001, y: 10026}
+  m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
   - {fileID: 19}
   - {fileID: 20}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -484,23 +484,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: e0f9ffff
-      m_LastClickedID: -1568
-      m_ExpandedIDs: 92c4fdff42f8feff6cf8feff84b3ffffa2b3ffffa2b5ffff0cfbffff14fbffffc2ac00000ab00000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 14fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: Soldier
-        m_OriginalName: Soldier
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -146166
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 9}
@@ -1090,9 +1090,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -2.3396156, y: 80.87839, z: 17.92621}
+    m_Target: {x: -7.567193, y: 65.05748, z: 10.303095}
     speed: 2
-    m_Value: {x: -2.3396156, y: 80.87839, z: 17.92621}
+    m_Value: {x: -7.567193, y: 65.05748, z: 10.303095}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1140,11 +1140,11 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: 0.27986115, y: -0.4226402, z: 0.15207414, w: 0.8504906}
     speed: 2
-    m_Value: {x: 0.2793855, y: -0.4219219, z: 0.15181568, w: 0.8490452}
+    m_Value: {x: -0.27986115, y: 0.4226402, z: -0.15207414, w: -0.8504906}
   m_Size:
-    m_Target: 0.9437293
+    m_Target: 6.0887256
     speed: 2
-    m_Value: 0.9437293
+    m_Value: 6.0887256
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1362,7 +1362,7 @@ MonoBehaviour:
     m_SkipHidden: 1
     m_SearchArea: 1
     m_Folders:
-    - "Assets/EnemyAI/Script/StateTest/\u5404AI/\u30DC\u30B9\uFF3F\u30C6\u30A3\u30BF\u30FC\u30CB\u30A2/FairysAI/\u653B\u6483\u578B"
+    - "Assets/EnemyAI/Script/StateTest/\u4EEE\u5B8C\u6210\u306E\u6575"
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1372,16 +1372,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 67
   m_LastFolders:
-  - "Assets/EnemyAI/Script/StateTest/\u5404AI/\u30DC\u30B9\uFF3F\u30C6\u30A3\u30BF\u30FC\u30CB\u30A2/FairysAI/\u653B\u6483\u578B"
+  - "Assets/EnemyAI/Script/StateTest/\u4EEE\u5B8C\u6210\u306E\u6575"
   m_LastFoldersGridSize: 67
   m_LastProjectPath: C:\GitHub\STEEL-BREAK\STEEL BREAK
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 369.2}
-    m_SelectedIDs: 4cc60000
-    m_LastClickedID: 50764
-    m_ExpandedIDs: 00000000dcc10000dec10000e0c10000e2c10000e4c10000e6c10000e8c10000eac10000ecc10000eec10000f0c10000f2c10000f4c10000f6c10000f8c10000fac10000fcc10000fec1000000c2000002c2000004c2000006c2000008c200000ac200000cc200000ec2000010c2000012c2000014c2000016c2000018c200001ac200001cc200001ec2000020c2000022c2000024c2000026c2000028c200002ac2000046c6000062c6000000ca9a3b
+    scrollPos: {x: 0, y: 303}
+    m_SelectedIDs: 08c80000
+    m_LastClickedID: 51208
+    m_ExpandedIDs: 00000000eac30000ecc30000eec30000f0c30000f2c30000f4c30000f6c30000f8c30000fac30000fcc30000fec3000000c4000002c4000004c4000006c4000008c400000ac400000cc400000ec4000010c4000012c4000014c4000016c4000018c400001ac400001cc400001ec4000020c4000022c4000024c4000026c4000028c400002ac400002cc400002ec4000030c4000032c4000034c4000036c4000038c4000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1410,7 +1410,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000dcc10000dec10000e0c10000e2c10000e4c10000e6c10000e8c10000eac10000ecc10000eec10000f0c10000f2c10000f4c10000f6c10000f8c10000fac10000fcc10000fec1000000c2000002c2000004c2000006c2000008c200000ac200000cc200000ec2000010c2000012c2000014c2000016c2000018c200001ac200001cc200001ec2000020c2000022c2000024c2000026c2000028c200002ac20000
+    m_ExpandedIDs: 00000000eac30000ecc30000eec30000f0c30000f2c30000f4c30000f6c30000f8c30000fac30000fcc30000fec3000000c4000002c4000004c4000006c4000008c400000ac400000cc400000ec4000010c4000012c4000014c4000016c4000018c400001ac400001cc400001ec4000020c4000022c4000024c4000026c4000028c400002ac400002cc400002ec4000030c4000032c4000034c4000036c4000038c40000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1436,8 +1436,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 26ae0000
-    m_LastClickedInstanceID: 44582
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000c2590000c88400003c75000068b00000247a0000e8870000d67b0000801e0300068b00009a780000965d0000b2760000000000002aa10000f43901004e6d000026a00000
     m_RenameOverlay:
