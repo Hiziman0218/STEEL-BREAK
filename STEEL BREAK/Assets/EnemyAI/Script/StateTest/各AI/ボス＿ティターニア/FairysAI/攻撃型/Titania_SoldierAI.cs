@@ -33,8 +33,10 @@ namespace StateMachineAI
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 10;
-        [Header("正面の攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
-        public float m_forwardDotThreshold = 0.8f;
+        [Header("最大連射数")]
+        [Range(1f, 30f)]
+        public int m_MaxRange = 5;
+
 
         [Header("突撃時の最大突進スピード")]
         [Range(10f, 40f)]
