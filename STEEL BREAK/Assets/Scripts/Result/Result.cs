@@ -16,8 +16,8 @@ public class Result : MonoBehaviour
     [Header("共通メニュー項目 (Retry, Title)")]
     [SerializeField] private TextMeshProUGUI[] menuItems;
 
-    [Header("パネル見出しテキスト")]
-    [SerializeField] private TextMeshProUGUI titleText;
+    /*[Header("パネル見出しテキスト")]
+    [SerializeField] private TextMeshProUGUI titleText;*/
 
     [Header("表示文言設定")]
     [SerializeField] private string clearTitle = "Game Clear!";
@@ -40,12 +40,12 @@ public class Result : MonoBehaviour
         if (endType == EndType.GameClear)
         {
             clearPanel.SetActive(true);
-            titleText.text = clearTitle;
+            //titleText.text = clearTitle;
         }
         else
         {
             overPanel.SetActive(true);
-            titleText.text = overTitle;
+            //titleText.text = overTitle;
         }
 
         // メニュー項目の文言を設定

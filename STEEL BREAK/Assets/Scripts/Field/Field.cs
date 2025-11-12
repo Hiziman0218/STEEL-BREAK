@@ -48,6 +48,7 @@ public class Field : MonoBehaviour
             m_currentWaveIndex++;
         }
 
+        GameData.ShowGameClear();
         Debug.Log("すべてのウェーブが終了");
     }
 

@@ -1,7 +1,6 @@
 using Ilumisoft.RadarSystem;
 using UnityEngine;
 using Game.Enum;
-using static Unity.Burst.Intrinsics.X86.Avx;
 using System;
 
 public class Player : PlayerBase
