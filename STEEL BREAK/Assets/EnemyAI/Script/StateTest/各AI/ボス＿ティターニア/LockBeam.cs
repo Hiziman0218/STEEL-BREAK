@@ -15,6 +15,9 @@ namespace StateMachineAI
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
+            //プレイヤーを緩くロックオン
+
+            //ビーム発射
 
         }
         public override void Exit()

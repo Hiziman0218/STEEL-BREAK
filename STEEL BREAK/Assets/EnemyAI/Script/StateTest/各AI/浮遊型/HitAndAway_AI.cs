@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System;
 using System.Reflection;
 using Plugins.RaycastPro.Demo.Scripts;
@@ -6,9 +6,9 @@ using Plugins.RaycastPro.Demo.Scripts;
 namespace StateMachineAI
 {
     /// <summary>
-    /// “G‚ÌƒXƒe[ƒgƒŠƒXƒg
-    /// ‚±‚±‚ÅƒXƒe[ƒg‚ğ“o˜^‚µ‚Ä‚¢‚È‚¢ê‡A
-    /// ŠY“–‚·‚és“®‚ª‘S‚­‚Å‚«‚È‚¢B
+    /// æ•µã®ã‚¹ãƒ†ãƒ¼ãƒˆãƒªã‚¹ãƒˆ
+    /// ã“ã“ã§ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ç™»éŒ²ã—ã¦ã„ãªã„å ´åˆã€
+    /// è©²å½“ã™ã‚‹è¡Œå‹•ãŒå…¨ãã§ããªã„ã€‚
     /// </summary>
     /// 
     public enum AIState_HitAndAwayAI
@@ -23,28 +23,47 @@ namespace StateMachineAI
     public class HitAndAwayAI
         : StatefulObjectBase<HitAndAwayAI, AIState_HitAndAwayAI>
     {
-        [Header("ƒvƒŒƒCƒ„[")]
+        [Header("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼")]
         public Transform m_Player;
-        [Header("ƒGƒlƒ~[ƒ‚ƒfƒ‹")]
+        [Header("ã‚¨ãƒãƒŸãƒ¼ãƒ¢ãƒ‡ãƒ«")]
         public Transform m_EnemyModel;
-        [Header("ƒZƒ“ƒ^[ƒ|ƒCƒ“ƒg‚Ìæ“¾")]
+        [Header("ã‚»ãƒ³ã‚¿ãƒ¼ãƒã‚¤ãƒ³ãƒˆã®å–å¾—")]
         public GameObject m_CenterMarker;
 
-        [Header("ˆÚ“®‘¬“x")]
+        [Header("ç§»å‹•é€Ÿåº¦")]
         [Range(10f, 50f)]
         public float m_speed = 30f;
-        [Header("UŒ‚‰Â”\‹——£")]
-        public float m_AttackDistance = 10;
-        [Header("³–Ê‚ÌUŒ‚‰Â”\Šp“x[-1 = Š®‘S‚É”wŒã, 0 = ^‰¡, 1 = ³–Ê]")]
+        [Header("æ—‹å›å¼·åº¦")]
+        [Tooltip("å¤§ããã™ã‚Œã°æ€¥æ—‹å›ã€å°ã•ãã™ã‚Œã°å¤§ããªå¼§ã‚’æãæ—‹å›\n" +
+            "ä½é€Ÿæ—‹å›ï¼ˆã‚†ã£ãŸã‚Šå¤§ããªå¼§ï¼‰30ã€œ60\n" +
+            "ä¸­é€Ÿæ—‹å›ï¼ˆè‡ªç„¶ãªã‚¿ãƒ¼ãƒ³ï¼‰90ã€œ180\n" +
+            "é«˜é€Ÿæ—‹å›ï¼ˆæ€¥æ¿€ãªæ–¹å‘è»¢æ›ï¼‰270ï½360"
+         )]
+        [Range(0f,360f)]
+        public float m_RotationSpeed = 90;
+        [Header("æ—‹å›é–‹å§‹è·é›¢")]
+        [Range(10,150)]
+        public float m_RotationStart = 40;
+
+        [Header("å†çªå…¥æ¡ä»¶ã®è§’åº¦")]
+        [Range(0f, 90f)]
+        public float m_ReEntryAngle = 30f;
+        [Header("å†çªå…¥æ¡ä»¶ã®æ™‚é–“")]
+        [Range(10f, 100f)]
+        public float m_AwayDuration = 20f;
+
+        [Header("æ”»æ’ƒå¯èƒ½è·é›¢")]
+        public float m_AttackDistance = 40;
+        [Header("æ­£é¢ã®æ”»æ’ƒå¯èƒ½è§’åº¦[-1 = å®Œå…¨ã«èƒŒå¾Œ, 0 = çœŸæ¨ª, 1 = æ­£é¢]")]
         public float m_forwardDotThreshold = 0.8f;
 
-        [Header("“ËŒ‚‚ÌÅ‘å“ËiƒXƒs[ƒh")]
+        [Header("çªæ’ƒæ™‚ã®æœ€å¤§çªé€²ã‚¹ãƒ”ãƒ¼ãƒ‰")]
         [Range(10f, 40f)]
         public float m_maxspeed = 20f;
-        [Header("‰Á‘¬“x")]
+        [Header("åŠ é€Ÿåº¦")]
         [Range(10f, 100f)]
         public float m_acceleration = 40f;
-        [Header("’Ç]•â³i’l‚ª¬‚³‚¢‚Ù‚ÇŠÉ‚­’Ç]‚·‚éj")]
+        [Header("è¿½å¾“è£œæ­£ï¼ˆå€¤ãŒå°ã•ã„ã»ã©ç·©ãè¿½å¾“ã™ã‚‹ï¼‰")]
         [Range(0.001f, 0.1f)]
         public float m_turnsmooth = 0.005f;
 
@@ -53,52 +72,52 @@ namespace StateMachineAI
         [HideInInspector]
         public Rigidbody m_Rigidbody;
         [HideInInspector]
-        // ©•ªê—pƒ†ƒjƒbƒg
+        // è‡ªåˆ†å°‚ç”¨ãƒ¦ãƒ‹ãƒƒãƒˆ
         public GameObject myAgent;
         [HideInInspector]
-        //Œ»İƒXƒs[ƒh
+        //ç¾åœ¨ã‚¹ãƒ”ãƒ¼ãƒ‰
         public float m_currentspeed = 0;
         [HideInInspector]
         private CharaBase charaBase;
         [HideInInspector]
-        //ƒG[ƒWƒFƒ“ƒg‚ÌƒRƒ“ƒgƒ[ƒ‰[æ“¾—p
+        //ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å–å¾—ç”¨
         public SteeringController m_RCController;
         [HideInInspector]
         public Enemy m_Enemy;
 
         void Start()
         {
-            //ƒvƒŒƒCƒ„[‚ğƒ^ƒO‚ÅŒŸõ‚µ‚Äæ“¾
+            //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ã‚¿ã‚°ã§æ¤œç´¢ã—ã¦å–å¾—
             m_Player = GameObject.FindWithTag("Player")?.transform;
-            //©•ª‚Ìƒ‚ƒfƒ‹‚ğæ‚é
+            //è‡ªåˆ†ã®ãƒ¢ãƒ‡ãƒ«ã‚’å–ã‚‹
             m_EnemyModel = this.transform;
 
-            //ƒZƒ“ƒ^[ƒ|ƒCƒ“ƒ^[‚ğŒÂ•Ê‚Éæ“¾‚·‚é
+            //ã‚»ãƒ³ã‚¿ãƒ¼ãƒã‚¤ãƒ³ã‚¿ãƒ¼ã‚’å€‹åˆ¥ã«å–å¾—ã™ã‚‹
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
-            //agent¶¬
+            //agentç”Ÿæˆ
             myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
-            //ƒG[ƒWƒFƒ“ƒg‚ÌƒRƒ“ƒ|[ƒlƒ“ƒgæ“¾
+            //ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾—
             m_RCController = myAgent.GetComponent<SteeringController>();
             m_RCController.speed = m_speed;
 
-            //ƒGƒlƒ~[‚ÌƒXƒNƒŠƒvƒg‚ğæ“¾
+            //ã‚¨ãƒãƒŸãƒ¼ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å–å¾—
             Enemy m_Enemy = GetComponent<Enemy>();
 
-            //ƒLƒƒƒ‰ƒx[ƒXæ“¾
+            //ã‚­ãƒ£ãƒ©ãƒ™ãƒ¼ã‚¹å–å¾—
             charaBase = GetComponent<CharaBase>();
-            //ƒLƒƒƒ‰ƒx[ƒX‚ª‚ ‚ê‚ÎƒCƒxƒ“ƒg“o˜^
+            //ã‚­ãƒ£ãƒ©ãƒ™ãƒ¼ã‚¹ãŒã‚ã‚Œã°ã‚¤ãƒ™ãƒ³ãƒˆç™»éŒ²
             if (charaBase != null)
             {
-                // ƒ_ƒ[ƒWƒCƒxƒ“ƒg‚ğw“Ç
+                // ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¤ãƒ™ãƒ³ãƒˆã‚’è³¼èª­
                 charaBase.OnDamage += HandleDamaged;
             }
 
-            //ƒAƒ^ƒbƒ`‚µ‚Ä‚¢‚éƒXƒvƒŠƒNƒg‚Ì©“®æ“¾
+            //ã‚¢ã‚¿ãƒƒãƒã—ã¦ã„ã‚‹ã‚¹ãƒ—ãƒªã‚¯ãƒˆã®è‡ªå‹•å–å¾—
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
-            //‘¶İ‚µ‚Ä‚¢‚È‚¢ƒNƒ‰ƒX‚ªw’è‚³‚ê‚½‚ç–{‘ÌÁ–Å
+            //å­˜åœ¨ã—ã¦ã„ãªã„ã‚¯ãƒ©ã‚¹ãŒæŒ‡å®šã•ã‚ŒãŸã‚‰æœ¬ä½“æ¶ˆæ»…
             if (!AddStateByName("Chase"))
                 Destroy(gameObject);
             if (!AddStateByName("Attack"))
@@ -110,10 +129,10 @@ namespace StateMachineAI
             if (!AddStateByName("Hit_HitAndAwayAI"))
                 Destroy(gameObject);
 
-            //ƒXƒe[ƒgƒ}ƒV[ƒ“‚ğ©g‚Æ‚µ‚Äİ’è
+            //ã‚¹ãƒ†ãƒ¼ãƒˆãƒã‚·ãƒ¼ãƒ³ã‚’è‡ªèº«ã¨ã—ã¦è¨­å®š
             stateMachine = new StateMachine<HitAndAwayAI>();
 
-            //‰Šú‹N“®‚ÍAƒvƒŒƒCƒ„[‚ğ’Ç‚¢‚©‚¯‚éó‘Ô‚ÉˆÚs‚³‚¹‚é
+            //åˆæœŸèµ·å‹•æ™‚ã¯ã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¿½ã„ã‹ã‘ã‚‹çŠ¶æ…‹ã«ç§»è¡Œã•ã›ã‚‹
             ChangeState(AIState_HitAndAwayAI.Chase);
         }
 
@@ -124,38 +143,38 @@ namespace StateMachineAI
 
 
         /// <summary>
-        /// ƒNƒ‰ƒX–¼‚ğŒ³‚ÉƒXƒe[ƒg‚ğ¶¬‚µ‚Ä’Ç‰Á‚·‚é
+        /// ã‚¯ãƒ©ã‚¹åã‚’å…ƒã«ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ç”Ÿæˆã—ã¦è¿½åŠ ã™ã‚‹
         /// </summary>
-        /// <param name="ClassName">¶¬‚·‚éƒNƒ‰ƒX‚Ì–¼‘O</param>
+        /// <param name="ClassName">ç”Ÿæˆã™ã‚‹ã‚¯ãƒ©ã‚¹ã®åå‰</param>
         public bool AddStateByName(string ClassName)
         {
             try
             {
-                // Œ»İ‚ÌƒAƒZƒ“ƒuƒŠ‚©‚çƒNƒ‰ƒX‚ğæ“¾
+                // ç¾åœ¨ã®ã‚¢ã‚»ãƒ³ãƒ–ãƒªã‹ã‚‰ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
                 Type StateType = Assembly.GetExecutingAssembly().GetType($"StateMachineAI.{ClassName}");
 
-                // ƒNƒ‰ƒX‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Ì‘Îˆ
+                // ã‚¯ãƒ©ã‚¹ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã®å¯¾å‡¦
                 if (StateType == null)
                 {
-                    Debug.LogError($"{ClassName} ƒNƒ‰ƒX‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B");
+                    Debug.LogError($"{ClassName} ã‚¯ãƒ©ã‚¹ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚");
                     return true;
                 }
 
-                // Œ^‚ª State<GunBattery_AI> ‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN
+                // å‹ãŒ State<GunBattery_AI> ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
                 if (!typeof(State<HitAndAwayAI>).IsAssignableFrom(StateType))
                 {
-                    Debug.LogError($"{ClassName} ‚Í State<EnemyAI> Œ^‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
+                    Debug.LogError($"{ClassName} ã¯ State<EnemyAI> å‹ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚");
                     return true;
                 }
 
-                // ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬
+                // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆ
                 System.Reflection.ConstructorInfo Constructor =
                     StateType.GetConstructor(new[] { typeof(HitAndAwayAI) });
 
 
                 if (Constructor == null)
                 {
-                    Debug.LogError($"{ClassName} ‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B");
+                    Debug.LogError($"{ClassName} ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚");
                     return true;
                 }
 
@@ -164,20 +183,20 @@ namespace StateMachineAI
 
                 if (StateInstance != null)
                 {
-                    // ƒXƒe[ƒgƒŠƒXƒg‚É’Ç‰Á
+                    // ã‚¹ãƒ†ãƒ¼ãƒˆãƒªã‚¹ãƒˆã«è¿½åŠ 
                     stateList.Add(StateInstance);
-                    Debug.Log($"{ClassName} ‚ğƒXƒe[ƒgƒŠƒXƒg‚É’Ç‰Á‚µ‚Ü‚µ‚½B");
+                    Debug.Log($"{ClassName} ã‚’ã‚¹ãƒ†ãƒ¼ãƒˆãƒªã‚¹ãƒˆã«è¿½åŠ ã—ã¾ã—ãŸã€‚");
                     return true;
                 }
                 else
                 {
-                    Debug.LogError($"{ClassName} ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬‚É¸”s‚µ‚Ü‚µ‚½B");
+                    Debug.LogError($"{ClassName} ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B: {ex.Message}");
+                Debug.LogError($"ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚: {ex.Message}");
                 return false;
             }
         }

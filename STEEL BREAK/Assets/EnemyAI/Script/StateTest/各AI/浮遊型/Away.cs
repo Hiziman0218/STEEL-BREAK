@@ -14,7 +14,8 @@ namespace StateMachineAI
             Debug.Log("離脱開始");
             //追従するターゲットの変更
             ChangeTarget.Change(owner.m_CenterMarker.transform, owner.myAgent);
-
+            //敵から見てプレイヤーの後ろにセンターポイントを指定
+            Center_Rush.CenterRush(owner.m_CenterMarker, owner.transform, owner.m_Player, owner.m_AttackDistance);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()

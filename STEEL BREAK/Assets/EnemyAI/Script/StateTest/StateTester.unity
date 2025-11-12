@@ -124527,7 +124527,11 @@ MonoBehaviour:
   m_Player: {fileID: 0}
   m_EnemyModel: {fileID: 0}
   m_CenterMarker: {fileID: 0}
-  m_speed: 25
+  m_speed: 20
+  m_RotationSpeed: 30
+  m_RotationStart: 40
+  m_ReEntryAngle: 10
+  m_AwayDuration: 20
   m_AttackDistance: 20
   m_forwardDotThreshold: 0.7
   m_maxspeed: 10
@@ -124560,7 +124564,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4402714534204529765
 Transform:
   m_ObjectHideFlags: 0
