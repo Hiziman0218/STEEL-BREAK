@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Game.Enum;
+using UnityEditor;
 
 //========================================
 // 📦 EquippedData : 現在装着中のパーツ情報
@@ -289,10 +290,15 @@ public class MechAssemblyManager : MonoBehaviour
             // 🔧 ボーンスケーリング適用
             ApplyBoneScalesToPart(partData, newPart, ref data.modifiedData);
 
-
-
             // 登録
             equippedParts[partType].Add(data);
+
+            // 🔄 Body または Backpack を付け替えたら位置を再調整
+            if (partType == PartType.Body ||
+                partType == PartType.Booster)
+            {
+                AlignBackpackToBody();
+            }
         }
     }
 
@@ -340,6 +346,46 @@ public class MechAssemblyManager : MonoBehaviour
     {
         return equippedParts;
     }
+
+    //========================================
+    // 🎯 Body と Backpack の位置を自動で合わせる処理（位置のみ）
+    //========================================
+    private void AlignBackpackToBody()
+    {
+        if (bodySlot == null) return;
+
+        // Body側のBackpackPointを探す
+        List<EquippedData> bodyParts = equippedParts[PartType.Body];
+        if(bodyParts == null || bodyParts.Count == 0 || bodyParts[0].partObjs.Count == 0)
+        {
+            return;
+        }
+        Transform backpackPoint = bodyParts[0].partObjs[0].transform.Find("BackpackPoint");
+        if (backpackPoint == null)
+        {
+            Debug.LogWarning("BodyにBackpackPointが見つかりません。");
+            return;
+        }
+
+        List<EquippedData> boosterParts = equippedParts[PartType.Booster];
+        if (boosterParts == null || boosterParts.Count == 0 || boosterParts[0].partObjs.Count == 0)
+        {
+            return;
+        }
+        Transform boosterTf = boosterParts[0].partObjs[0].transform;
+        Transform boosterPoint = boosterTf.Find("BodyPoint");
+        if (boosterPoint == null)
+        {
+            Debug.LogWarning("boosterにBodyPointが見つかりません。");
+            return;
+        }
+
+        Vector3 diff = boosterTf.position - boosterPoint.position;
+        boosterTf.position = backpackPoint.position + diff;
+
+    }
+
+
 
     //========================================
     // 📏 個別プレハブのスケール補正適用
