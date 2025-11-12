@@ -48,8 +48,6 @@ namespace StateMachineAI
         [HideInInspector]
         public Enemy m_Enemy;
 
-
-
         void Start()
         {
             //プレイヤーをタグで検索して取得
@@ -89,7 +87,6 @@ namespace StateMachineAI
         {
             ChangeState(AIState_GunBatteryAI.Hit);
         }
-
 
         /// <summary>
         /// クラス名を元にステートを生成して追加する

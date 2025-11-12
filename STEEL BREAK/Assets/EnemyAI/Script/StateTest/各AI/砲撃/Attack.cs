@@ -16,6 +16,9 @@ namespace StateMachineAI
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
+            //プレイヤーがなければリターン
+            if (owner.m_Player == null) return;
+
             //砲身の上下移動
             foreach (Transform muzzle in owner.m_Muzzles)
             {
@@ -39,13 +42,13 @@ namespace StateMachineAI
                     // 砲身 forward とプレイヤー方向の角度差を計算
                     float angle = Vector3.Angle(muzzle.forward, toPlayer);
 
-                    // 例えば 5度以内なら「狙えている」と判定
-                    if (angle < 5f && Vector3.Distance(owner.m_Player.position, owner.transform.position) <= owner.m_AttackDistance)
+                    // 例えば 10度以内なら「狙えている」と判定
+                    if (angle < 10f && Vector3.Distance(owner.m_Player.position, owner.transform.position) <= owner.m_AttackDistance)
                     {
                         if (distance <= owner.m_AttackDistance)
                         {
                             //攻撃
-                            Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
+                            Attack_Shots.Execute(owner.m_Enemy, owner.m_CoolDown,4f);
                         }
                     }
                 }

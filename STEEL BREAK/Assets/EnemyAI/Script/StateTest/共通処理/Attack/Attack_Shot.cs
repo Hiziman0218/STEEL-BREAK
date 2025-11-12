@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
+using System.Collections;
 
 //ŽËŒ‚
 public class Attack_Shot : MonoBehaviour
@@ -25,4 +23,5 @@ public class Attack_Shot : MonoBehaviour
         m_CoolDown.StartCoolDown("Attack", 4);
 
     }
+
 }
