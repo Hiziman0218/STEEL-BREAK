@@ -25174,7 +25174,7 @@ GameObject:
   - component: {fileID: 6609003342802906179}
   m_Layer: 7
   m_Name: "\u7832\u6483\u578B\uFF08\u5927\u578B\uFF09"
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25217,7 +25217,7 @@ MonoBehaviour:
   maxPitchAngle: 15
   m_rotationSpeedH: 2.92
   m_rotationSpeedV: 3
-  m_AttackDistance: 30
+  m_AttackDistance: 100
   m_CoolDown: {fileID: 0}
   m_Enemy: {fileID: 0}
 --- !u!114 &5554601787815308028

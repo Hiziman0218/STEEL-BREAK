@@ -7,6 +7,9 @@ namespace StateMachineAI
     {
         //コンストラクタ
         public Attack_GunBatteryAI(GunBatteryAI owner) : base(owner) { }
+        // 角度閾値を共通化
+        float angleThreshold = 15f;
+
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -33,7 +36,6 @@ namespace StateMachineAI
             //クールダウン中でなければ
             if (owner.m_CoolDown != null && !owner.m_CoolDown.IsCoolDown("Attack"))
             {
-
                 foreach (Transform muzzle in owner.m_Muzzles)
                 {
                     // プレイヤー方向ベクトル
@@ -42,14 +44,10 @@ namespace StateMachineAI
                     // 砲身 forward とプレイヤー方向の角度差を計算
                     float angle = Vector3.Angle(muzzle.forward, toPlayer);
 
-                    // 例えば 10度以内なら「狙えている」と判定
-                    if (angle < 10f && Vector3.Distance(owner.m_Player.position, owner.transform.position) <= owner.m_AttackDistance)
+                    // angleThresholdの角度内なら「狙えている」と判定＆攻撃可能距離なら
+                    if (angle < angleThreshold && distance <= owner.m_AttackDistance)
                     {
-                        if (distance <= owner.m_AttackDistance)
-                        {
-                            //攻撃
-                            Attack_Shots.Execute(owner.m_Enemy, owner.m_CoolDown,4f);
-                        }
+                        Attack_Shots.Execute(owner.m_Enemy, owner.m_CoolDown, 4f);
                     }
                 }
             }

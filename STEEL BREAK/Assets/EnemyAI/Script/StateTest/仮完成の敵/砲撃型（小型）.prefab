@@ -1896,7 +1896,7 @@ GameObject:
   - component: {fileID: -3083039309150312658}
   m_Layer: 7
   m_Name: "\u7832\u6483\u578B\uFF08\u5C0F\u578B\uFF09"
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1936,9 +1936,9 @@ MonoBehaviour:
   - {fileID: 1534352474984389486}
   minPitchAngle: -5
   maxPitchAngle: 60
-  m_rotationSpeedH: 1
-  m_rotationSpeedV: 1
-  m_AttackDistance: 10
+  m_rotationSpeedH: 2
+  m_rotationSpeedV: 2
+  m_AttackDistance: 100
   m_CoolDown: {fileID: 0}
   m_Enemy: {fileID: 0}
 --- !u!114 &4642060535392898373
