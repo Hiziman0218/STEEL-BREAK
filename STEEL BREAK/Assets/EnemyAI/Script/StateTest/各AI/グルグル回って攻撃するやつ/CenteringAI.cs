@@ -35,6 +35,9 @@ namespace StateMachineAI
         [Header("UŒ‚‰Â”\‹——£")]
         [Range(1f, 20f)]
         public float m_AttackDistance = 10f;
+        [Header("Å‘å˜AË”")]
+        [Range(1f, 30f)]
+        public int m_MaxRange = 5;
 
         public Enemy m_Enemy;
         [HideInInspector]

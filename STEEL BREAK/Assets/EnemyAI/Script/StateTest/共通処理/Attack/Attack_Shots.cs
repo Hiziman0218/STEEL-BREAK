@@ -66,4 +66,36 @@ public class Attack_Shots : MonoBehaviour
         m_CoolDown.StartCoolDown("Attack", CoolTime);
     }
 
+    /// <summary>
+    /// ランダム連射　エネミースクリプト,クールダウンスクリプト,付与するクールタイム,最大連射数,射撃間隔
+    /// </summary>
+    /// <param name="m_Enemy">エネミースクリプト</param>
+    /// <param name="m_CoolDown">クールダウンスクリプト</param>
+    /// <param name="CoolTime">付与するクールタイム</param>
+    /// <param name="MaxRange">最大連射数</param>
+    /// <param name="interval">射撃間隔</param>
+    public static IEnumerator ExecuteRandomBurst(Enemy m_Enemy, CoolDown m_CoolDown, float CoolTime, int MaxRange, float interval)
+    {
+        int shots = Random.Range(1, MaxRange);
+
+        for (int i = 0; i < shots; i++)
+        {
+            //使用する武器を決める
+            int choice = Random.Range(0, 2);
+
+            if (choice == 0 && m_Enemy.weaponR != null)
+            {
+                m_Enemy.UseR();
+            }
+            else if (choice == 1 && m_Enemy.weaponL != null)
+            {
+                m_Enemy.UseL();
+            }
+
+            yield return new WaitForSeconds(interval);
+        }
+
+        m_CoolDown.StartCoolDown("Attack", CoolTime);
+    }
+
 }

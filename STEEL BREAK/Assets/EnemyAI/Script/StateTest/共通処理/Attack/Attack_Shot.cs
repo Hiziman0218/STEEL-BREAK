@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 //ŽËŒ‚
 public class Attack_Shot : MonoBehaviour

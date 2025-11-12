@@ -1,10 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-//using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using static UnityEngine.GraphicsBuffer;
-
 
 namespace StateMachineAI
 {
@@ -30,7 +24,10 @@ namespace StateMachineAI
                 PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
 
                 //攻撃処理
-                Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
+                // コルーチンとして実行
+                owner.StartCoroutine(
+                    Attack_Shots.ExecuteRandomBurst(owner.m_Enemy, owner.m_CoolDown, 4f, owner.m_MaxRange, 0.5f)
+                );
             }
             //クールダウン中攻撃範囲外なら
             else
