@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -8,7 +9,8 @@ public class TagSetterEditor : EditorWindow
     /// タグ名を入力（例: SetPoint）
     /// タグを設定したいオブジェクトを選択して、ボタンを押す
     /// </summary>
-    //設定するタグ名
+
+    // 設定するタグ名
     private string targetTag = "SetPoint";
     private GameObject[] selectedObjects;
 
@@ -47,3 +49,4 @@ public class TagSetterEditor : EditorWindow
         Debug.Log($"選択した {selectedObjects.Length} 個のオブジェクトに '{targetTag}' タグを設定しました！");
     }
 }
+#endif

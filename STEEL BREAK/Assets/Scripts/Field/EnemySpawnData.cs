@@ -10,7 +10,7 @@ public class EnemySpawnData
     [Header("出現位置")]
     public Transform spawnTransform;
 
-    /*
-    [Header("出現位置リスト")]
-    public List<Transform> spawnPoints = new List<Transform>();*/
+    [Header("ランダム生成にするか")]
+    [Tooltip("trueならランダム生成、falseなら設定した敵プレハブで固定")]
+    public bool isRandom;
 }

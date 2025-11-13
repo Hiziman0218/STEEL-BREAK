@@ -22,8 +22,8 @@ public class Result : MonoBehaviour
     [Header("表示文言設定")]
     [SerializeField] private string clearTitle = "Game Clear!";
     [SerializeField] private string overTitle = "Game Over";
-    [SerializeField] private string retryText = "Retry";
-    [SerializeField] private string returnText = "Return to Title";
+    [SerializeField] private string retryText = "リトライ";
+    [SerializeField] private string returnText = "メインメニューに戻る";
 
     public Color normalColor = Color.white;
     public Color selectedColor = Color.yellow;

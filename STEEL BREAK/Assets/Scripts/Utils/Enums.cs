@@ -24,4 +24,12 @@ namespace Game.Enum
         Normal, //通常移動
         Dash,   //ブースト移動
     } 
+
+    //ウェーブを移行する追加条件
+    public enum WaveCondition
+    {
+        None,      //追加条件なし
+        Collision, //指定の範囲に到着
+        TimeOver,  //時間経過
+    }
 }

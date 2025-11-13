@@ -29,7 +29,8 @@ public class Enemy : CharaBase
         //HPが0以下なら、死亡
         if (m_status.GetHP() <= 0)
         {
-            Die();
+            //Die();
+            Destroy(gameObject);
         }
     }
 
@@ -65,22 +66,10 @@ public class Enemy : CharaBase
             Instantiate(DestructionEffect, transform.position, transform.rotation);
         }
         Destroy(gameObject);
-        //StageCount();
     }
 
-    /// <summary>
-    /// ステージに死亡を通知
-    /// </summary>
-    private void StageCount()
+    private void OnDestroy()
     {
-        GameObject stageObj = GameObject.FindGameObjectWithTag("Stage");
-        if (stageObj != null)
-        {
-            Stage stage = stageObj.GetComponent<Stage>();
-            if (stage != null)
-            {
-                stage.OnEnemyDestroyed();
-            }
-        }
+        Die();
     }
 }
