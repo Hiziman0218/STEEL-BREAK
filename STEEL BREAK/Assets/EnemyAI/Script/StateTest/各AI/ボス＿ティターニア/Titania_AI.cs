@@ -166,6 +166,20 @@ namespace StateMachineAI
             ChangeState(AIState_Titania_T.Idle_T);
         }
 
+        protected override void Update()
+        {
+            // 親クラスの Update を呼んでステートマシンを動かす
+            base.Update();
+
+            // プレイヤーがいないときの共通処理
+            if (m_Player == null)
+            {
+                return;
+            }
+
+        }
+
+
         /// <summary>
         /// クラス名を元にステートを生成して追加する
         /// </summary>
