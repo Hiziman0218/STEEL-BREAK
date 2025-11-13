@@ -108,21 +108,22 @@ public class BankerSet : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
+#if UNITY_EDITOR
         foreach (EscapeSensor ES in m_EscapeSensors)
         {
             Handles.color = Color.red;
-            // 現在のオブジェクト位置に半径1の球体を描画
             Gizmos.color = Color.white;
-            Gizmos.DrawCube(ES.m_BankerSensor.transform.position, new Vector3(1,2,1));
+            Gizmos.DrawCube(ES.m_BankerSensor.transform.position, new Vector3(1, 2, 1));
+
             for (int i = 0; i < ES.m_EscapePoint.Count; i++)
             {
                 Handles.DrawAAPolyLine(
                     10.0f,
                     ES.m_BankerSensor.transform.position,
                     ES.m_EscapePoint[i].position);
-                // 現在のオブジェクト位置に半径1の球体を描画
                 Gizmos.DrawSphere(ES.m_EscapePoint[i].position, 1.0f);
             }
         }
+#endif
     }
 }
