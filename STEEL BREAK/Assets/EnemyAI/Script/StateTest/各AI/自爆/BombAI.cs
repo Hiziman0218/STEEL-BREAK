@@ -48,7 +48,6 @@ namespace StateMachineAI
         [Range(0.001f, 0.005f)]
         public float m_turnsmooth = 0.001f;
 
-
         [HideInInspector]
         public Rigidbody m_Rigidbody;
         [HideInInspector]
@@ -129,6 +128,14 @@ namespace StateMachineAI
             ChangeState(AIState_BombAI.Hit);
         }
 
+        protected override void Update()
+        {
+            if (m_Player == null)
+            {
+                // プレイヤーがいないときの共通処理
+                return;
+            }
+        }
 
         /// <summary>
         /// クラス名を元にステートを生成して追加する

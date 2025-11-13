@@ -103,6 +103,15 @@ namespace StateMachineAI
             ChangeState(AIState_CenteringAI.Hit);
         }
 
+        protected override void Update()
+        {
+            if (m_Player == null)
+            {
+                // プレイヤーがいないときの共通処理
+                return;
+            }
+        }
+
         /// <summary>
         /// クラス名を元にステートを生成して追加する
         /// </summary>

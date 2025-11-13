@@ -7,6 +7,8 @@ namespace StateMachineAI
     {
         //コンストラクタ
         public Caution(GunBatteryAI owner) : base(owner) { }
+        private float nextChangeTime = 0f;
+        private Quaternion randomTarget;
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -16,13 +18,23 @@ namespace StateMachineAI
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
-            //砲身の上下移動
+            //一定時間ごとに向く方向をランダムで決める処理
+            if (Time.time > nextChangeTime)
+            {
+                // 新しいランダム方向を決める
+                randomTarget = Quaternion.Euler(
+                    Random.Range(owner.minPitchAngle, owner.maxPitchAngle),
+                    Random.Range(0f, 360f),
+                    0f
+                );
+                nextChangeTime = Time.time + 2f; // 2秒ごとに方向を変える
+            }
+
+            //砲身を動かす
             foreach (Transform muzzle in owner.m_Muzzles)
             {
-                LookVertical.Look_Vertical(muzzle, owner.m_Player, owner.minPitchAngle, owner.maxPitchAngle, owner.m_rotationSpeedV);
+                muzzle.rotation = Quaternion.Slerp(muzzle.rotation, randomTarget, Time.deltaTime * owner.m_rotationSpeedV);
             }
-            //砲台の横移動
-            Lookhorizontal.Look_horizontal(owner.transform, owner.m_Player ,owner.m_rotationSpeedH);
 
             //攻撃可能範囲に入った
             if (Vector3.Distance(owner.m_Player.position, owner.transform.position) < owner.m_AttackDistance)

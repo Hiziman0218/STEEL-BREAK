@@ -20,6 +20,8 @@ namespace StateMachineAI
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
+            //エージェントに追従
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
 
             //エージェントの向いている方向にy軸回転動を同期
             Quaternion yOnlyRotation = Quaternion.Euler(0, owner.myAgent.transform.rotation.eulerAngles.y, 0);
@@ -38,13 +40,6 @@ namespace StateMachineAI
             }
         }
 
-        //物理挙動はFixedで処理
-        public override void FixedStay()
-        {
-            //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
-
-        }
         public override void Exit()
         {
 
