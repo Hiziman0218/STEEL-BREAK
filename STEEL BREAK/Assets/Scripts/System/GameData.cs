@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -9,11 +9,11 @@ public static class GameData
     public static MissionData currentSelected;
     public static MechSaveData mechSaveData = new MechSaveData();
 
-    // Resources/Prefabs ˆÈ‰º‚É’u‚¢‚½ ResultMenu Prefab ‚ÌƒpƒX
+    // Resources/Prefabs ä»¥ä¸‹ã«ç½®ã„ãŸ ResultMenu Prefab ã®ãƒ‘ã‚¹
     private const string ResultMenuPath = "Result/Result";
 
     /// <summary>
-    /// ƒQ[ƒ€ƒNƒŠƒA‰æ–Ê‚ğ“®“I¶¬‚µ‚Ä•\¦
+    /// ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢ç”»é¢ã‚’å‹•çš„ç”Ÿæˆã—ã¦è¡¨ç¤º
     /// </summary>
     public static void ShowGameClear()
     {
@@ -21,92 +21,92 @@ public static class GameData
     }
 
     /// <summary>
-    /// ƒQ[ƒ€ƒI[ƒo[‰æ–Ê‚ğ“®“I¶¬‚µ‚Ä•\¦
+    /// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ç”»é¢ã‚’å‹•çš„ç”Ÿæˆã—ã¦è¡¨ç¤º
     /// </summary>
     public static void ShowGameOver()
     {
         ShowResult(EndType.GameOver);
     }
 
-    // Result.cs ‘¤‚Ì enum
+    // Result.cs å´ã® enum
     public enum EndType { GameClear, GameOver }
 
     /// <summary>
-    /// ‹¤’Ê¶¬ˆ—
+    /// å…±é€šç”Ÿæˆå‡¦ç†
     /// </summary>
     private static void ShowResult(EndType type)
     {
-        // Šù‚É•\¦Ï‚İ‚È‚ç¶¬‚µ‚È‚¢
+        // æ—¢ã«è¡¨ç¤ºæ¸ˆã¿ãªã‚‰ç”Ÿæˆã—ãªã„
         if (Object.FindObjectOfType<Result>() != null)
             return;
 
-        // Prefab ‚ğƒ[ƒh
+        // Prefab ã‚’ãƒ­ãƒ¼ãƒ‰
         var prefab = Resources.Load<GameObject>(ResultMenuPath);
         if (prefab == null)
         {
-            Debug.LogError($"ResultMenu Prefab ‚ª Resources/{ResultMenuPath}.prefab ‚ÉŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogError($"ResultMenu Prefab ãŒ Resources/{ResultMenuPath}.prefab ã«è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
             return;
         }
 
-        // Canvas ‚Ìq‚Æ‚µ‚Ä¶¬‚µ‚½‚¢ê‡‚Í‘æ2ˆø”‚É parent ‚ğ“n‚·
+        // Canvas ã®å­ã¨ã—ã¦ç”Ÿæˆã—ãŸã„å ´åˆã¯ç¬¬2å¼•æ•°ã« parent ã‚’æ¸¡ã™
         var instance = Object.Instantiate(prefab);
         var result = instance.GetComponent<Result>();
         if (result == null)
         {
-            Debug.LogError("¶¬‚µ‚½ Prefab ‚É Result ƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+            Debug.LogError("ç”Ÿæˆã—ãŸ Prefab ã« Result ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã¾ã›ã‚“");
             return;
         }
 
-        // ƒNƒŠƒA^ƒI[ƒo[ ƒ‚[ƒh‚ğƒZƒbƒg
+        // ã‚¯ãƒªã‚¢ï¼ã‚ªãƒ¼ãƒãƒ¼ ãƒ¢ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆ
         result.endType = (type == EndType.GameClear)
             ? Result.EndType.GameClear
             : Result.EndType.GameOver;
 
-        // ƒQ[ƒ€’â~
+        // ã‚²ãƒ¼ãƒ åœæ­¢
         Time.timeScale = 0f;
     }
 }
 
 /// <summary>
-/// ƒXƒƒbƒg‚²‚Æ‚ÌƒZ[ƒuƒf[ƒ^\‘¢
+/// ã‚¹ãƒ­ãƒƒãƒˆã”ã¨ã®ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿æ§‹é€ 
 /// </summary>
 [System.Serializable]
 public class SlotSaveData
 {
-    public string slotName;      // ƒXƒƒbƒg‚Ì–¼‘OiPartType—ñ‹“Œ^‚Ì•¶š—ñj
-    public string partsDataName;    // ƒp[ƒcƒf[ƒ^‚Ì–¼‘OiResources/PartsData ‚É‚ ‚éj
+    public string slotName;      // ã‚¹ãƒ­ãƒƒãƒˆã®åå‰ï¼ˆPartTypeåˆ—æŒ™å‹ã®æ–‡å­—åˆ—ï¼‰
+    public string partsDataName;    // ãƒ‘ãƒ¼ãƒ„ãƒ‡ãƒ¼ã‚¿ã®åå‰ï¼ˆResources/PartsData ã«ã‚ã‚‹ï¼‰
 }
 
 /// <summary>
-/// ‹@‘Ì‘S‘Ì‚ÌƒZ[ƒuƒf[ƒ^\‘¢
+/// æ©Ÿä½“å…¨ä½“ã®ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿æ§‹é€ 
 /// </summary>
 [System.Serializable]
 public class MechSaveData
 {
-    public List<SlotSaveData> slots = new();  // ŠeƒXƒƒbƒg‚Ìƒp[ƒcî•ñƒŠƒXƒg
-    [SerializeField] private string saveFileName = "mech_save.json";  // ƒZ[ƒuƒtƒ@ƒCƒ‹–¼
+    public List<SlotSaveData> slots = new();  // å„ã‚¹ãƒ­ãƒƒãƒˆã®ãƒ‘ãƒ¼ãƒ„æƒ…å ±ãƒªã‚¹ãƒˆ
+    [SerializeField] private string saveFileName = "mech_save.json";  // ã‚»ãƒ¼ãƒ–ãƒ•ã‚¡ã‚¤ãƒ«å
 
     /// <summary>
-    /// Œ»İ‚Ì‘•”õî•ñ‚ğ•Û‘¶‚·‚é
+    /// ç¾åœ¨ã®è£…å‚™æƒ…å ±ã‚’ä¿å­˜ã™ã‚‹
     /// </summary>
     public void Save()
     {
         MechAssemblyManager assemblyManager = MechAssemblyManager.instance;
         if (assemblyManager == null) return;
 
-        MechSaveData data = new MechSaveData();  // •Û‘¶—pƒf[ƒ^‚ğì¬
+        MechSaveData data = new MechSaveData();  // ä¿å­˜ç”¨ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆ
 
-        // ‘•’…’†‚Ì‘Sƒp[ƒc‚ğæ“¾
+        // è£…ç€ä¸­ã®å…¨ãƒ‘ãƒ¼ãƒ„ã‚’å–å¾—
         foreach (var kvp in assemblyManager.GetEquippedParts())
         {
             foreach (var part in kvp.Value)
             {
                 if (part == null) continue;
 
-                // ƒXƒƒbƒg–¼‚ğ PartType ‚Æ‚µ‚Ä•Û‘¶
+                // ã‚¹ãƒ­ãƒƒãƒˆåã‚’ PartType ã¨ã—ã¦ä¿å­˜
                 string slotName = kvp.Key.ToString();
 
-                // ƒXƒƒbƒgî•ñ‚ğ’Ç‰Á
+                // ã‚¹ãƒ­ãƒƒãƒˆæƒ…å ±ã‚’è¿½åŠ 
                 data.slots.Add(new SlotSaveData
                 {
                     slotName = slotName,
@@ -115,58 +115,56 @@ public class MechSaveData
             }
         }
 
-        // JSONŒ`®‚É•ÏŠ·‚µ‚Ä•Û‘¶
-        string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(Path.Combine(Application.persistentDataPath, saveFileName), json);
+        // ===== ä¿å­˜ãƒ‘ã‚¹ã®æ±ºå®š =====
+        string saveDirectory;
 
-        Debug.Log("ƒƒJ\¬‚ğ•Û‘¶‚µ‚Ü‚µ‚½B");
+        #if UNITY_EDITOR
+        // ğŸ¯ é–‹ç™ºä¸­ï¼ˆã‚¨ãƒ‡ã‚£ã‚¿å®Ÿè¡Œæ™‚ï¼‰ï¼šãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã® Assets å†…ã« "Savedata" ãƒ•ã‚©ãƒ«ãƒ€ã‚’ä½œã‚‹
+        saveDirectory = Path.Combine(Application.dataPath, "Savedata");
+        #else
+        // ğŸ¯ ãƒ“ãƒ«ãƒ‰å¾Œï¼ˆå®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«å®Ÿè¡Œæ™‚ï¼‰ï¼šexe ã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã« "Savedata" ã‚’ä½œã‚‹
+        saveDirectory = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Savedata");
+        #endif
+
+        // ãƒ•ã‚©ãƒ«ãƒ€ãŒãªã‘ã‚Œã°ä½œæˆ
+        Directory.CreateDirectory(saveDirectory);
+
+        // ä¿å­˜ãƒ‘ã‚¹ã‚’ä½œæˆ
+        string savePath = Path.Combine(saveDirectory, saveFileName);
+
+        // JSONå½¢å¼ã«å¤‰æ›ã—ã¦ä¿å­˜
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(savePath, json);
+
+        Debug.Log("ãƒ¡ã‚«æ§‹æˆã‚’ä¿å­˜ã—ã¾ã—ãŸã€‚");
     }
 
     /// <summary>
-    /// •Û‘¶‚³‚ê‚½‘•”õî•ñ‚ğ“Ç‚İ‚Ş
+    /// ä¿å­˜ã•ã‚ŒãŸè£…å‚™æƒ…å ±ã‚’èª­ã¿è¾¼ã‚€
     /// </summary>
     public void Load()
     {
-        string path = Path.Combine(Application.persistentDataPath, saveFileName);
+        string saveDirectory;
 
-        // •Û‘¶ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ê‡
+        #if UNITY_EDITOR
+        saveDirectory = Path.Combine(Application.dataPath, "Savedata");
+        #else
+        saveDirectory = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Savedata");
+        #endif
+
+        string path = Path.Combine(saveDirectory, saveFileName);
+
         if (!File.Exists(path))
         {
-            Debug.LogWarning("•Û‘¶ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogWarning("ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“: " + path);
             return;
         }
 
-        // ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ñ‚ÅƒfƒVƒŠƒAƒ‰ƒCƒY
         string json = File.ReadAllText(path);
         MechSaveData data = JsonUtility.FromJson<MechSaveData>(json);
         slots = data.slots;
 
-        //foreach (var slot in data.slots)
-        //{
-        //    PartType type;
-
-        //    // ƒXƒƒbƒg–¼‚ğ PartType ‚É•ÏŠ·
-        //    if (!System.Enum.TryParse(slot.slotName, out type)) continue;
-
-        //    // Resources/Parts ‚©‚çƒvƒŒƒnƒu‚ğ“Ç‚İ‚Ş
-        //    GameObject prefab = Resources.Load<GameObject>($"Parts/{slot.prefabName}");
-        //    if (prefab == null)
-        //    {
-        //        Debug.LogWarning($"ƒvƒŒƒnƒu {slot.prefabName} ‚ª“Ç‚İ‚ß‚Ü‚¹‚ñ‚Å‚µ‚½");
-        //        continue;
-        //    }
-
-        //    // ƒ_ƒ~[‚Ì PartData ‚ğì¬‚µ‚Ä‘•’…
-        //    PartData dummyPart = new PartData
-        //    {
-        //        partType = type,
-        //        partPrefab = prefab
-        //    };
-
-        //    assemblyManager.AttachPart(dummyPart, type);
-        //}
-
-        Debug.Log("ƒƒJ\¬‚ğ“Ç‚İ‚İ‚Ü‚µ‚½B");
+        Debug.Log("ãƒ¡ã‚«æ§‹æˆã‚’èª­ã¿è¾¼ã¿ã¾ã—ãŸ: " + path);
     }
 
     public static MissionData currentSelected;
