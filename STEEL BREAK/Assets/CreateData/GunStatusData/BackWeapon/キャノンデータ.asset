@@ -18,6 +18,7 @@ MonoBehaviour:
   Speed: 65
   Damage: 5
   MaxAmmo: 4
+  UseMuzzleControl: 1
   UseMirror: 0
   MirrorHand: 0
   BulletPrefab: {fileID: 7938403629850659924, guid: 689db15b9700c2f42bab755c75674888, type: 3}

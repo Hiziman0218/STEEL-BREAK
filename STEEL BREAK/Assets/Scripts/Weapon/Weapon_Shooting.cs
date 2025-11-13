@@ -244,28 +244,44 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
         {
             //ターゲットを設定
             m_currentTarget = lockOn.CurrentTarget;
-            //敵のBPを狙う
-            Transform bp = lockOn.CurrentTarget.transform.Find("BP");
 
-            if (bp != null)
+            //銃口の制御を行う場合
+            if (m_status.GetUseMuzzleControl())
             {
-                Rigidbody targetRb = lockOn.CurrentTarget.GetComponent<Rigidbody>();
-                shootDir = CalculateInterceptDirection(
-                    m_muzzleTransform.position,
-                    bp.position,
-                    targetRb != null ? targetRb.linearVelocity : Vector3.zero,
-                    m_status.GetSpeed()
-                );
+                //敵のBPを狙う
+                Transform bp = lockOn.CurrentTarget.transform.Find("BP");
 
-                //銃口を敵に向ける
-                m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+                if (bp != null)
+                {
+                    Rigidbody targetRb = lockOn.CurrentTarget.GetComponent<Rigidbody>();
+                    shootDir = CalculateInterceptDirection(
+                        m_muzzleTransform.position,
+                        bp.position,
+                        targetRb != null ? targetRb.linearVelocity : Vector3.zero,
+                        m_status.GetSpeed()
+                    );
+
+                    //銃口を敵に向ける
+                    m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+                }
+                else
+                {
+                    //BP が見つからない場合はとりあえず位置のみで狙う
+                    Vector3 targetPos = lockOn.CurrentTarget.transform.position;
+                    shootDir = (targetPos - m_muzzleTransform.position).normalized;
+                    m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+                }
             }
+            //行わない場合
             else
             {
-                //BP が見つからない場合はとりあえず位置のみで狙う
-                Vector3 targetPos = lockOn.CurrentTarget.transform.position;
-                shootDir = (targetPos - m_muzzleTransform.position).normalized;
-                m_muzzleTransform.rotation = Quaternion.LookRotation(shootDir);
+                //親オブジェクトを取得
+                GameObject rootObj = transform.root.gameObject;
+                //親オブジェクトの回転を取得
+                Quaternion forward = rootObj.transform.rotation;
+                //銃口を元に戻す
+                m_muzzleTransform.rotation = forward;
+                shootDir = m_muzzleTransform.forward;
             }
         }
         //ターゲットがいない場合

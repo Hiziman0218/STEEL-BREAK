@@ -116,15 +116,24 @@ public class Title : MonoBehaviour
         }
     }
 
-    // ゲームスタートボタンから呼び出す関数
+    /// <summary>
+    /// ゲームスタートボタンから呼び出す関数
+    /// </summary>
     public void OnClickGameStart()
     {
         //ゲームシーンを生成
         SceneHistoryManager.LoadScene("MainMenu");
     }
 
-    public void QuitGame()
+    /// <summary>
+    /// ゲームエンドボタンから呼び出す関数
+    /// </summary>
+    public void OnClickGameEnd()
     {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
 }

@@ -16,8 +16,10 @@ public class GunStatusData : ScriptableObject
     public float Damage;     //ダメージ量
     [Tooltip("最大弾数")]
     public int MaxAmmo;      //最大弾数
+    [Tooltip("銃口の制御をするか")]
+    public bool UseMuzzleControl; //銃口の補正をするか
     [Tooltip("反転機能を使うか(使うならtrue)")]
-    public bool UseMirror;   //反転機能を使うか
+    public bool UseMirror;        //反転機能を使うか
     [Tooltip("どちらで装備した時に反転させるか")]
     public AttachSide MirrorHand; //どちらで装備した時に反転させるか
     [Tooltip("弾丸のプレハブ")]

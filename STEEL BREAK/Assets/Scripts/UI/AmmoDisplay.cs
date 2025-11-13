@@ -57,7 +57,6 @@ public class AmmoDisplay : MonoBehaviour
 
     private IWeapon RH, LH, RB, LB; //各種武器のインターフェース
     private Player m_player;        //プレイヤー
-    private float angle = 0f;
 
     private void Update()
     {
@@ -71,16 +70,34 @@ public class AmmoDisplay : MonoBehaviour
     public void UpdateAllAmmoUI()
     {
         //各武器の情報を取得し反映
-        if (RH == null) RH = m_player.GetWeapon(WeaponSlot.RightHand);
+        //武器が見つからなければ、取得を試みつつリロードUIを非表示に
+        //武器が見つかれば、弾数の表示、リロード中ならリロードUIの表示
+        if (RH == null)
+        { 
+            RH = m_player.GetWeapon(WeaponSlot.RightHand);
+            rightHandReloadUI.SetActive(false);
+        } 
         else UpdateWeaponUI(RH, rightHandAmmo, rightHandMaxAmmo, rightHandReloadUI, rightHandReloadImage);
 
-        if (LH == null) LH = m_player.GetWeapon(WeaponSlot.LeftHand);
+        if (LH == null)
+        {
+            LH = m_player.GetWeapon(WeaponSlot.LeftHand);
+            leftHandReloadUI.SetActive(false);
+        }
         else UpdateWeaponUI(LH, leftHandAmmo, leftHandMaxAmmo, leftHandReloadUI, leftHandReloadImage);
 
-        if (RB == null) RB = m_player.GetWeapon(WeaponSlot.RightBack);
+        if (RB == null)
+        {
+            RB = m_player.GetWeapon(WeaponSlot.RightBack);
+            rightBackReloadUI.SetActive(false);
+        }
         else UpdateWeaponUI(RB, rightBackAmmo, rightBackMaxAmmo, rightBackReloadUI, rightBackReloadImage);
 
-        if (LB == null) LB = m_player.GetWeapon(WeaponSlot.LeftBack);
+        if (LB == null)
+        {
+            LB = m_player.GetWeapon(WeaponSlot.LeftBack);
+            leftBackReloadUI.SetActive(false);
+        }
         else UpdateWeaponUI(LB, leftBackAmmo, leftBackMaxAmmo, leftBackReloadUI, leftBackReloadImage);
     }
 

@@ -10,6 +10,7 @@ public class GunStatus
     private float Damege;     //ダメージ量
     private int MaxAmmo;      //最大弾数
     private int Ammo;         //現在の弾数
+    private bool UseMuzzleControl; //銃口の制御を使用するか
     private bool UseMirror;   //反転機能を使うか
     private AttachSide MirrorWhenHeld;    //どちらで装備した時に反転させるか
     private BulletBase BulletPrefab;          //弾丸プレハブ
@@ -31,6 +32,7 @@ public class GunStatus
         Damege = data.Damage;
         MaxAmmo = data.MaxAmmo;
         Ammo = data.MaxAmmo;
+        UseMuzzleControl = data.UseMuzzleControl;
         UseMirror = data.UseMirror;
         MirrorWhenHeld = data.MirrorHand;
         BulletPrefab = data.BulletPrefab;
@@ -110,6 +112,15 @@ public class GunStatus
     public void SetAmmo(int ammo)
     {
         Ammo = ammo;
+    }
+
+    /// <summary>
+    /// 銃口の制御を行うか取得
+    /// </summary>
+    /// <returns></returns>
+    public bool GetUseMuzzleControl()
+    {
+        return UseMuzzleControl;
     }
 
     /// <summary>

@@ -54,7 +54,7 @@ public class IK_Control : MonoBehaviour
         {
             lastFireTimeRight = Time.time;
             targetWeightRight = 1f;
-            hands[0].Weapon.SetIKFinished(hands[0].isIKFinished);
+            if(hands[0].Weapon != null) hands[0].Weapon.SetIKFinished(hands[0].isIKFinished);
         }
         else if (Time.time - lastFireTimeRight > disableDelay)
         {
@@ -66,7 +66,7 @@ public class IK_Control : MonoBehaviour
         {
             lastFireTimeLeft = Time.time;
             targetWeightLeft = 1f;
-            hands[1].Weapon.SetIKFinished(hands[1].isIKFinished);
+            if (hands[1].Weapon != null) hands[1].Weapon.SetIKFinished(hands[1].isIKFinished);
         }
         else if (Time.time - lastFireTimeLeft > disableDelay)
         {
