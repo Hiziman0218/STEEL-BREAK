@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-//using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace StateMachineAI
 {
@@ -43,7 +39,7 @@ namespace StateMachineAI
                     }
                     else
                     {
-                        // 残り50%でランダムな移動
+                        // 残りの確率でランダムな移動
                         Chak();
                     }
                 }

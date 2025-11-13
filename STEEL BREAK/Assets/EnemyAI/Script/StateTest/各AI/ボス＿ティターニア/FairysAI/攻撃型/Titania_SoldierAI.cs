@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-
 using System.Reflection;
 using RaycastPro.Detectors;
 
@@ -33,25 +32,19 @@ namespace StateMachineAI
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 10;
-        [Header("最大連射数")]
-        [Range(1f, 30f)]
-        public int m_MaxRange = 5;
+        [Header("攻撃のクールタイム")]
+        [Range(1f, 10f)]
+        public float m_CoolTime = 4f;
 
-
-        [Header("突撃時の最大突進スピード")]
-        [Range(10f, 40f)]
-        public float m_maxspeed = 10f;
 
         [HideInInspector]
         public CoolDown m_CoolDown;
-        [HideInInspector]
-        //クールタイム設定用
-        public float m_CoolTime;
         [HideInInspector]
         public Rigidbody m_Rigidbody;
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
+        [HideInInspector]
         //エージェントのディテクター
         public Detector m_Detector;
 
@@ -73,10 +66,6 @@ namespace StateMachineAI
             //エージェントを取得
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
             m_Detector = myAgent.GetComponent<Detector>();
-
-            //射撃用のスクリプトを取得
-            Enemy m_Enemy = GetComponent<Enemy>();
-
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Chase_Soldier"))
