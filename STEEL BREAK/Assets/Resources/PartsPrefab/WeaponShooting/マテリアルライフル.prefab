@@ -112,6 +112,7 @@ MonoBehaviour:
   m_statusData: {fileID: 0}
   m_muzzleTransform: {fileID: 0}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
+  m_audioSource: {fileID: 0}
 --- !u!1001 &7310383884056184390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -120,6 +121,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6859887033520168666}
     m_Modifications:
+    - target: {fileID: 4086067130618012996, guid: a90dd95af3b18c34c89d9bfd894df6db, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4352067364776803588, guid: a90dd95af3b18c34c89d9bfd894df6db, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
