@@ -36,7 +36,7 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
         //座標制御
-        m_MovePoint = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        m_MovePoint = new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f, Input.GetAxisRaw("Vertical"));
 
         //アニメーション制御
         m_animator.SetFloat("X", m_MovePoint.x);

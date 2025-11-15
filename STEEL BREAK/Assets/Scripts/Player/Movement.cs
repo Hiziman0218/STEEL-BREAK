@@ -21,7 +21,14 @@ public class Movement : MonoBehaviour
     [SerializeField] private float initialAscendSpeed = 20f;       //単押しで瞬間的に与える初速
     [SerializeField] private float ascendBrake = 10f;              //ホバー中の垂直慣性ブレーキ
     [SerializeField] private float shortAscendThreshold = 0.15f;   //単押しと長押しのしきい値
-    [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度(短押し含む)
+    [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度(短押し含む)z
+
+    // --- 追加: 落下改善用パラメータ（ここを調整してください） ---
+    [Header("落下設定")]
+    [SerializeField, Tooltip("落下時の重力倍率（1 = デフォルト、>1 で強く落下します）")]
+    private float fallMultiplier = 2.5f;
+    [SerializeField, Tooltip("最大落下速度（正の値、m/s）")]
+    private float maxFallSpeed = 20f;
 
     [SerializeField] private Camera cameraController;    //Inspector でセット
 
@@ -414,6 +421,21 @@ public class Movement : MonoBehaviour
             Vector3 currentVel = rb.linearVelocity;
             if (currentVel.y > 0f)
                 currentVel.y = Mathf.MoveTowards(currentVel.y, 0f, ascendBrake * Time.fixedDeltaTime);
+
+            // --- ここから落下強化処理 ---
+            if (currentVel.y <= 0f || isFalling)
+            {
+                // 上昇中でなければ落下増強を適用（Time.fixedDeltaTimeベースで垂直速度を増やす）
+                if (fallMultiplier > 1f)
+                {
+                    // 重力の追加分を垂直速度に反映（質量に依存しない近似）
+                    currentVel.y += Physics.gravity.y * (fallMultiplier - 1f) * Time.fixedDeltaTime;
+                }
+
+                // 最大落下速度でクランプ
+                currentVel.y = Mathf.Max(currentVel.y, -Mathf.Abs(maxFallSpeed));
+            }
+            // --- 落下強化処理ここまで ---
 
             Vector3 horizontalVel = new Vector3(currentVel.x, 0f, currentVel.z);
             Vector3 brakeForceAir = -horizontalVel * (brakePower * 0.5f);

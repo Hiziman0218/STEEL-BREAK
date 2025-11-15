@@ -12313,30 +12313,30 @@ MonoBehaviour:
   m_playerPrefab: {fileID: 6024539278335420986, guid: 36c96bd0ad3ba73478911ef8df88fbbd, type: 3}
   m_playerSpawnPoint: {fileID: 293960887}
   enemyPrefabs:
-  - enemyPrefab: {fileID: 5126525181661920617, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+  - enemyPrefab: {fileID: 3523091532187531777, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
     spawnWeight: 1
   - enemyPrefab: {fileID: 8492776461914824570, guid: 9c7146ea52e924d42bcdce4dedd4d0eb, type: 3}
     spawnWeight: 1
   waveDataList:
   - enemySpawnList:
-    - enemyPrefab: {fileID: 5126525181661920617, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+    - enemyPrefab: {fileID: 3523091532187531777, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
       spawnTransform: {fileID: 2106594461}
       isRandom: 0
-    - enemyPrefab: {fileID: 3250555800596888919, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
+    - enemyPrefab: {fileID: 4652928337225424680, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
       spawnTransform: {fileID: 664818575}
       isRandom: 0
-    - enemyPrefab: {fileID: 3250555800596888919, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
+    - enemyPrefab: {fileID: 4652928337225424680, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
       spawnTransform: {fileID: 1568631712}
       isRandom: 0
     condition: 0
   - enemySpawnList:
-    - enemyPrefab: {fileID: 5126525181661920617, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+    - enemyPrefab: {fileID: 3523091532187531777, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
       spawnTransform: {fileID: 1556949511}
       isRandom: 0
-    - enemyPrefab: {fileID: 5126525181661920617, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+    - enemyPrefab: {fileID: 3523091532187531777, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
       spawnTransform: {fileID: 98386871}
       isRandom: 0
-    - enemyPrefab: {fileID: 5554601787815308028, guid: 59a6d7db43c9277439b4d9707b564bcd, type: 3}
+    - enemyPrefab: {fileID: 115868814545812183, guid: 59a6d7db43c9277439b4d9707b564bcd, type: 3}
       spawnTransform: {fileID: 128908924}
       isRandom: 0
     condition: 0
