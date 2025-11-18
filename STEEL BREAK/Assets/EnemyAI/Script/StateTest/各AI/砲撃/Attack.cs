@@ -28,7 +28,7 @@ namespace StateMachineAI
                 LookVertical.Look_Vertical(muzzle, owner.m_Player, owner.minPitchAngle, owner.maxPitchAngle, owner.m_rotationSpeedV);
             }
             //砲台の横移動
-            Lookhorizontal.Look_horizontal(owner.transform, owner.m_Player, owner.m_rotationSpeedH);
+            Lookhorizontal.Look_horizontal(owner.m_RotPoint, owner.m_Player, owner.m_rotationSpeedH);
 
             //攻撃可能かのチェック
             (float distance, _, _) = Distance_Check.Check(owner.transform, owner.m_Player);

@@ -41,8 +41,8 @@ namespace StateMachineAI
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 30f;
 
-        [Header("回転ポイント")]
-        //回転ポイント
+        [HideInInspector]   
+        //回転ポイント（自動取得）
         public Transform m_RotPoint;
         [HideInInspector]
         public CoolDown m_CoolDown;
