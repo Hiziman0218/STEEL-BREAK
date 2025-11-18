@@ -27,7 +27,7 @@ public class MouseLookVertical : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         // 注視点Yオフセットをマウス入力に応じて更新
-        currentYOffset -= mouseY;
+        currentYOffset += mouseY;
         currentYOffset = Mathf.Clamp(currentYOffset, minOffsetY, maxOffsetY);
 
         // 注視点の座標を更新（プレイヤーの前方位置にオフセット付きで）

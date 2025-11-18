@@ -60,17 +60,10 @@ public class LockOn : MonoBehaviour
                 Unlock();
                 return;
             }
-
-            //カメラ中心から最も近い敵に自動でロックし直す
-            Transform nearestToCenter = FindClosestToScreenCenter(candidates);
-            if (nearestToCenter != null && nearestToCenter != currentTarget)
-            {
-                Lock(nearestToCenter);
-            }
         }
 
-        //未ロック → 自動ロック
-        if (candidates.Count > 0)
+        // 未ロック時のみ自動ロックを行う（ここが修正点）
+        if (currentTarget == null && candidates.Count > 0)
         {
             //候補リストの先頭(最も近い)を取り出して画面内判定
             Transform candidate = candidates[0];
@@ -208,13 +201,18 @@ public class LockOn : MonoBehaviour
     /// <summary>
     /// 次のターゲットへ切り替え
     /// </summary>
-    private void SwitchTarget()
+    public void SwitchTarget()
     {
-        if (candidates.Count < 2) return;
+        if (candidates.Count < 2)
+        {
+            Debug.Log("変更できる対象がいません。");
+            return;
+        }
         int idx = candidates.IndexOf(currentTarget);
         if (idx < 0) idx = 0;
         idx = (idx + 1) % candidates.Count;
         Lock(candidates[idx]);
+        Debug.Log("ターゲットを変更しました。");
     }
 
     /// <summary>

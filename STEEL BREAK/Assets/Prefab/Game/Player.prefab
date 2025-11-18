@@ -207,7 +207,7 @@ MonoBehaviour:
   maxOffsetY: 2.5
   m_Base: {fileID: 6399797733273792640}
   m_CameraTransform: {fileID: 3626535836731788290}
-  cameraBaseLocalOffset: {x: 0, y: 2.5, z: -4}
+  cameraBaseLocalOffset: {x: 0, y: 2.5, z: -5}
 --- !u!1 &8286787193822264659
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,6 +814,8 @@ MonoBehaviour:
   PartsSet: {fileID: 5744882643590379773}
   m_destroyEffect: {fileID: 100010, guid: e0609132424a24844b1d53ad3d704fd9, type: 3}
   m_lerpSpeed: 3
+  cameraRig: {fileID: 6673312967268915989}
+  cameraRotateLerp: 0.05
 --- !u!114 &5841538993253739429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -872,8 +874,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb0eb9ffcee111b42aa490be01eede85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 20
-  maxAngle: 60
+  detectionRange: 30
+  maxAngle: 100
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128

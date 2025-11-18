@@ -23,7 +23,6 @@ public class Movement : MonoBehaviour
     [SerializeField] private float shortAscendThreshold = 0.15f;   //単押しと長押しのしきい値
     [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度(短押し含む)z
 
-    // --- 追加: 落下改善用パラメータ（ここを調整してください） ---
     [Header("落下設定")]
     [SerializeField, Tooltip("落下時の重力倍率（1 = デフォルト、>1 で強く落下します）")]
     private float fallMultiplier = 2.5f;

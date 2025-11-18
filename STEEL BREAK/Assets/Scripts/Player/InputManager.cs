@@ -57,7 +57,7 @@ public class InputManager : MonoBehaviour
         IsJumpUp = Input.GetKeyUp(KeyCode.Space);          //Spaceキーを離した瞬間ジャンプ入力の計測終了
         IsFall = Input.GetKeyDown(KeyCode.LeftControl);    //左ctrlキーを押すと自由落下
         IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);    //Tabキーを押すとロックオン機能使用/不使用を切り替え
-        IsTargetChange = Input.GetKeyDown(KeyCode.V);      //Vキーを押すとターゲット切り替え
+        IsTargetChange = Input.GetKeyDown(KeyCode.F);      //Fキーを押すとターゲット切り替え
         IsReload = Input.GetKey(KeyCode.R);                //Rキーを押している間手動リロード待機
     }
 

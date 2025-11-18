@@ -9,14 +9,19 @@ public class MouseLook : MonoBehaviour
     public float laserRotateMultiplier = 0.1f;
 
     private Player m_player;
+    private LockOn m_lockOn;
 
     void Start()
     {
         m_player = GetComponent<Player>();
+        m_lockOn = GetComponent<LockOn>();
     }
 
     void Update()
     {
+        //ターゲットがいる場合は以降の処理を行わない
+        if (m_lockOn != null && m_lockOn.CurrentTarget != null) return;
+
         float mouseX = Input.GetAxis("Mouse X");
         float rotationSpeed = mouseSensitivity * Time.deltaTime;
 
