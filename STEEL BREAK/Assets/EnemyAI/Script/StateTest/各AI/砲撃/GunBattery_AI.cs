@@ -25,7 +25,7 @@ namespace StateMachineAI
         [Header("砲身モデル")]
         public Transform[] m_Muzzles;
 
-        [Header("砲身の仰角制限")]
+        [Header("砲身の仰角制限（縦方向の制限）")]
         [Range(-10f, 0f)]
         public float minPitchAngle = -5f;
         [Range(0f, 80f)]
@@ -41,6 +41,9 @@ namespace StateMachineAI
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 30f;
 
+        [Header("回転ポイント")]
+        //回転ポイント
+        public Transform m_RotPoint;
         [HideInInspector]
         public CoolDown m_CoolDown;
         [HideInInspector]
@@ -67,6 +70,12 @@ namespace StateMachineAI
 
             //コライダーを取得
             Collider[] myColliders = GetComponents<Collider>();
+
+            // 砲身の親を自動で取得
+            if (m_Muzzles != null && m_Muzzles.Length > 0)
+            {
+                m_RotPoint = m_Muzzles[0].parent;
+            }
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Caution"))

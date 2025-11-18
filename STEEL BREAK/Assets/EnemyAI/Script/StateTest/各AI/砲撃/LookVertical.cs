@@ -1,9 +1,4 @@
-﻿using StateMachineAI;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+﻿using UnityEngine;
 
 public class LookVertical : MonoBehaviour
 {
@@ -18,7 +13,7 @@ public class LookVertical : MonoBehaviour
         // ターゲットとの角度からピッチ（上下）を取得
         float pitch = Mathf.Atan2(localDir.y, localDir.z) * Mathf.Rad2Deg;
 
-        //角度制限
+        //角度制限 ※-をつけることでminとmaxの値が間隔的にずれることを防止（元のままだと上下反転してしまう）
         float clampedPitch = -Mathf.Clamp(pitch, minPitchAngle, maxPitchAngle);
 
         // 目標の回転
