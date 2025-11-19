@@ -99,15 +99,14 @@ namespace StateMachineAI
 
         protected override void Update()
         {
-            // 親クラスの Update を呼んでステートマシンを動かす
-            base.Update();
-
             // プレイヤーがいないときの共通処理
             if (m_Player == null)
             {
                 return;
             }
 
+            // 親クラスの Update を呼んでステートマシンを動かす
+            base.Update();
         }
 
         /// <summary>

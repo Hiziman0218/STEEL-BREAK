@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 namespace StateMachineAI
 {
@@ -15,6 +16,8 @@ namespace StateMachineAI
             Debug.Log("攻撃");
 
             m_TImes = 3.0f;
+            shots = Random.Range(1, owner.m_MaxRange);
+
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -24,7 +27,7 @@ namespace StateMachineAI
             owner.transform.LookAt(owner.m_Player);
 
             //攻撃
-            //owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
+            owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime, shots, 0.2f));
 
 
             if (m_TImes <= 0)
@@ -39,8 +42,6 @@ namespace StateMachineAI
         }
         public override void Exit()
         {
-            //エージェントを自分の位置へ戻ってこさせる
-            //owner.myAgent.transform = owner.transform.gameObject;
         }
     }
 }

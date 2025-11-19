@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 namespace StateMachineAI
 {
     public class Attack_GunBatteryAI : State<GunBatteryAI>

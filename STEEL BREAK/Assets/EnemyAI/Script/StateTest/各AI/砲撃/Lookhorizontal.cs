@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class Lookhorizontal : MonoBehaviour
@@ -18,9 +17,11 @@ public class Lookhorizontal : MonoBehaviour
 
         // プレイヤーの方向を向くための目標回転
         Quaternion targetRotation = Quaternion.LookRotation(targetPosition - myPosition);
+        //ローカルにする
+        Quaternion localTargetRotation = Quaternion.Inverse(m_RotPoint.parent.rotation) * targetRotation;
 
         // 現在の回転から目標回転へ補間（ラグを加える）
-        m_RotPoint.rotation = Quaternion.Lerp(m_RotPoint.localRotation, targetRotation, Time.deltaTime * m_rotationSpeed);
+        m_RotPoint.localRotation = Quaternion.Lerp(m_RotPoint.localRotation, localTargetRotation, Time.deltaTime * m_rotationSpeed);
 
     }
 }

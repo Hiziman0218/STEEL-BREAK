@@ -19,7 +19,7 @@ public static class AutoComponentInitializer
         foreach (var field in fields)
         {
             //フィールドの型が Unity の Component（例：Transform, Rigidbody, Collider など）かどうかをチェック
-            if (typeof(Component).IsAssignableFrom(field.FieldType))
+            if (typeof(Component).IsAssignableFrom(field.FieldType) && field.FieldType != typeof(Transform))
             {
                 var current = field.GetValue(target);
                 // nullなら自動代入処理

@@ -1,4 +1,3 @@
-
 namespace StateMachineAI
 {
     public class Hit_GunBatteryAI : State<GunBatteryAI>
