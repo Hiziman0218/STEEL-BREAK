@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 247876412228380715}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 8277906390066786085}
   - component: {fileID: 5643510697902099992}
   - component: {fileID: 4092064806149135289}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u53F0\u5EA7"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -879,9 +879,9 @@ GameObject:
   - component: {fileID: 4993377949998971562}
   - component: {fileID: 2212672478260007444}
   - component: {fileID: 7766417269908528419}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7832\u6483\u578B\uFF08\u5C0F\u578B\uFF09"
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1047,7 +1047,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2991158512608884997}
   - component: {fileID: 273727986440009524}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7832\u8EAB\u95A2\u7BC0\uFF08\u4E0A\u4E0B\uFF09\u52D5\u304B\u3059"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1099,7 +1099,7 @@ GameObject:
   - component: {fileID: 168253728558949700}
   - component: {fileID: 2003829935811361730}
   - component: {fileID: 1631163359366137851}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7832\u8EAB\u95A2\u7BC0\uFF08\u5DE6\u53F3\uFF09"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3816,7 +3816,7 @@ GameObject:
   - component: {fileID: 5540693482579500916}
   - component: {fileID: 8324940775701416347}
   - component: {fileID: 4623091986423128164}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5304,7 +5304,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1148891759934015725}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MuzzlePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5335,7 +5335,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3500313933962374542}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u53F0\u5EA7"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5367,7 +5367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6321569449352517878}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7832\u8EAB\u95A2\u7BC0\uFF08\u5DE6\u53F3\uFF09\u52D5\u304B\u3059"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5405,7 +5405,7 @@ GameObject:
   - component: {fileID: 7412633817828266248}
   - component: {fileID: 681392484245153577}
   - component: {fileID: 2412611643170467703}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "\u7832\u8EAB\u95A2\u7BC0\uFF08\u4E0A\u4E0B\uFF09"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
