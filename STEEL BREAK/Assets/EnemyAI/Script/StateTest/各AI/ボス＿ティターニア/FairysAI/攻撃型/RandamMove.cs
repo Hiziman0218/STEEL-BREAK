@@ -35,7 +35,7 @@ namespace StateMachineAI
                     if (chance < 0.7f)
                     {
                         // 70%の確率で射撃
-                        owner.ChangeState(AIState_Soldier.Shot_Soldier);
+                        owner.ChangeState(AIState_Soldier.Shot);
                     }
                     else
                     {

@@ -54,6 +54,9 @@ namespace StateMachineAI
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 40;
+        [Header("クールタイム")]
+        [Range(1f,30f)]
+        public float m_CoolTime = 4;
         [Header("正面の攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
         public float m_forwardDotThreshold = 0.8f;
 

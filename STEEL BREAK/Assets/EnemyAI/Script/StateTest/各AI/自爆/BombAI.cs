@@ -97,7 +97,8 @@ namespace StateMachineAI
             }
 
             m_Rigidbody = GetComponent<Rigidbody>();
-            m_CapsuleCollider = GetComponent<CapsuleCollider>();
+            //複数コライダーを取得
+            Collider[] myColliders = GetComponents<Collider>();
 
             //存在していないクラスが指定されたら本体消滅
             if (!AddStateByName("Chase_BombAI"))

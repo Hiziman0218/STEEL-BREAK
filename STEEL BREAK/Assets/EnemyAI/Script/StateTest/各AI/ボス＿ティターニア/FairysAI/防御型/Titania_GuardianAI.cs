@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 using System.Reflection;
+using RaycastPro.Detectors;
 
 namespace StateMachineAI
 {
@@ -14,12 +15,13 @@ namespace StateMachineAI
     /// </summary>
     public enum AIState_Gyardian
     {
-        Chase_Gyardian,
-        Shot_Gyardian,
-        RandamMove_Gyardian,
-        Guard_Gyardian,
-        CeackGuard_Gyardian,
-        Return_Gyardian
+        Chase,
+        Shot,
+        RandamMove,
+        Guard,
+        CeackGuard,
+        Return,
+        Hit
     }
 
     public class GyardianFairysAI
@@ -29,34 +31,35 @@ namespace StateMachineAI
         public Transform m_Player;
         [Header("エネミーモデル")]
         public Transform m_EnemyModel;
+        [Header("射撃するためのエネミーコンポーネント")]
+        public Enemy m_Enemy;
         [Header("センターポイントの取得")]
         public GameObject m_CenterMarker;
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 10;
-        [Header("正面の攻撃可能角度[-1 = 完全に背後, 0 = 真横, 1 = 正面]")]
-        public float m_forwardDotThreshold = 0.8f;
-
-        [Header("突撃時の最大突進スピード")]
-        [Range(10f, 40f)]
-        public float m_maxspeed = 10f;
+        [Header("攻撃のクールタイム")]
+        [Range(1f, 10f)]
+        public float m_CoolTime = 4f;
 
         [HideInInspector]
         public CoolDown m_CoolDown;
-        [HideInInspector]
-        //クールタイム設定用
-        public float m_CoolTime;
         [HideInInspector]
         public Rigidbody m_Rigidbody;
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
         [HideInInspector]
+        //エージェントのディテクター
+        public Detector m_Detector;
+        [HideInInspector]
         //自分が守るポイント取得用
         public GameObject m_GuardPointer;
         [HideInInspector]
         //守護位置のリスト
         public List<Transform> m_GuardPoint;
+        [HideInInspector]
+        private CharaBase charaBase;
 
         void Start()
         {
@@ -74,29 +77,48 @@ namespace StateMachineAI
                 m_GuardPoint.Add(child);
             }
 
+            //エネミーのスクリプトを取得
+            Enemy m_Enemy = GetComponent<Enemy>();
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
+
+
             //センターポインターを個別に取得する
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
             //エージェントを取得
             myAgent = PoolManager.Instance.Get("Gyardian", transform.position + transform.forward, m_Player);
 
-            //存在していないクラスが指定されたら本体消滅
-            if (!AddStateByName("Chase_Gyardian"))
-                Destroy(gameObject);
-            if (!AddStateByName("Shot_Gyardian"))
-                Destroy(gameObject);
-            if (!AddStateByName("RandamMove_Gyardian"))
-                Destroy(gameObject);
-            if (!AddStateByName("Guard_Gyardian"))
-                Destroy(gameObject);
-            if (!AddStateByName("CeackGuard_Gyardian"))
-                Destroy(gameObject);
+            //自動でクラス名を探して取得
+            foreach (AIState_Gyardian state in Enum.GetValues(typeof(AIState_Gyardian)))
+            {
+                // enum名からクラス名を組み立て
+                string className = $"{state}_Gyardian";
+                //存在していないクラスが指定されたら本体消滅
+                if (!AddStateByName(className))
+                {
+                    Debug.LogError("ステートの取得ができませんでした");
+                    Destroy(gameObject);
+                    return;
+                }
+            }
 
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<GyardianFairysAI>();
 
             // 守護位置を見つける
-            ChangeState(AIState_Gyardian.CeackGuard_Gyardian);
+            ChangeState(AIState_Gyardian.CeackGuard);
+        }
+
+        private void HandleDamaged()
+        {
+            ChangeState(AIState_Gyardian.Hit);
         }
 
         /// <summary>

@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace StateMachineAI
 {
-    public class CeackGuard_Fairys : State<GyardianFairysAI>
+    public class CeackGuard_Gyardian : State<GyardianFairysAI>
     {
         //コンストラクタ
-        public CeackGuard_Fairys(GyardianFairysAI owner) : base(owner) { }
+        public CeackGuard_Gyardian(GyardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -24,7 +21,7 @@ namespace StateMachineAI
                 bool isOccupied = false;
                 
                 //全てのフェアリーAIを走査して防衛ポイントに被りがないかチェック
-                foreach (var fairy in UnityEngine.Object.FindObjectsOfType<GyardianFairysAI>())
+                foreach (var fairy in Object.FindObjectsByType<GyardianFairysAI>(FindObjectsSortMode.None))
                 {
                     //もし自分ではないフェアリーと被っていればtureを返して終わる
                     if (fairy != owner && fairy.m_GuardPointer == guard.gameObject)
@@ -40,13 +37,13 @@ namespace StateMachineAI
                 {
                     //ガードポインタ―を対象のガードポイントに紐づけ
                     owner.m_GuardPointer = guard.gameObject;
-                    owner.ChangeState(AIState_Gyardian.Guard_Gyardian);
+                    owner.ChangeState(AIState_Gyardian.Guard);
                     return;
                 }
             }
 
             //空きがなければ攻撃しに行く
-            owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
+            owner.ChangeState(AIState_Gyardian.Shot);
         }
 
         public override void Exit()

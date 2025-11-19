@@ -38,6 +38,10 @@ namespace StateMachineAI
         [Header("最大連射数")]
         [Range(1f, 30f)]
         public int m_MaxRange = 5;
+        [Header("攻撃クールタイム")]
+        [Range(1f, 30f)]
+        public int m_CoolTime = 4;
+
 
         public Enemy m_Enemy;
         [HideInInspector]

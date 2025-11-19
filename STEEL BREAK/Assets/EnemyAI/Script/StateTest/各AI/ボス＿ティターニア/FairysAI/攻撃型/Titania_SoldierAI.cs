@@ -13,9 +13,10 @@ namespace StateMachineAI
     /// </summary>
     public enum AIState_Soldier
     {
-        Chase_Soldier,
-        Shot_Soldier,
-        RandamMove_Soldier,
+        Chase,
+        Shot,
+        RandamMove,
+        Hit,
     }
 
     public class SoldierFairysAI
@@ -25,7 +26,7 @@ namespace StateMachineAI
         public Transform m_Player;
         [Header("エネミーモデル")]
         public Transform m_EnemyModel;
-        [Header("射撃するためのコンポーネント")]
+        [Header("射撃するためのエネミーコンポーネント")]
         public Enemy m_Enemy;
         [Header("センターポイントの取得")]
         public GameObject m_CenterMarker;
@@ -47,6 +48,9 @@ namespace StateMachineAI
         [HideInInspector]
         //エージェントのディテクター
         public Detector m_Detector;
+        [HideInInspector]
+        private CharaBase charaBase;
+
 
         void Start()
         {
@@ -67,19 +71,35 @@ namespace StateMachineAI
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
             m_Detector = myAgent.GetComponent<Detector>();
 
+            //エネミーのスクリプトを取得
+            Enemy m_Enemy = GetComponent<Enemy>();
+            //キャラベース取得
+            charaBase = GetComponent<CharaBase>();
+            //キャラベースがあればイベント登録
+            if (charaBase != null)
+            {
+                // ダメージイベントを購読
+                charaBase.OnDamage += HandleDamaged;
+            }
+
+
             //存在していないクラスが指定されたら本体消滅
-            if (!AddStateByName("Chase_Soldier"))
-                Destroy(gameObject);
-            if (!AddStateByName("Shot_Soldier"))
-                Destroy(gameObject);
-            if (!AddStateByName("RandamMove_Soldier"))
-                Destroy(gameObject);
+            foreach (AIState_Soldier state in Enum.GetValues(typeof(AIState_Soldier)))
+            {
+                string className = $"{state}_Soldier"; // enum名からクラス名を組み立て
+                if (!AddStateByName(className))
+                {
+                    Debug.LogError("ステートの取得ができませんでした");
+                    Destroy(gameObject);
+                    return;
+                }
+            }
 
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<SoldierFairysAI>();
             
             // 追いかける
-            ChangeState(AIState_Soldier.Chase_Soldier);
+            ChangeState(AIState_Soldier.Chase);
         }
 
         protected override void Update()
@@ -93,6 +113,11 @@ namespace StateMachineAI
                 return;
             }
 
+        }
+
+        private void HandleDamaged()
+        {
+            ChangeState(AIState_Soldier.Hit);
         }
 
         /// <summary>

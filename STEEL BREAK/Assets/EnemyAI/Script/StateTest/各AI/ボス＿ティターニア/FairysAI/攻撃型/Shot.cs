@@ -16,8 +16,9 @@ namespace StateMachineAI
             //プレイヤーの方向に向く
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
 
-            //攻撃処理
-            Attack_Shots.Execute(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime);
+            // 右武器で攻撃（単発）
+            owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
+
             //待機時間
             m_TImes = 3.0f;
             //リジットボディがおかしくならないようにリセット
@@ -33,7 +34,7 @@ namespace StateMachineAI
             if (m_TImes <= 0)
             {
                 //ランダムに動く
-                owner.ChangeState(AIState_Soldier.RandamMove_Soldier);
+                owner.ChangeState(AIState_Soldier.RandamMove);
             }
             else
             {

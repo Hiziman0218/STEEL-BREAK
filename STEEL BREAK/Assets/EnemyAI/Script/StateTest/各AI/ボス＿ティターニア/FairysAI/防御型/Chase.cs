@@ -35,7 +35,7 @@ namespace StateMachineAI
             if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)
             {
                 // UŒ‚
-                owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
+                owner.ChangeState(AIState_Gyardian.Shot);
             }
         }
 

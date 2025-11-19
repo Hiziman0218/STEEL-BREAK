@@ -28,7 +28,7 @@ namespace StateMachineAI
             if (m_TImes <= 0)
             {
                 //ƒ‰ƒ“ƒ_ƒ€‚É“®‚­
-                owner.ChangeState(AIState_Gyardian.RandamMove_Gyardian);
+                owner.ChangeState(AIState_Gyardian.RandamMove);
             }
             else
             {

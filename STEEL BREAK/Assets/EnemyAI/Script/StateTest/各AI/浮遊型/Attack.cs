@@ -40,7 +40,7 @@ namespace StateMachineAI
             {
                 Debug.Log("射撃");
                 //射撃
-                Attack_Shot.Execute(owner.m_Enemy, owner.m_CoolDown);
+                owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
             }
 
             // 一定距離まで近づいたら離脱ステートへ

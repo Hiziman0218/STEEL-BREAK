@@ -1,101 +1,97 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
+using System;
+using System.Collections.Generic;
 
-//“¯ËŒ‚
 public class Attack_Shots : MonoBehaviour
 {
-    /// <summary>
-    /// ƒGƒlƒ~[ƒXƒNƒŠƒvƒgAƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒgA•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€‚Ì•b”
-    /// </summary>
-    /// <param name="m_Enemy">ƒGƒlƒ~[ƒXƒNƒŠƒvƒg</param>
-    /// <param name="m_CoolDown">ƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒg</param>
-    /// <param name="CoolTime">•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€‚Ì•b”</param>
-
-    //“¯ËŒ‚i’P”­j
-    public static void Execute(Enemy m_Enemy, CoolDown m_CoolDown, float CoolTime)
-    {
-
-        Debug.Log("ËŒ‚");
-
-        //ŠY“–‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ª‚ ‚ê‚Î
-        if (m_Enemy != null)
-        {
-            if (m_Enemy.weaponR != null)
-            {
-                m_Enemy.UseR();
-            }
-
-            if (m_Enemy.weaponL != null)
-            {
-                m_Enemy.UseL();
-            }
-
-        }
-
-        //ƒN[ƒ‹ƒ_ƒEƒ“İ’è
-        m_CoolDown.StartCoolDown("Attack", CoolTime);
-    }
+    ///ä½¿ã„æ–¹
+    /// StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
+    /// StartCoroutineä»˜ã‘ã‚‹ã®ã‚’å¿˜ã‚Œãªã„ã‚ˆã†ã«
 
     /// <summary>
-    /// “¯˜AË@ƒGƒlƒ~[ƒXƒNƒŠƒvƒg,ƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒg,•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€,Å‘å˜AË”,ËŒ‚ŠÔŠu
+    /// å…±é€šå°„æ’ƒå‡¦ç†
+    /// æ­¦å™¨é¸æŠãƒ­ã‚¸ãƒƒã‚¯ã‚’å¤–éƒ¨ã‹ã‚‰æ¸¡ã™ã“ã¨ã§ã€Œå³ã®ã¿ã€ã€Œå·¦ã®ã¿ã€ã€Œä¸¡æ–¹ã€ã€Œãƒ©ãƒ³ãƒ€ãƒ ã€ãªã©æŸ”è»Ÿã«å¯¾å¿œå¯èƒ½
+    /// shots ã¨ interval ã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã§å˜ç™ºï¼é€£å°„ã‚’çµ±ä¸€çš„ã«æ‰±ãˆã‚‹
     /// </summary>
-    /// <param name="m_Enemy">ƒGƒlƒ~[ƒXƒNƒŠƒvƒg</param>
-    /// <param name="m_CoolDown">ƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒg</param>
-    /// <param name="CoolTime">•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€</param>
-    /// <param name="MaxRange">Å‘å˜AË”</param>
-    /// <param name="interval">ËŒ‚ŠÔŠu</param>
-    public static IEnumerator ExecuteBurst(Enemy m_Enemy, CoolDown m_CoolDown, float CoolTime, int MaxRange, float interval)
+    /// <param name="enemy">ã‚¨ãƒãƒŸãƒ¼ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆ</param>
+    /// <param name="cd">ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ç®¡ç†ã‚¹ã‚¯ãƒªãƒ—ãƒˆ</param>
+    /// <param name="coolTime">æ”»æ’ƒå¾Œã«ä»˜ä¸ã™ã‚‹ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ ç§’æ•°</param>
+    /// <param name="weaponSelector">æ­¦å™¨é¸æŠãƒ­ã‚¸ãƒƒã‚¯ï¼ˆå³ãƒ»å·¦ãƒ»ä¸¡æ–¹ãƒ»ãƒ©ãƒ³ãƒ€ãƒ ãªã©</param>
+    /// <param name="shots">å°„æ’ƒå›æ•°ï¼ˆ1ãªã‚‰å˜ç™ºã€è¤‡æ•°ãªã‚‰é€£å°„</param>
+    /// <param name="interval">å°„æ’ƒé–“éš”ï¼ˆ0ãªã‚‰å³æ™‚é€£å°„ã€>0ãªã‚‰ä¸€å®šé–“éš”</param>
+    public static IEnumerator ExecuteAttack(
+        Enemy enemy,
+        CoolDown cd,
+        float coolTime,
+        Func<List<Action>, IEnumerable<Action>> weaponSelector,
+        int shots = 1,
+        float interval = 0f)
     {
-        int shots = Random.Range(1, MaxRange);
-        //˜AËˆ—
+        if (enemy == null) yield break;
+
+        // åˆ©ç”¨å¯èƒ½ãªæ­¦å™¨ã‚’ãƒªã‚¹ãƒˆåŒ–ï¼ˆå³æ­¦å™¨ãƒ»å·¦æ­¦å™¨ãŒå­˜åœ¨ã™ã‚Œã°è¿½åŠ ï¼‰
+        var weapons = new List<Action>();
+        if (enemy.weaponR != null) weapons.Add(enemy.UseR);
+        if (enemy.weaponL != null) weapons.Add(enemy.UseL);
+
+        if (weapons.Count == 0) yield break; // æ­¦å™¨ãŒãªã„å ´åˆã¯å‡¦ç†çµ‚äº†
+
+        // æŒ‡å®šå›æ•°åˆ†å°„æ’ƒ
         for (int i = 0; i < shots; i++)
         {
-            if (m_Enemy.weaponR != null)
+            // weaponSelector ã«ã‚ˆã£ã¦é¸ã°ã‚ŒãŸæ­¦å™¨ã‚’ç™ºå°„
+            foreach (var fire in weaponSelector(weapons))
             {
-                m_Enemy.UseR();
+                fire?.Invoke();
             }
 
-            if (m_Enemy.weaponL != null)
-            {
-                m_Enemy.UseL();
-            }
-
-            yield return new WaitForSeconds(interval); // ˜AËŠÔŠu
+            // å°„æ’ƒé–“éš”ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°å¾…æ©Ÿ
+            if (interval > 0f)
+                yield return new WaitForSeconds(interval);
         }
 
-        m_CoolDown.StartCoolDown("Attack", CoolTime);
+        // æœ€å¾Œã«ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ã‚’é–‹å§‹
+        cd.StartCoolDown("Attack", coolTime);
     }
 
     /// <summary>
-    /// ƒ‰ƒ“ƒ_ƒ€˜AË@ƒGƒlƒ~[ƒXƒNƒŠƒvƒg,ƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒg,•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€,Å‘å˜AË”,ËŒ‚ŠÔŠu
+    /// å³æ­¦å™¨ã®ã¿å˜ç™ºå°„æ’ƒ
     /// </summary>
-    /// <param name="m_Enemy">ƒGƒlƒ~[ƒXƒNƒŠƒvƒg</param>
-    /// <param name="m_CoolDown">ƒN[ƒ‹ƒ_ƒEƒ“ƒXƒNƒŠƒvƒg</param>
-    /// <param name="CoolTime">•t—^‚·‚éƒN[ƒ‹ƒ^ƒCƒ€</param>
-    /// <param name="MaxRange">Å‘å˜AË”</param>
-    /// <param name="interval">ËŒ‚ŠÔŠu</param>
-    public static IEnumerator ExecuteRandomBurst(Enemy m_Enemy, CoolDown m_CoolDown, float CoolTime, int MaxRange, float interval)
-    {
-        int shots = Random.Range(1, MaxRange);
+    public static IEnumerator ShotR(Enemy e, CoolDown cd, float ct)
+        => ExecuteAttack(e, cd, ct, weapons => new[] { weapons[0] });
 
-        for (int i = 0; i < shots; i++)
+    /// <summary>
+    /// å·¦æ­¦å™¨ã®ã¿å˜ç™ºå°„æ’ƒ
+    /// </summary>
+    public static IEnumerator ShotL(Enemy e, CoolDown cd, float ct)
+        => ExecuteAttack(e, cd, ct, weapons => new[] { weapons[weapons.Count - 1] });
+
+    /// <summary>
+    /// ä¸¡æ­¦å™¨åŒæ™‚å°„æ’ƒï¼ˆå˜ç™ºï¼‰
+    /// </summary>
+    public static IEnumerator ShotBoth(Enemy e, CoolDown cd, float ct)
+        => ExecuteAttack(e, cd, ct, weapons => weapons);
+
+    /// <summary>
+    /// ãƒ©ãƒ³ãƒ€ãƒ æ­¦å™¨å°„æ’ƒï¼ˆé€£å°„å¯¾å¿œï¼‰
+    /// - shots ã¨ interval ã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã§ã€Œãƒ©ãƒ³ãƒ€ãƒ é€£å°„ã€ãŒå¯èƒ½
+    /// </summary>
+    public static IEnumerator ShotRandom(Enemy e, CoolDown cd, float ct, int shots, float interval)
+        => ExecuteAttack(e, cd, ct, weapons =>
         {
-            //g—p‚·‚é•Ší‚ğŒˆ‚ß‚é
-            int choice = Random.Range(0, 2);
+            int choice = UnityEngine.Random.Range(0, weapons.Count);
+            return new[] { weapons[choice] };
+        }, shots, interval);
 
-            if (choice == 0 && m_Enemy.weaponR != null)
-            {
-                m_Enemy.UseR();
-            }
-            else if (choice == 1 && m_Enemy.weaponL != null)
-            {
-                m_Enemy.UseL();
-            }
-
-            yield return new WaitForSeconds(interval);
-        }
-
-        m_CoolDown.StartCoolDown("Attack", CoolTime);
+    /// <summary>
+    /// ä¸¡æ­¦å™¨ãƒãƒ¼ã‚¹ãƒˆå°„æ’ƒ
+    /// - 1ã€œmaxShots ã®ç¯„å›²ã§ãƒ©ãƒ³ãƒ€ãƒ å›æ•°é€£å°„
+    /// - ä¸¡æ­¦å™¨ã‚’åŒæ™‚ã«æ’ƒã¤
+    /// </summary>
+    public static IEnumerator ShotBurst(Enemy e, CoolDown cd, float ct, int maxShots, float interval)
+    {
+        int shots = UnityEngine.Random.Range(1, maxShots);
+        return ExecuteAttack(e, cd, ct, weapons => weapons, shots, interval);
     }
-
 }

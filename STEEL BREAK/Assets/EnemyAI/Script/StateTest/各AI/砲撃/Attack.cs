@@ -47,7 +47,7 @@ namespace StateMachineAI
                     // angleThresholdの角度内なら「狙えている」と判定＆攻撃可能距離なら
                     if (angle < angleThreshold && distance <= owner.m_AttackDistance)
                     {
-                        Attack_Shots.Execute(owner.m_Enemy, owner.m_CoolDown, 4f);
+                        owner.StartCoroutine(Attack_Shots.ShotBoth(owner.m_Enemy, owner.m_CoolDown, 4f));
                     }
                 }
             }

@@ -52,9 +52,7 @@ namespace StateMachineAI
         {
             isAttacking = true;
             // ここで並行実行 → AttackRoutine はすぐ終わる
-            owner.StartCoroutine(
-                Attack_Shots.ExecuteRandomBurst(owner.m_Enemy, owner.m_CoolDown, 4f, owner.m_MaxRange, 0.5f)
-            );
+            owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime, owner.m_MaxRange, 0.2f));
             // 少し待ってからフラグを解除（クールダウン終了に合わせる）
             yield return new WaitForSeconds(4f);
             isAttacking = false;

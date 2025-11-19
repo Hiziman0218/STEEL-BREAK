@@ -30,12 +30,12 @@ namespace StateMachineAI
                 if (chance < 0.3f)
                 {
                     // 30%の確率で射撃
-                    owner.ChangeState(AIState_Gyardian.Shot_Gyardian);
+                    owner.ChangeState(AIState_Gyardian.Shot);
                 }
                 else if (chance < 0.6f)
                 {
                     // 30%で追いかける
-                    owner.ChangeState(AIState_Gyardian.Chase_Gyardian);
+                    owner.ChangeState(AIState_Gyardian.Chase);
                 }
                 else
                 {
