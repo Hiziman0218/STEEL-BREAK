@@ -37054,7 +37054,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &1036210370
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -160601,7 +160601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &7658390494691276944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160619,6 +160619,7 @@ MonoBehaviour:
   m_Enemy: {fileID: 0}
   m_CenterMarker: {fileID: 0}
   m_AttackDistance: 10
+  m_MaxRange: 8
   m_CoolTime: 1
   m_CoolDown: {fileID: 0}
   m_Rigidbody: {fileID: 0}

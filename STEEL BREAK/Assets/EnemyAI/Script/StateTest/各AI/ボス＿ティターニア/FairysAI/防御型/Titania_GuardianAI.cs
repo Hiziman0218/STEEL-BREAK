@@ -37,7 +37,10 @@ namespace StateMachineAI
         public GameObject m_CenterMarker;
 
         [Header("攻撃可能距離")]
-        public float m_AttackDistance = 10;
+        public float m_AttackDistance = 20;
+        [Header("最大連射数")]
+        [Range(1f, 30f)]
+        public int m_MaxRange = 8;
         [Header("攻撃のクールタイム")]
         [Range(1f, 10f)]
         public float m_CoolTime = 4f;

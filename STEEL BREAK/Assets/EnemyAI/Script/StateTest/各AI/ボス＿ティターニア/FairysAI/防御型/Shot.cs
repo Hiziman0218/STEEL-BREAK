@@ -6,6 +6,7 @@ namespace StateMachineAI
     public class Shot_Gyardian : State<GyardianFairysAI>
     {
         public float m_TImes;
+        private int shots;
         //コンストラクタ
         public Shot_Gyardian(GyardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
@@ -23,6 +24,7 @@ namespace StateMachineAI
             owner.transform.LookAt(owner.m_Player);
 
             //攻撃
+            //owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
 
 
             if (m_TImes <= 0)

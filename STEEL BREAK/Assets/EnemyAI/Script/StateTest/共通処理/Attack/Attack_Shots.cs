@@ -18,7 +18,7 @@ public class Attack_Shots : MonoBehaviour
     /// <param name="cd">クールダウン管理スクリプト</param>
     /// <param name="coolTime">攻撃後に付与するクールタイム秒数</param>
     /// <param name="weaponSelector">武器選択ロジック（右・左・両方・ランダムなど</param>
-    /// <param name="shots">射撃回数（1なら単発、複数なら連射</param>
+    /// <param name="shots">射撃する回数（1なら単発、複数なら連射</param>
     /// <param name="interval">射撃間隔（0なら即時連射、>0なら一定間隔</param>
     public static IEnumerator ExecuteAttack(
         Enemy enemy,
