@@ -32,7 +32,7 @@ public class SpawnFairys_T : MonoBehaviour
             //Šm—¦‚ÅUŒ‚Œ^‚©–hŒäŒ^‚ğ‘Ioi–hŒäŒ^‚ÍãŒÀ‚ğİ‚¯‚Ä‚¢‚éj
             if (Random.value < m_SpawnPer && spawnedDefensEnemies.Count < m_MaxDefensFairys)
             {
-                var comp = enemy.AddComponent<GyardianFairysAI>();
+                var comp = enemy.AddComponent<GuardianFairysAI>();
                 spawnedDefensEnemies.Add(enemy);
             }
             else

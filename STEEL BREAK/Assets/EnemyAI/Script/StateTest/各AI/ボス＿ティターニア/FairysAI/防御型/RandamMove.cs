@@ -3,10 +3,10 @@
 namespace StateMachineAI
 {
     //ランダムな移動
-    public class RandamMove_Gyardian : State<GyardianFairysAI>
+    public class RandamMove_Guardian : State<GuardianFairysAI>
     {
         //コンストラクタ
-        public RandamMove_Gyardian(GyardianFairysAI owner) : base(owner) { }
+        public RandamMove_Guardian(GuardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -30,12 +30,12 @@ namespace StateMachineAI
                 if (chance < 0.3f)
                 {
                     // 30%の確率で射撃
-                    owner.ChangeState(AIState_Gyardian.Shot);
+                    owner.ChangeState(AIState_Guardian.Shot);
                 }
                 else if (chance < 0.6f)
                 {
                     // 30%で追いかける
-                    owner.ChangeState(AIState_Gyardian.Chase);
+                    owner.ChangeState(AIState_Guardian.Chase);
                 }
                 else
                 {
@@ -51,8 +51,15 @@ namespace StateMachineAI
         }
         public void Chak()
         {
-            
-            owner.m_CenterMarker.transform.Translate(new Vector3(10, 10, 10));            
+            // 中心を基準にランダムな位置を決める
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-owner.m_AttackDistance, owner.m_AttackDistance), //ｘ軸
+                Random.Range(-3, 3),                                            // y軸（高さ）
+                Random.Range(-owner.m_AttackDistance, owner.m_AttackDistance)  //ｚ軸
+            );
+
+            //次の移動場所を指定
+            owner.m_CenterMarker.transform.position = owner.m_Player.position + randomOffset;
         }
     }
 }

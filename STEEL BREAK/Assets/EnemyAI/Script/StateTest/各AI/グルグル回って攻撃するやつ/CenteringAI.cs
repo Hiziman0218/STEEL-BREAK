@@ -53,8 +53,6 @@ namespace StateMachineAI
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
-        [HideInInspector]
-        private CharaBase charaBase;
 
         void Start()
         {
@@ -71,13 +69,11 @@ namespace StateMachineAI
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();
-            //キャラベース取得
-            charaBase = GetComponent<CharaBase>();
-            //キャラベースがあればイベント登録
-            if (charaBase != null)
+            //エネミーがあればその中のキャラベースを参照してイベント登録
+            if (m_Enemy != null)
             {
                 // ダメージイベントを購読
-                charaBase.OnDamage += HandleDamaged;
+                m_Enemy.OnDamage += HandleDamaged;
             }
 
             //アタッチしているスプリクトの自動取得

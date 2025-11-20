@@ -3,26 +3,18 @@ using UnityEngine;
 namespace StateMachineAI
 {
     //ティターニアを守るフェアリー
-    public class Chase_Gyardian : State<GyardianFairysAI>
+    public class Chase_Guardian : State<GuardianFairysAI>
     {
         //コンストラクタ
-        public Chase_Gyardian(GyardianFairysAI owner) : base(owner) { }
+        public Chase_Guardian(GuardianFairysAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
             Debug.Log("追いかける");
 
             //追従するターゲットの変更
-            ChangeTarget.Change(owner.m_CenterMarker.transform, owner.myAgent);
+            ChangeTarget.Change(owner.m_Player.transform, owner.myAgent);
 
-            int X = Random.Range(-1, 1);
-            int Y = Random.Range(-1, 1);
-            if (X == 0) X = 1;
-            if (Y == 0) Y = 1;
-
-            Vector3 POS = owner.m_Player.position +
-                new Vector3((float)X * Random.Range(1.0f, 10.0f), 0, (float)Y * Random.Range(1.0f, 10.0f));
-            owner.m_CenterMarker.transform.position = POS;
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -35,7 +27,7 @@ namespace StateMachineAI
             if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)
             {
                 // 攻撃
-                owner.ChangeState(AIState_Gyardian.Shot);
+                owner.ChangeState(AIState_Guardian.Shot);
             }
         }
 
