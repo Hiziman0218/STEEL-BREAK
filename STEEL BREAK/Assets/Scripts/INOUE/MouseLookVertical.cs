@@ -16,7 +16,7 @@ public class MouseLookVertical : MonoBehaviour
     public Transform m_CameraTransform; // カメラのTransform
 
     [Header("カメラの基準位置")]
-    public Vector3 cameraBaseLocalOffset = new Vector3(0f, 1.5f, -4f); // プレイヤーから見たカメラの初期オフセット
+    public Vector3 cameraBaseLocalOffset = new Vector3(0f, 2.5f, -5f); // プレイヤーから見たカメラの初期オフセット
 
     private float currentYOffset = 0f;
 

@@ -184,7 +184,7 @@ Transform:
   m_GameObject: {fileID: 7581994491196790045}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: 0.644}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -523,6 +523,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GazingPoint: {fileID: 292033462318283121}
   m_Target: {fileID: 3626535836731788290}
+  desiredDistance: 5
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &6673312967268915989 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8564198371530048428, guid: 8e595ea6564509142986c30c7cd97ad7, type: 3}
