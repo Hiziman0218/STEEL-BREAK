@@ -215,13 +215,14 @@ public class Movement : MonoBehaviour
         if (player.IsFireLaser())
         {
             // 各種フラグをリセットして移動処理を打ち切る
+            /*
             jumpPressed = false;
             jumpHoldTimer = 0f;
             hasStartedAscend = false;
             isFalling = false;
             isDashing = false;
             dashTimer = 0f;
-            isBoosting = false;
+            isBoosting = false;*/
             return true;
         }
 

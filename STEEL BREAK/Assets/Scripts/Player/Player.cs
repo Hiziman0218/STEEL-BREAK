@@ -201,10 +201,10 @@ public class Player : PlayerBase
         }
     }
 
-    // LateUpdate にカメラ回転を移動 -> プレイヤー等の移動が終わった後に処理することで
-    // カメラ側のチラつきを軽減できます
     void LateUpdate()
     {
+        //レーザー使用中でなければ、ターゲットの方へ向く
+        if(!IsFireLaser())
         LookAtTarget();
     }
 

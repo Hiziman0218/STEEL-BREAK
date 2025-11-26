@@ -124,23 +124,22 @@ public class Weapon_Back : MonoBehaviour
     }
 
     /// <summary>
-    /// 武装自体を上下左右に制限付きで回転させる（ローカル空間で角度制限と補間を行う）
+    /// 武装自体を上下左右に制限付きで回転させる(ローカル空間で角度制限と補間を行う)
     /// - 重要: 目標方向はまずワールド→親のローカル空間に変換して扱うことで座標系の混乱を防ぐ
     /// </summary>
     private void RotateWeaponBody()
     {
-        // safety
+        //ロックオンクラスまたはターゲットがいない場合、以降の処理を行わない
         if (m_lockOn == null || m_lockOn.CurrentTarget == null) return;
-        if (transform.parent == null) return; // 親がないとローカル基準が不明
+        //親がいない場合、以降の処理を行わない
+        if (transform.parent == null) return;
 
-        // World-space direction to target (from weapon origin)
         Vector3 worldDir = (m_targetPos - transform.position);
         float worldDirMag = worldDir.magnitude;
-        if (worldDirMag < 0.0001f) return; // ほぼ同位置なら回転不要
+        if (worldDirMag < 0.0001f) return;
 
-        worldDir /= worldDirMag; // normalize
+        worldDir /= worldDirMag;
 
-        // --- ここが重要 ---
         // 武器の回転制御は "親のローカル空間" で行う（transform.localRotation に制御を入れるため）
         // worldDir を親ローカル空間へ変換する
         Vector3 localDir = transform.parent.InverseTransformDirection(worldDir);
@@ -224,6 +223,7 @@ public class Weapon_Back : MonoBehaviour
         if (m_isTrigger) return;
 
         //フラグ設定(使わない機能のフラグは更新しない)
+        //武器回転はプレイヤーのTransformに影響を与えないので関係ない
         m_isTrigger = true;
         if(m_usePlayerRotate) m_isRotated = false;
         if(m_useDeceleration) m_isDecelerated = false;
@@ -237,12 +237,11 @@ public class Weapon_Back : MonoBehaviour
 
         //敵方向の目標回転を計算
         Vector3 dir = (m_targetPos - transform.root.position).normalized;
-        //dir.y = 0f; //水平方向だけ向くように
         m_targetRot = Quaternion.LookRotation(dir);
     }
 
     /// <summary>
-    /// 回転機能を使うかを取得
+    /// プレイヤー回転機能を使うかを取得
     /// </summary>
     /// <returns></returns>
     public bool GetUseRotate()

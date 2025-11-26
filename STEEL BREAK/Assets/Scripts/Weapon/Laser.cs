@@ -6,6 +6,7 @@ public class Laser : BulletBase
     [Header("レーザー設定")]
     [SerializeField] private float m_damageInterval = 0.3f; //ダメージ間隔
     [SerializeField] private Collider m_hitCollider;        //自身の判定を除外する場合に設定
+    [SerializeField] private Transform m_parent;            //発射時に自身の親にしたい部分
 
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
     private Player m_player; //プレイヤー
@@ -23,8 +24,18 @@ public class Laser : BulletBase
                 transform.localRotation = Quaternion.identity;
             }
         }
+        //銃が無ければ(敵などの場合)
+        else
+        {
+            if(m_parent != null)
+            {
+                transform.SetParent(m_parent);
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+            }   
+        }
 
-        //プレイヤーにレーザー使用を通知
+        //使用者がプレイヤーなら、プレイヤーにレーザー使用を通知
         m_player = transform.root.GetComponent<Player>();
         if(m_player != null)
         {

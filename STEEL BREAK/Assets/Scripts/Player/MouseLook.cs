@@ -19,8 +19,11 @@ public class MouseLook : MonoBehaviour
 
     void Update()
     {
-        //ターゲットがいる場合は以降の処理を行わない
-        if (m_lockOn != null && m_lockOn.CurrentTarget != null) return;
+        //プレイヤーがレーザー使用中以外で、ターゲットがいる場合は以降の処理を行わない
+        if(m_player != null && !m_player.IsFireLaser())
+        {
+            if (m_lockOn != null && m_lockOn.CurrentTarget != null) return;
+        }
 
         float mouseX = Input.GetAxis("Mouse X");
         float rotationSpeed = mouseSensitivity * Time.deltaTime;

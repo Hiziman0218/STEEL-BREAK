@@ -862,14 +862,6 @@ MonoBehaviour:
   airResistance: 10
   airAssistMultiplier: 0.18
   cameraController: {fileID: 3083660886234470096}
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  groundSphereRadius: 0.05
-  groundCheckDistance: 0.05
-  groundNormalMinY: 0.65
-  groundCheckOriginYOffset: 0.02
-  laserExitGrace: 0.15
 --- !u!114 &5742647039142411501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -883,7 +875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 30
-  maxAngle: 100
+  maxAngle: 120
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
