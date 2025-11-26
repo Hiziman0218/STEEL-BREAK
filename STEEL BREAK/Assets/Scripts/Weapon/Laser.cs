@@ -8,8 +8,8 @@ public class Laser : BulletBase
     [SerializeField] private Collider m_hitCollider;        //自身の判定を除外する場合に設定
                                                             
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
-    private Player m_player; //プレイヤー
-    private Transform m_parent;            //発射時に自身の親にしたい部分
+    private Player m_player;     //プレイヤー
+    private Transform m_parent;  //発射時に自身の親にしたい部分
 
     private void Start()
     {

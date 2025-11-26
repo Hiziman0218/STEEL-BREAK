@@ -76,6 +76,13 @@ public class EnemyGun : MonoBehaviour
             bullet.SetDamage(m_status.GetDamage());
             bullet.SetSpeed(m_status.GetSpeed());
 
+            //レーザー専用の処理
+            Laser laser = bullet.GetComponent<Laser>();
+            if (laser != null)
+            {
+                laser.SetParent(transform);
+            }
+
             //弾の初速を velocity で設定
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
