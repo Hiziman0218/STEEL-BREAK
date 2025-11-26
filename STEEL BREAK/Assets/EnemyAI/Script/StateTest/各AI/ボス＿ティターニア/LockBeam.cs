@@ -16,7 +16,7 @@ namespace StateMachineAI
         public override void Stay()
         {
             //プレイヤーを緩くロックオン
-
+            PlayerLookAt.SoftLock(owner.transform, owner.m_Player, owner.m_turnsmooth);
             //ビーム発射
 
         }

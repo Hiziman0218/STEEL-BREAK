@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damageInterval: 0.3
   m_hitCollider: {fileID: 4866992731984907631}
+  m_parent: {fileID: 0}
 --- !u!95 &2001632698458274094
 Animator:
   serializedVersion: 7
