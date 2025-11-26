@@ -1,62 +1,96 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Movement: プレイヤーの移動（地上 / 空中 / ホバー / ダッシュ / 長押しで徐々に落下）を扱うコンポーネント
+/// 要点：
+/// - Rigidbody を用いて物理ベースに近い移動を行う（rb.linearVelocity の直接操作と AddForce の併用）
+/// - 空中は Rigidbody.drag = 0 の前提で、コード側で擬似的な抵抗と補間を入れて操作性を確保している
+/// - Inspector のシリアライズフィールドで操作感を調整できるようにしている（airControl 等）
+/// - 今回追加した機能：「長押しで徐々に落下（ホバー下降）」
+///   - Fall（下降）入力を一定時間長押しすると「ホバー下降（垂直速度を固定してゆっくり落ちる）」に入る
+///   - ホバー下降中は重力を切り、垂直速度を descendSpeed に固定（必要に応じて boost による倍率がかかる）
+/// 注意：
+/// - Rigidbody の設定（mass, drag, interpolation 等）や Ground の PhysicMaterial によって挙動が大きく変わるので、
+///   チューニングは必ず複数状況（小ジャンプ / 高滞空 / 着地直後 / ダッシュ）で確認してください。
+/// </summary>
 public class Movement : MonoBehaviour
 {
     [Header("移動/ブレーキ設定")]
-    [SerializeField] private float moveForce = 10f; //地上・空中ともに左右前後入力を受け付ける力
-    [SerializeField] private float maxSpeed = 5f;   //地上での最高水平速度
-    [SerializeField] private float brakePower = 5f; //地上の慣性ブレーキ
+    [SerializeField, Tooltip("入力に対して加える基礎力(地上・空中ともに使う補助的な力)")] private float moveForce = 10f;
+    [SerializeField, Tooltip("地上での水平最高速度")] private float maxSpeed = 5f;
+    [SerializeField, Tooltip("地上で入力がないときに慣性を減らすためのブレーキ係数")] private float brakePower = 5f;
 
     [Header("ダッシュ/ブースト設定")]
-    [SerializeField] private float dashSpeed = 20f;            //ダッシュ時に水平速度をいきなり上書き
-    [SerializeField] private float dashDuration = 0.1f;        //ダッシュ継続時間
-    [SerializeField] private float dashConsumptionRate = 30f;  //ダッシュ時のブースト消費
-    [SerializeField] private float boostMultiplier = 2.0f;     //ブースト倍率
-    [SerializeField] private float boostConsumptionRate = 20f; //ブースト維持時に減らす量
-    [SerializeField] private float maxBoost = 100f;            //最大ブースト量
-    [SerializeField] private float boostRegenRate = 10f;       //ブースト回復速度
+    [SerializeField, Tooltip("ダッシュ時に水平速度を一気に上書きする速度")] private float dashSpeed = 20f;
+    [SerializeField, Tooltip("ダッシュ継続時間(秒)")] private float dashDuration = 0.1f;
+    [SerializeField, Tooltip("ダッシュ時に消費するブースト量(/s 用ではなく消費率に使用)")] private float dashConsumptionRate = 30f;
+    [SerializeField, Tooltip("ブースト状態での速度倍率(地上・空中で適用場所あり)")] private float boostMultiplier = 2.0f;
+    [SerializeField, Tooltip("ブーストを維持する際の消費速度(/s)")] private float boostConsumptionRate = 20f;
+    [SerializeField, Tooltip("ブーストの最大値")] private float maxBoost = 100f;
+    [SerializeField, Tooltip("ブースト回復速度(/s)")] private float boostRegenRate = 10f;
 
     [Header("上昇/滞空/落下設定")]
-    [SerializeField] private float ascendSpeed = 5f;               //長押し時の上昇速度
-    [SerializeField] private float initialAscendSpeed = 20f;       //単押しで瞬間的に与える初速
-    [SerializeField] private float ascendBrake = 10f;              //ホバー中の垂直慣性ブレーキ
-    [SerializeField] private float shortAscendThreshold = 0.15f;   //単押しと長押しのしきい値
-    [SerializeField] private float ascendConsumptionRate = 15f;    //上昇中のブースト消費速度(短押し含む)z
+    [SerializeField, Tooltip("長押し(ホバー)時の上昇速度(y方向)")] private float ascendSpeed = 5f;
+    [SerializeField, Tooltip("短押しで与える瞬間上昇(ジャンプ的な即時速度上書き)")] private float initialAscendSpeed = 20f;
+    [SerializeField, Tooltip("上昇中の垂直減速(ホバーに入る際のブレーキ)")] private float ascendBrake = 10f;
+    [SerializeField, Tooltip("短押し/長押し判定の閾値(秒)")] private float shortAscendThreshold = 0.15f;
+    [SerializeField, Tooltip("上昇中のブースト消費(短押し時の即時消費も兼ねる)")] private float ascendConsumptionRate = 15f;
 
-    [Header("落下設定")]
-    [SerializeField, Tooltip("落下時の重力倍率（1 = デフォルト、>1 で強く落下します）")]
-    private float fallMultiplier = 2.5f;
-    [SerializeField, Tooltip("最大落下速度（正の値、m/s）")]
+    [Header("下降/落下設定")]
+    [SerializeField, Tooltip("落下時の重力倍率(1 = デフォルト、>1 なら速く落ちる)")]
+    private float fallMultiplier = 2.5f;    //落下を早める倍率(経験的に 1.5〜3 が調整範囲)
+    [SerializeField, Tooltip("最大落下速度(m/s) 速くしすぎると衝突時の挙動が荒れるので注意")]
     private float maxFallSpeed = 20f;
+    [SerializeField, Tooltip("長押しホバーでの下降速度(絶対値)")]
+    private float descendSpeed = 5f;
 
-    [SerializeField] private Camera cameraController;    //Inspector でセット
+    // --- 空中操作チューニング ---
+    [Header("空中操作チューニング")]
+    [SerializeField, Tooltip("空中での水平速度補間係数(大きいほど目標速度に速く近づく)")]
+    private float airControl = 12f;         //推奨: 5〜20 MoveTowards にして使う場合は「m/s per second」相当で考える
+    [SerializeField, Tooltip("空中で目指す水平速度(通常は地上と同程度)")]
+    private float airMaxSpeed = 5f;         //地上 maxSpeed と揃える 空中で速くしたければ大きくする
+    [SerializeField, Tooltip("空中擬似抵抗(速度に比例して減速する 小さめに設定)")]
+    private float airResistance = 0.6f;    //drag=0 の代替 0 にすると擬似抵抗なし(慣性強め)
+    [SerializeField, Tooltip("入力補助の乗数(加速補助用 小さい値が自然)")]
+    private float airAssistMultiplier = 0.12f; //補助力の割合(0.05〜0.3 程度を試す)
 
-    //参照
-    private Rigidbody rb;       //リジッドボディ
-    private InputManager input; //入力受け取りクラス
-    private Player player;      //プレイヤー
+    [SerializeField, Tooltip("Inspectorでセット nullならCamera.mainを使う")] private Camera cameraController;
 
-    //ダッシュ／ブースト関連
-    private bool isDashing = false;        //ブーストダッシュしているか
-    private float dashTimer = 0f;          //ブーストダッシュの残り時間
-    private bool dashHasDirection = true;  //ダッシュ開始時に方向入力があったか
-    private bool isBoosting = false;       //ブーストしているか（維持用）
-    private float boost;                   //残りブースト
+    // ------------- 参照 -------------
+    private Rigidbody rb;       // Rigidbody コンポーネント参照（物理挙動を操作）
+    private InputManager input; // 入力管理コンポーネント参照（外部）
+    private Player player;      // プレイヤー固有の管理クラス参照（レーザー使用判定等）
 
-    public float GetMaxBoost => maxBoost; //最大ブースト(読み取り専用)
-    public float GetBoost => boost;       //残りブースト(読み取り専用)
-    public bool IsBoosting => isBoosting; //ブーストしているか
+    // ------------- ダッシュ／ブースト状態 -------------
+    private bool isDashing = false;        // ダッシュ中フラグ
+    private float dashTimer = 0f;          // ダッシュ残時間
+    private bool dashHasDirection = true;  // ダッシュ開始時に入力があったか
+    private bool isBoosting = false;       // ブースト（維持）フラグ
+    private float boost;                   // 現在のブースト量
 
-    //上昇・滞空・落下関連
-    private bool jumpPressed = false;      //ジャンプボタンを押しているか
-    private float jumpHoldTimer = 0f;      //ジャンプボタンを押し始めてからの経過時間
-    private bool hasStartedAscend = false; //上昇を開始したか
-    private bool isFalling = false;        //自由落下中かどうか
+    // 公開用の読み取りプロパティ
+    public float GetMaxBoost => maxBoost;
+    public float GetBoost => boost;
+    public bool IsBoosting => isBoosting;
 
-    //地面判定用のレイキャスト設定
+    // ------------- ジャンプ／滞空／下降（長押し） -------------
+    private bool jumpPressed = false;        // ジャンプ入力を押している最中か
+    private float jumpHoldTimer = 0f;        // ジャンプ押下継続時間（秒）
+    private bool hasStartedAscend = false;   // ホバー（滞空）状態に移行したか
+    private bool isFalling = false;          // 強制落下状態かどうか（入力やブースト切れで強制的に落下するフラグ）
+
+    // ↓ ここから「長押しで徐々に落下（ホバー下降）」に関わる変数群
+    private bool fallPressed = false;        // 下降キーを押している最中か
+    private float fallHoldTimer = 0f;        // 下降長押し時間（秒）
+    private bool hasStartedDescend = false;  // ホバー下降に入ったか
+    // ↑ これらのフラグで「短押し = 通常落下」「長押し = ホバー下降」を区別する
+
+    private float jumpGraceTimer = 0f;       // ジャンプ直後の接地判定無視時間
+    private const float jumpGraceDuration = 0.2f; // 推奨値: 0.05〜0.15
+
+    // 地面判定用 Raycast の長さ（必要に応じて Collider の中心や高さに合わせて調整）
     private float groundCheckDistance = 0.1f;
-
-    public bool m_externalControl = false; //外部管理用フラグ
 
     void Awake()
     {
@@ -64,7 +98,8 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// Awake中の参照初期化＆初期ブースト設定
+    /// コンポーネント参照の初期化とブーストの初期値設定
+    /// - Awake で一度だけ呼ぶ
     /// </summary>
     private void InitializeReferences()
     {
@@ -72,115 +107,114 @@ public class Movement : MonoBehaviour
         input = GetComponent<InputManager>();
         player = GetComponent<Player>();
         boost = maxBoost;
+
+        // airMaxSpeed が 0 以下なら地上の maxSpeed をデフォルトにする（Inspectorで上書き推奨）
+        if (airMaxSpeed <= 0f) airMaxSpeed = maxSpeed;
     }
 
     void Update()
     {
-        //カメラ参照の確保(Inspector未設定時はMainを使う)
+        // 非物理部分（入力判定やフラグ更新）は Update で行う（毎フレーム）
         EnsureCameraAssigned();
 
-        //レーザー使用中なら以降の処理を行わない
+        // レーザーなどで移動を中断する場合はそれを優先
         if (ShouldSkipMovementByLaser())
             return;
 
-        //ジャンプ開始入力処理(押した瞬間)
+        // ジャンプ入力関連（押した瞬間／長押し計測／離した瞬間）を順に処理
         HandleJumpStart();
-
-        //ジャンプ長押しの計測(押し続けている間)
         UpdateJumpHoldTimer();
-
-        //ジャンプ離し(短押し判定やホバーへの遷移)
         HandleJumpRelease();
 
-        //落下入力(強制落下など)
-        HandleFallInput();
+        // 下降（Fall）入力関連の処理（長押しでのホバー下降をここで扱う）
+        HandleFallStart();
+        UpdateFallHoldTimer();
+        HandleFallRelease();
 
-        //ブーストダッシュの開始(瞬間)
+        // ダッシュ開始（瞬間判定）
         TryStartDash();
 
-        //ダッシュタイマーの減算と終了判定
+        // ダッシュのタイマー減算（Updateで良い）
         UpdateDashTimer();
 
-        //最終的な「維持用ブーストフラグ」を更新(Updateで上書きしている元の挙動を保持)
+        // ブースト維持フラグを最終決定（入力ベース）
         UpdateBoostingFlag();
 
-        //ブーストが無い場合は強制的に落下
+        // ブーストが無くなれば強制落下（状態更新）
         ForcedFall();
+
+        if (jumpGraceTimer > 0f)
+            jumpGraceTimer -= Time.deltaTime;
     }
 
-    /// <summary>
-    /// FixedUpdateでは物理処理を順序どおりに行う。
-    /// - ブースト回復（非消費中）
-    /// - 接地時の重力リセット
-    /// - ダッシュ処理（処理後リターン）
-    /// - ホバー処理（処理後リターン）
-    /// - 空中通常処理（処理後リターン）
-    /// - 地上移動処理
-    /// - 最後に水平速度制限を適用
-    /// </summary>
     void FixedUpdate()
     {
+        // 物理挙動は FixedUpdate で処理する（AddForce / velocity 変更など）
         if (StopMovementIfLaserActive())
             return;
 
-        //ブースト回復
         RegenerateBoostIfNeeded();
-
-        //地上判定が取れれば(上昇中でない)重力やフラグをリセット
         GroundCheckAndResetGravity();
 
+        // カメラ基準の入力方向（ワールド座標）を取得
         Vector3 dir = GetRelativeInputDirection();
+
+        // 現在の水平速度（XZ 平面のみ）
         Vector3 velH = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        //ダッシュ中はブースト消費だけして終了
+        // ダッシュ処理（継続中は他の移動処理をスキップ）
         if (ProcessDash())
             return;
 
-        //ホバー(長押し上昇)処理(条件満たせば処理して終了)
+        // ホバー処理（長押しによる上昇維持）を優先
         if (HandleHover(dir))
             return;
 
-        //空中通常 / 落下中の処理(条件満たせば処理して終了)
+        // ホバー下降（長押しでゆっくり落ちる）を優先（上の上昇ホバーと並列）
+        if (HandleHoverDescend(dir))
+            return;
+
+        // 空中（上昇/落下）処理。条件を満たすなら処理して FixedUpdate を終了
         if (HandleAirMovement(dir))
             return;
 
-        //地上移動 or ブースト中移動
+        // 地上移動処理
         HandleGroundMovement(dir, velH);
 
-        //地上での水平速度制限
+        // 最後に水平速度制限（地上/空中で別扱いしてもよい）
         ApplyHorizontalSpeedLimit();
     }
 
     // ----------------------------
-    // Update 内の細かい処理
+    // Update 内の細かい処理（各種入力・フラグ管理）
     // ----------------------------
     private void ForcedFall()
     {
-        // 滞空中かつブースト切れなら強制落下へ
+        // 滞空（hasStartedAscend）中にブーストが枯渇している、かつまだ落下していないなら強制落下へ
         if (hasStartedAscend && !isFalling && boost <= 0f && !IsGrounded())
         {
             isFalling = true;
             hasStartedAscend = false;
             jumpPressed = false;
-            rb.useGravity = true;
+            rb.useGravity = true; // 重力復帰
         }
     }
 
     private void EnsureCameraAssigned()
     {
+        // Inspector未設定なら MainCamera を参照する
         if (cameraController == null)
-        {
             cameraController = Camera.main;
-        }
     }
 
     private bool ShouldSkipMovementByLaser()
     {
+        // player がレーザーを発射中なら移動・ジャンプ関連を停止し、フラグをリセットして true を返す
         if (player == null) return false;
 
         if (player.IsFireLaser())
         {
-            // 移動やジャンプ関連のリセット処理
+            // 各種フラグをリセットして移動処理を打ち切る
             jumpPressed = false;
             jumpHoldTimer = 0f;
             hasStartedAscend = false;
@@ -195,7 +229,9 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// ジャンプの「押した瞬間」を扱う(短押し/長押し開始に先立つ初期化)
+    /// ジャンプの押下開始（押した瞬間の初期化）
+    /// - InputManager の IsJumpDown（GetKeyDown 相当）で検出
+    /// - 押された瞬間は重力を切り（rb.useGravity = false）、滞空準備をする
     /// </summary>
     private void HandleJumpStart()
     {
@@ -204,13 +240,18 @@ public class Movement : MonoBehaviour
             jumpPressed = true;
             jumpHoldTimer = 0f;
             hasStartedAscend = false;
+            fallPressed = false;
+            hasStartedDescend = false;
+            fallHoldTimer = 0f;
+            jumpGraceTimer = jumpGraceDuration;
             isFalling = false;
-            rb.useGravity = false;
+            rb.useGravity = false; // 重力を無効にして滞空の制御を行う
         }
     }
 
     /// <summary>
-    /// ジャンプの長押し時間を計測し、短押し→長押ししきい値を超えたら滞空(ホバー)開始フラグを立てる
+    /// ジャンプの長押し時間を計測し、しきい値を超えればホバー状態へ移行（hasStartedAscend = true）
+    /// - Update 内で Time.deltaTime を使って計測
     /// </summary>
     private void UpdateJumpHoldTimer()
     {
@@ -220,16 +261,15 @@ public class Movement : MonoBehaviour
             if (!hasStartedAscend && jumpHoldTimer >= shortAscendThreshold)
             {
                 hasStartedAscend = true;
-                rb.useGravity = false;
+                rb.useGravity = false; // ホバー中は重力を無効化（垂直速度は明示制御）
             }
         }
     }
 
     /// <summary>
-    /// ジャンプボタンを離した瞬間の処理
-    /// - 短押しなら瞬間上昇を与える(水平移動力を少し加える)
-    /// - 共通でホバー状態へ移行(hasStartedAscend = true)
-    /// - 短押しの際は ascendConsumptionRate を即時消費する(deltaTimeではない)
+    /// ジャンプ離し時（短押し判定を含む）
+    /// - 短押し（hasStartedAscend が false）なら初速を上書きして瞬間上昇を与える
+    /// - 共通でホバー状態へ遷移（hasStartedAscend = true）
     /// </summary>
     private void HandleJumpRelease()
     {
@@ -237,28 +277,28 @@ public class Movement : MonoBehaviour
         {
             if (!hasStartedAscend)
             {
-                //短押し：瞬間上昇(垂直速度を上書き)
+                // 短押し：垂直速度を上書きしてジャンプ的な挙動にする
                 Vector3 v = rb.linearVelocity;
                 v.y = initialAscendSpeed;
                 rb.linearVelocity = v;
 
-                //水平入力があれば少しだけ力を追加
+                // 水平入力があれば少し補助的に力を入れる（短押しでの勢いづけ）
                 Vector3 dir = GetRelativeInputDirection();
                 if (dir.magnitude > 0.01f)
                     rb.AddForce(dir * moveForce, ForceMode.Force);
 
-                //元コード同様、短押しで即座にブーストを消費(時間ではない)
+                // 短押しでは即時でブーストを消費する仕様（deltaTime ではない）
                 boost = Mathf.Max(0f, boost - ascendConsumptionRate);
             }
 
-            //共通：ホバー状態へ移行(論理的には短押し・長押しどちらでも)
             hasStartedAscend = true;
-            jumpPressed = false;
+            jumpPressed = false; // 押下状態の終了
         }
     }
 
     /// <summary>
-    /// 落下入力(強制落下)を処理
+    /// 強制落下入力（例: LeftControl）
+    /// - 押されたら isFalling=true にして重力を有効化
     /// </summary>
     private void HandleFallInput()
     {
@@ -272,9 +312,83 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// ブーストダッシュ入力の開始処理(瞬間動作)
-    /// - 方向入力が無ければ前方向へダッシュ
-    /// - ダッシュ開始時に水平速度を上書きする
+    /// 下降（Fall）押下開始処理
+    /// - IsFallDown（GetKeyDown 相当）で検出し、長押し計測を開始する
+    /// - 長押し判定までは重力をオフにしておき、短押しなら後で重力を有効にして通常落下に戻す
+    /// </summary>
+    private void HandleFallStart()
+    {
+        if (input.IsFallDown)   // GetKeyDown 相当
+        {
+            fallPressed = true;
+            fallHoldTimer = 0f;
+            hasStartedDescend = false;
+
+            // 下降判別に入った時点では重力を切る（上昇と対称）
+            rb.useGravity = false;
+            isFalling = false;
+        }
+    }
+
+    /// <summary>
+    /// 下降（Fall）離し時の処理
+    /// - 長押し（hasStartedDescend == true）ならホバー下降を終了（重力は切ったまま）
+    /// - 短押しなら通常落下（重力有効、isFalling=true）
+    /// </summary>
+    private void HandleFallRelease()
+    {
+        if (input.IsFallUp && fallPressed)
+        {
+            // 長押し中 → ホバー下降を終了（重力ONにはしない）
+            if (hasStartedDescend)
+            {
+                fallPressed = false;
+
+                // 高度維持用に垂直速度をゼロクリア（ホバー下降をやめて高度を保つ）
+                Vector3 vel = rb.linearVelocity;
+                vel.y = 0f;
+                rb.linearVelocity = vel;
+
+                rb.useGravity = false;
+                return;
+            }
+
+            // 単押し → 通常落下へ
+            if (!hasStartedDescend)
+            {
+                fallPressed = false;
+                hasStartedDescend = false;
+
+                rb.useGravity = true; // 通常落下に戻す
+                isFalling = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 下降（Fall）長押し時間の更新
+    /// - fallPressed=True の間、Time.deltaTime を溜めて shortAscendThreshold を超えたらホバー下降を開始する
+    /// - ホバー下降開始時は hasStartedDescend=true、重力はオフのままにする
+    /// </summary>
+    private void UpdateFallHoldTimer()
+    {
+        if (fallPressed && input.IsFall)   // 押し続けている間
+        {
+            fallHoldTimer += Time.deltaTime;
+
+            // 長押し判定 → ホバー下降開始
+            if (!hasStartedDescend && fallHoldTimer >= shortAscendThreshold)
+            {
+                hasStartedDescend = true;
+                rb.useGravity = false;    // ホバー下降は重力OFFのまま
+            }
+        }
+    }
+
+    /// <summary>
+    /// ブーストダッシュの開始判定
+    /// - 入力がありブーストが十分なら水平速度を即座に上書きしてダッシュ状態へ移行
+    /// - 入力が無ければ正面方向へダッシュ
     /// </summary>
     private void TryStartDash()
     {
@@ -283,21 +397,18 @@ public class Movement : MonoBehaviour
             Vector3 inputDir = GetRelativeInputDirection();
             Vector3 dashDir = inputDir.sqrMagnitude > 0.01f ? inputDir : transform.forward;
 
-            //初期加速を上書き
+            // 水平速度をダッシュ速度で上書き（瞬間加速）
             rb.linearVelocity = dashDir * dashSpeed;
             isDashing = true;
             dashTimer = dashDuration;
-
-            //開始時の方向入力有無フラグ
             dashHasDirection = inputDir.sqrMagnitude > 0.01f;
-
-            //元コードはここで isBoosting = true としているが、後段で UpdateBoostingFlag() により上書きされる可能性がある点は保持
             isBoosting = true;
         }
     }
 
     /// <summary>
-    /// ダッシュの持続時間タイマーを更新(Update側)
+    /// ダッシュタイマーの更新（Update側）
+    /// - dashTimer を減らして 0 以下になればダッシュ終了
     /// </summary>
     private void UpdateDashTimer()
     {
@@ -310,7 +421,8 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// Update の最後で入力に基づいて維持用の isBoosting を決める
+    /// Update の最後でブースト維持フラグを決める
+    /// - 入力がありかつ boost が残っていれば isBoosting = true
     /// </summary>
     private void UpdateBoostingFlag()
     {
@@ -318,33 +430,29 @@ public class Movement : MonoBehaviour
     }
 
     // ----------------------------
-    // FixedUpdate 内の細かい処理
+    // FixedUpdate 内の細かい処理（物理関係）
     // ----------------------------
-
     private bool StopMovementIfLaserActive()
     {
         if (player == null) return false;
 
         if (player.IsFireLaser())
         {
-            // 全方向の速度を止める(落下・上昇も含む)
+            // レーザー中は全速度をゼロにして以降の処理をスキップ
             rb.linearVelocity = Vector3.zero;
-
-            //もし物理的な位置がずれるのを防ぎたいなら、下記のように姿勢安定化も追加可
-            //rb.angularVelocity = Vector3.zero;
-
-            return true; //ここで以降の移動処理をスキップ
+            return true;
         }
 
         return false;
     }
 
     /// <summary>
-    /// ブーストが消費されていない場合の回復処理
+    /// ブーストの自動回復処理（FixedUpdate タイミング）
+    /// - isBoosting 中は回復しない
+    /// - ダッシュ中も回復しない
     /// </summary>
     private void RegenerateBoostIfNeeded()
     {
-        // ブーストが0になったらブースト解除
         if (boost <= 0f)
         {
             boost = 0f;
@@ -352,32 +460,41 @@ public class Movement : MonoBehaviour
         }
 
         if (!isBoosting && boost < maxBoost && !isDashing)
-        {
             boost = Mathf.Min(maxBoost, boost + boostRegenRate * Time.fixedDeltaTime);
-        }
     }
 
     /// <summary>
-    /// 地面判定が取れていて、かつ上昇中でなければ重力を再有効化しフラグをリセット
+    /// 地面接地時の重力復帰とフラグリセット
+    /// - IsGrounded() が true かつ上昇中でなければ重力を戻し、滞空関連フラグをクリア
+    /// - jumpGraceTimer による接地無視時間がある場合は判定を遅延する
     /// </summary>
     private void GroundCheckAndResetGravity()
     {
-        if (IsGrounded() && !hasStartedAscend && !jumpPressed)
+        if (jumpGraceTimer > 0f)
+            return;
+
+        if (IsGrounded())
         {
             isFalling = false;
+
+            // 上昇・下降ホバーの両方をリセット
             hasStartedAscend = false;
+            hasStartedDescend = false;
+            fallPressed = false;
+
             rb.useGravity = true;
         }
     }
 
     /// <summary>
-    /// ダッシュ中はブーストを消費し、以降の移動処理を行わず帰る（元コードの early return を保持）
-    /// 戻り値: ダッシュ処理が行われたか
+    /// ダッシュ処理（継続中は他処理をスキップさせるため true を返す）
+    /// - 固有のブースト消費処理のみ行う
     /// </summary>
     private bool ProcessDash()
     {
         if (isDashing)
         {
+            // ダッシュ中はブーストを時間依存で消費
             boost = Mathf.Max(0f, boost - dashConsumptionRate * Time.fixedDeltaTime);
             return true;
         }
@@ -385,22 +502,24 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// 長押しによるホバー(上昇維持)処理
-    /// 戻り値: ホバー処理が行われたら true(その後 FixedUpdate は終了)
+    /// ホバー処理（長押しによる上昇維持）
+    /// - hasStartedAscend が true かつジャンプ入力が継続している場合に維持
+    /// - 垂直速度を ascendSpeed に固定して水平は空中の制御を行う
+    /// - ブースト維持中は ascendSpeed に boostMultiplier をかけて上昇を強化し、ブースト消費する
     /// </summary>
     private bool HandleHover(Vector3 dir)
     {
         if (hasStartedAscend && input.IsJump && jumpHoldTimer >= shortAscendThreshold && !isFalling)
         {
-            Vector3 v = rb.linearVelocity;
+            // 垂直は一定速度で上昇（ブースト時は倍率）
+            Vector3 currentVel = rb.linearVelocity;
             float vY = isBoosting ? ascendSpeed * boostMultiplier : ascendSpeed;
-            v.y = vY;
-            rb.linearVelocity = v;
+            currentVel.y = vY;
 
-            if (dir.magnitude > 0.01f)
-                rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f), ForceMode.Force);
+            // 空中専用の水平制御（補間・抵抗・補助加速）を使う
+            ApplyAirControl(dir, currentVel.y);
 
-            //ホバー中のブースト消費(時間依存)
+            // ホバー中はブーストを消費（時間依存）
             if (isBoosting)
                 boost = Mathf.Max(0f, boost - ascendConsumptionRate * Time.fixedDeltaTime);
 
@@ -410,58 +529,114 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// 空中(上昇中または落下中)の通常移動処理
-    /// 戻り値: 空中処理が行われたら true(その後 FixedUpdate は終了)
+    /// ホバー下降（長押しで徐々に落下）処理
+    /// - hasStartedDescend が true かつ下降入力が継続している場合に実行
+    /// - 垂直速度を -descendSpeed に固定（isBoosting 時は倍率をかける）
+    /// - 重力はオフのまま維持し、水平は空中制御で扱う
+    /// - これにより「長押しでゆっくり落ちる」操作が可能になる
+    /// </summary>
+    private bool HandleHoverDescend(Vector3 dir)
+    {
+        if (hasStartedDescend && input.IsFall && fallHoldTimer >= shortAscendThreshold)
+        {
+            // 垂直速度を下降速度に固定（マイナス方向）
+            Vector3 currentVel = rb.linearVelocity;
+            float vY = -descendSpeed * (isBoosting ? boostMultiplier : 1f);
+            currentVel.y = vY;
+
+            // 水平空中制御は上昇ホバーと同様に扱う
+            ApplyAirControl(dir, currentVel.y);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 空中（上昇中 or 落下中）での通常移動処理
+    /// 実行条件：
+    /// - 接地していない（IsGrounded()==false）
+    /// - ダッシュ中でない
+    /// - かつ (縦速度がある || 強制落下フラグ || ホバー開始済み)
+    /// 
+    /// 処理ポイント：
+    /// - 上昇中は ascendBrake で垂直速度を徐々に減衰
+    /// - 落下中（jumpPressed していない場合）は fallMultiplier を加えて重力を強める
+    /// - 水平は擬似抵抗（airResistance）と入力に対する補間（ApplyAirControl）で制御
     /// </summary>
     private bool HandleAirMovement(Vector3 dir)
     {
-        if ((rb.linearVelocity.y > 0f || isFalling) && !IsGrounded())
+        // 実行条件：接地していない AND (縦速度差がある OR isFalling OR hasStartedAscend)
+        bool verticalMoving = Mathf.Abs(rb.linearVelocity.y) > 0.01f;
+        if (!IsGrounded() && !isDashing && (verticalMoving || isFalling || hasStartedAscend))
         {
             Vector3 currentVel = rb.linearVelocity;
+
+            // 垂直処理：上昇中は ascendBrake で徐々に落とす
             if (currentVel.y > 0f)
-                currentVel.y = Mathf.MoveTowards(currentVel.y, 0f, ascendBrake * Time.fixedDeltaTime);
-
-            // --- ここから落下強化処理 ---
-            if (currentVel.y <= 0f || isFalling)
             {
-                // 上昇中でなければ落下増強を適用（Time.fixedDeltaTimeベースで垂直速度を増やす）
-                if (fallMultiplier > 1f)
-                {
-                    // 重力の追加分を垂直速度に反映（質量に依存しない近似）
-                    currentVel.y += Physics.gravity.y * (fallMultiplier - 1f) * Time.fixedDeltaTime;
-                }
-
-                // 最大落下速度でクランプ
-                currentVel.y = Mathf.Max(currentVel.y, -Mathf.Abs(maxFallSpeed));
+                currentVel.y = Mathf.MoveTowards(currentVel.y, 0f, ascendBrake * Time.fixedDeltaTime);
             }
-            // --- 落下強化処理ここまで ---
+            else
+            {
+                // 落下処理は「ジャンプ保持中かどうか」を確認して適用を分ける
+                // jumpPressed が true の間はホバーへの遷移待ちとみなして落下強化を控える
+                if (!jumpPressed && !hasStartedAscend && !hasStartedDescend)
+                {
+                    if (fallMultiplier > 1f)
+                    {
+                        // fallMultiplier による重力強化（ForceMode.Acceleration を使い質量に依存させない）
+                        rb.AddForce(Physics.gravity * (fallMultiplier - 1f), ForceMode.Acceleration);
+                    }
+                    currentVel.y = Mathf.Max(currentVel.y, -Mathf.Abs(maxFallSpeed));
+                }
+                else
+                {
+                    // jumpPressed == true の場合は重力抑制（ホバー遷移の可能性あり）
+                    // 垂直はそのまま（HandleHover が最終的にホバー速度をつくる）
+                }
+            }
 
+            // 現在の水平速度（XZ）
             Vector3 horizontalVel = new Vector3(currentVel.x, 0f, currentVel.z);
-            Vector3 brakeForceAir = -horizontalVel * (brakePower * 0.5f);
-            rb.AddForce(brakeForceAir, ForceMode.Force);
 
+            // 空中擬似抵抗（速度に比例して減速させる。drag=0 の代替）
+            if (airResistance > 0f)
+                rb.AddForce(-horizontalVel * airResistance, ForceMode.Acceleration);
+
+            // 入力がある場合は補間で目標水平速度へ滑らかに遷移（ApplyAirControl）
             if (dir.magnitude > 0.01f)
-                rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f), ForceMode.Force);
+            {
+                ApplyAirControl(dir, currentVel.y);
 
-            //空中での維持ブースト消費(時間依存)
-            if (isBoosting)
-                boost = Mathf.Max(0f, boost - boostConsumptionRate * Time.fixedDeltaTime);
+                // 小さめの補助的な加速を入れる（質量に依存させない Acceleration）
+                rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f) * airAssistMultiplier, ForceMode.Acceleration);
 
-            //垂直成分だけ上書き(水平は既存のまま)
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, currentVel.y, rb.linearVelocity.z);
+                if (isBoosting)
+                    boost = Mathf.Max(0f, boost - boostConsumptionRate * Time.fixedDeltaTime);
+            }
+            else
+            {
+                // 入力がなければ垂直のみ上書き（水平は擬似抵抗に任せて減衰させる）
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, currentVel.y, rb.linearVelocity.z);
+            }
+
             return true;
         }
         return false;
     }
 
     /// <summary>
-    /// 地上での通常移動やブースト時の移動処理
+    /// 地上での通常移動（AddForce ベース）
+    /// - isBoosting によって速度上限や加速力を変える
+    /// - 入力がないときは慣性ブレーキをかける
     /// </summary>
     private void HandleGroundMovement(Vector3 dir, Vector3 velH)
     {
         if (isBoosting)
         {
-            //ブースト使用時は速度上限が増える 消費は時間依存
+            // ブースト中は消費して速度上限を増やす
             boost = Mathf.Max(0f, boost - boostConsumptionRate * Time.fixedDeltaTime);
             float speedLimit = maxSpeed * boostMultiplier;
             if (dir.magnitude > 0.01f && velH.magnitude < speedLimit)
@@ -476,14 +651,15 @@ public class Movement : MonoBehaviour
             }
             else
             {
-                //入力なし時の慣性ブレーキ
+                // 入力なし時の慣性ブレーキ（地上）
                 rb.AddForce(-velH * brakePower, ForceMode.Force);
             }
         }
     }
 
     /// <summary>
-    /// 地上での水平速度を最大値にクランプ(垂直成分は保持)
+    /// 水平速度の上限を適用（地上用の maxSpeed を基準）
+    /// - 空中と分けたい場合は条件追加して airMaxSpeed を使うようにしてもよい
     /// </summary>
     private void ApplyHorizontalSpeedLimit()
     {
@@ -497,8 +673,30 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// WASD入力(input.m_MovePoint)のX,Z成分を
-    /// プレイヤーの正面／右方向にマッピングして返却
+    /// 空中（ホバー含む）での水平速度補間＋補助力投入の共通処理
+    /// - horizontalVel を目標速度へ Lerp で近づける方式
+    /// - Lerp の挙動は airControl と Time.fixedDeltaTime の積で影響されるため、
+    ///   小さい値だと遅く、大きい値だと素早く目標に近づく
+    /// - 最終的に rb.linearVelocity を直接上書きする（垂直は targetY を保持）
+    /// - さらに小さめの補助加速を AddForce で投入して操作感を向上させる
+    /// </summary>
+    private void ApplyAirControl(Vector3 dir, float targetY)
+    {
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        float targetSpeed = isBoosting ? airMaxSpeed * boostMultiplier : airMaxSpeed;
+        Vector3 desiredH = dir * targetSpeed;
+
+        // Lerp による滑らかな速度補間（固定フレーム単位での補間係数に依存）
+        Vector3 newH = Vector3.Lerp(horizontalVel, desiredH, Mathf.Clamp01(airControl * Time.fixedDeltaTime));
+        rb.linearVelocity = new Vector3(newH.x, targetY, newH.z);
+
+        // 小さめの補助加速を入れて操作感を向上（Acceleration で質量の影響を減らす）
+        rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f) * airAssistMultiplier, ForceMode.Acceleration);
+    }
+
+    /// <summary>
+    /// 入力（WASD/左右）をカメラの向きに合わせてワールド方向に変換して返す
+    /// - InputManager.m_MovePoint を使っているため、そちらが Update で正しく更新されていることが前提
     /// </summary>
     private Vector3 GetRelativeInputDirection()
     {
@@ -506,7 +704,6 @@ public class Movement : MonoBehaviour
         Vector3 inputDir = new Vector3(raw.x, 0f, raw.z);
         if (inputDir.sqrMagnitude < 0.0001f) return Vector3.zero;
 
-        //カメラの yaw から擬似的に forward/right を作る
         Quaternion yawRot = Quaternion.Euler(0f, cameraController.transform.eulerAngles.y, 0f);
         Vector3 camF = yawRot * Vector3.forward;
         Vector3 camR = yawRot * Vector3.right;
@@ -516,7 +713,9 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// Raycastによる接地判定
+    /// Raycast による接地判定
+    /// - groundCheckDistance は Collider と Raycast 起点（transform.position）の差を考慮して調整する
+    /// - 判定が不安定なら distance を少し増やす（0.1 → 0.2 等）またはキャラクタコライダの中心を確認
     /// </summary>
     private bool IsGrounded()
     {

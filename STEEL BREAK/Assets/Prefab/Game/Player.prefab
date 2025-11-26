@@ -667,9 +667,6 @@ PrefabInstance:
       addedObject: {fileID: 5720429878876013111}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2989979615990403608}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8614227376836685229}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
@@ -745,11 +742,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -7252248863957988883, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
   m_PrefabInstance: {fileID: 6870838661514991467}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5486101984725760113 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1403033926850309914, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
-  m_PrefabInstance: {fileID: 6870838661514991467}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5585589082267417739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1358364089214462944, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
@@ -816,6 +808,10 @@ MonoBehaviour:
   m_lerpSpeed: 3
   cameraRig: {fileID: 6673312967268915989}
   cameraRotateLerp: 0.05
+  playerYawSmoothTime: 0.08
+  cameraYawSmoothTime: 0.15
+  cameraDirSmoothSpeed: 8
+  yawDeadzoneDegrees: 0.25
 --- !u!114 &5841538993253739429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -860,8 +856,20 @@ MonoBehaviour:
   ascendConsumptionRate: 15
   fallMultiplier: 2.5
   maxFallSpeed: 20
+  descendSpeed: 5
+  airControl: 20
+  airMaxSpeed: 12
+  airResistance: 10
+  airAssistMultiplier: 0.18
   cameraController: {fileID: 3083660886234470096}
-  m_externalControl: 0
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  groundSphereRadius: 0.05
+  groundCheckDistance: 0.05
+  groundNormalMinY: 0.65
+  groundCheckOriginYOffset: 0.02
+  laserExitGrace: 0.15
 --- !u!114 &5742647039142411501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,101 +931,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 100
   laserRotateMultiplier: 0.2
---- !u!114 &2989979615990403608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6024539278335420986}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e86536d7fd8d42344a8cf3f3666d3cbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mecha:
-  - m_Name: "\u982D"
-    m_Parts:
-    - m_Name: "\u982D"
-      m_Parts: {fileID: 3082026601123965065}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u4F53"
-    m_Parts:
-    - m_Name: "\u4F53"
-      m_Parts: {fileID: 1214673692359708941}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u8170"
-    m_Parts:
-    - m_Name: "\u8170"
-      m_Parts: {fileID: 5585589082267417739}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u5DE6\u8155"
-    m_Parts:
-    - m_Name: "\u5DE6\u80A9"
-      m_Parts: {fileID: 5486101984725760113}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u5DE6\u4E0A\u8155"
-      m_Parts: {fileID: 936638474907159359}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u5DE6\u524D\u8155"
-      m_Parts: {fileID: 2165156283425765035}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u5DE6\u624B"
-      m_Parts: {fileID: 799371679318221054}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u53F3\u8155"
-    m_Parts:
-    - m_Name: "\u53F3\u80A9"
-      m_Parts: {fileID: 6114619063908414186}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u53F3\u4E0A\u8155"
-      m_Parts: {fileID: 2732436222929239900}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u53F3\u524D\u8155"
-      m_Parts: {fileID: 1178411006915487596}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u53F3\u624B"
-      m_Parts: {fileID: 2560324305675862877}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u5DE6\u8DB3"
-    m_Parts:
-    - m_Name: "\u5DE6\u592A\u3082\u3082"
-      m_Parts: {fileID: 572550702019816998}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u5DE6\u4E0B\u817F"
-      m_Parts: {fileID: 2233483011499526219}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u5DE6\u8DB3"
-      m_Parts: {fileID: 3501923507378715445}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-  - m_Name: "\u53F3\u8DB3"
-    m_Parts:
-    - m_Name: "\u53F3\u592A\u3082\u3082"
-      m_Parts: {fileID: 5823301851654604002}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u53F3\u4E0B\u817F"
-      m_Parts: {fileID: 3958581410459130069}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
-    - m_Name: "\u53F3\u8DB3"
-      m_Parts: {fileID: 4900137710243733126}
-      m_Weight: {x: 0, y: 0, z: 0}
-      m_newParts: {fileID: 0}
 --- !u!136 &8614227376836685229
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1050,7 +963,7 @@ Rigidbody:
   m_GameObject: {fileID: 6024539278335420986}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 1
+  m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -1068,11 +981,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!4 &6114619063908414186 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8394319411648354943, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
-  m_PrefabInstance: {fileID: 6870838661514991467}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6315808028450674509 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8575875495617118170, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}

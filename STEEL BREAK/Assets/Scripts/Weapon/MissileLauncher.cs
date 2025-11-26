@@ -44,14 +44,19 @@ public class MissileLauncher : MonoBehaviour
         {
             Transform missile = m_missiles[i];
 
-            //待機
-            yield return new WaitForSeconds(m_fireInterval);
+            
 
             //最初の要素だけ非表示設定のみでスキップ
             if (i == 0)
             {
+                missile.rotation = m_shooting.GetMuzzle().rotation;
                 missile.gameObject.SetActive(false);
                 continue;
+            }
+            else
+            {
+                //待機
+                yield return new WaitForSeconds(m_fireInterval);
             }
 
             //通常の銃と同じ発射処理

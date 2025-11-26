@@ -19,7 +19,9 @@ public class InputManager : MonoBehaviour
     public bool IsJump { get; private set; }             //上昇の入力受け取り
     public bool IsJumpDown { get; private set; }         //上昇の入力受け取り開始
     public bool IsJumpUp { get; private set; }           //上昇の入力受け取り終了
-    public bool IsFall { get; private set; }             //自由落下の入力受け取り
+    public bool IsFall { get; private set; }             //落下の入力受け取り
+    public bool IsFallDown {  get; private set; }        //落下の入力受け取り開始
+    public bool IsFallUp {  get; private set; }          //落下の入力受け取り終了
     public bool IsLockOnCancel { get; private set; }     //ロックオン状態解除の入力受け取り
     public bool IsTargetChange {  get; private set; }    //ターゲット切り替えの入力受け取り
     public bool IsReload { get; private set; }           //リロードするか(手動リロード)
@@ -50,15 +52,17 @@ public class InputManager : MonoBehaviour
         IsReloadLeftHand = Input.GetMouseButton(0) && IsReload;  //左クリックを押していてリロード入力をしている間は左手武装のリロード
         IsReloadRightBack = Input.GetKey(KeyCode.E) && IsReload; //Eキーを押していてリロード入力をしている間は右背面武装のリロード
         IsReloadLeftBack = Input.GetKey(KeyCode.Q) && IsReload;  //Qキーを押していてリロード入力をしている間は左背面武装のリロード
-        IsBoost = Input.GetKey(KeyCode.LeftShift);         //左shiftを押している間はブースト(加速)
-        IsBoostDash = Input.GetKeyDown(KeyCode.LeftShift); //左shiftを押した瞬間はブースト(初期加速)
-        IsJump = Input.GetKey(KeyCode.Space);              //Spaceキーを押している間は上昇
-        IsJumpDown = Input.GetKeyDown(KeyCode.Space);      //Spaceキーを押した瞬間ジャンプ入力の計測開始
-        IsJumpUp = Input.GetKeyUp(KeyCode.Space);          //Spaceキーを離した瞬間ジャンプ入力の計測終了
-        IsFall = Input.GetKeyDown(KeyCode.LeftControl);    //左ctrlキーを押すと自由落下
-        IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);    //Tabキーを押すとロックオン機能使用/不使用を切り替え
-        IsTargetChange = Input.GetKeyDown(KeyCode.F);      //Fキーを押すとターゲット切り替え
-        IsReload = Input.GetKey(KeyCode.R);                //Rキーを押している間手動リロード待機
+        IsBoost = Input.GetKey(KeyCode.LeftShift);          //左shiftを押している間はブースト(加速)
+        IsBoostDash = Input.GetKeyDown(KeyCode.LeftShift);  //左shiftを押した瞬間はブースト(初期加速)
+        IsJump = Input.GetKey(KeyCode.Space);               //Spaceキーを押している間は上昇
+        IsJumpDown = Input.GetKeyDown(KeyCode.Space);       //Spaceキーを押した瞬間ジャンプ入力の計測開始
+        IsJumpUp = Input.GetKeyUp(KeyCode.Space);           //Spaceキーを離した瞬間ジャンプ入力の計測終了
+        IsFall = Input.GetKey(KeyCode.LeftControl);         //左ctrlキーを押すと落下
+        IsFallDown = Input.GetKeyDown(KeyCode.LeftControl); //左ctrlキーを押した瞬間落下入力の計測開始
+        IsFallUp = Input.GetKeyUp(KeyCode.LeftControl);     //左ctrlキーを離した瞬間落下入力の計測終了
+        IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);     //Tabキーを押すとロックオン機能使用/不使用を切り替え
+        IsTargetChange = Input.GetKeyDown(KeyCode.F);       //Fキーを押すとターゲット切り替え
+        IsReload = Input.GetKey(KeyCode.R);                 //Rキーを押している間手動リロード待機
     }
 
     /// <summary>
