@@ -17,7 +17,8 @@ namespace StateMachineAI
             PoolManager.Instance.Return("Titania",owner.myAgent);
             //ビームを撃つ
             owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, 0));
-
+            //クールダウンを設定この間は回転しながら上昇する
+            owner.m_CoolDown.StartCoolDown("Rot", 5f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -31,17 +32,14 @@ namespace StateMachineAI
             if (pos.y < owner.m_ground) pos.y = owner.m_ground; // 最低高度を維持
             owner.transform.position = pos;
 
-            // 一定時間経過でステート変更
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= 5f) // 5秒間回転上昇したら次へ
+            //クールダウンでなければ
+            if (!owner.m_CoolDown.IsCoolDown("Rot"))
             {
                 owner.ChangeState(AIState_Titania_T.LockBeam_T);
             }
         }
         public override void Exit()
         {
-            //エージェント再取得
-            owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position, owner.m_CenterMarker.transform);
         }
     }
 }

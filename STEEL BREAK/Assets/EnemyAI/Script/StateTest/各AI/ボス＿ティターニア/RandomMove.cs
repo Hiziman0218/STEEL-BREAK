@@ -24,6 +24,7 @@ namespace StateMachineAI
 
             //エージェントの向いている方向にy軸回転動を同期
             Quaternion yOnlyRotation = Quaternion.Euler(0, owner.myAgent.transform.rotation.eulerAngles.y, 0);
+
             owner.transform.rotation = yOnlyRotation;
             //回転処理を滑らかにする
             owner.transform.rotation = Quaternion.Slerp(
