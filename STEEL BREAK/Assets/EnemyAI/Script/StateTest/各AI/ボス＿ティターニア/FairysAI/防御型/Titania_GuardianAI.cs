@@ -37,6 +37,8 @@ namespace StateMachineAI
 
         [Header("攻撃可能距離")]
         public float m_AttackDistance = 20;
+        [Header("守護位置から離れても追い続ける距離")]
+        public float m_ReturnDistance = 50;
         [Header("最大連射数")]
         [Range(1f, 30f)]
         public int m_MaxRange = 8;
@@ -48,14 +50,18 @@ namespace StateMachineAI
         public CoolDown m_CoolDown;
         [HideInInspector]
         public Rigidbody m_Rigidbody;
+        [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
+        [HideInInspector]
         //エージェントのディテクター
         public SteeringDetector m_Detector;
         //自分が守るポイント取得用
         public GameObject m_GuardPointer;
+        [HideInInspector]
         //守護位置のリスト
         public List<Transform> m_GuardPoint;
+        [HideInInspector]
         //守護位置に帰る処理流すかどうかのフラグ
         public bool m_atk_flag = false;
 
@@ -132,7 +138,7 @@ namespace StateMachineAI
             if (m_atk_flag == true)
             {
                 //もしm_GuardPointerから一定距離離れるor攻撃範囲内からプレイヤーが外れたら
-                if (guarddistance > 30f && distance > m_AttackDistance)
+                if (guarddistance > m_ReturnDistance && distance > m_AttackDistance)
                 {
                     m_atk_flag = false;
                     //守護位置に戻っていく

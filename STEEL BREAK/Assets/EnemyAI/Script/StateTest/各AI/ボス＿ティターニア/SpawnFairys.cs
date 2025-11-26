@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class SpawnFairys_T : MonoBehaviour
 {
     //一体一体生成していく
     public static IEnumerator SpawnWithInterval(
-    GameObject m_Fairys,                        //生成するモデル
+    GameObject soldierPrefab,
+    GameObject guardianPrefab,
     List<GameObject> m_SpawnPoints,             //スポーンポイント
     List<GameObject> spawnedEnemies,            //全体の生成数
     List<GameObject> spawnedAttackEnemies,      //攻撃型の数
@@ -18,26 +18,31 @@ public class SpawnFairys_T : MonoBehaviour
     int m_MaxFairys,                            //ゲーム上で生成できる最大数
     int m_MaxDefensFairys,                      //ボスを守る雑魚の上限
     System.Action onComplete
-)
+    )
     {
+        GameObject enemy;
+
         //場に存在できる最大数より少なければ処理が走る
         while (spawnedEnemies.Count < m_MaxFairys)
         {
             //スポーンポイントを取得
             GameObject point = m_SpawnPoints[Random.Range(0, m_SpawnPoints.Count)];
 
-            //フェアリーの生成
-            GameObject enemy = GameObject.Instantiate(m_Fairys, point.transform.position, Quaternion.identity);
-
             //確率で攻撃型か防御型を選出（防御型は上限を設けている）
             if (Random.value < m_SpawnPer && spawnedDefensEnemies.Count < m_MaxDefensFairys)
             {
-                var comp = enemy.AddComponent<GuardianFairysAI>();
+                //フェアリーの生成
+                enemy = GameObject.Instantiate(guardianPrefab, point.transform.position, Quaternion.identity);
+
+                //防御型のカウンターに追加
                 spawnedDefensEnemies.Add(enemy);
             }
             else
             {
-                var comp = enemy.AddComponent<SoldierFairysAI>();
+                //フェアリーの生成
+                enemy = GameObject.Instantiate(soldierPrefab, point.transform.position, Quaternion.identity);
+
+                //攻撃型のカウンターに追加
                 spawnedAttackEnemies.Add(enemy);
             }
 

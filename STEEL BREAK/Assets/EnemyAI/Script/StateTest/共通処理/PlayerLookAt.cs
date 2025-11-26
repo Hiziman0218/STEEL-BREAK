@@ -24,6 +24,8 @@ public class PlayerLookAt : MonoBehaviour
     /// <param name="m_turnsmooth">追従補正</param>
     public static void SoftLock(Transform m_My, Transform m_Player, float m_turnsmooth)
     {
+        if (m_Player == null) return;
+
         // 少しだけプレイヤーの方向へ補正回転
         Vector3 targetDir = (m_Player.position - m_My.transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(targetDir, Vector3.up);
@@ -43,6 +45,8 @@ public class PlayerLookAt : MonoBehaviour
     /// <param name="turnSmooth"></param>
     public static void LookAtFlat(Transform m_Player, Transform m_my, float turnSmooth)
     {
+        if (m_Player == null) return;
+
         // プレイヤーのXZ座標を使ってターゲット位置を作る
         Vector3 targetPos = new Vector3(m_Player.position.x, m_my.position.y, m_Player.position.z);
         Vector3 dir = targetPos - m_my.position;
@@ -62,5 +66,4 @@ public class PlayerLookAt : MonoBehaviour
             m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth * Time.deltaTime);
         }
     }
-
 }

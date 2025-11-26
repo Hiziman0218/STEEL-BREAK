@@ -15,7 +15,7 @@ namespace StateMachineAI
 
             //追従飛行を解除
             PoolManager.Instance.Return("Titania", owner.myAgent);
-
+            //突進開始位置を記録
             startPos = owner.transform.position;
 
             //もし最大速度より低ければ最大速度に
@@ -25,7 +25,7 @@ namespace StateMachineAI
                 owner.m_RCController.speed = owner.m_maxspeed;
             }
 
-            owner.m_CoolDown.StartCoolDown("Lockon", 2f);
+            owner.m_CoolDown.StartCoolDown("Lockon", 3f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -33,18 +33,19 @@ namespace StateMachineAI
             //ロックオン時間であれば
             if (owner.m_CoolDown.IsCoolDown("Lockon"))
             {
+                Debug.Log("ロックオンタイム");
                 //プレイヤーへの緩い追従処理
-                PlayerLookAt.LookAtFlat(owner.transform, owner.m_Player, owner.m_turnsmooth);
+                PlayerLookAt.LookAtFlat(owner.m_Player, owner.transform, owner.m_turnsmooth);
             }
             else
             {
-                //加速処理
-                owner.m_currentspeed = Acceleration.Smooth(owner.m_currentspeed, owner.m_maxspeed, owner.m_acceleration);
-
+                // RCController の speed と同期
+                owner.m_currentspeed = owner.m_RCController.speed;
+                
                 //まっすぐ進むだけ
                 owner.m_currentspeed = Mathf.Lerp(owner.m_currentspeed, owner.m_maxspeed, 1 - Mathf.Exp(owner.m_acceleration * Time.deltaTime));
                 owner.transform.position += owner.transform.forward * owner.m_currentspeed * Time.deltaTime;
-
+                
                 //拡散ビーム
 
 
@@ -60,7 +61,7 @@ namespace StateMachineAI
         public override void Exit()
         {
             //クールタイムを設ける
-            //owner.m_CoolDown.StartCoolDown("Rush", 8f);
+            owner.m_CoolDown.StartCoolDown("Rush", 8f);
             //デフォルト速度に戻す
             owner.m_RCController.speed = owner.m_speed;
             //エージェントを再取得

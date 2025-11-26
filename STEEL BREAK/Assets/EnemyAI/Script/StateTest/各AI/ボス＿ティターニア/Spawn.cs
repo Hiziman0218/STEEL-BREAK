@@ -17,13 +17,13 @@ namespace StateMachineAI
             owner.currentEnemy.m_spawnedAttackEnemies.RemoveAll(item => item == null);
             owner.currentEnemy.m_spawnedDefensEnemies.RemoveAll(item => item == null);
 
-
             //Œ»İê‚É‚¢‚éG‹›‚ªãŒÀ‚Ì”¼”–¢–‚È‚çÄ¶¬
             if (owner.currentEnemy.m_spawnedEnemies.Count < owner.m_MaxFairys / 2)
             {
                 owner.StartCoroutine(
                     SpawnFairys_T.SpawnWithInterval(
-                        owner.m_Fairys,
+                        owner.soldierPrefab,
+                        owner.guardianPrefab,
                         owner.m_SpawnPoints,
                         owner.currentEnemy.m_spawnedEnemies,
                         owner.currentEnemy.m_spawnedAttackEnemies,

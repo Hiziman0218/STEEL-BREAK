@@ -39,7 +39,6 @@ namespace StateMachineAI
             [Range(0f, 10f)] public float weight;
             [Header("クールダウン用キー 必要ないなら空でok")]
             public string cooldownKey;
-            // 追加: 条件チェック用
             [Header("条件チェック用 必要ないなら空でok")]
             public System.Func<Titania_T, bool> condition;
 
@@ -52,8 +51,12 @@ namespace StateMachineAI
         public List<GameObject> m_SpawnPoints = new List<GameObject>();
         [Header("雑魚敵の守護位置を取得")]
         public GameObject m_Guard_Point;
-        [Header("雑魚敵のプレハブ")]
-        public GameObject m_Fairys;
+
+        [Header("攻撃型のプレハブ")]
+        public GameObject soldierPrefab;
+        [Header("防御型のプレハブ")]
+        public GameObject guardianPrefab;
+
 
         [Header("雑魚敵の場に残る上限数")]
         [Range(10, 20)]
@@ -85,8 +88,8 @@ namespace StateMachineAI
         [Range(10f, 100f)]
         public float m_acceleration = 40f;
         [Header("追従補正（値が小さいほど緩く追従する）")]
-        [Range(0.001f, 0.1f)]
-        public float m_turnsmooth = 0.009f;
+        [Range(0.01f, 1.0f)]
+        public float m_turnsmooth = 0.3f;
 
         [System.Serializable]
         public class CurrentEnemy
@@ -106,6 +109,8 @@ namespace StateMachineAI
         public CoolDown m_CoolDown;
         [HideInInspector]
         public Rigidbody m_Rigidbody;
+        [HideInInspector]
+        public Enemy m_Enemy;
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
