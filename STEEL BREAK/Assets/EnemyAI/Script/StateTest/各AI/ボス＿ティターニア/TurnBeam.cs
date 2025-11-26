@@ -6,6 +6,7 @@ namespace StateMachineAI
     public class TurnBeam_T : State<Titania_T>
     {
         private float elapsedTime;
+        GameObject dummyTarget;
 
         //コンストラクタ
         public TurnBeam_T(Titania_T owner) : base(owner) { }
@@ -16,6 +17,7 @@ namespace StateMachineAI
             PoolManager.Instance.Return("Titania",owner.myAgent);
             //ビームを撃つ
             owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, 0));
+
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
