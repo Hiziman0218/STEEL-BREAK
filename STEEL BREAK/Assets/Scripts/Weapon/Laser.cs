@@ -6,10 +6,10 @@ public class Laser : BulletBase
     [Header("レーザー設定")]
     [SerializeField] private float m_damageInterval = 0.3f; //ダメージ間隔
     [SerializeField] private Collider m_hitCollider;        //自身の判定を除外する場合に設定
-    [SerializeField] private Transform m_parent;            //発射時に自身の親にしたい部分
-
+                                                            
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
     private Player m_player; //プレイヤー
+    private Transform m_parent;            //発射時に自身の親にしたい部分
 
     private void Start()
     {
@@ -84,5 +84,14 @@ public class Laser : BulletBase
     public void OnLaserEnd()
     {
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 親にしたいオブジェクトを設定
+    /// </summary>
+    /// <param name="parent"></param>
+    public void SetParent(Transform parent)
+    {
+        m_parent = parent;
     }
 }
