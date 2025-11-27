@@ -137,8 +137,8 @@ namespace StateMachineAI
 
             if (m_atk_flag == true)
             {
-                //もしm_GuardPointerから一定距離離れるor攻撃範囲内からプレイヤーが外れたら
-                if (guarddistance > m_ReturnDistance && distance > m_AttackDistance)
+                //もしm_GuardPointerから一定距離離れたら
+                if (guarddistance > m_ReturnDistance)
                 {
                     m_atk_flag = false;
                     //守護位置に戻っていく

@@ -151,6 +151,13 @@ namespace StateMachineAI
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
+            //キャラベースがあればイベント登録
+            if (m_Enemy != null)
+            {
+                // ダメージイベントを購読
+                m_Enemy.OnDamage += CommandEnemy;
+            }
+
             //存在していないクラスが指定されたら本体消滅
             foreach (AIState_Titania_T state in Enum.GetValues(typeof(AIState_Titania_T)))
             {
@@ -169,6 +176,26 @@ namespace StateMachineAI
             ChangeState(AIState_Titania_T.Idle_T);
         }
 
+        //ダメージを与えられたら防御型に通知
+        private void CommandEnemy()
+        {
+            //現在存在している防御型を走査
+            foreach (GameObject enemy in currentEnemy.m_spawnedDefensEnemies)
+            {
+                //防御型のスクリプトにアクセス
+                var ai = enemy.GetComponent<GuardianFairysAI>();
+
+                if (ai == null) continue;
+
+                // プレイヤーとの距離が追跡可能範囲内なら
+                if (Vector3.Distance(enemy.transform.position, m_Player.position) < ai.m_ReturnDistance)
+                {
+                    //ステートを変更させる
+                    ai.ChangeState(AIState_Guardian.Chase);
+                }
+            }
+        }
+
         protected override void Update()
         {
             // 親クラスの Update を呼んでステートマシンを動かす
@@ -179,7 +206,6 @@ namespace StateMachineAI
             {
                 return;
             }
-
         }
 
 

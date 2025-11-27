@@ -6670,19 +6670,18 @@ MonoBehaviour:
   m_EnemyModel: {fileID: 8426477915361804993}
   m_CenterMarker: {fileID: 0}
   m_BeamPoint: {fileID: 6604280383463968119}
-  m_RushAreas: {fileID: 0}
   actionEntries:
   - state: 2
-    weight: 0
+    weight: 7
     cooldownKey: 
   - state: 1
-    weight: 10
+    weight: 7
     cooldownKey: Spawn
   - state: 3
-    weight: 0
+    weight: 5
     cooldownKey: Turn
   - state: 5
-    weight: 0
+    weight: 4
     cooldownKey: Rush
   m_SpawnPoints: []
   m_Guard_Point: {fileID: 7107263102567958727}

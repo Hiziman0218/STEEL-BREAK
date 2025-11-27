@@ -15,6 +15,7 @@ namespace StateMachineAI
             //エージェントを自分の位置へ戻す
             owner.myAgent.transform.position = owner.transform.position;
             Chak();
+            owner.m_CoolDown.StartCoolDown("Move", 4f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -33,8 +34,8 @@ namespace StateMachineAI
                 Time.deltaTime * owner.turnSpeed
             );
 
-            //エージェントの近くに来たらIdleに戻る
-            if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < 3.0f)
+            //エージェントの近くに来たor一定時間すぎたらIdleに戻る
+            if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < 3.0f || !owner.m_CoolDown.IsCoolDown("Move"))
             {
                 owner.ChangeState(AIState_Titania_T.Idle_T);
             }
