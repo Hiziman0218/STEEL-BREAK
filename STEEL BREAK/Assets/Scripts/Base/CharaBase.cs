@@ -22,7 +22,7 @@ public class CharaBase : MonoBehaviour
         m_status = new Status(m_statusData);
     }
 
-    public void Start()
+    public void Awake()
     {
         Initialize();
     }
