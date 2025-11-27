@@ -85,7 +85,7 @@ public class Rush : MonoBehaviour
     /// </summary>
     public void StartRush()
     {
-        m_collider.enabled = true;
+        m_collider.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public class Rush : MonoBehaviour
     /// </summary>
     public void EndRush()
     {
-        m_collider.enabled = false;
+        m_collider.gameObject.SetActive(false);
         m_hitTimer.Clear();
     }
 
