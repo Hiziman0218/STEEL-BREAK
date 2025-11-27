@@ -13,7 +13,7 @@ public class Rush : MonoBehaviour
 
     private void Start()
     {
-        CharaBase chara = GetComponentInParent<CharaBase>();
+        Enemy chara = GetComponentInParent<Enemy>();
         if (chara != null)
         {
             m_myTeam = chara.GetTeam();
