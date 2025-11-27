@@ -82237,18 +82237,19 @@ MonoBehaviour:
   m_EnemyModel: {fileID: 4350773699586158723}
   m_CenterMarker: {fileID: 0}
   m_BeamPoint: {fileID: 843795537819255012}
+  m_RushAreas: {fileID: 0}
   actionEntries:
   - state: 2
-    weight: 0
+    weight: 7
     cooldownKey: 
   - state: 1
-    weight: 0
+    weight: 7
     cooldownKey: Spawn
   - state: 3
-    weight: 10
+    weight: 4
     cooldownKey: Turn
   - state: 5
-    weight: 0
+    weight: 4
     cooldownKey: Rush
   m_SpawnPoints: []
   m_Guard_Point: {fileID: 593031792983254197}
@@ -82277,6 +82278,7 @@ MonoBehaviour:
   isSpawningFairy: 0
   m_RushDirection: {x: 0, y: 0, z: 0}
   m_RCController: {fileID: 0}
+  m_rush: {fileID: 0}
 --- !u!114 &3387176847139025902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82359,7 +82361,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6501174955237041345}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 100
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

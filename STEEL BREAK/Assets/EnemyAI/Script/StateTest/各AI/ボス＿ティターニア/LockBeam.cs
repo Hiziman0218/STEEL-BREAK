@@ -59,7 +59,7 @@ namespace StateMachineAI
         public override void Exit()
         {
             //クールタイムを設ける
-            owner.m_CoolDown.StartCoolDown("Turn", 8f);
+            owner.m_CoolDown.StartCoolDown("Turn", 5f);
             //TurnBeam_Tで解除したエージェント再取得
             owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position, owner.m_CenterMarker.transform);
         }

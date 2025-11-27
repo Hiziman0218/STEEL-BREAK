@@ -58,7 +58,6 @@ namespace StateMachineAI
         [Header("防御型のプレハブ")]
         public GameObject guardianPrefab;
 
-
         [Header("雑魚敵の場に残る上限数")]
         [Range(10, 20)]
         public int m_MaxFairys;
@@ -75,13 +74,13 @@ namespace StateMachineAI
         public float m_AttackDistance = 30;
         [Header("最低でも保つ高度")]
         [Range(30.0f, 70.0f)]
-        public float m_ground = 50;
+        public float m_ground = 30f;
         [Header("旋回速度")]
         [Range(5.0f, 15.0f)]
         public float turnSpeed = 5f; 
         [Header("突撃時の最大突進スピード")]
         [Range(2f, 50f)]
-        public float m_maxspeed = 10f;
+        public float m_maxspeed = 15f;
         [HideInInspector]
         //コントローラーの元の速度記録用
         public float m_speed;
