@@ -27,9 +27,6 @@ namespace StateMachineAI
         public GameObject m_CenterMarker;
         [Header("ƒr[ƒ€”­ËŒû")]
         public Transform m_BeamPoint;
-        [Header("“Ëi‚Ì“–‚½‚è”»’è")]
-        public GameObject m_RushAreas;
-
 
         [System.Serializable]
         public class ActionEntry
