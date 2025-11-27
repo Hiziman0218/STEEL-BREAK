@@ -13,10 +13,27 @@ public class Rush : MonoBehaviour
 
     private void Start()
     {
+        //チームを取得
         CharaBase chara = GetComponentInParent<CharaBase>();
         if (chara != null)
         {
             m_myTeam = chara.GetTeam();
+        }
+
+        //最初は当たり判定をオフに設定
+        m_collider.enabled = false;
+    }
+
+    private void Update()
+    {
+        //チームが設定されていなかった場合、取得
+        if(m_myTeam == null)
+        {
+            CharaBase chara = GetComponentInParent<CharaBase>();
+            if (chara != null)
+            {
+                m_myTeam = chara.GetTeam();
+            }
         }
     }
 
