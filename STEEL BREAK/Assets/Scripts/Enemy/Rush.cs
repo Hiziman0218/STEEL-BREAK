@@ -21,7 +21,8 @@ public class Rush : MonoBehaviour
         }
 
         //Å‰‚Í“–‚½‚è”»’è‚ğƒIƒt‚Éİ’è
-        m_collider.enabled = false;
+        //m_collider.enabled = false;
+        m_collider.gameObject.SetActive(false);
     }
 
     private void Update()
