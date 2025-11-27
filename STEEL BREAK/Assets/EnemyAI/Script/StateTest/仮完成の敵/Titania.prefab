@@ -6723,7 +6723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b226fbbe53a47a4f9f8907274191ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_statusData: {fileID: 11400000, guid: 14d4b1ec5e5cf25459463b240ef56b6e, type: 2}
+  m_statusData: {fileID: 11400000, guid: a797eb6f8d47c9d4c8fcb4ee8ad9443b, type: 2}
   DestructionEffect: {fileID: 100008, guid: 1dbc518224e49f34095aab42fe05751a, type: 3}
   weaponR: {fileID: 6195010714844141557}
   weaponL: {fileID: 0}
@@ -6740,7 +6740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_collider: {fileID: 4789067638998564630}
-  m_knockbackPower: 100
+  m_knockbackPower: 50
   m_damage: 3
   m_damageInterval: 0.3
 --- !u!114 &5075020535933588517

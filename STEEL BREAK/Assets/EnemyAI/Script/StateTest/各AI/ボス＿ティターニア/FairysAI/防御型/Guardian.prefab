@@ -44229,6 +44229,7 @@ MonoBehaviour:
   m_Enemy: {fileID: 0}
   m_CenterMarker: {fileID: 0}
   m_AttackDistance: 20
+  m_ReturnDistance: 50
   m_MaxRange: 8
   m_CoolTime: 4
   m_CoolDown: {fileID: 0}
@@ -44250,7 +44251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b226fbbe53a47a4f9f8907274191ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_statusData: {fileID: 11400000, guid: 7a181de743a45014aaf89d2f38fdbbe2, type: 2}
+  m_statusData: {fileID: 11400000, guid: f6c06233102fe9d4da481306716a5fc2, type: 2}
   DestructionEffect: {fileID: 100006, guid: 93485fd5fc2ccf2439cb3239186f6382, type: 3}
   weaponR: {fileID: 1356156837460485471}
   weaponL: {fileID: 8125030468139529050}
