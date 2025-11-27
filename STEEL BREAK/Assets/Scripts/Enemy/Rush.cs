@@ -11,6 +11,15 @@ public class Rush : MonoBehaviour
     private string m_myTeam; //自身の所属するチーム
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
 
+    private void Start()
+    {
+        CharaBase chara = GetComponentInParent<CharaBase>();
+        if (chara != null)
+        {
+            m_myTeam = chara.GetTeam();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         //キャラクターでなければ以降の処理を行わない
