@@ -6,6 +6,8 @@ namespace StateMachineAI
     public class RushBeam_T : State<Titania_T>
     {
         private Vector3 startPos;
+        private bool isRushing = false;
+
         //コンストラクタ
         public RushBeam_T(Titania_T owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
@@ -25,37 +27,69 @@ namespace StateMachineAI
                 owner.m_RCController.speed = owner.m_maxspeed;
             }
 
-            owner.m_CoolDown.StartCoolDown("Lockon", 3f);
+            owner.m_CoolDown.StartCoolDown("Lockon", 6f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
-            //ロックオン時間であれば
             if (owner.m_CoolDown.IsCoolDown("Lockon"))
             {
-                Debug.Log("ロックオンタイム");
-                //プレイヤーへの緩い追従処理
+                // プレイヤー方向へ回転
                 PlayerLookAt.LookAtFlat(owner.m_Player, owner.transform, owner.m_turnsmooth);
+
+                // プレイヤー方向との角度差をチェック
+                Vector3 toPlayer = (owner.m_Player.position - owner.transform.position).normalized;
+                float angle = Vector3.Angle(owner.transform.forward, toPlayer);
+
+                // 30度以内なら「向いた」と判定して突進開始
+                if (angle < 30f)
+                {
+                    isRushing = true;
+                    StartRush();
+                }
             }
             else
             {
-                // RCController の speed と同期
-                owner.m_currentspeed = owner.m_RCController.speed;
-                
-                //まっすぐ進むだけ
-                owner.m_currentspeed = Mathf.Lerp(owner.m_currentspeed, owner.m_maxspeed, 1 - Mathf.Exp(owner.m_acceleration * Time.deltaTime));
-                owner.transform.position += owner.transform.forward * owner.m_currentspeed * Time.deltaTime;
-                
-                //拡散ビーム
-
-
-                // 移動距離で判定
-                float traveled = Vector3.Distance(startPos, owner.transform.position);
-                if (traveled >= 80f) // 突進距離
+                // ロックオンが終わっても突進していなければ開始
+                if (!isRushing)
                 {
-                    owner.ChangeState(AIState_Titania_T.Idle_T);
+                    StartRush();
+                }
+
+                if (isRushing)
+                {
+                    // RCController の speed と同期
+                    owner.m_currentspeed = owner.m_RCController.speed;
+
+                    // まっすぐ進む
+                    owner.m_currentspeed = Mathf.Lerp(
+                        owner.m_currentspeed,
+                        owner.m_maxspeed,
+                        1 - Mathf.Exp(owner.m_acceleration * Time.deltaTime)
+                    );
+                    owner.transform.position += owner.transform.forward * owner.m_currentspeed * Time.deltaTime;
+
+                    // 拡散ビーム処理（ここに追加）
+
+                    // 移動距離で判定
+                    float traveled = Vector3.Distance(startPos, owner.transform.position);
+                    if (traveled >= 80f) // 突進距離
+                    {
+                        //当たり判定をオフにする
+                        owner.m_rush.EndRush();
+                        owner.ChangeState(AIState_Titania_T.Idle_T);
+                    }
                 }
             }
+        }
+
+        private void StartRush()
+        {
+            isRushing = true;
+            //突進の判定をつける
+            owner.m_rush.StartRush();
+            // 突進開始位置を更新
+            startPos = owner.transform.position;
         }
 
         public override void Exit()

@@ -27,6 +27,8 @@ namespace StateMachineAI
         public GameObject m_CenterMarker;
         [Header("ビーム発射口")]
         public Transform m_BeamPoint;
+        [Header("突進の当たり判定")]
+        public GameObject m_RushAreas;
 
 
         [System.Serializable]
@@ -125,6 +127,7 @@ namespace StateMachineAI
         [HideInInspector]
         //エージェントのコントローラー取得用
         public SteeringController m_RCController;
+        public Rush m_rush;
 
         void Start()
         {
