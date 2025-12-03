@@ -26,7 +26,7 @@ namespace StateMachineAI
         [Header("センターポイントの取得")]
         public GameObject m_CenterMarker;
         [Header("ビーム発射口")]
-        public Transform m_BeamPoint;
+        private Transform m_BeamPoint;
 
         [System.Serializable]
         public class ActionEntry

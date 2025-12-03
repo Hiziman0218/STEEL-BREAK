@@ -1,43 +1,44 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using System.Collections;
 
 namespace StateMachineAI
 {
-    //ƒr[ƒ€‚ğŒ‚‚¿‚Â‚Â‰ñ“]‚µ‚È‚ª‚çã¸
+    //ãƒ“ãƒ¼ãƒ ã‚’æ’ƒã¡ã¤ã¤å›è»¢ã—ãªãŒã‚‰ä¸Šæ˜‡
     public class TurnBeam_T : State<Titania_T>
     {
-        private float elapsedTime;
-        GameObject dummyTarget;
-
-        //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        //ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         public TurnBeam_T(Titania_T owner) : base(owner) { }
-        //‚±‚ÌAI‚ª‹N“®‚µ‚½uŠÔ‚ÉÀs(Start‚Æ“¯‹`)
+        //ã“ã®AIãŒèµ·å‹•ã—ãŸç¬é–“ã«å®Ÿè¡Œ(Startã¨åŒç¾©)
         public override void Enter()
         {
-            //ƒG[ƒWƒFƒ“ƒg‚ğ‚¢‚Á‚½‚ñ•Ô‹p
+            //ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã‚’ã„ã£ãŸã‚“è¿”å´
             PoolManager.Instance.Return("Titania",owner.myAgent);
-            //ƒr[ƒ€‚ğŒ‚‚Â
+            //ãƒ“ãƒ¼ãƒ ã‚’æ’ƒã¤
             owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, 0));
-            //ƒN[ƒ‹ƒ_ƒEƒ“‚ğİ’è‚±‚ÌŠÔ‚Í‰ñ“]‚µ‚È‚ª‚çã¸‚·‚é
+            //ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ã‚’è¨­å®šã“ã®é–“ã¯å›è»¢ã—ãªãŒã‚‰ä¸Šæ˜‡ã™ã‚‹
             owner.m_CoolDown.StartCoolDown("Rot", 5f);
         }
-        //‚±‚ÌAI‚ª‹N“®’†‚Éí‚ÉÀs(Update‚Æ“¯‹`)
+        //ã“ã®AIãŒèµ·å‹•ä¸­ã«å¸¸ã«å®Ÿè¡Œ(Updateã¨åŒç¾©)
         public override void Stay()
         {
-            // ‰ñ“]ˆ—iY²‰ñ“]j
+            // å›è»¢å‡¦ç†ï¼ˆYè»¸å›è»¢ï¼‰
             owner.transform.Rotate(Vector3.up, 180f * Time.deltaTime);
 
-            // ã¸ˆ—iÅ’á‚“x‚ğˆÛ‚µ‚Â‚Âã¸j
+            // ä¸Šæ˜‡å‡¦ç†ï¼ˆæœ€ä½é«˜åº¦ã‚’ç¶­æŒã—ã¤ã¤ä¸Šæ˜‡ï¼‰
             Vector3 pos = owner.transform.position;
-            pos.y += 5f * Time.deltaTime; // ã¸‘¬“x‚ğ’²®
-            if (pos.y < owner.m_ground) pos.y = owner.m_ground; // Å’á‚“x‚ğˆÛ
+            pos.y += 5f * Time.deltaTime; // ä¸Šæ˜‡é€Ÿåº¦ã‚’èª¿æ•´
+            if (pos.y < owner.m_ground) pos.y = owner.m_ground; // æœ€ä½é«˜åº¦ã‚’ç¶­æŒ
             owner.transform.position = pos;
 
-            //ƒN[ƒ‹ƒ_ƒEƒ“‚Å‚È‚¯‚ê‚Î
+            //ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ã§ãªã‘ã‚Œã°
             if (!owner.m_CoolDown.IsCoolDown("Rot"))
             {
+                // ãƒ­ãƒƒã‚¯ã‚ªãƒ³çŠ¶æ…‹ã¸ç§»è¡Œ
                 owner.ChangeState(AIState_Titania_T.LockBeam_T);
+
             }
         }
+
         public override void Exit()
         {
         }

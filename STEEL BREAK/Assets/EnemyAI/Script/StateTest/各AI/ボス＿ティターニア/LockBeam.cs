@@ -65,18 +65,23 @@ namespace StateMachineAI
         private IEnumerator SmoothResetRotation()
         {
             float t = 0f;
-            Quaternion start = owner.transform.rotation;
+            Vector3 startEuler = owner.transform.rotation.eulerAngles;
+            Vector3 targetEuler = originalRotation.eulerAngles;
+
             while (t < 1f)
             {
                 t += Time.deltaTime / 1.0f; // 1秒かけて戻す
-                //現在の角度から記憶した元の角度に戻す
-                owner.transform.rotation = Quaternion.Lerp(start, originalRotation, t);
+
+                // Yawは現在値を維持、X/Zだけ補間
+                float newX = Mathf.LerpAngle(startEuler.x, targetEuler.x, t);
+                float newY = startEuler.y; // 向きは固定
+                float newZ = Mathf.LerpAngle(startEuler.z, targetEuler.z, t);
+
+                owner.transform.rotation = Quaternion.Euler(newX, newY, newZ);
                 yield return null;
             }
 
-            // 処理が終わったらIdle に移行
             owner.ChangeState(AIState_Titania_T.Idle_T);
-
         }
 
     }
