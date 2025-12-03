@@ -4247,6 +4247,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1071161441446682694, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2678821892499198890, guid: 8f2e511550141e0498fe7fc100534549, type: 3}
       propertyPath: m_Name
       value: Cylinder
