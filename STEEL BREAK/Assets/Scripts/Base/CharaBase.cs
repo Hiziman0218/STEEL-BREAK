@@ -9,7 +9,8 @@ public class CharaBase : MonoBehaviour
     [Tooltip("キャラのステータス(StatusDataを設定)")]
     [SerializeField] protected StatusData m_statusData; //インスペクタで設定
 
-    public System.Action OnDamage; //ダメージを受けた時のイベント
+    public Action OnDamage; //ダメージを受けた時のイベント
+    public event Action OnDied; //死亡イベント
 
     protected Status m_status; //インスペクタで設定されたものを代入
 
@@ -28,6 +29,18 @@ public class CharaBase : MonoBehaviour
     }
 
     /// <summary>
+    /// 死亡処理
+    /// </summary>
+    protected void Die()
+    {
+        //死亡エフェクトを生成(削除はエフェクトが担当)
+        DestructionEffect Effect = Instantiate(m_status.GetDestructionEffect(), transform.position, transform.rotation);
+        Effect.SetOwner(gameObject, OnDied);
+        //自身を非表示に設定
+        gameObject.SetActive(false);
+    }
+
+    /// <summary>
     /// 被弾処理
     /// </summary>
     /// <param name="damage">受けるダメージ</param>
@@ -36,6 +49,15 @@ public class CharaBase : MonoBehaviour
         m_status.SetHP(m_status.GetHP() - damage);
         OnDamage?.Invoke();
         Debug.Log("ダメージ量 : " + damage);
+    }
+
+    /// <summary>
+    /// ステータスを取得
+    /// </summary>
+    /// <returns></returns>
+    public Status GetStatus()
+    {
+        return m_status;
     }
 
     /// <summary>

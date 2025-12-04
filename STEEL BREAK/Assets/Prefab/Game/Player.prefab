@@ -662,6 +662,9 @@ PrefabInstance:
       addedObject: {fileID: 5202396081107519552}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4787710159622605991}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 5742647039142411501}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1e8e1bfafe7fa241ba6b4181f3eba85, type: 3}
       insertIndex: -1
@@ -808,7 +811,6 @@ MonoBehaviour:
   m_rightBackWeaponMono: {fileID: 0}
   m_leftBackWeaponMono: {fileID: 0}
   PartsSet: {fileID: 5744882643590379773}
-  m_destroyEffect: {fileID: 100010, guid: e0609132424a24844b1d53ad3d704fd9, type: 3}
   m_lerpSpeed: 3
   cameraRig: {fileID: 6673312967268915989}
   cameraRotateLerp: 0.05
@@ -866,6 +868,21 @@ MonoBehaviour:
   airResistance: 10
   airAssistMultiplier: 0.18
   cameraController: {fileID: 3083660886234470096}
+--- !u!114 &4787710159622605991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6024539278335420986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f0e5aacb1adc04198a3d6b1d4da62d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 5202396081107519552}
+  pushStrength: 0.5
+  wallHitEffectPrefab: {fileID: 0}
 --- !u!114 &5742647039142411501
 MonoBehaviour:
   m_ObjectHideFlags: 0

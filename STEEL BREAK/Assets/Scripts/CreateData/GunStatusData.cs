@@ -14,6 +14,8 @@ public class GunStatusData : ScriptableObject
     public float Speed;      //’e‘¬
     [Tooltip("—^‚¦‚éƒ_ƒ[ƒW—Ê")]
     public float Damage;     //ƒ_ƒ[ƒW—Ê
+    [Tooltip("—^‚¦‚é‚æ‚ë‚¯’l")]
+    public float StaggerPower;
     [Tooltip("Å‘å’e”")]
     public int MaxAmmo;      //Å‘å’e”
     [Tooltip("eŒû‚Ì§Œä‚ğ‚·‚é‚©")]

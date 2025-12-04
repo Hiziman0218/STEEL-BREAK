@@ -6,6 +6,7 @@ public class Status
     private float m_defence; //防御力
     private float m_speed;   //移動速度
     private string m_team;   //所属チーム
+    private DestructionEffect m_destructionEffect; //死亡エフェクト
 
     /// <summary>
     /// コンストラクタ 各種ステータスを設定
@@ -19,6 +20,7 @@ public class Status
         m_defence = data.Defence;
         m_speed = data.Speed;
         m_team = data.Team;
+        m_destructionEffect = data.DestructionEffect;
     }
 
     /// <summary>
@@ -118,5 +120,14 @@ public class Status
     public string GetTeam()
     {
         return m_team;
+    }
+
+    /// <summary>
+    /// 死亡エフェクトを取得
+    /// </summary>
+    /// <returns></returns>
+    public DestructionEffect GetDestructionEffect()
+    {
+        return m_destructionEffect;
     }
 }

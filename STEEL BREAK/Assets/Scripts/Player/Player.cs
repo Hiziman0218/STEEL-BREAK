@@ -17,9 +17,6 @@ public class Player : PlayerBase
     [Tooltip("パーツ設定用オブジェクト")]
     [SerializeField] private MechAssemblyManager PartsSet;
 
-    [Tooltip("破壊時エフェクト")]
-    [SerializeField] private GameObject m_destroyEffect;
-
     [Header("基本設定")]
     [SerializeField] private float m_lerpSpeed; //ラープのスピード
 
@@ -80,6 +77,9 @@ public class Player : PlayerBase
         movement = GetComponent<Movement>();
         lockon = GetComponent<LockOn>();
         IK = GetComponent<IK_Control>();
+
+        //死亡イベント設定
+        OnDied += GameOver;
 
         // デフォルト初期化（カメラ方向フィルタ）
         if (cameraRig != null)
@@ -192,12 +192,10 @@ public class Player : PlayerBase
         //自動で水平に
         if (m_isAutoHorizontal && !IsFireLaser()) AutoHorizontal();
 
-        //HPが0以下なら、破壊エフェクトを再生し自身を削除、その後ゲームオーバー画面へ遷移
+        //HPが0以下なら、死亡処理
         if (m_status.GetHP() <= 0f)
         {
-            Instantiate(m_destroyEffect, transform.position, transform.rotation);
-            Destroy(gameObject);
-            GameData.ShowGameOver();
+            Die();
         }
     }
 
@@ -285,6 +283,15 @@ public class Player : PlayerBase
         euler.x = Mathf.LerpAngle(euler.x, 0f, m_lerpSpeed * Time.deltaTime);
         euler.z = Mathf.LerpAngle(euler.z, 0f, m_lerpSpeed * Time.deltaTime);
         transform.eulerAngles = euler;
+    }
+
+    /// <summary>
+    /// ゲームオーバー処理
+    /// </summary>
+    private void GameOver()
+    {
+        //ゲームオーバー画面へ遷移
+        GameData.ShowGameOver();
     }
 
     /// <summary>

@@ -61,6 +61,7 @@ public class Movement : MonoBehaviour
     private Rigidbody rb;       // Rigidbody コンポーネント参照（物理挙動を操作）
     private InputManager input; // 入力管理コンポーネント参照（外部）
     private Player player;      // プレイヤー固有の管理クラス参照（レーザー使用判定等）
+    private WallCollisionController wallCtrl; //壁の判定取得用
 
     // ------------- ダッシュ／ブースト状態 -------------
     private bool isDashing = false;        // ダッシュ中フラグ
@@ -95,6 +96,7 @@ public class Movement : MonoBehaviour
     void Awake()
     {
         InitializeReferences();
+        wallCtrl = GetComponent<WallCollisionController>();
     }
 
     /// <summary>
@@ -158,6 +160,7 @@ public class Movement : MonoBehaviour
 
         // カメラ基準の入力方向（ワールド座標）を取得
         Vector3 dir = GetRelativeInputDirection();
+        dir = wallCtrl.ModifyDirection(dir);
 
         // 現在の水平速度（XZ 平面のみ）
         Vector3 velH = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -188,7 +191,7 @@ public class Movement : MonoBehaviour
     // ----------------------------
     // Update 内の細かい処理（各種入力・フラグ管理）
     // ----------------------------
-    private void ForcedFall()
+    private void ForcedFall() //削除
     {
         // 滞空（hasStartedAscend）中にブーストが枯渇している、かつまだ落下していないなら強制落下へ
         if (hasStartedAscend && !isFalling && boost <= 0f && !IsGrounded())
@@ -214,15 +217,7 @@ public class Movement : MonoBehaviour
 
         if (player.IsFireLaser())
         {
-            // 各種フラグをリセットして移動処理を打ち切る
-            /*
-            jumpPressed = false;
-            jumpHoldTimer = 0f;
-            hasStartedAscend = false;
-            isFalling = false;
-            isDashing = false;
-            dashTimer = 0f;
-            isBoosting = false;*/
+            // 移動処理を打ち切る
             return true;
         }
 
@@ -301,6 +296,7 @@ public class Movement : MonoBehaviour
     /// 強制落下入力（例: LeftControl）
     /// - 押されたら isFalling=true にして重力を有効化
     /// </summary>
+    /*
     private void HandleFallInput()
     {
         if (input.IsFall)
@@ -310,7 +306,7 @@ public class Movement : MonoBehaviour
             hasStartedAscend = false;
             rb.useGravity = true;
         }
-    }
+    }*/
 
     /// <summary>
     /// 下降（Fall）押下開始処理
@@ -721,5 +717,15 @@ public class Movement : MonoBehaviour
     private bool IsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
+    }
+
+    public Vector3 Velocity
+    {
+        get { return rb.linearVelocity; }   // あなたの内部変数名に沿って
+    }
+
+    public void SetVelocity(Vector3 v)
+    {
+        rb.linearVelocity = v;
     }
 }

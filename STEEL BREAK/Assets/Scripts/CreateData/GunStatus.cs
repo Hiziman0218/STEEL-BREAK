@@ -3,13 +3,14 @@ using Game.Enum;
 
 public class GunStatus
 {
-    private string Name;      //武装名
-    private float Rate;       //発射レート
-    private float ReloadTime; //リロード時間
-    private float Speed;      //発射力
-    private float Damege;     //ダメージ量
-    private int MaxAmmo;      //最大弾数
-    private int Ammo;         //現在の弾数
+    private string Name;        //武装名
+    private float Rate;         //発射レート
+    private float ReloadTime;   //リロード時間
+    private float Speed;        //発射力
+    private float Damege;       //ダメージ量
+    private float StaggerPower; //与えるよろけ値
+    private int MaxAmmo;        //最大弾数
+    private int Ammo;           //現在の弾数
     private bool UseMuzzleControl; //銃口の制御を使用するか
     private bool UseMirror;   //反転機能を使うか
     private AttachSide MirrorWhenHeld;    //どちらで装備した時に反転させるか
@@ -30,6 +31,7 @@ public class GunStatus
         ReloadTime = data.ReloadTime;
         Speed = data.Speed;
         Damege = data.Damage;
+        StaggerPower = data.StaggerPower;
         MaxAmmo = data.MaxAmmo;
         Ammo = data.MaxAmmo;
         UseMuzzleControl = data.UseMuzzleControl;
@@ -85,6 +87,15 @@ public class GunStatus
     public float GetDamage()
     {
         return Damege;
+    }
+
+    /// <summary>
+    /// 与えるよろけ値を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetStaggerPower()
+    {
+        return StaggerPower;
     }
 
     /// <summary>

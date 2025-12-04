@@ -13,4 +13,6 @@ public class StatusData : ScriptableObject
     public float Speed;   //移動速度
     [Tooltip("所属チーム")]
     public string Team;   //所属チーム
+    [Tooltip("死亡エフェクト")]
+    public DestructionEffect DestructionEffect; //死亡エフェクト
 }
