@@ -4,17 +4,22 @@ namespace StateMachineAI
 {
     public class Idle_T : State<Titania_T>
     {
-        float total;
-        float rand;
-
         //コンストラクタ
         public Idle_T(Titania_T owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
             Debug.Log("行動決め待機時間");
+            //別ステートでエージェントを解除して取得していなければ
+            if (owner.myAgent == null || !owner.myAgent.activeInHierarchy)
+            {
+                //エージェントがnullなら再取得する
+                owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position, owner.m_CenterMarker.transform);
+            }
+
             //idle状態になった時の攻撃隙
             owner.m_CoolDown.StartCoolDown("Idle", 2f);
+
             //リジットボディがおかしくならないようにリセット
             owner.m_Rigidbody.linearVelocity = Vector3.zero;
             owner.m_Rigidbody.angularVelocity = Vector3.zero;

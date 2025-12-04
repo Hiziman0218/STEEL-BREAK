@@ -50,15 +50,8 @@ namespace StateMachineAI
                 yield return null;
 
             //次の行動の際にガクッと角度が変わらないようにここで滑らかにリセット
+            //この処理が終わり次第ステートが遷移
             owner.StartCoroutine(SmoothResetRotation());
-        }
-
-        public override void Exit()
-        {
-            //クールタイムを設ける
-            owner.m_CoolDown.StartCoolDown("Turn", 8f);
-            //TurnBeam_Tで解除したエージェント再取得
-            owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position, owner.m_CenterMarker.transform);
         }
 
         //角度リセット処理（スムーズ）
@@ -81,8 +74,16 @@ namespace StateMachineAI
                 yield return null;
             }
 
+            //傾きを調整後にステートを変更
             owner.ChangeState(AIState_Titania_T.Idle_T);
         }
 
+        public override void Exit()
+        {
+            //クールタイムを設ける
+            owner.m_CoolDown.StartCoolDown("Turn", 40f);
+            //TurnBeam_Tで解除したエージェント再取得
+            //owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position, owner.m_CenterMarker.transform);
+        }
     }
 }

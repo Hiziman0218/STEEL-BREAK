@@ -54,9 +54,10 @@ public class PoolManager : MonoBehaviour
     {
         // 対応するキーがなければ何も返さない
         if (!pools.ContainsKey(key)) return null;
+        GameObject obj = null;
 
         // 使用できる（非アクティブ）なオブジェクトがあれば再利用、それ以外は新しく生成
-        GameObject obj = (pools[key].Count > 0 && !pools[key].Peek().activeInHierarchy)
+        obj = (pools[key].Count > 0 && !pools[key].Peek().activeInHierarchy)
             ? pools[key].Dequeue()
             : Instantiate(poolItems.Find(p => p.key == key).prefab);
 

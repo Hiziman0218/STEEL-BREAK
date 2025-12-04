@@ -32,9 +32,12 @@ namespace StateMachineAI
                         owner.m_waitSeconds,
                         owner.m_MaxFairys,
                         owner.m_MaxDefensFairys,
-                        () => owner.ChangeState(AIState_Titania_T.Idle_T)
+                        () => 
+                        owner.ChangeState(AIState_Titania_T.Idle_T)
                     )
                 );
+
+                owner.m_CoolDown.StartCoolDown("Spawn", 70f);
             }
             else
             {

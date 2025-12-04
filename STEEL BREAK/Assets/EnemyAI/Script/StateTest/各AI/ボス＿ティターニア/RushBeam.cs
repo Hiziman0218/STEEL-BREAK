@@ -95,7 +95,7 @@ namespace StateMachineAI
         public override void Exit()
         {
             //クールタイムを設ける
-            owner.m_CoolDown.StartCoolDown("Rush", 8f);
+            owner.m_CoolDown.StartCoolDown("Rush", 20f);
             //デフォルト速度に戻す
             owner.m_RCController.speed = owner.m_speed;
             //エージェントを再取得
