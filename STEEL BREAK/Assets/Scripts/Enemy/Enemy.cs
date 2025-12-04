@@ -7,10 +7,8 @@ public class Enemy : CharaBase
     [SerializeField] private float m_staggerThreshold; //よろけるのに必要なよろけ値
 
     public event Action<Enemy> OnStagger; //よろけイベント
-    public event Action<Enemy> OnDeath;  //死亡イベント
+    public event Action<Enemy> OnDeath;   //死亡イベント
     public event Action<Enemy> OnDiedField; //死亡時のフィールド用イベント
-
-    public GameObject DestructionEffect; //破壊エフェクト(ステータスに移す)
 
     public EnemyGun weaponR; //右武器
     public EnemyGun weaponL; //左武器
@@ -65,25 +63,4 @@ public class Enemy : CharaBase
     {
         weaponL ?.Fire();
     }
-
-    /*
-    /// <summary>
-    /// 死亡処理
-    /// </summary>
-    private void Die()
-    {
-        //死亡イベント
-        OnDeath?.Invoke(this);
-        OnDiedField?.Invoke(this);
-
-        //フラグをfalseにし、死亡エフェクトを再生(削除はDestructionEffectが担当)
-        IsAlive = false;
-        /*
-        if (DestructionEffect)
-        {
-            Instantiate(DestructionEffect, transform.position, transform.rotation);
-        }
-        Destroy(gameObject);
-        base.Die();
-    }*/
 }
