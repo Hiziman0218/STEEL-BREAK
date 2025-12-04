@@ -9,6 +9,7 @@ using UnityEditor;
 public class EquippedData
 {
     public string partsDataName;                         // パーツデータ名（保存や復元用）
+    public PartData partData;
     public List<GameObject> partObjs = new();            // 実際に装着されているプレハブオブジェクト群
     public List<ModifierBoneData> modifiedData = new();  // このパーツで変更したボーン情報（リセット用）
 }
@@ -282,6 +283,7 @@ public class MechAssemblyManager : MonoBehaviour
             {
                 partsDataName = partData.name
             };
+            data.partData = partData;
             data.partObjs.Add(newPart);
 
             // 🔧 スケール・位置・回転補正
@@ -328,7 +330,6 @@ public class MechAssemblyManager : MonoBehaviour
             GameObject newPart = Instantiate(prefab, slot);
             newPart.transform.localPosition = Vector3.zero;
             newPart.transform.localRotation = Quaternion.identity;
-
             data.partObjs.Add(newPart);
 
             // スケール補正
@@ -521,4 +522,26 @@ public class MechAssemblyManager : MonoBehaviour
         }
         return null;
     }
+
+    /// <summary>
+    /// 現在装着中のパーツの AP 合計を取得する
+    /// </summary>
+    public int GetTotalAP()
+    {
+        int total = 0;
+
+        foreach (var pair in equippedParts)
+        {
+            foreach (var data in pair.Value)
+            {
+                if (data.partData != null)
+                    total += data.partData.ap;
+            }
+        }
+
+        return total;
+    }
+
+
+
 }

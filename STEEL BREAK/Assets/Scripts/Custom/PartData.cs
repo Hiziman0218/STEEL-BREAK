@@ -1,80 +1,80 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// ‹@‘Ìƒp[ƒc‚Ìî•ñ‚ğ•Û‚·‚éScriptableObjectƒNƒ‰ƒXB
-/// Šeƒp[ƒc‚ÌƒXƒe[ƒ^ƒX‚âí—ŞAŒ©‚½–Ú‚Ìî•ñ‚È‚Ç‚ğ‚Ü‚Æ‚ß‚Äˆµ‚¦‚é‚æ‚¤‚É‚µ‚Ü‚·B
+/// æ©Ÿä½“ãƒ‘ãƒ¼ãƒ„ã®æƒ…å ±ã‚’ä¿æŒã™ã‚‹ScriptableObjectã‚¯ãƒ©ã‚¹ã€‚
+/// å„ãƒ‘ãƒ¼ãƒ„ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚„ç¨®é¡ã€è¦‹ãŸç›®ã®æƒ…å ±ãªã©ã‚’ã¾ã¨ã‚ã¦æ‰±ãˆã‚‹ã‚ˆã†ã«ã—ã¾ã™ã€‚
 /// </summary>
 [CreateAssetMenu(fileName = "PartData", menuName = "Mech/PartData")]
 public class PartData : ScriptableObject
 {
-    [Header("Šî–{î•ñ")]
-    public string partName;              // ƒp[ƒc–¼
-    public PartType partType;           // ƒp[ƒcí•Ê
+    [Header("åŸºæœ¬æƒ…å ±")]
+    public string partName;              // ãƒ‘ãƒ¼ãƒ„å
+    public PartType partType;           // ãƒ‘ãƒ¼ãƒ„ç¨®åˆ¥
 
-    [Header("Œ©‚½–Ú")]
-    public Sprite partIcon;             // UI—pƒAƒCƒRƒ“
+    [Header("è¦‹ãŸç›®")]
+    public Sprite partIcon;             // UIç”¨ã‚¢ã‚¤ã‚³ãƒ³
 
-    [Tooltip("’Pˆê‘•’…•”ˆÊ‚ÌƒvƒŒƒnƒu")]
-    public GameObject partPrefab;       // ’PˆêƒvƒŒƒnƒuiHead‚È‚Ç‚Ég—pj
+    [Tooltip("å˜ä¸€è£…ç€éƒ¨ä½ã®ãƒ—ãƒ¬ãƒãƒ–")]
+    public GameObject partPrefab;       // å˜ä¸€ãƒ—ãƒ¬ãƒãƒ–ï¼ˆHeadãªã©ã«ä½¿ç”¨ï¼‰
 
-    [Tooltip("•¡”‘•’…‚ª‰Â”\‚È•”ˆÊ—p‚ÌƒvƒŒƒnƒuŒQ")]
-    public List<GameObject> multiPrefabs; // •¡”ƒvƒŒƒnƒuiL_Arm‚È‚Çj
+    [Tooltip("è¤‡æ•°è£…ç€ãŒå¯èƒ½ãªéƒ¨ä½ç”¨ã®ãƒ—ãƒ¬ãƒãƒ–ç¾¤")]
+    public List<GameObject> multiPrefabs; // è¤‡æ•°ãƒ—ãƒ¬ãƒãƒ–ï¼ˆL_Armãªã©ï¼‰
 
-    [Header("Šg’£‚·‚éƒ{[ƒ“î•ñ")]
+    [Header("æ‹¡å¼µã™ã‚‹ãƒœãƒ¼ãƒ³æƒ…å ±")]
     public List<BoneScaleInfo> boneScales = new();
 
-    [Tooltip("ƒvƒŒƒnƒu‚ÌƒXƒP[ƒ‹EˆÊ’u•â³î•ñ‚ğ•¡”Ši”[")]
+    [Tooltip("ãƒ—ãƒ¬ãƒãƒ–ã®ã‚¹ã‚±ãƒ¼ãƒ«ãƒ»ä½ç½®è£œæ­£æƒ…å ±ã‚’è¤‡æ•°æ ¼ç´")]
     public List<PrefabScaleInfo> scaleInfos = new List<PrefabScaleInfo>();
 
-    [Header("ƒp[ƒc‚ÌƒXƒe[ƒ^ƒX")]
-    public int AP; //ƒA[ƒ}[ƒ|ƒCƒ“ƒg
+    [Header("ãƒ‘ãƒ¼ãƒ„ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
+    public int ap; //ã‚¢ãƒ¼ãƒãƒ¼ãƒã‚¤ãƒ³ãƒˆ
 
-    [Header("à–¾")]
+    [Header("èª¬æ˜")]
     [TextArea(2, 5)]
     public string description;
 }
 
 /// <summary>
-/// ƒp[ƒc‚ÌƒvƒŒƒnƒu‚Ææ‚è•t‚¯æƒ{[ƒ“‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+/// ãƒ‘ãƒ¼ãƒ„ã®ãƒ—ãƒ¬ãƒãƒ–ã¨å–ã‚Šä»˜ã‘å…ˆãƒœãƒ¼ãƒ³ã®æƒ…å ±ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 /// </summary>
 [System.Serializable]
 public class PartPrefabInfo
 {
-    [Tooltip("‚±‚ÌƒƒbƒVƒ…‚ªæ‚è•t‚¯‚ç‚ê‚é‘ÎÛ‚Ìƒ{[ƒ“–¼")]
+    [Tooltip("ã“ã®ãƒ¡ãƒƒã‚·ãƒ¥ãŒå–ã‚Šä»˜ã‘ã‚‰ã‚Œã‚‹å¯¾è±¡ã®ãƒœãƒ¼ãƒ³å")]
     public string targetBoneName;
 
-    [Tooltip("æ‚è•t‚¯‚éƒvƒŒƒnƒui‚±‚Ìƒ{[ƒ“‚ÉƒAƒ^ƒbƒ`‚³‚ê‚éj")]
+    [Tooltip("å–ã‚Šä»˜ã‘ã‚‹ãƒ—ãƒ¬ãƒãƒ–ï¼ˆã“ã®ãƒœãƒ¼ãƒ³ã«ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ï¼‰")]
     public GameObject partPrefab;
 }
 
 [System.Serializable]
 public class BoneScaleInfo
 {
-    [Tooltip("‘ÎÛ‚Ìƒ{[ƒ“–¼")]
+    [Tooltip("å¯¾è±¡ã®ãƒœãƒ¼ãƒ³å")]
     public string boneName;
 
-    [Tooltip("ƒXƒP[ƒŠƒ“ƒO‚·‚é”{—¦ (x, y, z)")]
+    [Tooltip("ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã™ã‚‹å€ç‡ (x, y, z)")]
     public Vector3 scale = Vector3.one;
 
-    [Tooltip("ƒ[ƒJƒ‹ˆÊ’uƒIƒtƒZƒbƒg (x, y, z)")]
+    [Tooltip("ãƒ­ãƒ¼ã‚«ãƒ«ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆ (x, y, z)")]
     public List<ChildBoneOffsetInfo> offsetInfos = new List<ChildBoneOffsetInfo>();
 }
 
 [System.Serializable]
 public class PrefabScaleInfo
 {
-    [Tooltip("’²®‚·‚éƒvƒŒƒnƒu")]
-    // ‘ÎÛƒvƒŒƒnƒu
+    [Tooltip("èª¿æ•´ã™ã‚‹ãƒ—ãƒ¬ãƒãƒ–")]
+    // å¯¾è±¡ãƒ—ãƒ¬ãƒãƒ–
     public GameObject prefab;
 
-    // ƒXƒP[ƒŠƒ“ƒO”{—¦
+    // ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°å€ç‡
     public Vector3 scale = Vector3.one;
 
-    // ƒ[ƒJƒ‹ˆÊ’uƒIƒtƒZƒbƒg
+    // ãƒ­ãƒ¼ã‚«ãƒ«ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆ
     public Vector3 positionOffset = Vector3.zero;
 
-    // ƒ[ƒJƒ‹‰ñ“]ƒIƒtƒZƒbƒg
+    // ãƒ­ãƒ¼ã‚«ãƒ«å›è»¢ã‚ªãƒ•ã‚»ãƒƒãƒˆ
     public Vector3 rotationOffset = Vector3.zero;
 }
 

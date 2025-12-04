@@ -1,41 +1,45 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
-/// ƒp[ƒc‘I‘ğ UI ‘S‘Ì‚ğ§Œä‚·‚éƒ}ƒl[ƒWƒƒ[B
-/// ƒ^ƒu‚É‰‚¶‚½ƒp[ƒcƒŠƒXƒg‚ğ•\¦‚µA‘I‘ğ‚³‚ê‚½ƒp[ƒc‚ğ Mech ‚É‘•’…‚·‚éB
+/// ãƒ‘ãƒ¼ãƒ„é¸æŠ UI å…¨ä½“ã‚’åˆ¶å¾¡ã™ã‚‹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã€‚
+/// ã‚¿ãƒ–ã«å¿œã˜ãŸãƒ‘ãƒ¼ãƒ„ãƒªã‚¹ãƒˆã‚’è¡¨ç¤ºã—ã€é¸æŠã•ã‚ŒãŸãƒ‘ãƒ¼ãƒ„ã‚’ Mech ã«è£…ç€ã™ã‚‹ã€‚
 /// </summary>
 public class AssemblyUIManager : MonoBehaviour
 {
-    [Header("QÆ")]
+    [Header("å‚ç…§")]
 
-    // ƒp[ƒcƒŠƒXƒg‚ğ•\¦‚·‚éeƒRƒ“ƒeƒiiƒXƒNƒ[ƒ‹ƒrƒ…[‚ÌContent‚È‚Çj
+    // ãƒ‘ãƒ¼ãƒ„ãƒªã‚¹ãƒˆã‚’è¡¨ç¤ºã™ã‚‹è¦ªã‚³ãƒ³ãƒ†ãƒŠï¼ˆã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ“ãƒ¥ãƒ¼ã®Contentãªã©ï¼‰
     public Transform partListParent;
 
-    // ƒp[ƒcƒŠƒXƒg‚ÌƒAƒCƒeƒ€ƒvƒŒƒnƒuiPartListItemƒXƒNƒŠƒvƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚éj
+    // ãƒ‘ãƒ¼ãƒ„ãƒªã‚¹ãƒˆã®ã‚¢ã‚¤ãƒ†ãƒ ãƒ—ãƒ¬ãƒãƒ–ï¼ˆPartListItemã‚¹ã‚¯ãƒªãƒ—ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹ï¼‰
     public GameObject listItemPrefab;
 
-    // Mech‚Éƒp[ƒc‚ğ‘•’…‚·‚éƒ}ƒl[ƒWƒƒ[iÀ‘Ì‘¤‚Ìƒ‚ƒfƒ‹§Œäj
+    // Mechã«ãƒ‘ãƒ¼ãƒ„ã‚’è£…ç€ã™ã‚‹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ï¼ˆå®Ÿä½“å´ã®ãƒ¢ãƒ‡ãƒ«åˆ¶å¾¡ï¼‰
     public MechAssemblyManager mechAssemblyManager;
 
-    [Header("ƒp[ƒcƒf[ƒ^")]
+    [Header("ãƒ‘ãƒ¼ãƒ„ãƒ‡ãƒ¼ã‚¿")]
 
-    // ‘S‚Ä‚Ìƒp[ƒc‚Ìƒf[ƒ^iScriptableObject‚È‚Ç‚Å“o˜^‚³‚ê‚Ä‚¢‚éj
+    // å…¨ã¦ã®ãƒ‘ãƒ¼ãƒ„ã®ãƒ‡ãƒ¼ã‚¿ï¼ˆScriptableObjectãªã©ã§ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ï¼‰
     public List<PartData> allParts;
 
-    // Œ»İ‘I‘ğ’†‚Ìƒ^ƒui•”ˆÊí•Êj
+    // ç¾åœ¨é¸æŠä¸­ã®ã‚¿ãƒ–ï¼ˆéƒ¨ä½ç¨®åˆ¥ï¼‰
     private PartType currentTabType;
+
+    public TextMeshProUGUI apValueText;  // å³ä¸‹ã® AP è¡¨ç¤º Text
 
     [SerializeField] private MechSaveLoader saveLoader;
 
 
     /// <summary>
-    /// Œ»İ‚Ìƒ^ƒu‚É‘Î‰‚·‚éƒp[ƒcƒŠƒXƒg‚ğ•\¦‚µ’¼‚·B
+    /// ç¾åœ¨ã®ã‚¿ãƒ–ã«å¯¾å¿œã™ã‚‹ãƒ‘ãƒ¼ãƒ„ãƒªã‚¹ãƒˆã‚’è¡¨ç¤ºã—ç›´ã™ã€‚
     /// </summary>
     public void RefreshPartList()
     {
-        // ‡@ Œ»İ•\¦‚³‚ê‚Ä‚¢‚éƒŠƒXƒgƒAƒCƒeƒ€‚ğ‚·‚×‚Äíœ
+        // â‘  ç¾åœ¨è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ãƒªã‚¹ãƒˆã‚¢ã‚¤ãƒ†ãƒ ã‚’ã™ã¹ã¦å‰Šé™¤
         foreach (Transform child in partListParent)
         {
             Destroy(child.gameObject);
@@ -43,7 +47,7 @@ public class AssemblyUIManager : MonoBehaviour
 
         PartData[] filteredParts;
 
-        // ‡A “Á—áˆ—FWeaponL ‚Ìê‡AWeapon ƒ^ƒCƒv‚Ìƒp[ƒc‚àˆê‚É•\¦‚·‚é
+        // â‘¡ ç‰¹ä¾‹å‡¦ç†ï¼šWeaponL ã®å ´åˆã€Weapon ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‚‚ä¸€ç·’ã«è¡¨ç¤ºã™ã‚‹
         if (currentTabType == PartType.WeaponL)
         {
             filteredParts = allParts
@@ -58,59 +62,67 @@ public class AssemblyUIManager : MonoBehaviour
         }
         else
         {
-            // ‡B ’ÊíF‘I‘ğ‚³‚ê‚½ƒ^ƒu‚Æˆê’v‚·‚éƒ^ƒCƒv‚Ìƒp[ƒc‚¾‚¯‚ğ’Šo
+            // â‘¢ é€šå¸¸ï¼šé¸æŠã•ã‚ŒãŸã‚¿ãƒ–ã¨ä¸€è‡´ã™ã‚‹ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã ã‘ã‚’æŠ½å‡º
             filteredParts = allParts
                 .Where(p => p.partType == currentTabType)
                 .ToArray();
         }
 
-        // ‡C ’Šo‚µ‚½ƒp[ƒc‚ğŒ³‚ÉAUIƒŠƒXƒgƒAƒCƒeƒ€‚ğ¶¬‚µ‚Ä•À‚×‚é
+        // â‘£ æŠ½å‡ºã—ãŸãƒ‘ãƒ¼ãƒ„ã‚’å…ƒã«ã€UIãƒªã‚¹ãƒˆã‚¢ã‚¤ãƒ†ãƒ ã‚’ç”Ÿæˆã—ã¦ä¸¦ã¹ã‚‹
         foreach (var part in filteredParts)
         {
-            GameObject item = Instantiate(listItemPrefab, partListParent); // ƒvƒŒƒnƒu‚ğ¶¬‚µ‚Äe‚ÉƒZƒbƒg
-            item.GetComponent<PartListItem>().Setup(part, this);           // ŠeƒAƒCƒeƒ€‚Éƒp[ƒcî•ñ‚ğİ’è
+            GameObject item = Instantiate(listItemPrefab, partListParent); // ãƒ—ãƒ¬ãƒãƒ–ã‚’ç”Ÿæˆã—ã¦è¦ªã«ã‚»ãƒƒãƒˆ
+            item.GetComponent<PartListItem>().Setup(part, this);           // å„ã‚¢ã‚¤ãƒ†ãƒ ã«ãƒ‘ãƒ¼ãƒ„æƒ…å ±ã‚’è¨­å®š
         }
     }
 
     /// <summary>
-    /// ƒ^ƒu‚ª‘I‘ğ‚³‚ê‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚éBPartType‚É‰‚¶‚ÄƒŠƒXƒg‚ğXVB
+    /// ã‚¿ãƒ–ãŒé¸æŠã•ã‚ŒãŸã¨ãã«å‘¼ã°ã‚Œã‚‹ã€‚PartTypeã«å¿œã˜ã¦ãƒªã‚¹ãƒˆã‚’æ›´æ–°ã€‚
     /// </summary>
-    /// <param name="no">PartType‚Ìint’liEnum‚Ì”Ô†j</param>
+    /// <param name="no">PartTypeã®intå€¤ï¼ˆEnumã®ç•ªå·ï¼‰</param>
     public void OnTabSelected(int no)
     {
-        // ‡@ “n‚³‚ê‚½”Ô†‚ª PartType ‚É•ÏŠ·‰Â”\‚©‚ğƒ`ƒFƒbƒN
+        // â‘  æ¸¡ã•ã‚ŒãŸç•ªå·ãŒ PartType ã«å¤‰æ›å¯èƒ½ã‹ã‚’ãƒã‚§ãƒƒã‚¯
         if (System.Enum.IsDefined(typeof(PartType), no))
         {
-            // ‡A ³í‚È”Ô†‚È‚ç PartType ‚É•ÏŠ·‚µ‚Ä•Û‘¶
+            // â‘¡ æ­£å¸¸ãªç•ªå·ãªã‚‰ PartType ã«å¤‰æ›ã—ã¦ä¿å­˜
             currentTabType = (PartType)no;
 
-            // ‡B ƒŠƒXƒg‚ğÄ\’z
+            // â‘¢ ãƒªã‚¹ãƒˆã‚’å†æ§‹ç¯‰
             RefreshPartList();
         }
         else
         {
-            // ˆÙí’l‚Ì‚Æ‚«‚ÍŒx‚ğo—Í
-            Debug.LogWarning($"–³Œø‚È PartType ‚Ì”Ô†: {no}");
+            // ç•°å¸¸å€¤ã®ã¨ãã¯è­¦å‘Šã‚’å‡ºåŠ›
+            Debug.LogWarning($"ç„¡åŠ¹ãª PartType ã®ç•ªå·: {no}");
         }
     }
 
     /// <summary>
-    /// ƒp[ƒc‚ªƒŠƒXƒg‚©‚ç‘I‘ğ‚³‚ê‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚éBMech ‚É‘•’…ˆ—‚ğˆË—ŠB
+    /// ãƒ‘ãƒ¼ãƒ„ãŒãƒªã‚¹ãƒˆã‹ã‚‰é¸æŠã•ã‚ŒãŸã¨ãã«å‘¼ã°ã‚Œã‚‹ã€‚Mech ã«è£…ç€å‡¦ç†ã‚’ä¾é ¼ã€‚
     /// </summary>
-    /// <param name="part">‘I‘ğ‚³‚ê‚½ PartData</param>
+    /// <param name="part">é¸æŠã•ã‚ŒãŸ PartData</param>
     public void OnPartSelected(PartData part)
     {
-        // Mech‚Éƒp[ƒc‚ğ‘•’…
+        // Mechã«ãƒ‘ãƒ¼ãƒ„ã‚’è£…ç€
         mechAssemblyManager.AttachPart(part, currentTabType);
 
-        // •K—v‚Å‚ ‚ê‚ÎƒXƒe[ƒ^ƒXUIXV‚È‚Ç‚Ì’Ç‰Áˆ—‚ğ‚±‚±‚ÅÀs‰Â”\
+        // AP åˆè¨ˆã‚’ UI ã«åæ˜ 
+        UpdateAPDisplay();
     }
 
-    // WeaponL ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚Æ‚«
+    // WeaponL ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã¨ã
     public void OnWeaponLButtonClicked(PartData selectedWeapon)
     {
         mechAssemblyManager.AttachPart(selectedWeapon, currentTabType);
     }
+
+    private void UpdateAPDisplay()
+    {
+        int totalAP = mechAssemblyManager.GetTotalAP();
+        apValueText.text = totalAP.ToString();
+    }
+
 
     public void OnClickSave()
     {
