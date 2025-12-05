@@ -290,8 +290,8 @@ public class Player : PlayerBase
     /// </summary>
     private void GameOver()
     {
-        //ゲームオーバー画面へ遷移
-        GameData.ShowGameOver();
+        //ゲームマネージャーへ死亡を通知
+        GameManager.Instance.PlayerDie();
     }
 
     /// <summary>

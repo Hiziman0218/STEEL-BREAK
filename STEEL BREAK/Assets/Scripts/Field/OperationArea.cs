@@ -2,19 +2,29 @@ using UnityEngine;
 
 public class OperationArea : MonoBehaviour
 {
-    [SerializeField] private float limitTime = 5f;
+    [SerializeField] private OperationUI ui;
+    [SerializeField] private float timeLimit = 5f;
 
     private float timer;
     private bool isOutside = false;
 
-    private Player player;
-    private OperationUI operationUI;
-
-    private void Start()
+    private void OnTriggerExit(Collider other)
     {
-        player = FindObjectOfType<Player>();
-        operationUI = FindObjectOfType<OperationUI>();
-        timer = limitTime;
+        if (other.CompareTag("Player"))
+        {
+            isOutside = true;
+            timer = timeLimit;
+            ui.ShowWarning(true);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isOutside = false;
+            ui.ShowWarning(false);
+        }
     }
 
     private void Update()
@@ -22,34 +32,14 @@ public class OperationArea : MonoBehaviour
         if (!isOutside) return;
 
         timer -= Time.deltaTime;
-        operationUI.UpdateTimer(timer);
+        ui.UpdateTimer(timer);
 
         if (timer <= 0f)
         {
+            Player player = FindAnyObjectByType<Player>();
             player.GetDamage(player.GetStatus().GetMaxHP());
-            operationUI.HideWarning();
             isOutside = false;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isOutside = true;
-            timer = limitTime;
-
-            operationUI.ShowWarning();
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player") && isOutside)
-        {
-            isOutside = false;
-
-            operationUI.HideWarning();
+            ui.ShowWarning(false);
         }
     }
 }

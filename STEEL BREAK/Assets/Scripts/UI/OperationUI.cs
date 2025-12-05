@@ -1,64 +1,59 @@
-using UnityEngine;
-using System.Collections;
+ï»¿using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class OperationUI : MonoBehaviour
 {
-    [Header("ƒ^ƒCƒ}[(TMP)")]
-    [SerializeField] private TMP_Text timerText;
+    [Header("UI References")]
+    [SerializeField] private GameObject warningPanel;     //è­¦å‘Šãƒ‘ãƒãƒ«
+    [SerializeField] private Text warningText;            //è­¦å‘Šæ–‡
+    [SerializeField] private GameObject timerParent;      //ã‚¿ã‚¤ãƒãƒ¼ãƒ‘ãƒãƒ«å…¨ä½“
+    [SerializeField] private TextMeshProUGUI timerText;   //ã‚¿ã‚¤ãƒãƒ¼æ–‡å­—
 
-    [Header("Œx•\¦ (ƒtƒF[ƒh—p CanvasGroup)")]
-    [SerializeField] private CanvasGroup warningGroup;
-    [SerializeField] private float fadeDuration = 0.5f;
+    [Header("Warning Text Pulse")]
+    [SerializeField] private float warningMinAlpha = 0.5f;
+    [SerializeField] private float warningMaxAlpha = 1.0f;
+    [SerializeField] private float pulseSpeed = 2f;
 
-    private Coroutine fadeCoroutine;
+    private bool isWarningActive = false;
+    private float pulseTime = 0f;
 
-    /// <summary>
-    /// Œx•¶‚ğƒtƒF[ƒhƒCƒ“‚³‚¹‚é
-    /// </summary>
-    public void ShowWarning()
+    private void Start()
     {
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(FadeWarning(0f, 1f, fadeDuration));
+        //å„UIã‚’éè¡¨ç¤ºã«
+        warningPanel.SetActive(false);
+        timerParent.SetActive(false);
     }
 
-    /// <summary>
-    /// Œx•¶‚ğƒtƒF[ƒhƒAƒEƒg‚³‚¹‚é
-    /// </summary>
-    public void HideWarning()
+    public void ShowWarning(bool show)
     {
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(FadeWarning(1f, 0f, fadeDuration));
+        isWarningActive = show;
+
+        warningPanel.SetActive(show);
+        timerParent.SetActive(show);
     }
 
-    /// <summary>
-    /// ƒ^ƒCƒ}[XVi¬”‘æ2ˆÊj
-    /// </summary>
     public void UpdateTimer(float time)
     {
+        //ã‚¿ã‚¤ãƒãƒ¼ã®æ•°å€¤ã‚’å°æ•°ç‚¹ç¬¬2ä½ã¾ã§è¡¨ç¤º
         timerText.text = time.ToString("F2");
     }
 
-    /// <summary>
-    /// Œx•¶ƒtƒF[ƒh‚ÌƒRƒ‹[ƒ`ƒ“
-    /// </summary>
-    private IEnumerator FadeWarning(float start, float end, float duration)
+    private void Update()
     {
-        float t = 0f;
+        if (!isWarningActive) return;
 
-        warningGroup.alpha = start;
-        warningGroup.gameObject.SetActive(true);
+        //ãƒ‘ãƒ«ã‚¹å‡¦ç†
+        pulseTime += Time.deltaTime * pulseSpeed;
 
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            warningGroup.alpha = Mathf.Lerp(start, end, t / duration);
-            yield return null;
-        }
+        float alpha = Mathf.Lerp(
+            warningMinAlpha,
+            warningMaxAlpha,
+            (Mathf.Sin(pulseTime) + 1f) / 2f
+        );
 
-        warningGroup.alpha = end;
-
-        if (end == 0f)
-            warningGroup.gameObject.SetActive(false);
+        Color c = warningText.color;
+        c.a = alpha;
+        warningText.color = c;
     }
 }

@@ -5,19 +5,19 @@ using Game.Enum;
 public class GunStatusData : ScriptableObject
 {
     [Tooltip("武装の名前")]
-    public string Name;      //武装名
+    public string Name;        //武装名
     [Tooltip("発射レート")]
-    public float Rate;       //発射レート
+    public float Rate;         //発射レート
     [Tooltip("リロードに必要な時間")]
-    public float ReloadTime; //リロード時間
+    public float ReloadTime;   //リロード時間
     [Tooltip("弾速")]
-    public float Speed;      //弾速
+    public float Speed;        //弾速
     [Tooltip("与えるダメージ量")]
-    public float Damage;     //ダメージ量
+    public float Damage;       //ダメージ量
     [Tooltip("与えるよろけ値")]
-    public float StaggerPower;
+    public float StaggerPower; //よろけ値
     [Tooltip("最大弾数")]
-    public int MaxAmmo;      //最大弾数
+    public int MaxAmmo;        //最大弾数
     [Tooltip("銃口の制御をするか")]
     public bool UseMuzzleControl; //銃口の補正をするか
     [Tooltip("反転機能を使うか(使うならtrue)")]

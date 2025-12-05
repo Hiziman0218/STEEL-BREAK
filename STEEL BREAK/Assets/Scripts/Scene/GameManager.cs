@@ -15,9 +15,20 @@ public class GameManager : MonoBehaviour
     //プレイヤーの装備する武器の残弾数
     public AmmoDisplay m_ammoDisplay;
 
+    //プレイヤーが死亡したか
+    private bool m_playerDied;
+
     void Awake()
     {
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if (m_playerDied)
+        {
+            GameData.ShowGameOver();
+        }
     }
 
     /// <summary>
@@ -32,5 +43,13 @@ public class GameManager : MonoBehaviour
         player.SetBoostGauge(m_playerBoostGauge);
         player.SetRadar(m_radar);
         m_ammoDisplay.SetPlayer(player);
+    }
+
+    /// <summary>
+    /// プレイヤーの死亡を通知
+    /// </summary>
+    public void PlayerDie()
+    {
+        m_playerDied = true;
     }
 }
