@@ -34,7 +34,6 @@ namespace StateMachineAI
             {
                 // ロックオン状態へ移行
                 owner.ChangeState(AIState_Titania_T.LockBeam_T);
-
             }
         }
 
