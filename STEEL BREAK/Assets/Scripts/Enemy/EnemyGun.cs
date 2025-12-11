@@ -3,16 +3,13 @@ using UnityEngine;
 public class EnemyGun : MonoBehaviour
 {
     [SerializeField] private GunStatusData m_statusData;  //銃の性能(インスペクタで設定)
-    [SerializeField] private Transform m_muzzleTransform;
+    [SerializeField] private Transform m_muzzleTransform; //銃口
     
     private GunStatus m_status;    //銃の性能(インスペクタで設定したものを代入)
-
     private Transform targetPoint; //目標とするポイント
 
     private string m_myTeam;       //自身の所属するチーム
-
     private float m_elapsedTime;   //経過時間計測用
-
     private bool m_isFire = false; //発射可能フラグ
     private bool m_isReloading = false; //リロード中フラグ
 

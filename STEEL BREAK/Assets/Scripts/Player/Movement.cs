@@ -61,14 +61,16 @@ public class Movement : MonoBehaviour
     private Rigidbody rb;       // Rigidbody コンポーネント参照（物理挙動を操作）
     private InputManager input; // 入力管理コンポーネント参照（外部）
     private Player player;      // プレイヤー固有の管理クラス参照（レーザー使用判定等）
-    private WallCollisionController wallCtrl; //壁の判定取得用
 
     // ------------- ダッシュ／ブースト状態 -------------
     private bool isDashing = false;        // ダッシュ中フラグ
     private float dashTimer = 0f;          // ダッシュ残時間
     private bool dashHasDirection = true;  // ダッシュ開始時に入力があったか
     private bool isBoosting = false;       // ブースト（維持）フラグ
+    //private bool isBoostRelease = true;    // ブースト入力をやめたか
+    private bool boostExhaustedLocked = false; // ブースト枯渇時に再利用を禁止するロック
     private float boost;                   // 現在のブースト量
+    private float moveMultiplier = 1f;     // BackPackから渡される移動倍率(1 = 等倍)
 
     // 公開用の読み取りプロパティ
     public float GetMaxBoost => maxBoost;
@@ -96,7 +98,6 @@ public class Movement : MonoBehaviour
     void Awake()
     {
         InitializeReferences();
-        wallCtrl = GetComponent<WallCollisionController>();
     }
 
     /// <summary>
@@ -136,6 +137,11 @@ public class Movement : MonoBehaviour
         // ダッシュ開始（瞬間判定）
         TryStartDash();
 
+        if (input.IsBoostDashUp)
+        {
+            boostExhaustedLocked = false; // ボタンを放したら枯渇ロックを解除
+        }
+
         // ダッシュのタイマー減算（Updateで良い）
         UpdateDashTimer();
 
@@ -160,7 +166,6 @@ public class Movement : MonoBehaviour
 
         // カメラ基準の入力方向（ワールド座標）を取得
         Vector3 dir = GetRelativeInputDirection();
-        dir = wallCtrl.ModifyDirection(dir);
 
         // 現在の水平速度（XZ 平面のみ）
         Vector3 velH = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -293,29 +298,13 @@ public class Movement : MonoBehaviour
     }
 
     /// <summary>
-    /// 強制落下入力（例: LeftControl）
-    /// - 押されたら isFalling=true にして重力を有効化
-    /// </summary>
-    /*
-    private void HandleFallInput()
-    {
-        if (input.IsFall)
-        {
-            isFalling = true;
-            jumpPressed = false;
-            hasStartedAscend = false;
-            rb.useGravity = true;
-        }
-    }*/
-
-    /// <summary>
     /// 下降（Fall）押下開始処理
     /// - IsFallDown（GetKeyDown 相当）で検出し、長押し計測を開始する
     /// - 長押し判定までは重力をオフにしておき、短押しなら後で重力を有効にして通常落下に戻す
     /// </summary>
     private void HandleFallStart()
     {
-        if (input.IsFallDown)   // GetKeyDown 相当
+        if (input.IsFallDown)   // GetKeyDown
         {
             fallPressed = true;
             fallHoldTimer = 0f;
@@ -389,7 +378,7 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void TryStartDash()
     {
-        if (input.IsBoostDash && boost >= dashConsumptionRate)
+        if (input.IsBoostDash && boost >= dashConsumptionRate && !boostExhaustedLocked)
         {
             Vector3 inputDir = GetRelativeInputDirection();
             Vector3 dashDir = inputDir.sqrMagnitude > 0.01f ? inputDir : transform.forward;
@@ -423,7 +412,7 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void UpdateBoostingFlag()
     {
-        isBoosting = input.IsBoost && boost > 0f;
+        isBoosting = input.IsBoost && boost > 0f && !boostExhaustedLocked;
     }
 
     // ----------------------------
@@ -454,6 +443,8 @@ public class Movement : MonoBehaviour
         {
             boost = 0f;
             isBoosting = false;
+            // ブーストが枯渇したら再使用を封印（ボタン放しで解除させる）
+            boostExhaustedLocked = true;
         }
 
         if (!isBoosting && boost < maxBoost && !isDashing)
@@ -631,24 +622,27 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void HandleGroundMovement(Vector3 dir, Vector3 velH)
     {
+        //バックパックからの倍率反映
+        float finalMoveForce = moveForce * moveMultiplier;
+        float finalMaxSpeed = maxSpeed * moveMultiplier;
+
         if (isBoosting)
         {
-            // ブースト中は消費して速度上限を増やす
             boost = Mathf.Max(0f, boost - boostConsumptionRate * Time.fixedDeltaTime);
-            float speedLimit = maxSpeed * boostMultiplier;
+            float speedLimit = finalMaxSpeed * boostMultiplier;
+
             if (dir.magnitude > 0.01f && velH.magnitude < speedLimit)
-                rb.AddForce(dir * moveForce * boostMultiplier, ForceMode.Force);
+                rb.AddForce(dir * finalMoveForce * boostMultiplier, ForceMode.Force);
         }
         else
         {
             if (dir.magnitude > 0.01f)
             {
-                if (velH.magnitude < maxSpeed)
-                    rb.AddForce(dir * moveForce, ForceMode.Force);
+                if (velH.magnitude < finalMaxSpeed)
+                    rb.AddForce(dir * finalMoveForce, ForceMode.Force);
             }
             else
             {
-                // 入力なし時の慣性ブレーキ（地上）
                 rb.AddForce(-velH * brakePower, ForceMode.Force);
             }
         }
@@ -660,7 +654,11 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void ApplyHorizontalSpeedLimit()
     {
-        float limitH = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
+        //バックパックからの倍率反映
+        float limitH =
+        (isBoosting ? maxSpeed * boostMultiplier : maxSpeed)
+        * moveMultiplier;
+
         Vector3 velH = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (velH.magnitude > limitH)
         {
@@ -679,16 +677,23 @@ public class Movement : MonoBehaviour
     /// </summary>
     private void ApplyAirControl(Vector3 dir, float targetY)
     {
+        //バックパックからの倍率反映
         Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        float targetSpeed = isBoosting ? airMaxSpeed * boostMultiplier : airMaxSpeed;
+
+        float targetSpeed =
+            (isBoosting ? airMaxSpeed * boostMultiplier : airMaxSpeed)
+            * moveMultiplier;
+
         Vector3 desiredH = dir * targetSpeed;
 
-        // Lerp による滑らかな速度補間（固定フレーム単位での補間係数に依存）
-        Vector3 newH = Vector3.Lerp(horizontalVel, desiredH, Mathf.Clamp01(airControl * Time.fixedDeltaTime));
+        Vector3 newH = Vector3.Lerp(horizontalVel, desiredH,
+            Mathf.Clamp01(airControl * Time.fixedDeltaTime));
+
         rb.linearVelocity = new Vector3(newH.x, targetY, newH.z);
 
-        // 小さめの補助加速を入れて操作感を向上（Acceleration で質量の影響を減らす）
-        rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f) * airAssistMultiplier, ForceMode.Acceleration);
+        // 補助加速も倍率を適用
+        float assist = moveForce * moveMultiplier * (isBoosting ? boostMultiplier : 1f) * airAssistMultiplier;
+        rb.AddForce(dir * assist, ForceMode.Acceleration);
     }
 
     /// <summary>
@@ -719,13 +724,11 @@ public class Movement : MonoBehaviour
         return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
     }
 
-    public Vector3 Velocity
+    /// <summary>
+    /// BackPack から移動倍率を設定する
+    /// </summary>
+    public void SetMoveMultiplier(float value)
     {
-        get { return rb.linearVelocity; }   // あなたの内部変数名に沿って
-    }
-
-    public void SetVelocity(Vector3 v)
-    {
-        rb.linearVelocity = v;
+        moveMultiplier = Mathf.Max(0f, value); // 万が一0以下でも安全に
     }
 }

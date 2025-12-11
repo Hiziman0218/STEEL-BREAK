@@ -17,13 +17,14 @@ MonoBehaviour:
   ReloadTime: 5
   Speed: 10
   Damage: 3
+  StaggerPower: 0
   MaxAmmo: 4
   UseMuzzleControl: 0
   UseMirror: 0
   MirrorHand: 0
   BulletPrefab: {fileID: 1782671735075917170, guid: b3ed825c18e704645b587f09c804500a, type: 3}
   MuzzleFlashEffect: {fileID: 0}
-  FireSE: {fileID: 0}
+  FireSE: {fileID: 8300000, guid: 6f8a57bd78c6e4640b0594348bd0c047, type: 3}
   EmptyFireSE: {fileID: 0}
   ReloadSE: {fileID: 0}
   Detail: "\u8A98\u5C0E\u306E\u5F37\u3044\u30DF\u30B5\u30A4\u30EB"

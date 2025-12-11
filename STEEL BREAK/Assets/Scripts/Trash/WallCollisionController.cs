@@ -49,14 +49,14 @@ public class WallCollisionController : MonoBehaviour
     {
         if (movement == null) return;
 
-        Vector3 vel = movement.Velocity;
-        float dot = Vector3.Dot(vel, wallNormal);
+        //Vector3 vel = movement.Velocity;
+        //float dot = Vector3.Dot(vel, wallNormal);
 
         // •Ç•ûŒü‚Öi‚Þ‘¬“x¬•ª‚ð‘Å‚¿Á‚·
-        if (dot > 0f)
+        //if (dot > 0f)
         {
-            vel -= wallNormal * dot;
-            movement.SetVelocity(vel);
+            //vel -= wallNormal * dot;
+            //movement.SetVelocity(vel);
         }
     }
 

@@ -10,7 +10,6 @@ public class LockOn : MonoBehaviour
     public float detectionRange = 20f;
     [Tooltip("ロックオン可能な最大角度")]
     public float maxAngle = 60f;
-
     [Tooltip("敵のレイヤー")]
     public LayerMask enemyLayer;
 

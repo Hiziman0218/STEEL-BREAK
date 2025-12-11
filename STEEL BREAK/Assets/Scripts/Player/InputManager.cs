@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     public bool IsReloadLeftBack { get; private set; }   //左背面武装のリロード入力受け取り
     public bool IsBoost { get; private set; }            //ブーストの入力受け取り
     public bool IsBoostDash { get; private set; }        //ブーストダッシュの入力受け取り
+    public bool IsBoostDashUp {  get; private set; }     //ブーストダッシュの入力解除受け取り
     public bool IsJump { get; private set; }             //上昇の入力受け取り
     public bool IsJumpDown { get; private set; }         //上昇の入力受け取り開始
     public bool IsJumpUp { get; private set; }           //上昇の入力受け取り終了
@@ -54,6 +55,7 @@ public class InputManager : MonoBehaviour
         IsReloadLeftBack = Input.GetKey(KeyCode.Q) && IsReload;  //Qキーを押していてリロード入力をしている間は左背面武装のリロード
         IsBoost = Input.GetKey(KeyCode.LeftShift);          //左shiftを押している間はブースト(加速)
         IsBoostDash = Input.GetKeyDown(KeyCode.LeftShift);  //左shiftを押した瞬間はブースト(初期加速)
+        IsBoostDashUp = Input.GetKeyUp(KeyCode.LeftShift);  //左shiftを離した瞬間はブースト入力解除
         IsJump = Input.GetKey(KeyCode.Space);               //Spaceキーを押している間は上昇
         IsJumpDown = Input.GetKeyDown(KeyCode.Space);       //Spaceキーを押した瞬間ジャンプ入力の計測開始
         IsJumpUp = Input.GetKeyUp(KeyCode.Space);           //Spaceキーを離した瞬間ジャンプ入力の計測終了

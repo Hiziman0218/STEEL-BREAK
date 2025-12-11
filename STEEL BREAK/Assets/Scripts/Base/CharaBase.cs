@@ -29,6 +29,14 @@ public class CharaBase : MonoBehaviour
     }
 
     /// <summary>
+    /// 破壊(強制的にHPを0にするダメージ)
+    /// </summary>
+    public void Destruction()
+    {
+        GetDamage(GetStatus().GetMaxHP());
+    }
+
+    /// <summary>
     /// 死亡処理
     /// </summary>
     protected void Die()

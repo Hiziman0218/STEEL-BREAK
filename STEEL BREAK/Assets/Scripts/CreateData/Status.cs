@@ -2,8 +2,6 @@ public class Status
 {
     private float m_HP;      //Œ»İ‚Ì‘Ï‹v
     private float m_maxHP;   //Å‘å‘Ï‹v
-    private float m_power;   //UŒ‚—Í
-    private float m_defence; //–hŒä—Í
     private float m_speed;   //ˆÚ“®‘¬“x
     private string m_team;   //Š‘®ƒ`[ƒ€
     private DestructionEffect m_destructionEffect; //€–SƒGƒtƒFƒNƒg
@@ -16,8 +14,6 @@ public class Status
     {
         m_HP = data.HP;
         m_maxHP = data.HP;
-        m_power = data.Power;
-        m_defence = data.Defence;
         m_speed = data.Speed;
         m_team = data.Team;
         m_destructionEffect = data.DestructionEffect;
@@ -57,42 +53,6 @@ public class Status
     public void SetMaxHP(float MaxHP)
     {
         m_maxHP = MaxHP;
-    }
-
-    /// <summary>
-    /// UŒ‚—Í‚ğæ“¾
-    /// </summary>
-    /// <returns></returns>
-    public float GetPower()
-    {
-        return m_power;
-    }
-
-    /// <summary>
-    /// UŒ‚—Í‚ğİ’è
-    /// </summary>
-    /// <param name="Power"></param>
-    public void SetPower(float Power)
-    {
-        m_power = Power;
-    }
-
-    /// <summary>
-    /// –hŒä—Í‚ğæ“¾
-    /// </summary>
-    /// <returns></returns>
-    public float GetDefence()
-    {
-        return m_defence;
-    }
-
-    /// <summary>
-    /// –hŒä—Í‚ğİ’è
-    /// </summary>
-    /// <param name="Defence"></param>
-    public void SetDefence(float Defence)
-    {
-        m_defence = Defence;
     }
 
     /// <summary>

@@ -5,14 +5,6 @@ using System;
 
 public class Player : PlayerBase
 {
-    [Header("デバッグ設定")]
-    //デバッグ用 武装をインスペクタで設定
-    [SerializeField] private bool m_isDebug = false; //デバッグか
-    [SerializeField] private GameObject m_rightHandWeaponMono; //右手武装(デバッグ)
-    [SerializeField] private GameObject m_leftHandWeaponMono;  //左手武装(デバッグ)
-    [SerializeField] private GameObject m_rightBackWeaponMono; //右背面武装(デバッグ)
-    [SerializeField] private GameObject m_leftBackWeaponMono;  //左背面武装(デバッグ)
-
     [Header("プレハブ設定")]
     [Tooltip("パーツ設定用オブジェクト")]
     [SerializeField] private MechAssemblyManager PartsSet;
@@ -55,11 +47,10 @@ public class Player : PlayerBase
     private ProgressBar m_boostGauge; //ブーストゲージ
     private Radar m_radar;            //プレイヤーを中心とするレーダー
 
-    /*デバッグ武装保持用*/
-    IWeapon DebugWeaponRightH;
-    IWeapon DebugWeaponLeftH;
-    IWeapon DebugWeaponRightB;
-    IWeapon DebugWeaponLeftB;
+    private void Awake()
+    {
+        cameraRig = Camera.main.transform;
+    }
 
     /// <summary>
     /// 初期化
@@ -76,7 +67,7 @@ public class Player : PlayerBase
         inputManager = GetComponent<InputManager>();
         movement = GetComponent<Movement>();
         lockon = GetComponent<LockOn>();
-        IK = GetComponent<IK_Control>();
+        IK = GetComponent<IKControl>();
 
         //死亡イベント設定
         OnDied += GameOver;
@@ -88,12 +79,6 @@ public class Player : PlayerBase
             smoothedCameraDir.y = 0f;
             if (smoothedCameraDir.sqrMagnitude < 0.001f) smoothedCameraDir = transform.forward;
             smoothedCameraDir.Normalize();
-        }
-
-        //デバッグ中なら、デバッグ用の処理を行う
-        if (m_isDebug)
-        {
-            DebugWeaponAttach();
         }
     }
 
@@ -345,40 +330,5 @@ public class Player : PlayerBase
     public bool IsFireLaser()
     {
         return m_laserCount != 0;
-    }
-
-    /// <summary>
-    /// インスペクタで設定した武器を装備する(デバッグ)
-    /// </summary>
-    public void DebugWeaponAttach()
-    {
-        // 各装備を複製してEquip
-        if (m_rightHandWeaponMono != null)
-        {
-            var rightHandObj = Instantiate(m_rightHandWeaponMono.gameObject);
-            DebugWeaponRightH = rightHandObj.GetComponent<IWeapon>();
-            EquipWeapon(DebugWeaponRightH, WeaponSlot.RightHand);
-        }
-
-        if (m_leftHandWeaponMono != null)
-        {
-            var leftHandObj = Instantiate(m_leftHandWeaponMono.gameObject);
-            DebugWeaponLeftH = leftHandObj.GetComponent<IWeapon>();
-            EquipWeapon(DebugWeaponLeftH, WeaponSlot.LeftHand);
-        }
-
-        if (m_rightBackWeaponMono != null)
-        {
-            var rightBackObj = Instantiate(m_rightBackWeaponMono.gameObject);
-            DebugWeaponRightB = rightBackObj.GetComponent<IWeapon>();
-            EquipWeapon(DebugWeaponRightB, WeaponSlot.RightBack);
-        }
-
-        if (m_leftBackWeaponMono != null)
-        {
-            var leftBackObj = Instantiate(m_leftBackWeaponMono.gameObject);
-            DebugWeaponLeftB = leftBackObj.GetComponent<IWeapon>();
-            EquipWeapon(DebugWeaponLeftB, WeaponSlot.LeftBack);
-        }
     }
 }

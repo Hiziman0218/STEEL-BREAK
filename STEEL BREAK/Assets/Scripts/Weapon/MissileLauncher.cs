@@ -44,8 +44,6 @@ public class MissileLauncher : MonoBehaviour
         {
             Transform missile = m_missiles[i];
 
-            
-
             //最初の要素だけ非表示設定のみでスキップ
             if (i == 0)
             {
@@ -79,6 +77,9 @@ public class MissileLauncher : MonoBehaviour
 
                 m_shooting.GetGunStatus().SetAmmo(m_shooting.GetGunStatus().GetAmmo() - 1);
                 if (m_shooting.GetGunStatus().GetAmmo() > 0) m_shooting.Reload();
+
+                //SEは上書き再生
+                m_shooting.PlayFireSE(m_shooting.GetGunStatus().GetFireSE(), true);
             }
         }
         //フラグ設定

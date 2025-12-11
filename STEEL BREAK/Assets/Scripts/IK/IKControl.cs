@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IK_Control : MonoBehaviour
+public class IKControl : MonoBehaviour
 {
     [System.Serializable]
     public class HandIK

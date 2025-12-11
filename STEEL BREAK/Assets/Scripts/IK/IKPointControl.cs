@@ -22,7 +22,7 @@ public class IKPointControl : MonoBehaviour
         if (lockOn == null)
             lockOn = FindObjectOfType<LockOn>();
         if (player == null)
-            player = transform.root; //IKPoint ‚ğq‚É‚µ‚Ä‚¢‚½ê‡‚Ì—á
+            player = transform.root;
     }
 
     void LateUpdate()

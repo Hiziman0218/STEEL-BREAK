@@ -42,13 +42,13 @@ public class PlayerBase : CharaBase
     protected IWeapon m_rightBackWeapon; //‰E”w–Ê•‘•
     protected IWeapon m_leftBackWeapon;  //¶”w–Ê•‘•
 
-    protected IK_Control IK; //IK
+    protected IKControl IK; //IK
 
     protected override void Initialize()
     {
         base.Initialize();
 
-        IK = GetComponent<IK_Control>();
+        IK = GetComponent<IKControl>();
     }
 
     /// <summary>

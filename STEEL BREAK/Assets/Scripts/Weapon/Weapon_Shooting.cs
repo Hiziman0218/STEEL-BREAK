@@ -438,10 +438,11 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// SEを再生
     /// </summary>
     /// <param name="PlaySE">再生したいSE</param>
-    private void PlayFireSE(AudioClip PlaySE)
+    /// <param name="Overwrite">上書き再生するか(デフォルトではしない)</param>
+    public void PlayFireSE(AudioClip PlaySE, bool Overwrite = false)
     {
         //既に何かのSEを再生中なら、音声を再生しない
-        if (m_audioSource.isPlaying) return;
+        if (!Overwrite && m_audioSource.isPlaying) return;
 
         //音声保存用変数に再生したいSEを設定し、再生
         m_audioSource.clip = PlaySE;
