@@ -59,7 +59,7 @@ public class Bullet : BulletBase
                         Enemy enemy = chara.GetComponent<Enemy>();
                         if (enemy != null)
                         {
-                            enemy.GetStaggerValue();
+                            enemy.GetStaggerValue(GetStaggerValue());
                         }
 
                         //ヒットしたら消えるオブジェクトなら削除
