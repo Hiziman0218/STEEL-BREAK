@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Enemy : CharaBase
 {
-
     [SerializeField] private float m_staggerThreshold; //よろけるのに必要なよろけ値
 
     public event Action<Enemy> OnStagger; //よろけイベント
@@ -29,10 +28,13 @@ public class Enemy : CharaBase
 
     private void Update()
     {
+        Debug.Log("現在のよろけ値 : " + m_currentStagger);
         //よろけ値が最大になればよろけイベント
         if(m_currentStagger >= m_staggerThreshold)
         {
             OnStagger?.Invoke(this);
+            m_currentStagger = 0;
+            Debug.Log("よろけイベント呼び出し");
         }
 
         //HPが0以下なら、死亡

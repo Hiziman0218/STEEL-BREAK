@@ -55,7 +55,7 @@ public class OperationArea : MonoBehaviour
         if (timer <= 0f)
         {
             Player player = FindAnyObjectByType<Player>();
-            player.GetDamage(player.GetStatus().GetMaxHP());
+            player.Destruction();
 
             isOutside = false;
             ui.ShowWarning(false);
