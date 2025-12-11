@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Enemy : CharaBase
 {
-    [SerializeField] private float m_staggerThreshold; //よろけるのに必要なよろけ値
+    [SerializeField] private float m_staggerThreshold = 1; //よろけるのに必要なよろけ値
 
     public event Action<Enemy> OnStagger; //よろけイベント
     public event Action<Enemy> OnDeath;   //死亡イベント

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: "\u30EC\u30FC\u30B6\u30FC\u30AC\u30F3\u30C7\u30FC\u30BF"
   m_EditorClassIdentifier: 
   Name: "\u30EC\u30FC\u30B6\u30FC\u30AC\u30F3"
-  Rate: 1
+  Rate: 0.8
   ReloadTime: 3
   Speed: 150
   Damage: 4
+  StaggerPower: 0.35
   MaxAmmo: 40
   UseMuzzleControl: 1
   UseMirror: 0
