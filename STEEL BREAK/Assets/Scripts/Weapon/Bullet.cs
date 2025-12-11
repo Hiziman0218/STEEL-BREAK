@@ -56,6 +56,7 @@ public class Bullet : BulletBase
                         m_hitList.Add(chara);
                         if (m_hitEffect) Instantiate(m_hitEffect, hit.point, Quaternion.identity);
 
+                        //‘ÎÛ‚ª“G‚¾‚Á‚½ê‡A‚æ‚ë‚¯’l‚ğ‰ÁZ
                         Enemy enemy = chara.GetComponent<Enemy>();
                         if (enemy != null)
                         {

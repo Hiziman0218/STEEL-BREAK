@@ -13,31 +13,91 @@ public class FloatingCamera : MonoBehaviour
     [Header("壁との衝突判定用レイヤー")]
     public LayerMask obstacleLayers;
 
+    [Header("カメラ当たり判定の太さ")]
+    public float cameraRadius = 0.2f;
+
+    [Header("カメラがプレイヤーを表示しなくなる距離")]
+    public float hideDistance = 2f;
+
     private void Start()
     {
         //プレイヤーとの親子関係を解除
-        transform.SetParent(null);   
+        transform.SetParent(null);
     }
 
-    /// <summary>
-    /// フレームではなく時間で起動するアップデート
-    /// 重い処理とかに使用するが、場合によって処理をすっ飛ばす可能性がある
-    /// </summary>
     private void FixedUpdate()
     {
-        if (m_GazingPoint && m_Target)
+        if (!m_GazingPoint || !m_Target) return;
+
+        //----------------------------------------------------------
+        // ① GazingPoint → Target を SphereCast して壁をチェック
+        //----------------------------------------------------------
+        Vector3 from = m_GazingPoint.position;
+        Vector3 to = m_Target.position;
+        Vector3 direction = (to - from).normalized;
+        float distance = Vector3.Distance(from, to);
+
+        float correctedDistance = distance;
+
+        if (Physics.SphereCast(
+                from,
+                cameraRadius,
+                direction,
+                out RaycastHit hit,
+                distance,
+                obstacleLayers))
         {
-            ///フローティングカメラの向きをプレイヤーの位置情報から向き情報を獲得し、分割してゆっくり回転
-            ///Slerpは、AからBまでの補完を行い、分割して値を提出する
-            transform.rotation = Quaternion.Lerp(
-                transform.rotation,
-                Quaternion.LookRotation(m_GazingPoint.position - transform.position),
-                0.1f);
-            ///フローティングカメラの位置をフローティングカメラ台にゆっくり移動させる
-            transform.position = Vector3.Lerp(
-                transform.position,
-                m_Target.position,
-                0.1f);
+            // 壁に当たったなら、カメラが少し手前に来るよう距離を補正
+            correctedDistance = hit.distance - cameraRadius;
+        }
+
+        // 実際に移動させるべき位置を決定
+        Vector3 correctedTargetPos = from + direction * correctedDistance;
+
+        //----------------------------------------------------------
+        // ② カメラの向き：注視点を向く（遅れつつ追従）
+        //----------------------------------------------------------
+        transform.rotation = Quaternion.Lerp(
+            transform.rotation,
+            Quaternion.LookRotation(m_GazingPoint.position - transform.position),
+            0.1f);
+
+        //----------------------------------------------------------
+        // ③ カメラ位置：補正済みのカメラ台に向けて Lerp 移動
+        //----------------------------------------------------------
+        transform.position = Vector3.Lerp(
+            transform.position,
+            correctedTargetPos,
+            0.1f);
+
+        //----------------------------------------------------------
+        // ④ プレイヤー透明化：距離に応じてレイヤー切り替え
+        //----------------------------------------------------------
+        float currentDistanceToPlayer = Vector3.Distance(transform.position, m_GazingPoint.position);
+
+        // カメラが描画しないレイヤー
+        int hiddenLayer = LayerMask.NameToLayer("PlayerHidden");
+
+        // プレイヤーの通常レイヤー
+        int defaultLayer = LayerMask.NameToLayer("Player");
+
+        if (currentDistanceToPlayer < hideDistance)
+        {
+            SetLayerRecursively(m_GazingPoint.root.gameObject, hiddenLayer);
+        }
+        else
+        {
+            SetLayerRecursively(m_GazingPoint.root.gameObject, defaultLayer);
+        }
+    }
+
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, newLayer);
         }
     }
 }

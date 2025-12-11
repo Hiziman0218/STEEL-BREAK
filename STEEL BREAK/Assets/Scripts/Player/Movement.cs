@@ -149,7 +149,7 @@ public class Movement : MonoBehaviour
         UpdateBoostingFlag();
 
         // ブーストが無くなれば強制落下（状態更新）
-        ForcedFall();
+        //ForcedFall();
 
         if (jumpGraceTimer > 0f)
             jumpGraceTimer -= Time.deltaTime;
@@ -381,13 +381,23 @@ public class Movement : MonoBehaviour
         if (input.IsBoostDash && boost >= dashConsumptionRate && !boostExhaustedLocked)
         {
             Vector3 inputDir = GetRelativeInputDirection();
-            Vector3 dashDir = inputDir.sqrMagnitude > 0.01f ? inputDir : transform.forward;
 
-            // 水平速度をダッシュ速度で上書き（瞬間加速）
+            // "ごく微小な入力" を無視し、無入力扱いにする
+            bool hasMoveInput = input.m_MovePoint.sqrMagnitude > 0.05f;
+
+            // 入力が無いなら前方へダッシュ
+            Vector3 dashDir = hasMoveInput ? inputDir : transform.forward;
+
+            // ダッシュは水平移動だけ
+            dashDir.y = 0f;
+            dashDir.Normalize();
+
+            // ダッシュ開始
             rb.linearVelocity = dashDir * dashSpeed;
+
             isDashing = true;
             dashTimer = dashDuration;
-            dashHasDirection = inputDir.sqrMagnitude > 0.01f;
+            dashHasDirection = hasMoveInput;
             isBoosting = true;
         }
     }
@@ -704,6 +714,14 @@ public class Movement : MonoBehaviour
     {
         Vector3 raw = input.m_MovePoint;
         Vector3 inputDir = new Vector3(raw.x, 0f, raw.z);
+
+        // ブースト中 & 入力なし → 強制的に前方向へ
+        if (isBoosting && inputDir.sqrMagnitude < 0.001f)
+        {
+            // forward はカメラ基準ではなくプレイヤーの向き基準が自然
+            return transform.forward.normalized;
+        }
+
         if (inputDir.sqrMagnitude < 0.0001f) return Vector3.zero;
 
         Quaternion yawRot = Quaternion.Euler(0f, cameraController.transform.eulerAngles.y, 0f);

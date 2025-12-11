@@ -55,6 +55,10 @@ public class Laser : BulletBase
         //同チームは無視
         if (chara.GetTeam() == m_myTeam) return;
 
+        //よろけ値は毎フレーム加算
+        Enemy enemy = chara.GetComponent<Enemy>();
+        if (enemy != null) enemy.GetStaggerValue(m_staggerValue);
+
         float now = Time.time;
 
         //初回 or 前回ダメージから一定時間経過したら

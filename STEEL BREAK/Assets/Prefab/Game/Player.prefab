@@ -184,7 +184,7 @@ Transform:
   m_GameObject: {fileID: 7581994491196790045}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0.65}
+  m_LocalPosition: {x: 0, y: 1.5, z: 1.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -264,7 +264,7 @@ Transform:
   m_GameObject: {fileID: 9013977064213555854}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -3}
+  m_LocalPosition: {x: 0, y: 2, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -399,6 +399,10 @@ PrefabInstance:
       propertyPath: near clip plane
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 39730847096557161, guid: 8e595ea6564509142986c30c7cd97ad7, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 511
+      objectReference: {fileID: 0}
     - target: {fileID: 299767693803531068, guid: 8e595ea6564509142986c30c7cd97ad7, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -526,10 +530,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GazingPoint: {fileID: 292033462318283121}
   m_Target: {fileID: 3626535836731788290}
-  desiredDistance: 5
+  desiredDistance: 6
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 8
+  cameraRadius: 0.2
+  hideDistance: 2
 --- !u!114 &8027108546484901734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -888,7 +894,7 @@ MonoBehaviour:
   maxSpeed: 12
   brakePower: 1
   dashSpeed: 20
-  dashDuration: 0.1
+  dashDuration: 0.5
   dashConsumptionRate: 30
   boostMultiplier: 2
   boostConsumptionRate: 20

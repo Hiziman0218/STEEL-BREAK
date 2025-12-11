@@ -28,7 +28,6 @@ public class Enemy : CharaBase
 
     private void Update()
     {
-        Debug.Log("現在のよろけ値 : " + m_currentStagger);
         //よろけ値が最大になればよろけイベント
         if(m_currentStagger >= m_staggerThreshold)
         {

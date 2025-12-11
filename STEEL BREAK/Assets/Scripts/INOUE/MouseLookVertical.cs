@@ -33,11 +33,17 @@ public class MouseLookVertical : MonoBehaviour
         // 注視点の座標を更新（プレイヤーの前方位置にオフセット付きで）
         Vector3 gazePos = m_Base.position + m_Base.forward * 1.0f;
         gazePos.y += currentYOffset;
+
+        //最低でもプレイヤーの足元の高さを維持する
+        float minY = m_Base.position.y + 0.2f;
+        if (gazePos.y < minY)
+            gazePos.y = minY;
+
         transform.position = gazePos;
 
         // カメラ位置をシーソー関係で更新（注視点が上がればカメラが下がる）
         Vector3 camLocalOffset = cameraBaseLocalOffset;
         camLocalOffset.y -= currentYOffset; // シーソー効果：逆方向に変動
-        m_CameraTransform.position = m_Base.TransformPoint(camLocalOffset);
+        //m_CameraTransform.position = m_Base.TransformPoint(camLocalOffset);
     }
 }
