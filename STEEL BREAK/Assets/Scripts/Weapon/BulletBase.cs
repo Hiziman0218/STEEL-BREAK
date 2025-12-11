@@ -3,10 +3,11 @@ using UnityEngine;
 public class BulletBase : MonoBehaviour
 {
     protected Weapon_Shooting m_shooting; //自身を生成した銃
-    protected string m_myTeam;    //所属チーム
-    protected float m_damage;     //与えられるダメージ
-    protected float m_speed;      //弾速
-    protected Transform m_target; //自身が狙っているターゲット
+    protected string m_myTeam;      //所属チーム
+    protected float m_damage;       //与えられるダメージ
+    protected float m_speed;        //弾速
+    protected float m_staggerValue; //与えるよろけ値
+    protected Transform m_target;   //自身が狙っているターゲット
 
     /// <summary>
     /// 自身を生成した銃を取得
@@ -78,6 +79,24 @@ public class BulletBase : MonoBehaviour
     public void SetSpeed(float speed)
     {
         m_speed = speed;
+    }
+
+    /// <summary>
+    /// 与えるよろけ値を取得
+    /// </summary>
+    /// <returns></returns>
+    public float GetStaggerValue()
+    {
+        return m_staggerValue;
+    }
+
+    /// <summary>
+    /// 与えるよろけ値を設定
+    /// </summary>
+    /// <param name="StaggerValue"></param>
+    public void SetStaggerValue(float StaggerValue)
+    {
+        m_staggerValue = StaggerValue;
     }
 
     /// <summary>

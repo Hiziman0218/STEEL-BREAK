@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using RaycastPro.Bullets;
 
 public class MissileLauncher : MonoBehaviour
 {
@@ -69,6 +70,7 @@ public class MissileLauncher : MonoBehaviour
                 Dummy.SetTeam(m_shooting.GetTeam());
                 Dummy.SetDamage(m_shooting.GetGunStatus().GetDamage());
                 Dummy.SetSpeed(m_shooting.GetGunStatus().GetSpeed());
+                Dummy.SetStaggerValue(m_shooting.GetGunStatus().GetStaggerPower());
 
                 if (m_shooting.GetCurrentTarget() != null) Dummy.SetTarget(m_shooting.GetCurrentTarget());
 

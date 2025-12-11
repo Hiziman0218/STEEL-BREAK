@@ -65,4 +65,13 @@ public class Enemy : CharaBase
     {
         weaponL ?.Fire();
     }
+
+    /// <summary>
+    /// ‚æ‚ë‚¯’l‚ð‰ÁŽZ
+    /// </summary>
+    /// <param name="StaggerValue">—^‚¦‚é‚æ‚ë‚¯’l</param>
+    public void GetStaggerValue(float StaggerValue)
+    {
+        m_currentStagger += StaggerValue;
+    }
 }

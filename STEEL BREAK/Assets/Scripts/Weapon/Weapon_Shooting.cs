@@ -308,6 +308,7 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
             bullet.SetTeam(m_myTeam);
             bullet.SetDamage(m_status.GetDamage());
             bullet.SetSpeed(m_status.GetSpeed());
+            bullet.SetStaggerValue(m_status.GetStaggerPower());
 
             //ターゲットがいる場合、弾丸のターゲットに設定
             if (lockOn.CurrentTarget != null) bullet.SetTarget(lockOn.CurrentTarget);

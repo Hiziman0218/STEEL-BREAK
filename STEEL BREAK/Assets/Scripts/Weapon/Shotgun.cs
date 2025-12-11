@@ -44,6 +44,7 @@ public class Shotgun : MonoBehaviour
             //弾の所属チームとダメージ量を設定
             Dummy.SetTeam(m_bullet.GetTeam());
             Dummy.SetDamage(m_bullet.GetDamage());
+            Dummy.SetStaggerValue(m_bullet.GetStaggerValue());
             //指定範囲内のランダムな方向へ向け、その方向へ発射
             Dummy.transform.Rotate(new Vector3(Random.Range(m_minRange, m_maxRange), Random.Range(m_minRange, m_maxRange), 0));
             Dummy.GetComponent<Rigidbody>().linearVelocity = Dummy.transform.forward * m_bullet.GetSpeed();

@@ -56,6 +56,12 @@ public class Bullet : BulletBase
                         m_hitList.Add(chara);
                         if (m_hitEffect) Instantiate(m_hitEffect, hit.point, Quaternion.identity);
 
+                        Enemy enemy = chara.GetComponent<Enemy>();
+                        if (enemy != null)
+                        {
+                            enemy.GetStaggerValue();
+                        }
+
                         //ヒットしたら消えるオブジェクトなら削除
                         if (m_disappearOnHit)
                         {
