@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-
 using System.Reflection;
 
 namespace StateMachineAI
@@ -42,7 +41,6 @@ namespace StateMachineAI
         [Range(1f, 30f)]
         public int m_CoolTime = 4;
 
-
         public Enemy m_Enemy;
         [HideInInspector]
         public CoolDown m_CoolDown;
@@ -73,7 +71,7 @@ namespace StateMachineAI
             if (m_Enemy != null)
             {
                 // ダメージイベントを購読
-                m_Enemy.OnDamage += HandleDamaged;
+                m_Enemy.OnStagger += HandleDamaged;
             }
 
             //アタッチしているスプリクトの自動取得
@@ -98,7 +96,7 @@ namespace StateMachineAI
             ChangeState(AIState_CenteringAI.Chase);
         }
 
-        private void HandleDamaged()
+        private void HandleDamaged(Enemy enemy)
         {
             ChangeState(AIState_CenteringAI.Hit);
         }

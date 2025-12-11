@@ -1,9 +1,3 @@
-using Plugins.RaycastPro.Demo.Scripts;
-using RaycastPro.Detectors;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-//using Unity.VisualScripting;
 using UnityEngine;
 
 namespace StateMachineAI
@@ -25,8 +19,8 @@ namespace StateMachineAI
                 );
             }
 
-            //オブジェクト削除
-            Object.Destroy(owner.gameObject);
+            //強制的にHPを０に
+            owner.m_Enemy.Destruction();
 
         }
         //このAIが起動中に常に実行(Updateと同義)

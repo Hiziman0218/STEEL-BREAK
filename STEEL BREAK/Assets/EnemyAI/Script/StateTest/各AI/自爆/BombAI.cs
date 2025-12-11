@@ -87,13 +87,11 @@ namespace StateMachineAI
             m_RCController = myAgent.GetComponent<SteeringController>();
             m_RCController.speed = m_speed;
 
-            //キャラベース取得
-            charaBase = GetComponent<CharaBase>();
             //キャラベースがあればイベント登録
-            if (charaBase != null)
+            if (m_Enemy != null)
             {
                 // ダメージイベントを購読
-                charaBase.OnDamage += HandleDamaged;
+                m_Enemy.OnStagger += HandleDamaged;
             }
 
             m_Rigidbody = GetComponent<Rigidbody>();
@@ -117,7 +115,7 @@ namespace StateMachineAI
             ChangeState(AIState_BombAI.Chase);
         }
 
-        private void HandleDamaged()
+        private void HandleDamaged(Enemy enemy)
         {
             // 現在のステートが Ramming_BombAI 型なら無視
             if (stateMachine.CurrentState is Ramming_BombAI)

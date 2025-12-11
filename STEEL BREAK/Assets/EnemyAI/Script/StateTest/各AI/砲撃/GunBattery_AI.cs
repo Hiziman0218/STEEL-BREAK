@@ -55,18 +55,15 @@ namespace StateMachineAI
         {
             //プレイヤーをタグで検索して取得
             m_Player = GameObject.FindWithTag("Player")?.transform;
-
-            //キャラベース取得
-            charaBase = GetComponent<CharaBase>();
-            //キャラベースがあればイベント登録
-            if (charaBase != null)
-            {
-                // ダメージイベントを購読
-                charaBase.OnDamage += HandleDamaged;
-            }
-
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
+
+            //キャラベースがあればイベント登録
+            if (m_Enemy != null)
+            {
+                // ダメージイベントを購読
+                m_Enemy.OnStagger += HandleDamaged;
+            }
 
             //コライダーを取得
             Collider[] myColliders = GetComponents<Collider>();
@@ -92,7 +89,7 @@ namespace StateMachineAI
             ChangeState(AIState_GunBatteryAI.Caution);
         }
 
-        private void HandleDamaged()
+        private void HandleDamaged(Enemy enemy)
         {
             ChangeState(AIState_GunBatteryAI.Hit);
         }

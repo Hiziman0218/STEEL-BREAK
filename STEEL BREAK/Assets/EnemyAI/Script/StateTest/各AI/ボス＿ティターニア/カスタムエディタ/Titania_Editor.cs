@@ -1,8 +1,11 @@
 using Plugins.RaycastPro.Demo.Scripts;
 using StateMachineAI;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(StateMachineAI.Titania_T))]
 public class Titania_TEditor : Editor
 {
@@ -34,3 +37,4 @@ public class Titania_TEditor : Editor
         }
     }
 }
+#endif
