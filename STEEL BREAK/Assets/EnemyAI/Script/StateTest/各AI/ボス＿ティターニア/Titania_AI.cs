@@ -14,6 +14,7 @@ namespace StateMachineAI
         TurnBeam_T,
         LockBeam_T,
         RushBeam_T,
+        Hit_T,
     }
 
     public class Titania_T
@@ -156,6 +157,7 @@ namespace StateMachineAI
             {
                 // ダメージイベントを購読
                 m_Enemy.OnDamage += CommandEnemy;
+                m_Enemy.OnStagger -= HandleDamaged;
             }
 
             //存在していないクラスが指定されたら本体消滅
@@ -174,6 +176,12 @@ namespace StateMachineAI
 
             //初期起動時は、行動決め状態に移行させる
             ChangeState(AIState_Titania_T.Idle_T);
+        }
+
+        //ヒットストップ
+        private void HandleDamaged(Enemy enemy)
+        {
+            ChangeState(AIState_Titania_T.Hit_T);
         }
 
         //ダメージを与えられたら防御型に通知

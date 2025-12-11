@@ -73,13 +73,11 @@ namespace StateMachineAI
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();
-            //キャラベース取得
-            charaBase = GetComponent<CharaBase>();
             //キャラベースがあればイベント登録
-            if (charaBase != null)
+            if (m_Enemy != null)
             {
                 // ダメージイベントを購読
-                charaBase.OnDamage += HandleDamaged;
+                m_Enemy.OnStagger += HandleDamaged;
             }
 
 
@@ -115,7 +113,7 @@ namespace StateMachineAI
 
         }
 
-        private void HandleDamaged()
+        private void HandleDamaged(Enemy enemy)
         {
             ChangeState(AIState_Soldier.Hit);
         }

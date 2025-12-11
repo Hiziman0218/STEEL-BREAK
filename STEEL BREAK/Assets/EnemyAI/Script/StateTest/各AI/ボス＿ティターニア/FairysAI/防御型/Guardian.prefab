@@ -44252,7 +44252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: f6c06233102fe9d4da481306716a5fc2, type: 2}
-  DestructionEffect: {fileID: 100006, guid: 93485fd5fc2ccf2439cb3239186f6382, type: 3}
+  m_staggerThreshold: 1.5
   weaponR: {fileID: 1356156837460485471}
   weaponL: {fileID: 8125030468139529050}
 --- !u!114 &7875520850339493199

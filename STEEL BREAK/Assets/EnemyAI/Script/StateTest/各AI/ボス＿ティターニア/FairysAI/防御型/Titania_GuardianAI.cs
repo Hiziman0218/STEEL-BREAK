@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-
 using System.Reflection;
 using RaycastPro.Detectors;
 
@@ -90,7 +89,7 @@ namespace StateMachineAI
             if (m_Enemy != null)
             {
                 // ダメージイベントを購読
-                m_Enemy.OnDamage += HandleDamaged;
+                m_Enemy.OnStagger += HandleDamaged;
             }
 
             //センターポインターを個別に取得する
@@ -148,7 +147,7 @@ namespace StateMachineAI
 
         }
 
-        private void HandleDamaged()
+        private void HandleDamaged(Enemy enemy)
         {
             ChangeState(AIState_Guardian.Hit);
         }
