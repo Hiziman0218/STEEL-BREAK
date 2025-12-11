@@ -6669,7 +6669,6 @@ MonoBehaviour:
   m_Player: {fileID: 0}
   m_EnemyModel: {fileID: 8426477915361804993}
   m_CenterMarker: {fileID: 0}
-  m_BeamPoint: {fileID: 6604280383463968119}
   actionEntries:
   - state: 2
     weight: 7
@@ -6724,7 +6723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: a797eb6f8d47c9d4c8fcb4ee8ad9443b, type: 2}
-  DestructionEffect: {fileID: 100008, guid: 1dbc518224e49f34095aab42fe05751a, type: 3}
+  m_staggerThreshold: 5
   weaponR: {fileID: 6195010714844141557}
   weaponL: {fileID: 0}
 --- !u!114 &7167518726578823200

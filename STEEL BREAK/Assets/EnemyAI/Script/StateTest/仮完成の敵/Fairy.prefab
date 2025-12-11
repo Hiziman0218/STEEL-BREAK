@@ -1835,8 +1835,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: 7a181de743a45014aaf89d2f38fdbbe2, type: 2}
-  m_staggerThreshold: 0
-  DestructionEffect: {fileID: 100006, guid: 93485fd5fc2ccf2439cb3239186f6382, type: 3}
+  m_staggerThreshold: 1
   weaponR: {fileID: 4310280915521970087}
   weaponL: {fileID: 6506523770205866480}
 --- !u!114 &2986692859159271203

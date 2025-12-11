@@ -111,7 +111,6 @@ namespace StateMachineAI
             {
                 return;
             }
-
         }
 
         /// <summary>
