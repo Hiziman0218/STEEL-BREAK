@@ -190,6 +190,7 @@ public class MechAssemblyManager : MonoBehaviour
             // 実際に装着処理
             AttachPart(partData, type);
         }
+        UpdateStatus();
     }
 
     //========================================
@@ -300,6 +301,8 @@ public class MechAssemblyManager : MonoBehaviour
             {
                 AlignBackpackToBody();
             }
+
+
         }
     }
 
@@ -317,7 +320,7 @@ public class MechAssemblyManager : MonoBehaviour
         }
         equippedParts[partType].Clear();
 
-        EquippedData data = new() { partsDataName = partData.name };
+        EquippedData data = new() { partsDataName = partData.name, partData = partData };
 
         // 各スロットに順番にプレハブ生成
         for (int i = 0; i < slots.Length && i < partData.multiPrefabs.Count; i++)
@@ -527,20 +530,68 @@ public class MechAssemblyManager : MonoBehaviour
     /// </summary>
     public int GetTotalAP()
     {
-        int total = 0;
+        int ap_total = 0;
 
         foreach (var pair in equippedParts)
         {
             foreach (var data in pair.Value)
             {
                 if (data.partData != null)
-                    total += data.partData.ap;
+                    ap_total += data.partData.ap;
             }
         }
 
-        return total;
+        return ap_total;
     }
 
+    /// <summary>
+    /// 現在装着中のパーツの AP 合計を取得する
+    /// </summary>
+    public int GetTotalweight()
+    {
+        int weight_total = 0;
 
+        foreach (var pair in equippedParts)
+        {
+            foreach (var data in pair.Value)
+            {
+                if (data.partData != null)
+                    weight_total += data.partData.weight;
+            }
+        }
+
+        return weight_total;
+    }
+
+    /// <summary>
+    /// 🔄 装備している全パーツのステータスを再計算する
+    /// </summary>
+    public void UpdateStatus()
+    {
+        int totalAP = 0;
+        int totalWeight = 0;
+
+        // すべてのパーツスロットをチェック
+        foreach (var kv in equippedParts)
+        {
+            foreach (var eq in kv.Value)
+            {
+                PartData data = eq.partData;
+                if (data == null) continue;
+
+                totalAP += data.ap;
+                totalWeight += data.weight;
+            }
+        }
+
+        // 📊 UIにも反映
+        if (AssemblyUIManager.instance != null)
+        {
+            AssemblyUIManager.instance.UpdateStatusUI(
+                totalAP,
+                totalWeight
+            );
+        }
+    }
 
 }

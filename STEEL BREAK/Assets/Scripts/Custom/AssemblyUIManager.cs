@@ -10,6 +10,13 @@ using TMPro;
 /// </summary>
 public class AssemblyUIManager : MonoBehaviour
 {
+    public static AssemblyUIManager instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     [Header("参照")]
 
     // パーツリストを表示する親コンテナ（スクロールビューのContentなど）
@@ -30,6 +37,7 @@ public class AssemblyUIManager : MonoBehaviour
     private PartType currentTabType;
 
     public TextMeshProUGUI apValueText;  // 右下の AP 表示 Text
+    public TextMeshProUGUI weightValueText;  // 右下の Weight 表示 Text
 
     [SerializeField] private MechSaveLoader saveLoader;
 
@@ -109,6 +117,7 @@ public class AssemblyUIManager : MonoBehaviour
 
         // AP 合計を UI に反映
         UpdateAPDisplay();
+        UpdateWeightDisplay();
     }
 
     // WeaponL ボタンが押されたとき
@@ -121,6 +130,21 @@ public class AssemblyUIManager : MonoBehaviour
     {
         int totalAP = mechAssemblyManager.GetTotalAP();
         apValueText.text = totalAP.ToString();
+    }
+
+    private void UpdateWeightDisplay()
+    {
+        int totalweight = mechAssemblyManager.GetTotalweight();
+        weightValueText.text = totalweight.ToString();
+    }
+
+    /// <summary>
+    /// ステータスUI（AP・重量）を更新する
+    /// </summary>
+    public void UpdateStatusUI(int totalAP ,int totalWeight)
+    {
+        apValueText.text = totalAP.ToString();
+        weightValueText.text = totalWeight.ToString();
     }
 
 

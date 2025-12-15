@@ -28,7 +28,8 @@ public class PartData : ScriptableObject
     public List<PrefabScaleInfo> scaleInfos = new List<PrefabScaleInfo>();
 
     [Header("パーツのステータス")]
-    public int ap; //アーマーポイント
+    public int ap;      //アーマーポイント
+    public int weight;  //重量
 
     [Header("説明")]
     [TextArea(2, 5)]

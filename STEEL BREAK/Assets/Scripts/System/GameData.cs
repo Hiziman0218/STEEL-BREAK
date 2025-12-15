@@ -75,6 +75,9 @@ public class SlotSaveData
 {
     public string slotName;      // スロットの名前（PartType列挙型の文字列）
     public string partsDataName;    // パーツデータの名前（Resources/PartsData にある）
+
+    public int ap;                 // 個別パーツのAP
+    public int weight;             // 個別パーツの重量
 }
 
 /// <summary>
@@ -84,7 +87,24 @@ public class SlotSaveData
 public class MechSaveData
 {
     public List<SlotSaveData> slots = new();  // 各スロットのパーツ情報リスト
+
+    public int totalAP;            // 合計AP
+    public int totalWeight;        // 合計重量
+
     [SerializeField] private string saveFileName = "mech_save.json";  // セーブファイル名
+
+    private string GetSavePath()
+    {
+        string saveDirectory;
+
+        #if UNITY_EDITOR
+            saveDirectory = Path.Combine(Application.dataPath, "Savedata");
+        #else
+            saveDirectory = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Savedata");
+        #endif
+
+        return Path.Combine(saveDirectory, saveFileName);
+    }
 
     /// <summary>
     /// 現在の装備情報を保存する
@@ -94,65 +114,55 @@ public class MechSaveData
         MechAssemblyManager assemblyManager = MechAssemblyManager.instance;
         if (assemblyManager == null) return;
 
-        MechSaveData data = new MechSaveData();  // 保存用データを作成
+        MechSaveData data = new MechSaveData();
 
-        // 装着中の全パーツを取得
+        int totalAp = 0;
+        int totalWeight = 0;
+
         foreach (var kvp in assemblyManager.GetEquippedParts())
         {
             foreach (var part in kvp.Value)
             {
-                if (part == null) continue;
+                if (part == null || part.partData == null) continue;
 
-                // スロット名を PartType として保存
-                string slotName = kvp.Key.ToString();
+                int ap = part.partData.ap;
+                int weight = part.partData.weight;
 
-                // スロット情報を追加
+                Debug.Log($"SAVE PART: {part.partsDataName} | AP={ap} | Weight={weight}");
+
+                totalAp += ap;
+                totalWeight += weight;
+
                 data.slots.Add(new SlotSaveData
                 {
-                    slotName = slotName,
-                    partsDataName = part.partsDataName,
+                    slotName = kvp.Key.ToString(),
+                    partsDataName = part.partData.name,
+                    ap = ap,
+                    weight = weight
                 });
             }
         }
 
-        // ===== 保存パスの決定 =====
-        string saveDirectory;
+        data.totalAP = totalAp;
+        data.totalWeight = totalWeight;
 
-        #if UNITY_EDITOR
-        // 🎯 開発中（エディタ実行時）：プロジェクトの Assets 内に "Savedata" フォルダを作る
-        saveDirectory = Path.Combine(Application.dataPath, "Savedata");
-        #else
-        // 🎯 ビルド後（実行ファイル実行時）：exe のあるフォルダに "Savedata" を作る
-        saveDirectory = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Savedata");
-        #endif
+        GameData.mechSaveData = data;
 
-        // フォルダがなければ作成
-        Directory.CreateDirectory(saveDirectory);
+        string path = GetSavePath();
 
-        // 保存パスを作成
-        string savePath = Path.Combine(saveDirectory, saveFileName);
-
-        // JSON形式に変換して保存
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(savePath, json);
+        File.WriteAllText(path, json);
 
         Debug.Log("メカ構成を保存しました。");
     }
+
 
     /// <summary>
     /// 保存された装備情報を読み込む
     /// </summary>
     public void Load()
     {
-        string saveDirectory;
-
-        #if UNITY_EDITOR
-        saveDirectory = Path.Combine(Application.dataPath, "Savedata");
-        #else
-        saveDirectory = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Savedata");
-        #endif
-
-        string path = Path.Combine(saveDirectory, saveFileName);
+        string path = GetSavePath();
 
         if (!File.Exists(path))
         {
@@ -162,11 +172,32 @@ public class MechSaveData
 
         string json = File.ReadAllText(path);
         MechSaveData data = JsonUtility.FromJson<MechSaveData>(json);
+
         slots = data.slots;
+        totalAP = data.totalAP;
+        totalWeight = data.totalWeight;
 
         Debug.Log("メカ構成を読み込みました: " + path);
     }
 
     public static MissionData currentSelected;
     public static MechSaveData mechSaveData = new MechSaveData();
+
+    /// <summary>
+    /// セーブデータに保存されている合計APを取得
+    /// </summary>
+    public int GetTotalAP()
+    {
+        return totalAP;
+    }
+
+    /// <summary>
+    /// セーブデータに保存されている合計Weightを取得
+    /// </summary>
+    public int GetTotalWeight()
+    {
+        return totalWeight;
+    }
+
+
 }
