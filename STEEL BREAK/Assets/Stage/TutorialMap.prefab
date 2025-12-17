@@ -25479,7 +25479,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 64281622261451828, guid: e6037065a7ca30841ba445cefd3ad5f8, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25511,7 +25511,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 5.000234, y: 4, z: 0.72432125}
   m_Center: {x: 2.500117, y: 2, z: -0.19655274}
