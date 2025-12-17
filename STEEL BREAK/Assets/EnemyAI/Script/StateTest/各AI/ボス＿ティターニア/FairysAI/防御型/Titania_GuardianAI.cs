@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using RaycastPro.Detectors;
+using Plugins.RaycastPro.Demo.Scripts;
 
 namespace StateMachineAI
 {
@@ -55,6 +56,7 @@ namespace StateMachineAI
         [HideInInspector]
         //エージェントのディテクター
         public SteeringDetector m_Detector;
+        public SteeringController m_Controller;
         //自分が守るポイント取得用
         public GameObject m_GuardPointer;
         [HideInInspector]
@@ -99,6 +101,7 @@ namespace StateMachineAI
             myAgent = PoolManager.Instance.Get("Guardian", transform.position + transform.forward, m_Player);
             //エージェントのSteeringDetectorを取得
             m_Detector = myAgent.GetComponent<SteeringDetector>();
+            m_Controller = myAgent.GetComponent<SteeringController>();
 
             //自動でクラス名を探して取得
             foreach (AIState_Guardian state in Enum.GetValues(typeof(AIState_Guardian)))

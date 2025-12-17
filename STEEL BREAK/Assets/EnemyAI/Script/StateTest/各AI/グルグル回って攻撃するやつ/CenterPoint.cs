@@ -6,7 +6,7 @@ namespace StateMachineAI
     {
         //コンストラクタ
         public CenterPoint(CenteringAI owner) : base(owner) { }
-        private float m_RayDistance = 3f;
+        private float m_RayDistance = 1.5f;
 
 
         //このAIが起動した瞬間に実行(Startと同義)
@@ -22,7 +22,7 @@ namespace StateMachineAI
             Centering.CenterPoint(owner.m_CenterMarker, owner.transform, owner.m_Player, owner.m_Muki, owner.m_AttackDistance);
 
             //追いかける
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //プレイヤーへ向く
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);

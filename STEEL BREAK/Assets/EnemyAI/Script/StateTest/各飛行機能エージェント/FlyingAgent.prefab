@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6045560889105662159}
   - component: {fileID: 6022895994269186505}
-  - component: {fileID: 7179193609274629903}
   - component: {fileID: 649798475387452253}
+  - component: {fileID: 7179193609274629903}
   m_Layer: 2
   m_Name: FlyingAgent
   m_TagString: Untagged
@@ -87,6 +87,26 @@ MonoBehaviour:
   spiderSolver: 1
   timeMode: 0
   calculatedDirection: {x: -0.8377374, y: 0.0012903935, z: 0.5460719}
+--- !u!114 &649798475387452253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840784196727427622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e0d89e1723fbd34497986edffc6e7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detector: {fileID: 6022895994269186505}
+  accelerationSpeed: 4
+  arriveDistance: 0.5
+  turnRate: 6
+  movable: 1
+  rotatable: 1
+  fixRotate: 0
+  speed: 12
 --- !u!54 &7179193609274629903
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -114,23 +134,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &649798475387452253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3840784196727427622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e0d89e1723fbd34497986edffc6e7b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detector: {fileID: 6022895994269186505}
-  accelerationSpeed: 4
-  arriveDistance: 0.5
-  turnRate: 6
-  movable: 1
-  rotatable: 1
-  fixRotate: 0
-  speed: 12

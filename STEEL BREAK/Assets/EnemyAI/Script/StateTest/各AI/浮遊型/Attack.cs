@@ -25,7 +25,7 @@ namespace StateMachineAI
             owner.transform.rotation = owner.myAgent.transform.rotation;
 
             //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             /*
             // プレイヤーに向かって突っ込みながら移動

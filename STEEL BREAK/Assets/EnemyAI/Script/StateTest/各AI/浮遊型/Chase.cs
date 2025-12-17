@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-
+﻿
 namespace StateMachineAI
 {
     public class Chase : State<HitAndAwayAI>
@@ -26,7 +25,7 @@ namespace StateMachineAI
             owner.transform.rotation = owner.myAgent.transform.rotation;
 
             //追いかける
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //攻撃できる範囲か
             if (distance < owner.m_AttackDistance && direction > owner.m_forwardDotThreshold)

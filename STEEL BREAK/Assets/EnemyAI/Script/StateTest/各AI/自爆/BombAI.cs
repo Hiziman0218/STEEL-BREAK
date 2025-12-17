@@ -59,12 +59,9 @@ namespace StateMachineAI
         // 現在速度を保持
         public float m_currentspeed = 0f;
         [HideInInspector]
-        //エージェントのコントローラー取得用
-        public SteeringController m_RCController;
-        [HideInInspector]
         public CoolDown m_CoolDown;
         [HideInInspector]
-        private CharaBase charaBase;
+        public SteeringController m_Controller;
         [HideInInspector]
         public Enemy m_Enemy;
 
@@ -84,8 +81,8 @@ namespace StateMachineAI
             //エージェント取得
             myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
             //エージェントのコンポーネント取得
-            m_RCController = myAgent.GetComponent<SteeringController>();
-            m_RCController.speed = m_speed;
+            m_Controller = myAgent.GetComponent<SteeringController>();
+            m_Controller.speed = m_speed;
 
             //キャラベースがあればイベント登録
             if (m_Enemy != null)

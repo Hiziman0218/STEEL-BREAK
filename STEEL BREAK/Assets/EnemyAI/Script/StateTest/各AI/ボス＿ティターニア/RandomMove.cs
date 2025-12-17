@@ -21,7 +21,7 @@ namespace StateMachineAI
         public override void Stay()
         {
             //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //エージェントの向いている方向にy軸回転動を同期
             Quaternion yOnlyRotation = Quaternion.Euler(0, owner.myAgent.transform.rotation.eulerAngles.y, 0);

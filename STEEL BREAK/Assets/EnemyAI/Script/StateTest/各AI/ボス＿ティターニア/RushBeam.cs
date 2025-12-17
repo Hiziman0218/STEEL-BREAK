@@ -21,10 +21,10 @@ namespace StateMachineAI
             startPos = owner.transform.position;
 
             //もし最大速度より低ければ最大速度に
-            if (owner.m_RCController.speed < owner.m_maxspeed)
+            if (owner.m_Controller.speed < owner.m_maxspeed)
             {
                 //最大速度を代入
-                owner.m_RCController.speed = owner.m_maxspeed;
+                owner.m_Controller.speed = owner.m_maxspeed;
             }
 
             owner.m_CoolDown.StartCoolDown("Lockon", 6f);
@@ -59,7 +59,7 @@ namespace StateMachineAI
                 if (isRushing)
                 {
                     // RCController の speed と同期
-                    owner.m_currentspeed = owner.m_RCController.speed;
+                    owner.m_currentspeed = owner.m_Controller.speed;
 
                     // まっすぐ進む
                     owner.m_currentspeed = Mathf.Lerp(
@@ -97,7 +97,7 @@ namespace StateMachineAI
             //クールタイムを設ける
             owner.m_CoolDown.StartCoolDown("Rush", 20f);
             //デフォルト速度に戻す
-            owner.m_RCController.speed = owner.m_speed;
+            owner.m_Controller.speed = owner.m_speed;
             //エージェントを再取得
             owner.myAgent = PoolManager.Instance.Get("Titania", owner.transform.position + owner.transform.forward, owner.m_CenterMarker.transform);
         }

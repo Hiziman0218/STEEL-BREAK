@@ -29,7 +29,7 @@ namespace StateMachineAI
             (float guarddistance, _, _) = Distance_Check.Check(owner.transform, owner.m_GuardPointer.transform);
 
             //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //Flyにy軸回転動を同期
             Quaternion yOnlyRotation = Quaternion.Euler(0, owner.myAgent.transform.rotation.eulerAngles.y, 0);

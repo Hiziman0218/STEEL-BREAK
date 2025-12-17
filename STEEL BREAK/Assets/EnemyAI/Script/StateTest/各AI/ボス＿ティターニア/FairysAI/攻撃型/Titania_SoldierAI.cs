@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using RaycastPro.Detectors;
+using Plugins.RaycastPro.Demo.Scripts;
 
 namespace StateMachineAI
 {
@@ -49,7 +50,7 @@ namespace StateMachineAI
         //エージェントのディテクター
         public Detector m_Detector;
         [HideInInspector]
-        private CharaBase charaBase;
+        public SteeringController m_Controller;
 
 
         void Start()
@@ -70,6 +71,7 @@ namespace StateMachineAI
             //エージェントを取得
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
             m_Detector = myAgent.GetComponent<Detector>();
+            m_Controller = myAgent.GetComponent<SteeringController>();
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Reflection;
+using Plugins.RaycastPro.Demo.Scripts;
 
 namespace StateMachineAI
 {
@@ -51,6 +52,7 @@ namespace StateMachineAI
         [HideInInspector]
         // 自分専用ユニット
         public GameObject myAgent;
+        public SteeringController m_Controller;
 
         void Start()
         {
@@ -64,6 +66,8 @@ namespace StateMachineAI
 
             //agent生成
             myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
+            //エージェントのコントローラー取得
+            m_Controller = myAgent.GetComponent<SteeringController>();
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();

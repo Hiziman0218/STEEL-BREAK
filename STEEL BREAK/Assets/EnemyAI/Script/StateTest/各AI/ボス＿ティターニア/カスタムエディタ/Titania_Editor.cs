@@ -33,7 +33,7 @@ public class Titania_TEditor : Editor
             EditorGUILayout.FloatField("Current Speed", t.m_currentspeed);
             EditorGUILayout.Toggle("Is Spawning Fairy", t.isSpawningFairy);
             EditorGUILayout.Vector3Field("Rush Direction", t.m_RushDirection);
-            EditorGUILayout.ObjectField("RC Controller", t.m_RCController, typeof(SteeringController), true);
+            EditorGUILayout.ObjectField("RC Controller", t.m_Controller, typeof(SteeringController), true);
         }
     }
 }

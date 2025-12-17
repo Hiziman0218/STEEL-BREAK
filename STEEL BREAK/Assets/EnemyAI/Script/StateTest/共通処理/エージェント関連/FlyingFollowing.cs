@@ -1,36 +1,39 @@
 using Plugins.RaycastPro.Demo.Scripts;
-using RaycastPro.Detectors;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Flying_Following : MonoBehaviour
 {
+    private SteeringController m_Controller;
+
     /// <summary>
-    /// ”òs‹@”\‚ğ‚½‚¹‚é‚¾‚¯
+    /// é£›è¡Œæ©Ÿèƒ½ã‚’æŒãŸã›ã‚‹ã ã‘
     /// </summary>
-    /// <param name="myAgent">©•ª‚ÌƒG[ƒWƒFƒ“ƒg</param>
-    /// <param name="m_My">©•ª‚ÌˆÊ’u</param>
-    /// <param name="m_Player">ƒvƒŒƒCƒ„[‚ÌˆÊ’u</param>
-    /// <param name="m_Rigidbody">ƒŠƒWƒbƒgƒ{ƒfƒB</param>
-    public static void FlyingFollowing(GameObject myAgent, Transform m_My, Transform m_Player, Rigidbody m_Rigidbody)
+    /// <param name="myAgent">è‡ªåˆ†ã®ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆ</param>
+    /// <param name="m_My">è‡ªåˆ†ã®ä½ç½®</param>
+    /// <param name="m_Player">ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®</param>
+    /// <param name="m_Rigidbody">ãƒªã‚¸ãƒƒãƒˆãƒœãƒ‡ã‚£</param>
+    public static void FlyingFollowing(GameObject myAgent, SteeringController m_Controller, Transform m_Player, Rigidbody m_Rigidbody)
     {
-        //ƒvƒŒƒCƒ„[‚ª‚¢‚È‚¯‚ê‚ÎƒŠƒ^[ƒ“
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã„ãªã‘ã‚Œã°ãƒªã‚¿ãƒ¼ãƒ³
         if (!m_Player)
             return;
 
-        // ƒ^[ƒQƒbƒg‚ÌˆÊ’u‚ğ•â‘«
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®
         Vector3 nextPos = myAgent.transform.position;
-        // •Ç‚ª–³‚¯‚ê‚ÎˆÚ“®‚·‚é
-        if (!Physics.CheckSphere(nextPos, 0.5f, LayerMask.GetMask("Field")))
-        {
-            //Rigidbody‚Å’Ç](ˆÚ“®‚ğ~‚ß‚½Û‚É–³d—Íó‘Ô‚İ‚½‚¢‚È•Ï‚È‹““®‚ğ–h~)
-            m_Rigidbody.MovePosition(nextPos);
-        }
+        Vector3 dir = (nextPos - m_Rigidbody.position).normalized;
 
-        //ƒŠƒWƒbƒgƒ{ƒfƒB‚Æ‚©d—Í‚ğ–³Œø‰»‚µ‚Ä”òs‚Å‚«‚é‚æ‚¤‚É‚·‚é
+        // ç›®æ¨™é€Ÿåº¦
+        Vector3 targetVelocity = dir * m_Controller.speed;
+
+        // ç¾åœ¨ã®é€Ÿåº¦ã‹ã‚‰æ»‘ã‚‰ã‹ã«è£œé–“
+        m_Rigidbody.linearVelocity = Vector3.Lerp(
+            m_Rigidbody.linearVelocity,
+            targetVelocity,
+            1 - Mathf.Exp(-5f * Time.deltaTime)
+        );
+
+
+        //ãƒªã‚¸ãƒƒãƒˆãƒœãƒ‡ã‚£ã¨ã‹é‡åŠ›ã‚’ç„¡åŠ¹åŒ–ã—ã¦é£›è¡Œã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
         if (m_Rigidbody.useGravity)
         {
             m_Rigidbody.useGravity = false;

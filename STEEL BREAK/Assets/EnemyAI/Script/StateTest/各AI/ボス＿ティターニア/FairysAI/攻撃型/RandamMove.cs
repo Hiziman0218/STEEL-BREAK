@@ -22,7 +22,7 @@ namespace StateMachineAI
         {
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
             //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //クールタイムでないなら
             if (!owner.m_CoolDown.IsCoolDown("MoveCool"))

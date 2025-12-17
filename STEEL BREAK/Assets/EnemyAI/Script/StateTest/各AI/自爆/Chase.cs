@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace StateMachineAI
@@ -23,7 +20,7 @@ namespace StateMachineAI
             owner.transform.rotation = owner.myAgent.transform.rotation;
 
             //’Ç‚¢‚©‚¯‚é
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //UŒ‚‚Å‚«‚é”ÍˆÍ‚©‚Â³–Ê•ûŒü‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚½‚Æ‚«
             if (Vector3.Distance(owner.m_Player.position, owner.transform.position) < owner.m_AttackDistance && Mathf.Abs(direction) < owner.m_SideDotThreshold)

@@ -21,7 +21,7 @@ namespace StateMachineAI
         {
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
             //í«è]
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //çUåÇÇ≈Ç´ÇÈîÕàÕÇ©
             if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)

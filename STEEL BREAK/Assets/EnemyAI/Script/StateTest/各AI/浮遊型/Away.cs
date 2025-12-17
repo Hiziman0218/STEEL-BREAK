@@ -4,7 +4,6 @@ namespace StateMachineAI
 {
     public class Away : State<HitAndAwayAI>
     {
-        private Vector3 retreatTarget;
 
         //コンストラクタ
         public Away(HitAndAwayAI owner) : base(owner) { }
@@ -27,7 +26,7 @@ namespace StateMachineAI
             owner.transform.rotation = owner.myAgent.transform.rotation;
 
             //エージェントに追従
-            Flying_Following.FlyingFollowing(owner.myAgent, owner.transform, owner.m_Player, owner.m_Rigidbody);
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             // 攻撃可能範囲からでたら
             if (distance > owner.m_AttackDistance)

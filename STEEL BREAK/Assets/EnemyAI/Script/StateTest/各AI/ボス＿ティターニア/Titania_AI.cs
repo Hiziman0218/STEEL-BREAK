@@ -123,7 +123,7 @@ namespace StateMachineAI
         public Vector3 m_RushDirection;
         [HideInInspector]
         //エージェントのコントローラー取得用
-        public SteeringController m_RCController;
+        public SteeringController m_Controller;
         public Rush m_rush;
 
         void Start()
@@ -144,9 +144,9 @@ namespace StateMachineAI
             //agent生成
             myAgent = PoolManager.Instance.Get("Titania", transform.position, m_CenterMarker.transform);
             //エージェントのコンポーネント取得
-            m_RCController = myAgent.GetComponent<SteeringController>();
+            m_Controller = myAgent.GetComponent<SteeringController>();
             //デフォルトの速度を記憶
-            m_speed = m_RCController.speed;
+            m_speed = m_Controller.speed;
 
             //アタッチしているスプリクトの自動取得
             AutoComponentInitializer.InitializeComponents(this);
