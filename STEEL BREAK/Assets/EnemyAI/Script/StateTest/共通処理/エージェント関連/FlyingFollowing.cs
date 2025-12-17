@@ -23,8 +23,12 @@ public class Flying_Following : MonoBehaviour
 
         // ターゲットの位置を補足
         Vector3 nextPos = myAgent.transform.position;
-        // Rigidbodyで追従(移動を止めた際に無重力状態みたいな変な挙動を防止)
-        m_Rigidbody.MovePosition(nextPos);
+        // 壁が無ければ移動する
+        if (!Physics.CheckSphere(nextPos, 0.5f, LayerMask.GetMask("Field")))
+        {
+            //Rigidbodyで追従(移動を止めた際に無重力状態みたいな変な挙動を防止)
+            m_Rigidbody.MovePosition(nextPos);
+        }
 
         //リジットボディとか重力を無効化して飛行できるようにする
         if (m_Rigidbody.useGravity)
