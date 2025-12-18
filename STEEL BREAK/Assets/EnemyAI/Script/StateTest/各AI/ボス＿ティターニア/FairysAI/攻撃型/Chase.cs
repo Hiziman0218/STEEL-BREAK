@@ -34,8 +34,8 @@ namespace StateMachineAI
             //UŒ‚‚Å‚«‚é”ÍˆÍ‚©
             if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)
             {
-                // UŒ‚
-                owner.ChangeState(AIState_Soldier.Shot);
+                // ƒ‰ƒ“ƒ_ƒ€s“®‚ÖˆÚs
+                owner.ChangeState(AIState_Soldier.RandamMove);
             }
         }
 

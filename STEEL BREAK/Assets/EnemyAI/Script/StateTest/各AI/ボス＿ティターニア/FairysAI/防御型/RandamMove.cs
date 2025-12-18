@@ -31,21 +31,23 @@ namespace StateMachineAI
             {
                 float chance = Random.value; // 0〜1の間のランダムな値
 
-                if (chance < 0.3f)
+                if (chance < 0.4f)
                 {
-                    // 30%の確率で射撃
+                    // 40%の確率で射撃
                     owner.ChangeState(AIState_Guardian.Shot);
-                }
-                else if (chance < 0.6f)
-                {
-                    // 30%で追いかける
-                    owner.ChangeState(AIState_Guardian.Chase);
                 }
                 else
                 {
-                    // 残り40%でランダムな移動
+                    // 残り60%でランダムな移動
                     Chak();
                 }
+            }
+
+            //プレイヤーとの距離が攻撃可能距離より離れたら
+            if(Vector3.Distance(owner.m_Player.transform.position, owner.transform.position) > owner.m_AttackDistance)
+            {
+                //追いかける
+                owner.ChangeState(AIState_Guardian.Chase);
             }
 
         }
