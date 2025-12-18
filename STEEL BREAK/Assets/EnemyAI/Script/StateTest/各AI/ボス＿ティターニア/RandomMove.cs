@@ -75,7 +75,7 @@ namespace StateMachineAI
             }
 
             // 地面から m_ground ～ m_ground + n の高さに設定
-            float heightOffset = UnityEngine.Random.Range(owner.m_ground, owner.m_ground + 5);
+            float heightOffset = UnityEngine.Random.Range(owner.m_ground, owner.m_ground + 80);
             candidate.y = groundY + heightOffset;
 
             // もし今いる位置と距離が近すぎる場合は再抽選しても良い

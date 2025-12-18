@@ -7,6 +7,8 @@ namespace StateMachineAI
     {
         private Vector3 startPos;
         private bool isRushing = false;
+        private bool reachedSameHeight = false;
+        private Vector3 rushDir;
 
         //コンストラクタ
         public Rush_T(Titania_T owner) : base(owner) { }
@@ -58,9 +60,6 @@ namespace StateMachineAI
 
                 if (isRushing)
                 {
-                    // Controller の speed と同期
-                    owner.m_currentspeed = owner.m_Controller.speed;
-
                     // 加速処理
                     owner.m_currentspeed = Mathf.Lerp(
                         owner.m_currentspeed,
@@ -68,21 +67,50 @@ namespace StateMachineAI
                         1 - Mathf.Exp(-owner.m_acceleration * Time.deltaTime)
                     );
 
-                    // Rigidbody に速度を与える
-                    owner.m_Rigidbody.linearVelocity = owner.transform.forward * owner.m_currentspeed;
+                    Vector3 targetPos = owner.m_Player.position;
+                    Vector3 flatDir = (new Vector3(targetPos.x, owner.transform.position.y, targetPos.z)
+                                       - owner.transform.position).normalized;
 
-                    // 移動距離で判定
-                    float traveled = Vector3.Distance(startPos, owner.transform.position);
-                    if (traveled >= 80f) // 突進距離
+                    Vector3 dir;
+
+                    if (!reachedSameHeight)
                     {
-                        // 当たり判定をオフにする
-                        owner.m_rush.EndRush();
-                        owner.ChangeState(AIState_Titania_T.Idle_T);
+                        // 高度差をチェック
+                        float heightDiff = Mathf.Abs(owner.transform.position.y - targetPos.y);
 
-                        // 突進終了時は速度を止める
-                        owner.m_Rigidbody.linearVelocity = Vector3.zero;
+                        if (heightDiff <= 5f) // 5m以内なら直進モードへ
+                        {
+                            reachedSameHeight = true;
+                            // 直進方向をこの時点で固定
+                            rushDir = flatDir;
+                            dir = rushDir;
+                        }
+                        else
+                        {
+                            // 高度がまだ離れている → カーブをかけて降下or上昇
+                            float newY = Mathf.Lerp(owner.transform.position.y, targetPos.y, 0.05f);
+                            dir = new Vector3(flatDir.x, (newY - owner.transform.position.y), flatDir.z).normalized;
+                        }
+                    }
+                    else
+                    {
+                        // 直進モード → 開始時に固定した方向で突進
+                        dir = rushDir;
                     }
 
+                    // Rigidbody に速度を与える
+                    owner.m_Rigidbody.linearVelocity = dir * owner.m_currentspeed;
+
+                    // 終了判定（距離 or 時間）
+                    float traveled = Vector3.Distance(startPos, owner.transform.position);
+                    if (traveled >= 80f || !owner.m_CoolDown.IsCoolDown("Move"))
+                    {
+                        owner.m_rush.EndRush();
+                        owner.m_Rigidbody.linearVelocity = Vector3.zero;
+                        // 次回突進に備えてリセット
+                        reachedSameHeight = false;
+                        owner.ChangeState(AIState_Titania_T.Idle_T);
+                    }
                 }
             }
         }
@@ -92,8 +120,13 @@ namespace StateMachineAI
             isRushing = true;
             //突進の判定をつける
             owner.m_rush.StartRush();
+            // 開始時点ではまだ方向を固定しない（高度が揃うまで補間する）
+            rushDir = Vector3.zero;
+
             // 突進開始位置を更新
             startPos = owner.transform.position;
+            //突進時間を設定
+            owner.m_CoolDown.StartCoolDown("Move", 5f);
         }
 
         public override void Exit()
