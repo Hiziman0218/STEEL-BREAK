@@ -37,7 +37,7 @@ namespace StateMachineAI
                     )
                 );
 
-                owner.m_CoolDown.StartCoolDown("Spawn", 70f);
+                owner.m_CoolDown.StartCoolDown("Spawn", 30f);
             }
             else
             {
