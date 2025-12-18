@@ -3,10 +3,8 @@ using UnityEngine;
 
 public class Flying_Following : MonoBehaviour
 {
-    private SteeringController m_Controller;
-
     /// <summary>
-    /// 飛行機能を持たせるだけ
+    /// エージェントに追従させる
     /// </summary>
     /// <param name="myAgent">自分のエージェント</param>
     /// <param name="m_Controller">エージェントのコントローラー</param>
@@ -31,7 +29,6 @@ public class Flying_Following : MonoBehaviour
             targetVelocity,
             1 - Mathf.Exp(-5f * Time.deltaTime)
         );
-
 
         //リジットボディとか重力を無効化して飛行できるようにする
         if (m_Rigidbody.useGravity)

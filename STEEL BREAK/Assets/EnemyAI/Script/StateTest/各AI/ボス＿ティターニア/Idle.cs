@@ -30,7 +30,7 @@ namespace StateMachineAI
                 switch (entry.state)
                 {
                     //突進行動はプレイヤーが一定の高度である時
-                    case AIState_Titania_T.RushBeam_T:
+                    case AIState_Titania_T.Rush_T:
                         entry.condition = (owner) =>
                         {
                             float playerHeight = owner.m_Player.position.y;

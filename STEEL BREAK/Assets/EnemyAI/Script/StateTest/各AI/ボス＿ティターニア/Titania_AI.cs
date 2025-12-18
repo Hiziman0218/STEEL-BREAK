@@ -13,7 +13,7 @@ namespace StateMachineAI
         RandomMove_T,
         TurnBeam_T,
         LockBeam_T,
-        RushBeam_T,
+        Rush_T,
         Hit_T,
     }
 
@@ -157,6 +157,8 @@ namespace StateMachineAI
             {
                 // ダメージイベントを購読
                 m_Enemy.OnDamage += CommandEnemy;
+                //死亡イベントを購読
+                m_Enemy.OnDeath += HandleBossDeath;
                 //m_Enemy.OnStagger -= HandleDamaged;
             }
 
@@ -174,8 +176,8 @@ namespace StateMachineAI
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<Titania_T>();
 
-            //初期起動時は、行動決め状態に移行させる
-            ChangeState(AIState_Titania_T.Idle_T);
+            //初期起動時は、雑魚敵の生成に移行させる
+            ChangeState(AIState_Titania_T.Spawn_T);
         }
 
         /*
@@ -204,6 +206,22 @@ namespace StateMachineAI
                 }
             }
         }
+
+        //ボスが死亡したときに取り巻きもまとめて死亡させる
+        private void HandleBossDeath(Enemy boss)
+        {
+            foreach (GameObject fairy in currentEnemy.m_spawnedEnemies)
+            {
+                if (fairy == null) continue;
+                var enemyComp = fairy.GetComponent<Enemy>();
+                if (enemyComp != null && enemyComp.IsAlive)
+                {
+                    enemyComp.Destruction(); // HPを0にして死亡処理を走らせる
+                }
+            }
+        }
+
+
 
         protected override void Update()
         {

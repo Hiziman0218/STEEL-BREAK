@@ -33,6 +33,8 @@ namespace StateMachineAI
         {
             //プレイヤーの方向に向く
             owner.transform.LookAt(owner.m_Player);
+            //エージェントに追従
+            Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             if (m_TImes <= 0)
             {

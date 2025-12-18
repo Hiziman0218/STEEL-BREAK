@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b51a9991b8c47c45946e2abad7b1845, type: 3}
   m_Name: "\u30C6\u30A3\u30BF\u30FC\u30CB\u30A2\u30B9\u30C6\u30FC\u30BF\u30B9"
   m_EditorClassIdentifier: 
-  HP: 500
-  Power: 5
-  Defence: 5
+  HP: 700
   Speed: 2.5
   Team: Enemy
+  DestructionEffect: {fileID: 0}

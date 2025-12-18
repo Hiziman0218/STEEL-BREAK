@@ -24,7 +24,7 @@ namespace StateMachineAI
             Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
             //UŒ‚‚Å‚«‚é”ÍˆÍ‚©
-            if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < owner.m_AttackDistance)
+            if (Vector3.Distance(owner.m_Player.transform.position, owner.transform.position) < owner.m_AttackDistance)
             {
                 // ƒ‰ƒ“ƒ_ƒ€s“®‚ÉØ‚è‘Ö‚¦
                 owner.ChangeState(AIState_Guardian.RandamMove);

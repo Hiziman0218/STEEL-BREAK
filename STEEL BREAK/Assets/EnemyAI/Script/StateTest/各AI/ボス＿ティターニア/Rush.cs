@@ -2,14 +2,14 @@ using UnityEngine;
 
 namespace StateMachineAI
 {
-    //突進しながら拡散ビーム
-    public class RushBeam_T : State<Titania_T>
+    //突進
+    public class Rush_T : State<Titania_T>
     {
         private Vector3 startPos;
         private bool isRushing = false;
 
         //コンストラクタ
-        public RushBeam_T(Titania_T owner) : base(owner) { }
+        public Rush_T(Titania_T owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
