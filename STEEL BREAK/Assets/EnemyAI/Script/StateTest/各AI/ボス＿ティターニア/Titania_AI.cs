@@ -195,6 +195,9 @@ namespace StateMachineAI
         {
             if (m_Enemy == null || !m_Enemy.IsAlive) return; // €–SÏ‚İ‚È‚çˆ—‚µ‚È‚¢
 
+            //€–S‚µ‚½“G‚Ìî•ñ‚ğíœ
+            currentEnemy.m_spawnedDefensEnemies.RemoveAll(item => item == null);
+
             //Œ»İ‘¶İ‚µ‚Ä‚¢‚é–hŒäŒ^‚ğ‘–¸
             foreach (GameObject enemy in currentEnemy.m_spawnedDefensEnemies)
             {
