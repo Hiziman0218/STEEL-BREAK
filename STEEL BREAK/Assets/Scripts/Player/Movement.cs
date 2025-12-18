@@ -43,6 +43,8 @@ public class Movement : MonoBehaviour
     private float maxFallSpeed = 20f;
     [SerializeField, Tooltip("長押しホバーでの下降速度(絶対値)")]
     private float descendSpeed = 5f;
+    [SerializeField, Tooltip("接地判定に使うレイヤー")]
+    private LayerMask groundLayer;
 
     // --- 空中操作チューニング ---
     [Header("空中操作チューニング")]
@@ -67,10 +69,10 @@ public class Movement : MonoBehaviour
     private float dashTimer = 0f;          // ダッシュ残時間
     private bool dashHasDirection = true;  // ダッシュ開始時に入力があったか
     private bool isBoosting = false;       // ブースト（維持）フラグ
-    //private bool isBoostRelease = true;    // ブースト入力をやめたか
     private bool boostExhaustedLocked = false; // ブースト枯渇時に再利用を禁止するロック
     private float boost;                   // 現在のブースト量
     private float moveMultiplier = 1f;     // BackPackから渡される移動倍率(1 = 等倍)
+    private float boostMultiplierinWeight = 1f; //重さによるブースト消費倍率(1 = 等倍)
 
     // 公開用の読み取りプロパティ
     public float GetMaxBoost => maxBoost;
@@ -289,7 +291,7 @@ public class Movement : MonoBehaviour
                     rb.AddForce(dir * moveForce, ForceMode.Force);
 
                 // 短押しでは即時でブーストを消費する仕様（deltaTime ではない）
-                boost = Mathf.Max(0f, boost - ascendConsumptionRate);
+                boost = Mathf.Max(0f, boost - ascendConsumptionRate * boostMultiplierinWeight);
             }
 
             hasStartedAscend = true;
@@ -519,7 +521,7 @@ public class Movement : MonoBehaviour
 
             // ホバー中はブーストを消費（時間依存）
             if (isBoosting)
-                boost = Mathf.Max(0f, boost - ascendConsumptionRate * Time.fixedDeltaTime);
+                boost = Mathf.Max(0f, boost - boostConsumptionRate * boostMultiplierinWeight * Time.fixedDeltaTime);
 
             return true;
         }
@@ -544,6 +546,10 @@ public class Movement : MonoBehaviour
 
             // 水平空中制御は上昇ホバーと同様に扱う
             ApplyAirControl(dir, currentVel.y);
+
+            // ホバー中はブーストを消費（時間依存）
+            if (isBoosting)
+                boost = Mathf.Max(0f, boost - boostConsumptionRate * boostMultiplierinWeight * Time.fixedDeltaTime);
 
             return true;
         }
@@ -612,7 +618,7 @@ public class Movement : MonoBehaviour
                 rb.AddForce(dir * moveForce * (isBoosting ? boostMultiplier : 1f) * airAssistMultiplier, ForceMode.Acceleration);
 
                 if (isBoosting)
-                    boost = Mathf.Max(0f, boost - boostConsumptionRate * Time.fixedDeltaTime);
+                    boost = Mathf.Max(0f, boost - boostConsumptionRate * boostMultiplierinWeight * Time.fixedDeltaTime);
             }
             else
             {
@@ -739,14 +745,29 @@ public class Movement : MonoBehaviour
     /// </summary>
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
+        return Physics.Raycast(
+        transform.position,
+        Vector3.down,
+        groundCheckDistance,
+        groundLayer
+    );
     }
 
     /// <summary>
-    /// BackPack から移動倍率を設定する
+    /// BackPackから移動倍率を設定する
     /// </summary>
+    /// <param name="value"></param>
     public void SetMoveMultiplier(float value)
     {
-        moveMultiplier = Mathf.Max(0f, value); // 万が一0以下でも安全に
+        moveMultiplier = Mathf.Max(0.1f, value); // 万が一0以下でも安全に
+    }
+
+    /// <summary>
+    /// Playerからブースト消費倍率を設定する
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetBoostMultiplierinWeight(float value)
+    {
+        boostMultiplierinWeight = Mathf.Max(0.1f, value);
     }
 }

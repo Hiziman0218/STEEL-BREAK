@@ -75,11 +75,16 @@ public class Bullet : BulletBase
                 //キャラクター以外の場合
                 else
                 {
-                    OnHit?.Invoke(hit.point); //イベント発火
-                    //ヒットエフェクトを生成し、自身を削除
-                    if (m_hitEffect) Instantiate(m_hitEffect, hitPos, Quaternion.identity);
-                    Destroy(gameObject);
-                    return;
+                    //フィールドなら、ヒット時のイベントとヒットエフェクトを生成し削除
+                    Field field = hit.collider.GetComponentInParent<Field>();
+                    if (field != null)
+                    {
+                        OnHit?.Invoke(hit.point); //イベント発火
+                        //ヒットエフェクトを生成し、自身を削除
+                        if (m_hitEffect) Instantiate(m_hitEffect, hitPos, Quaternion.identity);
+                        Destroy(gameObject);
+                        return;
+                    }  
                 }
             }
         }

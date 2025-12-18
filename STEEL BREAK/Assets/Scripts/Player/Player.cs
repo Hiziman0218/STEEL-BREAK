@@ -1,123 +1,109 @@
-using Ilumisoft.RadarSystem;
+ï»¿using Ilumisoft.RadarSystem;
 using UnityEngine;
-using Game.Enum;
 using System;
 
 public class Player : PlayerBase
 {
-    [Header("ƒvƒŒƒnƒuİ’è")]
-    [Tooltip("ƒp[ƒcİ’è—pƒIƒuƒWƒFƒNƒg")]
-    [SerializeField] private MechAssemblyManager PartsSet;
+    [Header("ãƒ—ãƒ¬ãƒãƒ–è¨­å®š")]
+    [Tooltip("ãƒ‘ãƒ¼ãƒ„è¨­å®šç”¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
+    [SerializeField] private MechAssemblyManager m_partsSet;
 
-    [Header("Šî–{İ’è")]
-    [SerializeField] private float m_lerpSpeed; //ƒ‰[ƒv‚ÌƒXƒs[ƒh
+    [Header("é‡é‡è¨­å®š")]
+    [SerializeField] float m_minWeight = 85f;
+    [SerializeField] float m_maxWeight = 235f;
+    [SerializeField] float m_minMultiplier = 0.8f;
+    [SerializeField] float m_maxMultiplier = 1.4f;
 
-    [SerializeField] private Transform cameraRig;
-    [SerializeField] private float cameraRotateLerp = 8f;
+    [Header("å›è»¢è¨­å®š")]
+    [Tooltip("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å›è»¢é€Ÿåº¦")]
+    [SerializeField] private float m_lerpSpeed;
+    [Tooltip("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æœ¬ä½“ã®Yawè£œé–“ã«ä½¿ã†ã‚¹ãƒ ãƒ¼ã‚¹ã‚¿ã‚¤ãƒ (ç§’)")]
+    [SerializeField] private float m_playerYawSmoothTime = 0.08f;
+    [Tooltip("è§’åº¦å¤‰åŒ–ãŒã“ã‚Œä»¥ä¸‹ãªã‚‰æ›´æ–°ã‚’æŠ‘ãˆã¦å¾®æŒ¯å‹•ã‚’é˜²ã(åº¦)")]
+    [SerializeField] private float m_yawDeadzoneDegrees = 0.25f;
 
-    [Header("‰ñ“]ƒXƒ€[ƒYİ’è")]
-    [Tooltip("ƒvƒŒƒCƒ„[–{‘Ì‚ÌYaw•âŠÔ‚Ég‚¤ƒXƒ€[ƒXƒ^ƒCƒ€i•bj")]
-    [SerializeField] private float playerYawSmoothTime = 0.08f;
-    [Tooltip("ƒJƒƒ‰ƒŠƒO‚ÌYaw•âŠÔ‚Ég‚¤ƒXƒ€[ƒXƒ^ƒCƒ€i•bj")]
-    [SerializeField] private float cameraYawSmoothTime = 0.15f;
-    [Tooltip("ƒJƒƒ‰•ûŒüƒxƒNƒgƒ‹‚Ìƒ[ƒpƒX‘¬“xi‘å‚«‚¢‚Ù‚Ç’Ç]‚ª‘¬‚¢j")]
-    [SerializeField] private float cameraDirSmoothSpeed = 8f;
-    [Tooltip("Šp“x•Ï‰»‚ª‚±‚êˆÈ‰º‚È‚çXV‚ğ—}‚¦‚Ä”÷U“®‚ğ–h‚®i“xj")]
-    [SerializeField] private float yawDeadzoneDegrees = 0.25f;
+    private float m_HPRate;           //ç¾åœ¨ã®è€ä¹…å‰²åˆ
+    private float m_boostRate;        //ç¾åœ¨ã®ãƒ–ãƒ¼ã‚¹ãƒˆå‰²åˆ
 
-    private float m_HPRate;           //Œ»İ‚Ì‘Ï‹vŠ„‡
-    private float m_boostRate;        //Œ»İ‚Ìƒu[ƒXƒgŠ„‡
+    private float m_weight;           //æ©Ÿä½“ã®é‡ã•
 
-    // •ª—£‚µ‚½SmoothDamp—p‚Ì“à•”‘¬“xiƒvƒŒƒCƒ„[/ƒJƒƒ‰‚»‚ê‚¼‚êj
-    private float yawVelocityCamera = 0f;
-    private float yawVelocityPlayer = 0f;
+    private float m_yawVelocityPlayer = 0f; //åˆ†é›¢ã—ãŸSmoothDampç”¨ã®å†…éƒ¨é€Ÿåº¦
 
-    // ƒJƒƒ‰Œü‚«—p‚Ì’áˆæ’Ê‰ßƒtƒBƒ‹ƒ^iƒ^[ƒQƒbƒg•ûŒü‚ğƒXƒ€[ƒY‚É‚·‚éj
-    private Vector3 smoothedCameraDir = Vector3.zero;
+    private int m_laserCount;         //ä½¿ç”¨ã—ã¦ã„ã‚‹ãƒ¬ãƒ¼ã‚¶ãƒ¼ã®æ•°
 
-    private int m_laserCount;         //g—p‚µ‚Ä‚¢‚éƒŒ[ƒU[‚Ì”
+    private bool m_isAutoHorizontal;  //æ°´å¹³ã«æˆ»ã™ã‹
 
-    private bool m_isAutoHorizontal;  //…•½‚É–ß‚·‚©
+    private InputManager m_inputManager; //å…¥åŠ›å—ã‘å–ã‚Šã‚¯ãƒ©ã‚¹
+    private Movement m_movement;         //ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚„ã‚­ãƒ¼ã«ã‚ˆã‚‹ç§»å‹•
+    private LockOn m_lockon;             //ãƒ­ãƒƒã‚¯ã‚ªãƒ³æ©Ÿèƒ½
 
-    private InputManager inputManager; //“ü—Íó‚¯æ‚èƒNƒ‰ƒX
-    private Movement movement;         //ƒRƒ“ƒgƒ[ƒ‰[‚âƒL[‚É‚æ‚éˆÚ“®
-    private LockOn lockon;             //ƒƒbƒNƒIƒ“‹@”\
-
-    private ProgressBar m_HPBar;      //HPƒo[
-    private ProgressBar m_boostGauge; //ƒu[ƒXƒgƒQ[ƒW
-    private Radar m_radar;            //ƒvƒŒƒCƒ„[‚ğ’†S‚Æ‚·‚éƒŒ[ƒ_[
-
-    private void Awake()
-    {
-        cameraRig = Camera.main.transform;
-    }
+    private ProgressBar m_HPBar;      //HPãƒãƒ¼
+    private ProgressBar m_boostGauge; //ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸
+    private Radar m_radar;            //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ä¸­å¿ƒã¨ã™ã‚‹ãƒ¬ãƒ¼ãƒ€ãƒ¼
 
     /// <summary>
-    /// ‰Šú‰»
+    /// åˆæœŸåŒ–
     /// </summary>
     protected override void Initialize()
     {
-        //Šî’êƒNƒ‰ƒX‚Ì‰Šú‰»ŒÄ‚Ño‚µ
+        //åŸºåº•ã‚¯ãƒ©ã‚¹ã®åˆæœŸåŒ–å‘¼ã³å‡ºã—
         base.Initialize();
 
-        //ƒp[ƒcİ’è—pƒIƒuƒWƒFƒNƒg‚É©g‚ğİ’è
-        PartsSet.SetPlayer(this);
+        //ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿å‘¼ã³å‡ºã—/ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®ä¸€éƒ¨ã«ã‚«ã‚¹ã‚¿ãƒ ã«ã‚ˆã‚‹å¤‰æ›´ã‚’åæ˜ 
+        m_partsSet.SetPlayer(this);
+        m_status.SetMaxHP(GameData.mechSaveData.GetTotalAP());
+        m_status.SetHP(m_status.GetMaxHP());
+        m_weight = GameData.mechSaveData.GetTotalWeight();
 
-        //Še§ŒäƒNƒ‰ƒX‚ğæ“¾
-        inputManager = GetComponent<InputManager>();
-        movement = GetComponent<Movement>();
-        lockon = GetComponent<LockOn>();
+        //å„åˆ¶å¾¡ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
+        m_inputManager = GetComponent<InputManager>();
+        m_movement = GetComponent<Movement>();
+        m_lockon = GetComponent<LockOn>();
         IK = GetComponent<IKControl>();
 
-        //€–SƒCƒxƒ“ƒgİ’è
-        OnDied += GameOver;
+        //ãƒ–ãƒ¼ã‚¹ãƒˆæ¶ˆè²»é‡å€ç‡ã‚’Movementã‚¯ãƒ©ã‚¹ã«è¨­å®š
+        m_movement.SetBoostMultiplierinWeight(GetBoostMultiplier());
 
-        // ƒfƒtƒHƒ‹ƒg‰Šú‰»iƒJƒƒ‰•ûŒüƒtƒBƒ‹ƒ^j
-        if (cameraRig != null)
-        {
-            smoothedCameraDir = cameraRig.forward;
-            smoothedCameraDir.y = 0f;
-            if (smoothedCameraDir.sqrMagnitude < 0.001f) smoothedCameraDir = transform.forward;
-            smoothedCameraDir.Normalize();
-        }
+        //æ­»äº¡ã‚¤ãƒ™ãƒ³ãƒˆè¨­å®š
+        OnDied += GameOver;
     }
 
     void Update()
     {
-        //ƒtƒ‰ƒOŠÇ—
+        //ãƒ•ãƒ©ã‚°ç®¡ç†
         m_isAutoHorizontal = true;
 
-        //•‘•‚Ìg—p
-        //‰Eè‚ÌUŒ‚“ü—Í‚ğó‚¯æ‚Á‚Ä‚¢‚½‚ç
-        if (inputManager.IsFireRightHand)
+        //æ­¦è£…ã®ä½¿ç”¨
+        //å³æ‰‹ã®æ”»æ’ƒå…¥åŠ›ã‚’å—ã‘å–ã£ã¦ã„ãŸã‚‰
+        if (m_inputManager.IsFireRightHand)
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p‚·‚é
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨ã™ã‚‹
             m_rightHandWeapon?.Use();
         }
-        //ó‚¯æ‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç
+        //å—ã‘å–ã£ã¦ã„ãªã‹ã£ãŸã‚‰
         else
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p‚µ‚È‚¢
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨ã—ãªã„
             m_rightHandWeapon?.NotUse();
         }
 
-        //¶è‚ÌUŒ‚“ü—Í‚ğó‚¯æ‚Á‚Ä‚¢‚½‚ç
-        if (inputManager.IsFireLeftHand)
+        //å·¦æ‰‹ã®æ”»æ’ƒå…¥åŠ›ã‚’å—ã‘å–ã£ã¦ã„ãŸã‚‰
+        if (m_inputManager.IsFireLeftHand)
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨
             m_leftHandWeapon?.Use();
         }
-        //ó‚¯æ‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç
+        //å—ã‘å–ã£ã¦ã„ãªã‹ã£ãŸã‚‰
         else
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p‚µ‚È‚¢
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨ã—ãªã„
             m_leftHandWeapon?.NotUse();
         }
 
-        //‰E”w–Ê‚ÌUŒ‚“ü—Í‚ğó‚¯æ‚Á‚½‚ç
-        if (inputManager.IsFireRightBack)
+        //å³èƒŒé¢ã®æ”»æ’ƒå…¥åŠ›ã‚’å—ã‘å–ã£ãŸã‚‰
+        if (m_inputManager.IsFireRightBack)
         {
-            //IWeaponŒ^‚©‚çWeapon_Back‚ğæ“¾‚µA‚Å‚«‚½‚ç”­Ë‚ğƒŠƒNƒGƒXƒg
+            //IWeaponå‹ã‹ã‚‰Weapon_Backã‚’å–å¾—ã—ã€ã§ããŸã‚‰ç™ºå°„ã‚’ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
             if (m_rightBackWeapon is MonoBehaviour comp)
             {
                 Weapon_Back BackWeapon = comp.GetComponent<Weapon_Back>();
@@ -131,17 +117,17 @@ public class Player : PlayerBase
                 }
             }
         }
-        //ó‚¯æ‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç
+        //å—ã‘å–ã£ã¦ã„ãªã‹ã£ãŸã‚‰
         else
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p‚µ‚È‚¢
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨ã—ãªã„
             m_rightBackWeapon?.NotUse();
         }
 
-        //¶”w–Ê‚ÌUŒ‚“ü—Í‚ğó‚¯æ‚Á‚½‚ç
-        if (inputManager.IsFireLeftBack)
+        //å·¦èƒŒé¢ã®æ”»æ’ƒå…¥åŠ›ã‚’å—ã‘å–ã£ãŸã‚‰
+        if (m_inputManager.IsFireLeftBack)
         {
-            //IWeaponŒ^‚©‚çWeapon_Back‚ğæ“¾‚µA‚Å‚«‚½‚ç”­Ë‚ğƒŠƒNƒGƒXƒg
+            //IWeaponå‹ã‹ã‚‰Weapon_Backã‚’å–å¾—ã—ã€ã§ããŸã‚‰ç™ºå°„ã‚’ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
             if (m_leftBackWeapon is MonoBehaviour comp)
             {
                 Weapon_Back BackWeapon = comp.GetComponent<Weapon_Back>();
@@ -155,29 +141,26 @@ public class Player : PlayerBase
                 }
             }
         }
-        //ó‚¯æ‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç
+        //å—ã‘å–ã£ã¦ã„ãªã‹ã£ãŸã‚‰
         else
         {
-            //•‘•‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©‚ğŠm”F‚µAg—p‚µ‚È‚¢
+            //æ­¦è£…ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã—ã€ä½¿ç”¨ã—ãªã„
             m_leftBackWeapon?.NotUse();
         }
 
-        //è“®ƒŠƒ[ƒh“ü—Í‚ğó‚¯æ‚Á‚Ä‚¢‚½‚çA‘Î‰‚·‚éƒL[‚Ì•‘•‚ğè“®ƒŠƒ[ƒh
-        if (inputManager.IsReloadRightHand) m_rightHandWeapon?.Reload();
-        if (inputManager.IsReloadLeftHand) m_leftHandWeapon?.Reload();
-        if (inputManager.IsReloadRightBack) m_rightBackWeapon?.Reload();
-        if (inputManager.IsReloadLeftBack) m_leftBackWeapon?.Reload();
+        //æ‰‹å‹•ãƒªãƒ­ãƒ¼ãƒ‰å…¥åŠ›ã‚’å—ã‘å–ã£ã¦ã„ãŸã‚‰ã€å¯¾å¿œã™ã‚‹ã‚­ãƒ¼ã®æ­¦è£…ã‚’æ‰‹å‹•ãƒªãƒ­ãƒ¼ãƒ‰
+        if (m_inputManager.IsReloadRightHand) m_rightHandWeapon?.Reload();
+        if (m_inputManager.IsReloadLeftHand) m_leftHandWeapon?.Reload();
+        if (m_inputManager.IsReloadRightBack) m_rightBackWeapon?.Reload();
+        if (m_inputManager.IsReloadLeftBack) m_leftBackWeapon?.Reload();
 
-        //ƒ^[ƒQƒbƒg•ÏX‚Ì“ü—Í‚ğó‚¯æ‚Á‚Ä‚¢‚½‚çAŸ‚Ìƒ^[ƒQƒbƒg‚ÖƒƒbƒN‚ğ•ÏX
-        if (inputManager.IsTargetChange) lockon.SwitchTarget();
+        //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¤‰æ›´ã®å…¥åŠ›ã‚’å—ã‘å–ã£ã¦ã„ãŸã‚‰ã€æ¬¡ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¸ãƒ­ãƒƒã‚¯ã‚’å¤‰æ›´
+        if (m_inputManager.IsTargetChange) m_lockon.SwitchTarget();
 
-        //Š„‡ŒvZ/”½‰f
-        UpdateRate();
-
-        //©“®‚Å…•½‚É
+        //è‡ªå‹•ã§æ°´å¹³ã«
         if (m_isAutoHorizontal && !IsFireLaser()) AutoHorizontal();
 
-        //HP‚ª0ˆÈ‰º‚È‚çA€–Sˆ—
+        //HPãŒ0ä»¥ä¸‹ãªã‚‰ã€æ­»äº¡å‡¦ç†
         if (m_status.GetHP() <= 0f)
         {
             Die();
@@ -186,81 +169,84 @@ public class Player : PlayerBase
 
     void LateUpdate()
     {
-        //ƒŒ[ƒU[g—p’†‚Å‚È‚¯‚ê‚ÎAƒ^[ƒQƒbƒg‚Ì•û‚ÖŒü‚­
+        //ãƒ¬ãƒ¼ã‚¶ãƒ¼ä½¿ç”¨ä¸­ã§ãªã‘ã‚Œã°ã€ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ–¹ã¸å‘ã
         if(!IsFireLaser())
         LookAtTarget();
+
+        //å‰²åˆè¨ˆç®—/åæ˜ 
+        UpdateRate();
     }
 
     /// <summary>
-    /// ŠeíŠ„‡‚ğŒvZ‚µA‘Î‰‚µ‚½UI‚É”½‰f
+    /// å„ç¨®å‰²åˆã‚’è¨ˆç®—ã—ã€å¯¾å¿œã—ãŸUIã«åæ˜ 
     /// </summary>
     void UpdateRate()
     {
-        //HPƒo[‚ªİ’è‚³‚ê‚Ä‚¢‚½‚ç
+        //HPãƒãƒ¼ãŒè¨­å®šã•ã‚Œã¦ã„ãŸã‚‰
         if (m_HPBar != null)
         {
-            //Œ»İ‚ÌHPŠ„‡‚ğŒvZ
+            //ç¾åœ¨ã®HPå‰²åˆã‚’è¨ˆç®—
             m_HPRate = m_status.GetHP() / m_status.GetMaxHP() * 100f;
-            //HPƒo[‚É”½‰f
-            m_HPBar.BarValue = m_HPRate;
+            //HPãƒãƒ¼ã«åæ˜ (ä½“åŠ›ãŒå®Œå…¨ã«0ã«ãªã‚‹ã¾ã§ã¯æœ€ä½1%ã¨ã—ã¦è¡¨ç¤º)
+            m_HPBar.BarValue = (m_status.GetHP() > 0f) ? Math.Max(1f, MathF.Floor(m_HPRate)) : 0f;
         }
 
-        //ƒu[ƒXƒgƒQ[ƒW‚ªİ’è‚³‚ê‚Ä‚¢‚½‚ç
+        //ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸ãŒè¨­å®šã•ã‚Œã¦ã„ãŸã‚‰
         if (m_boostGauge != null)
         {
-            //Œ»İ‚Ìƒu[ƒXƒgŠ„‡‚ğŒvZ
-            m_boostRate = movement.GetBoost / movement.GetMaxBoost * 100f;
-            //ƒu[ƒXƒgƒQ[ƒW‚É”½‰f
+            //ç¾åœ¨ã®ãƒ–ãƒ¼ã‚¹ãƒˆå‰²åˆã‚’è¨ˆç®—
+            m_boostRate = m_movement.GetBoost / m_movement.GetMaxBoost * 100f;
+            //ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸ã«åæ˜ 
             m_boostGauge.BarValue = MathF.Floor(m_boostRate);
         }
     }
 
     /// <summary>
-    /// ƒ^[ƒQƒbƒg‚Ì•û‚ÖŒü‚­iƒvƒŒƒCƒ„[–{‘Ìj - Yaw‚Ì‚İŠŠ‚ç‚©‚É•âŠÔ‚·‚éÀ‘•‚É•ÏX
+    /// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ–¹ã¸å‘ã - Yawã®ã¿æ»‘ã‚‰ã‹ã«è£œé–“ã™ã‚‹å®Ÿè£…ã«å¤‰æ›´
     /// </summary>
     private void LookAtTarget()
     {
-        Transform target = lockon.CurrentTarget;
+        Transform target = m_lockon.CurrentTarget;
         if (target == null) return;
 
-        // ƒ^[ƒQƒbƒg•ûŒüi…•½‚Ì‚İj
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ–¹å‘ï¼ˆæ°´å¹³ã®ã¿ï¼‰
         Vector3 toTarget = target.position - transform.position;
         toTarget.y = 0f;
 
         if (toTarget.sqrMagnitude < 0.01f) return;
 
-        // –Ú•WYawŠp‚ğŒvZ
+        // ç›®æ¨™Yawè§’ã‚’è¨ˆç®—
         float targetYaw = Mathf.Atan2(toTarget.x, toTarget.z) * Mathf.Rad2Deg;
 
-        // Œ»İ‚ÌYaw
+        // ç¾åœ¨ã®Yaw
         float currentYaw = transform.eulerAngles.y;
 
-        // ƒfƒbƒhƒ][ƒ“: ¬‚³‚ÈŠp“x•Ï‰»‚Í–³‹‚µ‚Ä”÷U“®‚ğ–h‚®
+        // ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³: å°ã•ãªè§’åº¦å¤‰åŒ–ã¯ç„¡è¦–ã—ã¦å¾®æŒ¯å‹•ã‚’é˜²ã
         float delta = Mathf.Abs(Mathf.DeltaAngle(currentYaw, targetYaw));
-        if (delta < yawDeadzoneDegrees)
+        if (delta < m_yawDeadzoneDegrees)
         {
-            // ‚ ‚Ü‚è“®‚©‚³‚È‚¢i–ß‚è‚âƒmƒCƒY‚ğ–h‚®j
+            // ã‚ã¾ã‚Šå‹•ã‹ã•ãªã„ï¼ˆæˆ»ã‚Šã‚„ãƒã‚¤ã‚ºã‚’é˜²ãï¼‰
             return;
         }
 
-        // ŠŠ‚ç‚©‚ÉYaw•âŠÔiSmoothDampAngle‚ğg—pj
+        // æ»‘ã‚‰ã‹ã«Yawè£œé–“ï¼ˆSmoothDampAngleã‚’ä½¿ç”¨ï¼‰
         float newYaw = Mathf.SmoothDampAngle(
             currentYaw,
             targetYaw,
-            ref yawVelocityPlayer,
-            playerYawSmoothTime,
+            ref m_yawVelocityPlayer,
+            m_playerYawSmoothTime,
             Mathf.Infinity,
             Time.deltaTime
         );
 
-        // Pitch/Roll ‚ğ•Û‚µ‚Ä Yaw ‚Ì‚İ“K—p
+        // Pitch/Roll ã‚’ä¿æŒã—ã¦ Yaw ã®ã¿é©ç”¨
         Vector3 euler = transform.eulerAngles;
         euler.y = newYaw;
         transform.eulerAngles = euler;
     }
 
     /// <summary>
-    /// ©g‚ğ…•½‚Éƒ‰[ƒv
+    /// è‡ªèº«ã‚’æ°´å¹³ã«ãƒ©ãƒ¼ãƒ—
     /// </summary>
     private void AutoHorizontal()
     {
@@ -271,36 +257,53 @@ public class Player : PlayerBase
     }
 
     /// <summary>
-    /// ƒQ[ƒ€ƒI[ƒo[ˆ—
+    /// é‡ã•ã«ã‚ˆã‚‹ãƒ–ãƒ¼ã‚¹ãƒˆæ¶ˆè²»é‡å€ç‡ã‚’è¨ˆç®—ã—å–å¾—
+    /// </summary>
+    /// <returns></returns>
+    private float GetBoostMultiplier()
+    {
+        // 0ã€œ1 ã«æ­£è¦åŒ–
+        float normalized =
+            Mathf.InverseLerp(m_minWeight, m_maxWeight, m_weight);
+
+        // å®‰å…¨ã®ãŸã‚ã‚¯ãƒ©ãƒ³ãƒ—
+        normalized = Mathf.Clamp01(normalized);
+
+        // å€ç‡ã«å¤‰æ›
+        return Mathf.Lerp(m_minMultiplier, m_maxMultiplier, normalized);
+    }
+
+    /// <summary>
+    /// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼å‡¦ç†
     /// </summary>
     private void GameOver()
     {
-        //ƒQ[ƒ€ƒ}ƒl[ƒWƒƒ[‚Ö€–S‚ğ’Ê’m
+        //ã‚²ãƒ¼ãƒ ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã¸æ­»äº¡ã‚’é€šçŸ¥
         GameManager.Instance.PlayerDie();
     }
 
     /// <summary>
-    /// HPƒo[‚ğİ’è
+    /// HPãƒãƒ¼ã‚’è¨­å®š
     /// </summary>
-    /// <param name="bar">HPƒo[</param>
+    /// <param name="bar">HPãƒãƒ¼</param>
     public void SetHPBar(ProgressBar bar)
     {
         m_HPBar = bar;
     }
 
     /// <summary>
-    /// ƒu[ƒXƒgƒQ[ƒW‚ğİ’è
+    /// ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸ã‚’è¨­å®š
     /// </summary>
-    /// <param name="bar">ƒu[ƒXƒgƒQ[ƒW</param>
+    /// <param name="bar">ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸</param>
     public void SetBoostGauge(ProgressBar bar)
     {
         m_boostGauge = bar;
     }
 
     /// <summary>
-    /// ƒŒ[ƒ_[‚ğİ’è
+    /// ãƒ¬ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
     /// </summary>
-    /// <param name="radar">ƒŒ[ƒ_[</param>
+    /// <param name="radar">ãƒ¬ãƒ¼ãƒ€ãƒ¼</param>
     public void SetRadar(Radar radar)
     {
         m_radar = radar;
@@ -308,7 +311,7 @@ public class Player : PlayerBase
     }
 
     /// <summary>
-    /// ƒŒ[ƒU[‚ğg—p
+    /// ãƒ¬ãƒ¼ã‚¶ãƒ¼ã‚’ä½¿ç”¨
     /// </summary>
     public void FireLaser()
     {
@@ -316,7 +319,7 @@ public class Player : PlayerBase
     }
 
     /// <summary>
-    /// ƒŒ[ƒU[‚Ìg—pI—¹
+    /// ãƒ¬ãƒ¼ã‚¶ãƒ¼ã®ä½¿ç”¨çµ‚äº†
     /// </summary>
     public void EndLaser()
     {
@@ -324,7 +327,7 @@ public class Player : PlayerBase
     }
 
     /// <summary>
-    /// ƒŒ[ƒU[‚ğg—p’†‚©(g—p’†‚È‚çtrue)
+    /// ãƒ¬ãƒ¼ã‚¶ãƒ¼ã‚’ä½¿ç”¨ä¸­ã‹(ä½¿ç”¨ä¸­ãªã‚‰true)
     /// </summary>
     /// <returns></returns>
     public bool IsFireLaser()

@@ -4,7 +4,8 @@ public class EnemyGun : MonoBehaviour
 {
     [SerializeField] private GunStatusData m_statusData;  //銃の性能(インスペクタで設定)
     [SerializeField] private Transform m_muzzleTransform; //銃口
-    
+    [SerializeField] private AudioSource m_audioSource;   //音声データ
+
     private GunStatus m_status;    //銃の性能(インスペクタで設定したものを代入)
     private Transform targetPoint; //目標とするポイント
 
@@ -95,6 +96,12 @@ public class EnemyGun : MonoBehaviour
             Destroy(MuzzleFlash, 0.1f);
         }
 
+        //発射音を再生
+        if (m_status.GetFireSE())
+        {
+            PlayFireSE(m_status.GetFireSE());
+        }
+
         //弾数減少/フラグ更新
         m_status.SetAmmo(m_status.GetAmmo() - 1);
         m_isFire = false;
@@ -148,6 +155,23 @@ public class EnemyGun : MonoBehaviour
         m_status.SetAmmo(m_status.GetMaxAmmo());
         m_isFire = true;
         m_elapsedTime = 0f;
+    }
+
+    /// <summary>
+    /// SEを再生
+    /// </summary>
+    /// <param name="PlaySE">再生したいSE</param>
+    /// <param name="Overwrite">上書き再生するか(デフォルトではしない)</param>
+    public void PlayFireSE(AudioClip PlaySE, bool Overwrite = false)
+    {
+        //AudioSourceが無ければ、以降の処理は行わない
+        if (m_audioSource == null) return;
+        //既に何かのSEを再生中なら、音声を再生しない
+        if (!Overwrite && m_audioSource.isPlaying) return;
+
+        //音声保存用変数に再生したいSEを設定し、再生
+        m_audioSource.clip = PlaySE;
+        AudioSource.PlayClipAtPoint(m_audioSource.clip, m_muzzleTransform.position);
     }
 
     /// <summary>

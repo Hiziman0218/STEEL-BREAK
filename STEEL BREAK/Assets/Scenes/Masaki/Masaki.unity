@@ -8678,7 +8678,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 20, z: 130}
   m_LocalScale: {x: 1, y: 2.5, z: 7.5}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12667,24 +12667,24 @@ MonoBehaviour:
     spawnWeight: 1
   waveDataList:
   - enemySpawnList:
-    - enemyPrefab: {fileID: 3581042290968210567, guid: 82c6791a7d3a0bc418241ebb27cd753e, type: 3}
+    - enemyPrefab: {fileID: 6332733954681566683, guid: bf989b21da84f71429ccd2bb136e07c9, type: 3}
       spawnTransform: {fileID: 2106594461}
       isRandom: 0
-    - enemyPrefab: {fileID: 4553015260090052566, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
+    - enemyPrefab: {fileID: 5397037438429758691, guid: 5809d39dac97eab41a9f2e6ab3d0b722, type: 3}
       spawnTransform: {fileID: 664818575}
       isRandom: 0
-    - enemyPrefab: {fileID: 4553015260090052566, guid: fe45379db2dc40d4ba4e59c487ba1701, type: 3}
+    - enemyPrefab: {fileID: 5397037438429758691, guid: 5809d39dac97eab41a9f2e6ab3d0b722, type: 3}
       spawnTransform: {fileID: 1568631712}
       isRandom: 0
     condition: 0
   - enemySpawnList:
-    - enemyPrefab: {fileID: 390855096640865080, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+    - enemyPrefab: {fileID: 6528066841152192826, guid: e5423de66e357d14297366fbe58ee85b, type: 3}
       spawnTransform: {fileID: 1556949511}
       isRandom: 0
-    - enemyPrefab: {fileID: 390855096640865080, guid: 485dfe445697db04ba688ef917ff9b1f, type: 3}
+    - enemyPrefab: {fileID: 6528066841152192826, guid: e5423de66e357d14297366fbe58ee85b, type: 3}
       spawnTransform: {fileID: 98386871}
       isRandom: 0
-    - enemyPrefab: {fileID: 7047030616286980611, guid: 59a6d7db43c9277439b4d9707b564bcd, type: 3}
+    - enemyPrefab: {fileID: 8424347088845781334, guid: 435655908bbfcb8428fcb4340410382f, type: 3}
       spawnTransform: {fileID: 128908924}
       isRandom: 0
     condition: 0

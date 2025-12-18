@@ -44,6 +44,5 @@ public class MouseLookVertical : MonoBehaviour
         // カメラ位置をシーソー関係で更新（注視点が上がればカメラが下がる）
         Vector3 camLocalOffset = cameraBaseLocalOffset;
         camLocalOffset.y -= currentYOffset; // シーソー効果：逆方向に変動
-        //m_CameraTransform.position = m_Base.TransformPoint(camLocalOffset);
     }
 }

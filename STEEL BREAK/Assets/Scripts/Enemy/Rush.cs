@@ -7,6 +7,7 @@ public class Rush : MonoBehaviour
     [SerializeField] private float m_knockbackPower = 3.0f; //相手を跳ね飛ばす力
     [SerializeField] private float m_damage = 3.0f;         //与えるダメージ
     [SerializeField] private float m_damageInterval = 0.3f; //ダメージ間隔
+    [SerializeField] private AudioSource m_audioSource;     //音声データ
 
     private string m_myTeam; //自身の所属するチーム
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
@@ -30,10 +31,16 @@ public class Rush : MonoBehaviour
         //チームが設定されていなかった場合、取得
         if(m_myTeam == null)
         {
+            Debug.Log("チームがnullでした。");
             CharaBase chara = GetComponentInParent<CharaBase>();
             if (chara != null)
             {
                 m_myTeam = chara.GetTeam();
+                Debug.Log("チームを取得できました。");
+            }
+            else
+            {
+                Debug.Log("チームを取得できませんでした。");
             }
         }
     }
@@ -46,6 +53,10 @@ public class Rush : MonoBehaviour
 
         //所属チームが同じなら以降の処理を行わない
         if (chara.GetTeam() == m_myTeam) return;
+
+        //ヒット位置を取得し、SEを再生
+        Vector3 hitPos = other.ClosestPoint(transform.position);
+        PlayRushSE(hitPos);
 
         //相手を吹き飛ばす
         Rigidbody rb = other.GetComponentInParent<Rigidbody>();
@@ -75,6 +86,9 @@ public class Rush : MonoBehaviour
         {
             //ダメージ処理
             chara.GetDamage(m_damage);
+            //ヒット位置を取得し、SEを再生
+            Vector3 hitPos = other.ClosestPoint(transform.position);
+            PlayRushSE(hitPos);
             //タイマー更新
             m_hitTimer[chara] = now;
         }
@@ -98,11 +112,14 @@ public class Rush : MonoBehaviour
     }
 
     /// <summary>
-    /// 所属チームを設定
+    /// 音声再生
     /// </summary>
-    /// <param name="team"></param>
-    public void SetTeam(string team)
+    public void PlayRushSE(Vector3 hitPosition)
     {
-        m_myTeam = team;
+        //AudioSourceが無ければ、以降の処理は行わない
+        if (m_audioSource == null) return;
+
+        //ヒット時SE再生
+        AudioSource.PlayClipAtPoint(m_audioSource.clip, hitPosition);
     }
 }

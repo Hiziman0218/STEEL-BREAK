@@ -126,8 +126,9 @@ MonoBehaviour:
   m_normalBoostEffectPrefab: {fileID: 6671874329552905155, guid: 00d56cd280c7c7b4ba28214b94fcdcfc, type: 3}
   m_dashBoostEffectPrefab: {fileID: 4528170343565572684, guid: 2bf409899fb64344aa1388047f96cd0b, type: 3}
   m_audioSource: {fileID: 1696668177668293315}
-  m_normalMoveSE: {fileID: 0}
-  m_dashMoveSE: {fileID: 0}
+  m_normalMoveSE: {fileID: 8300000, guid: df225f5b26693944787e4c80dd68ccfe, type: 3}
+  m_dashMoveSE: {fileID: 8300000, guid: 4808fd9b3d9946a44809df230192c3fb, type: 3}
+  m_fadeDuration: 0.25
 --- !u!82 &1696668177668293315
 AudioSource:
   m_ObjectHideFlags: 0

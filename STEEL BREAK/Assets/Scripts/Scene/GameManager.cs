@@ -15,12 +15,19 @@ public class GameManager : MonoBehaviour
     //プレイヤーの装備する武器の残弾数
     public AmmoDisplay m_ammoDisplay;
 
+    //ボスに設定するHPバー
+    public ProgressBar m_bossHPBar;
+
     //プレイヤーが死亡したか
     private bool m_playerDied;
 
     void Awake()
     {
         Instance = this;
+
+        //マウスカーソルを非表示にする
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -46,10 +53,26 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// ボス用のHPバーを取得
+    /// </summary>
+    /// <returns></returns>
+    public ProgressBar GetBossHPBar()
+    {
+        return m_bossHPBar;
+    }
+
+    /// <summary>
     /// プレイヤーの死亡を通知
     /// </summary>
     public void PlayerDie()
     {
         m_playerDied = true;
+    }
+
+    private void OnDestroy()
+    {
+        //マウスカーソルを表示する
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 }

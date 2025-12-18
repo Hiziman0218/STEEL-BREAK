@@ -32,7 +32,7 @@ public class Homing : MonoBehaviour
     {
         //NewBulletがターゲットを持っているなら参照
         m_target = m_bullet.GetTarget();
-        if (m_target == null) return;
+        if (m_target == null || !m_target.gameObject.activeInHierarchy) return;
 
         //目標方向を計算
         Vector3 dir = (m_target.position - transform.position).normalized;

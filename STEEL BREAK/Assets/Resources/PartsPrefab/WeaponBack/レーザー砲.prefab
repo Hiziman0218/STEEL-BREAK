@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 4391038715929966822}
   - component: {fileID: 5649558131051365504}
   - component: {fileID: 6920265599602406841}
-  - component: {fileID: 1794621471754580545}
+  - component: {fileID: 7972501972527460679}
   m_Layer: 0
   m_Name: "\u30EC\u30FC\u30B6\u30FC\u7832"
   m_TagString: Untagged
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_statusData: {fileID: 11400000, guid: f4c215aa71cc6454ba5bac420bbbf232, type: 2}
   m_muzzleTransform: {fileID: 7055182430445133437}
   m_attachOffsetPos: {x: 0, y: 0, z: 0}
-  m_audioSource: {fileID: 1794621471754580545}
+  m_audioSource: {fileID: 7972501972527460679}
 --- !u!114 &6920265599602406841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_minPitch: -10
   m_maxYaw: 45
   m_minYaw: -45
---- !u!82 &1794621471754580545
+--- !u!82 &7972501972527460679
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

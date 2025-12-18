@@ -119,7 +119,10 @@ public class MechAssemblyManager : MonoBehaviour
 
     private void Start()
     {
-        SetPlayer(customPlayer);
+        if(customPlayer != null)
+        {
+            SetPlayer(customPlayer);
+        }   
     }
 
     private void OnDestroy()

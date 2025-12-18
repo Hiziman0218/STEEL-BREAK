@@ -6,7 +6,12 @@ public class Laser : BulletBase
     [Header("レーザー設定")]
     [SerializeField] private float m_damageInterval = 0.3f; //ダメージ間隔
     [SerializeField] private Collider m_hitCollider;        //自身の判定を除外する場合に設定
-                                                            
+
+    [Header("音声設定")]
+    [SerializeField] private AudioSource m_audioSource;
+    [SerializeField] private float m_minScale = 0.05f;
+    [SerializeField] private float m_maxScale = 1.5f;
+
     private readonly Dictionary<CharaBase, float> m_hitTimer = new(); //ヒット管理用
     private Player m_player;     //プレイヤー
     private Transform m_parent;  //発射時に自身の親にしたい部分
@@ -40,6 +45,25 @@ public class Laser : BulletBase
         if(m_player != null)
         {
             m_player.FireLaser();
+        }
+
+        //音声設定
+        if (m_audioSource != null)
+        {
+            m_audioSource.volume = 0f;
+            m_audioSource.loop = true;
+            m_audioSource.Play();
+        }
+    }
+
+    private void Update()
+    {
+        if (m_audioSource != null)
+        {
+            float scale = transform.localScale.x; //太さのスケールを参照
+            float t = Mathf.InverseLerp(m_minScale, m_maxScale, scale);
+
+            m_audioSource.volume = t; //フェードイン/アウト
         }
     }
 
@@ -78,6 +102,12 @@ public class Laser : BulletBase
         if(m_player != null)
         {
             m_player.EndLaser();
+        }
+
+        //音声を止める
+        if (m_audioSource != null)
+        {
+            m_audioSource.Stop();
         }
     }
 

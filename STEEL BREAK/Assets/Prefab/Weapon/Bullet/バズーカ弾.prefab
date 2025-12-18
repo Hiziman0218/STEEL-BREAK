@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 189851028628905455}
   - component: {fileID: 4797214269450151203}
   - component: {fileID: 6215948269900874737}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: "\u30D0\u30BA\u30FC\u30AB\u5F3E"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ TrailRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Time: 0.03
-  m_PreviewTimeScale: 0
+  m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1

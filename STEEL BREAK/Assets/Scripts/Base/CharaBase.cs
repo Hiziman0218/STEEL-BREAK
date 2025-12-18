@@ -1,4 +1,3 @@
-using Game.Enum;
 using System;
 using UnityEngine;
 
@@ -9,10 +8,10 @@ public class CharaBase : MonoBehaviour
     [Tooltip("キャラのステータス(StatusDataを設定)")]
     [SerializeField] protected StatusData m_statusData; //インスペクタで設定
 
-    public Action OnDamage; //ダメージを受けた時のイベント
+    public Action OnDamage;     //ダメージを受けた時のイベント
     public event Action OnDied; //死亡イベント
 
-    protected Status m_status; //インスペクタで設定されたものを代入
+    protected Status m_status;  //インスペクタで設定されたものを代入
 
     /// <summary>
     /// 初期化
@@ -41,11 +40,20 @@ public class CharaBase : MonoBehaviour
     /// </summary>
     protected void Die()
     {
-        //死亡エフェクトを生成(削除はエフェクトが担当)
-        DestructionEffect Effect = Instantiate(m_status.GetDestructionEffect(), transform.position, transform.rotation);
-        Effect.SetOwner(gameObject, OnDied);
-        //自身を非表示に設定
-        gameObject.SetActive(false);
+        //死亡エフェクトが取得出来たら、エフェクトを生成して非表示
+        if (m_status.GetDestructionEffect())
+        {
+            //死亡エフェクトを生成(削除はエフェクトが担当)
+            DestructionEffect Effect = Instantiate(m_status.GetDestructionEffect(), transform.position, transform.rotation);
+            Effect.SetOwner(gameObject, OnDied);
+            //自身を非表示に設定
+            gameObject.SetActive(false);
+        }
+        //死亡エフェクトが取得できなければ、そのまま削除
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     /// <summary>

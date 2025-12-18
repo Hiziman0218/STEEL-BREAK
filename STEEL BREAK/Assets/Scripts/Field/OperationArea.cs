@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class OperationArea : MonoBehaviour
 {
@@ -14,6 +15,77 @@ public class OperationArea : MonoBehaviour
     private float timer;
     private bool isOutside = false;
     private Coroutine warningCoroutine;
+
+    private readonly List<Enemy> enemies = new();
+    public Bounds AreaBounds { get; private set; }
+
+    private void Awake()
+    {
+        Collider col = GetComponent<Collider>();
+        AreaBounds = col.bounds;
+    }
+
+    /// <summary>
+    /// ¶¬‚µ‚½“G‚ğƒŠƒXƒg‚É’Ç‰Á
+    /// </summary>
+    /// <param name="enemy">¶¬‚µ‚½“G</param>
+    public void RegisterEnemy(Enemy enemy)
+    {
+        if (enemy == null) return;
+        if (!enemies.Contains(enemy))
+            enemies.Add(enemy);
+    }
+
+    /// <summary>
+    /// “G‚ğƒŠƒXƒg‚©‚çíœ
+    /// </summary>
+    /// <param name="enemy"></param>
+    public void UnregisterEnemy(Enemy enemy)
+    {
+        enemies.Remove(enemy);
+    }
+
+    // ===============================
+    // “G‚ÌS‘©ˆ—
+    // ===============================
+    private void LateUpdate()
+    {
+        AreaBounds = GetComponent<Collider>().bounds;
+
+        for (int i = enemies.Count - 1; i >= 0; i--)
+        {
+            Enemy enemy = enemies[i];
+            if (enemy == null)
+            {
+                enemies.RemoveAt(i);
+                continue;
+            }
+
+            ClampEnemy(enemy);
+        }
+    }
+
+    /// <summary>
+    /// “G‚ÌS‘©
+    /// </summary>
+    /// <param name="enemy"></param>
+    private void ClampEnemy(Enemy enemy)
+    {
+        Vector3 pos = enemy.transform.position;
+        Bounds b = AreaBounds;
+
+        Vector3 clamped = new Vector3(
+            Mathf.Clamp(pos.x, b.min.x, b.max.x),
+            Mathf.Clamp(pos.y, b.min.y, b.max.y),
+            Mathf.Clamp(pos.z, b.min.z, b.max.z)
+        );
+
+        if (pos != clamped)
+        {
+            enemy.ForceSetPosition(clamped);
+            enemy.OnBlockedByOperationArea();
+        }
+    }
 
     private void OnTriggerExit(Collider other)
     {

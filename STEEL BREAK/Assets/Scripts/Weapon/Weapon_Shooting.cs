@@ -62,38 +62,6 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
 
     private void Update()
     {
-        /*
-        //発射不可能の場合
-        if (!m_isFireInternal)
-        {
-            //経過時間を計測
-            m_elapsedTime += Time.deltaTime;
-
-            //リロード中の場合
-            if (m_isReloading)
-            {
-                //経過時間がリロード時間を超えていたら
-                if (m_elapsedTime >= m_status.GetReloadTime())
-                {
-                    //リロード完了
-                    ReloadComplete();
-                }
-            }
-            //経過時間が発射レートを超えていたら
-            else if (m_elapsedTime >= m_status.GetRate())
-            {
-                //発射可能処理
-                m_isFireInternal = true;
-                m_isCoolTime = false;
-                m_elapsedTime = 0f;
-            }
-            //リロード中ではなく、発射レート中なら
-            else
-            {
-                m_isCoolTime = true;
-            }
-        }*/
-
         // 毎フレーム時間を加算
         m_elapsedTime += Time.deltaTime;
 
@@ -442,6 +410,8 @@ public class Weapon_Shooting : MonoBehaviour, IWeapon
     /// <param name="Overwrite">上書き再生するか(デフォルトではしない)</param>
     public void PlayFireSE(AudioClip PlaySE, bool Overwrite = false)
     {
+        //AudioSourceが無ければ、以降の処理は行わない
+        if (m_audioSource == null) return;
         //既に何かのSEを再生中なら、音声を再生しない
         if (!Overwrite && m_audioSource.isPlaying) return;
 

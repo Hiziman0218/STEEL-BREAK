@@ -72,7 +72,8 @@ public class Target : MonoBehaviour
     {
         get
         {
-            return needArrowIndicator;
+            // 追加 : 表示するかの条件に、ロックオンされているかを追加
+            return needArrowIndicator && isLockedOn;
         }
     }
 

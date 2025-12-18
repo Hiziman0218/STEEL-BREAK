@@ -24,7 +24,7 @@ MonoBehaviour:
   MirrorHand: 0
   BulletPrefab: {fileID: 7938403629850659924, guid: 689db15b9700c2f42bab755c75674888, type: 3}
   MuzzleFlashEffect: {fileID: 0}
-  FireSE: {fileID: 0}
-  EmptyFireSE: {fileID: 0}
+  FireSE: {fileID: 8300000, guid: 9a514e4c3219e5a40802a3fa64919d17, type: 3}
+  EmptyFireSE: {fileID: 8300000, guid: 169d19b02424c53419234a68ed87b2e6, type: 3}
   ReloadSE: {fileID: 0}
   Detail: "\u80A9\u6B66\u5668\u7248\u30D0\u30BA\u30FC\u30AB"

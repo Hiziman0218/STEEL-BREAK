@@ -7,7 +7,7 @@ public static class RuntimeInitialize
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {
-        GameData.mechSaveData.Load();
+        //GameData.mechSaveData.Load();
 
         SceneHistoryManager.Create();
     }

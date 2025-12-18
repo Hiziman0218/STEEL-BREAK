@@ -49,9 +49,9 @@ public class OffScreenIndicator : MonoBehaviour
     /// </summary>
     void DrawIndicators()
     {
-        foreach(Target target in targets)
+        foreach (Target target in targets)
         {
-            /*
+            /* 初期段階
             Vector3 screenPosition = OffScreenIndicatorCore.GetScreenPosition(mainCamera, target.transform.position);
             bool isTargetVisible = OffScreenIndicatorCore.IsTargetVisible(screenPosition);
             float distanceFromCamera = target.NeedDistanceText ? target.GetDistanceFromCamera(mainCamera.transform.position) : float.MinValue;// Gets the target distance from the camera.
@@ -85,6 +85,7 @@ public class OffScreenIndicator : MonoBehaviour
             }
             */
 
+            /* 仕様2
             // 1) 現在の画面位置と可視判定
             //Vector3 screenPosition = OffScreenIndicatorCore.GetScreenPosition(mainCamera, target.transform.position);
             //変更 : ターゲットの設定した座標に表示するように設定
@@ -106,6 +107,57 @@ public class OffScreenIndicator : MonoBehaviour
             screenPosition.z = 0;
             Indicator indicator = GetIndicator(ref target.indicator, IndicatorType.BOX);
                     // 色やテキストは不要なら SetDistanceText を呼ばないなど調整可
+            indicator.SetImageColor(target.TargetColor);
+            indicator.transform.position = screenPosition;
+            indicator.SetTextRotation(Quaternion.identity);
+        }*/
+
+            Vector3 screenPosition =
+                    OffScreenIndicatorCore.GetScreenPosition(
+                        mainCamera,
+                        target.GetTargetPosition()
+                    );
+
+            bool isTargetVisible =
+                OffScreenIndicatorCore.IsTargetVisible(screenPosition);
+
+            Indicator indicator = null;
+
+            // ロックオン中 & 画面内 → BOX
+            if (target.NeedBoxIndicator && isTargetVisible)
+            {
+                screenPosition.z = 0;
+                indicator = GetIndicator(ref target.indicator, IndicatorType.BOX);
+                indicator.transform.rotation = Quaternion.identity;
+            }
+            // ロックオン中 & 画面外 → ARROW
+            else if (target.NeedArrowIndicator && !isTargetVisible)
+            {
+                float angle = 0f;
+
+                OffScreenIndicatorCore.GetArrowIndicatorPositionAndAngle(
+                    ref screenPosition,
+                    ref angle,
+                    screenCentre,
+                    screenBounds
+                );
+
+                indicator = GetIndicator(ref target.indicator, IndicatorType.ARROW);
+                indicator.transform.rotation =
+                    Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg);
+            }
+            // ロックオン解除 or 表示条件外 → 非表示
+            else
+            {
+                if (target.indicator != null)
+                {
+                    target.indicator.Activate(false);
+                    target.indicator = null;
+                }
+                continue;
+            }
+
+            // 共通設定
             indicator.SetImageColor(target.TargetColor);
             indicator.transform.position = screenPosition;
             indicator.SetTextRotation(Quaternion.identity);

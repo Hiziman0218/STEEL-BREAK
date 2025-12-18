@@ -25,6 +25,7 @@ public class InputManager : MonoBehaviour
     public bool IsFallUp {  get; private set; }          //落下の入力受け取り終了
     public bool IsLockOnCancel { get; private set; }     //ロックオン状態解除の入力受け取り
     public bool IsTargetChange {  get; private set; }    //ターゲット切り替えの入力受け取り
+    public bool IsTargetBoss {  get; private set; }      //ターゲットをボスにする入力受け取り
     public bool IsReload { get; private set; }           //リロードするか(手動リロード)
 
 
@@ -64,6 +65,7 @@ public class InputManager : MonoBehaviour
         IsFallUp = Input.GetKeyUp(KeyCode.LeftControl);     //左ctrlキーを離した瞬間落下入力の計測終了
         IsLockOnCancel = Input.GetKeyDown(KeyCode.Tab);     //Tabキーを押すとロックオン機能使用/不使用を切り替え
         IsTargetChange = Input.GetKeyDown(KeyCode.F);       //Fキーを押すとターゲット切り替え
+        IsTargetBoss = Input.GetKeyDown(KeyCode.C);         //Cキーを押すと強制的にボスにターゲット切り替え
         IsReload = Input.GetKey(KeyCode.R);                 //Rキーを押している間手動リロード待機
     }
 
