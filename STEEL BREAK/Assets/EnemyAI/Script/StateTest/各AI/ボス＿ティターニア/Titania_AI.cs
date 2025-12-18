@@ -176,8 +176,11 @@ namespace StateMachineAI
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<Titania_T>();
 
+            //デバッグ用
+            ChangeState(AIState_Titania_T.Idle_T);
+
             //初期起動時は、雑魚敵の生成に移行させる
-            ChangeState(AIState_Titania_T.Spawn_T);
+            //ChangeState(AIState_Titania_T.Spawn_T);
         }
 
         /*
@@ -187,9 +190,11 @@ namespace StateMachineAI
             ChangeState(AIState_Titania_T.Hit_T);
         }*/
 
-        //ダメージを与えられたら防御型に通知
+        //ダメージを与えられたら防御型に通知してプレイヤーが近ければ攻撃させに行く
         private void CommandEnemy()
         {
+            if (m_Enemy == null || !m_Enemy.IsAlive) return; // 死亡済みなら処理しない
+
             //現在存在している防御型を走査
             foreach (GameObject enemy in currentEnemy.m_spawnedDefensEnemies)
             {
@@ -210,18 +215,20 @@ namespace StateMachineAI
         //ボスが死亡したときに取り巻きもまとめて死亡させる
         private void HandleBossDeath(Enemy boss)
         {
+            // ダメージイベントを解除
+            boss.OnDamage -= CommandEnemy;
+
             foreach (GameObject fairy in currentEnemy.m_spawnedEnemies)
             {
                 if (fairy == null) continue;
                 var enemyComp = fairy.GetComponent<Enemy>();
                 if (enemyComp != null && enemyComp.IsAlive)
                 {
-                    enemyComp.Destruction(); // HPを0にして死亡処理を走らせる
+                    // HPを0にして死亡処理を走らせる
+                    enemyComp.Destruction();
                 }
             }
         }
-
-
 
         protected override void Update()
         {

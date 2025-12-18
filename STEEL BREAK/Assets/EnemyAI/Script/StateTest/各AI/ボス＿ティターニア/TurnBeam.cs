@@ -28,14 +28,14 @@ namespace StateMachineAI
                 hasShot = true;
             }
 
-            // 回転処理（Y軸回転）
-            owner.transform.Rotate(Vector3.up, 180f * Time.deltaTime);
+            // 回転処理
+            Quaternion deltaRot = Quaternion.Euler(0f, 180f * Time.deltaTime, 0f);
+            owner.m_Rigidbody.MoveRotation(owner.m_Rigidbody.rotation * deltaRot);
 
-            // 上昇処理（最低高度を維持しつつ上昇）
-            Vector3 pos = owner.transform.position;
-            pos.y += 5f * Time.deltaTime; // 上昇速度を調整
-            if (pos.y < owner.m_ground) pos.y = owner.m_ground; // 最低高度を維持
-            owner.transform.position = pos;
+            // 上昇処理
+            Vector3 velocity = owner.m_Rigidbody.linearVelocity;
+            velocity.y = 5f; // 上昇速度を固定
+            owner.m_Rigidbody.linearVelocity = velocity;
 
             //クールダウンでなければ
             if (!owner.m_CoolDown.IsCoolDown("Rot"))
@@ -48,6 +48,7 @@ namespace StateMachineAI
         public override void Exit()
         {
             hasShot = false;
+            owner.m_Rigidbody.linearVelocity = Vector3.zero; // 上昇を止める
         }
     }
 }

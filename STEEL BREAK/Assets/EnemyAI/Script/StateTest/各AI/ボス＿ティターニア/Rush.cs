@@ -61,22 +61,28 @@ namespace StateMachineAI
                     // Controller の speed と同期
                     owner.m_currentspeed = owner.m_Controller.speed;
 
-                    // まっすぐ進む
+                    // 加速処理
                     owner.m_currentspeed = Mathf.Lerp(
                         owner.m_currentspeed,
                         owner.m_maxspeed,
-                        1 - Mathf.Exp(owner.m_acceleration * Time.deltaTime)
+                        1 - Mathf.Exp(-owner.m_acceleration * Time.deltaTime)
                     );
-                    owner.transform.position += owner.transform.forward * owner.m_currentspeed * Time.deltaTime;
+
+                    // Rigidbody に速度を与える
+                    owner.m_Rigidbody.linearVelocity = owner.transform.forward * owner.m_currentspeed;
 
                     // 移動距離で判定
                     float traveled = Vector3.Distance(startPos, owner.transform.position);
                     if (traveled >= 80f) // 突進距離
                     {
-                        //当たり判定をオフにする
+                        // 当たり判定をオフにする
                         owner.m_rush.EndRush();
                         owner.ChangeState(AIState_Titania_T.Idle_T);
+
+                        // 突進終了時は速度を止める
+                        owner.m_Rigidbody.linearVelocity = Vector3.zero;
                     }
+
                 }
             }
         }

@@ -62,8 +62,8 @@ public class PlayerLookAt : MonoBehaviour
         }
         else
         {
-            // スムーズに回転（Time.deltaTime を掛けると安定）
-            m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth * Time.deltaTime);
+            //滑らかな回転
+            m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth);
         }
     }
 }

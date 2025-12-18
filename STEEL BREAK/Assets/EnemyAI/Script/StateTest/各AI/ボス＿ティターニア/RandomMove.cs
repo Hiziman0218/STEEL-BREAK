@@ -14,7 +14,9 @@ namespace StateMachineAI
 
             //エージェントを自分の位置へ戻す
             owner.myAgent.transform.position = owner.transform.position;
+
             Chak();
+
             owner.m_CoolDown.StartCoolDown("Move", 4f);
         }
         //このAIが起動中に常に実行(Updateと同義)
