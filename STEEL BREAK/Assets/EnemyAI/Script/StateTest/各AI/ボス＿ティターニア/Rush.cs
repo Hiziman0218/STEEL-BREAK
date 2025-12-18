@@ -37,7 +37,7 @@ namespace StateMachineAI
             if (owner.m_CoolDown.IsCoolDown("Lockon"))
             {
                 // プレイヤー方向へ回転
-                PlayerLookAt.LookAtFlat(owner.m_Player, owner.transform, owner.m_turnsmooth);
+                PlayerLookAt.SoftLock(owner.transform, owner.m_Player, owner.m_turnsmooth);
 
                 // プレイヤー方向との角度差をチェック
                 Vector3 toPlayer = (owner.m_Player.position - owner.transform.position).normalized;
@@ -60,6 +60,7 @@ namespace StateMachineAI
 
                 if (isRushing)
                 {
+
                     // 加速処理
                     owner.m_currentspeed = Mathf.Lerp(
                         owner.m_currentspeed,
@@ -68,8 +69,21 @@ namespace StateMachineAI
                     );
 
                     Vector3 targetPos = owner.m_Player.position;
-                    Vector3 flatDir = (new Vector3(targetPos.x, owner.transform.position.y, targetPos.z)
-                                       - owner.transform.position).normalized;
+                    // プレイヤー方向ベクトル（XZ）
+                    Vector3 flatRaw = new Vector3(
+                        targetPos.x - owner.transform.position.x,
+                        0,
+                        targetPos.z - owner.transform.position.z
+                    );
+
+                    // 横方向の影響を弱める係数
+                    float xzFactor = 0.8f;
+
+                    // X成分だけ弱める
+                    flatRaw.x *= xzFactor;
+
+                    // 正規化して方向ベクトルに
+                    Vector3 flatDir = flatRaw.normalized;
 
                     Vector3 dir;
 
@@ -78,7 +92,7 @@ namespace StateMachineAI
                         // 高度差をチェック
                         float heightDiff = Mathf.Abs(owner.transform.position.y - targetPos.y);
 
-                        if (heightDiff <= 5f) // 5m以内なら直進モードへ
+                        if (heightDiff <= 10f || !owner.m_CoolDown.IsCoolDown("Lock")) // 10m以内の高さなら直進モードへ
                         {
                             reachedSameHeight = true;
                             // 直進方向をこの時点で固定
@@ -88,7 +102,7 @@ namespace StateMachineAI
                         else
                         {
                             // 高度がまだ離れている → カーブをかけて降下or上昇
-                            float newY = Mathf.Lerp(owner.transform.position.y, targetPos.y, 0.05f);
+                            float newY = Mathf.Lerp(owner.transform.position.y, targetPos.y, 0.01f);
                             dir = new Vector3(flatDir.x, (newY - owner.transform.position.y), flatDir.z).normalized;
                         }
                     }
@@ -100,6 +114,16 @@ namespace StateMachineAI
 
                     // Rigidbody に速度を与える
                     owner.m_Rigidbody.linearVelocity = dir * owner.m_currentspeed;
+
+                    if (dir != Vector3.zero)
+                    {
+                        Quaternion targetRot = Quaternion.LookRotation(dir);
+                        owner.transform.rotation = Quaternion.Slerp(
+                            owner.transform.rotation,
+                            targetRot,
+                            Time.deltaTime * owner.turnSpeed
+                        );
+                    }
 
                     // 終了判定（距離 or 時間）
                     float traveled = Vector3.Distance(startPos, owner.transform.position);
@@ -127,6 +151,8 @@ namespace StateMachineAI
             startPos = owner.transform.position;
             //突進時間を設定
             owner.m_CoolDown.StartCoolDown("Move", 5f);
+            //直進モードになるまでの猶予
+            owner.m_CoolDown.StartCoolDown("Lock", 3f);
         }
 
         public override void Exit()
