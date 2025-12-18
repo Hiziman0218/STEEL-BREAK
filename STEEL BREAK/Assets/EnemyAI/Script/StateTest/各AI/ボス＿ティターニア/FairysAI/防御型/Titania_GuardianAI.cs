@@ -78,11 +78,22 @@ namespace StateMachineAI
             AutoComponentInitializer.InitializeComponents(this);
             m_Rigidbody = GetComponent<Rigidbody>();
 
-            //ガードポイントを取得
-            Transform parent = GameObject.Find("GuardPoint").transform;
-            foreach (Transform child in parent)
+            // ガードポイントを取得
+            GameObject guardRoot = GameObject.Find("GuardPoint");
+            m_GuardPoint = new List<Transform>();
+
+            if (guardRoot != null)
             {
-                m_GuardPoint.Add(child);
+                foreach (Transform child in guardRoot.transform)
+                {
+                    m_GuardPoint.Add(child);
+                }
+                Debug.Log("GuardPoint を取得しました");
+            }
+            else
+            {
+                Debug.LogWarning("GuardPoint が存在しません。ガードなしモードで動作します。");
+                m_GuardPointer = null; // ガードポイントなし
             }
 
             //エネミーのスクリプトを取得
@@ -134,17 +145,22 @@ namespace StateMachineAI
 
             //攻撃可能かのチェック
             (float distance, _, _) = Distance_Check.Check(transform, m_Player);
-            //守護位置と自分の距離
-            (float guarddistance, _, _) = Distance_Check.Check(m_GuardPointer.transform, transform);
 
-            if (m_atk_flag == true)
+            //守護位置が存在するなら
+            if (m_GuardPointer != null)
             {
-                //もしm_GuardPointerから一定距離離れたら
-                if (guarddistance > m_ReturnDistance)
+                //守護位置と自分の距離
+                (float guarddistance, _, _) = Distance_Check.Check(m_GuardPointer.transform, transform);
+
+                if (m_atk_flag == true)
                 {
-                    m_atk_flag = false;
-                    //守護位置に戻っていく
-                    ChangeState(AIState_Guardian.Guard);
+                    //もしm_GuardPointerから一定距離離れたら
+                    if (guarddistance > m_ReturnDistance)
+                    {
+                        m_atk_flag = false;
+                        //守護位置に戻っていく
+                        ChangeState(AIState_Guardian.Guard);
+                    }
                 }
             }
 

@@ -43,7 +43,7 @@ namespace StateMachineAI
             yield return owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, 0));
 
             // ビームが消えるまでクールダウンで止めておく
-            owner.m_CoolDown.StartCoolDown("Cool", 4f);
+            owner.m_CoolDown.StartCoolDown("Cool", 6f);
 
             // クールダウンが終わるまで待機
             while (owner.m_CoolDown.IsCoolDown("Cool"))
@@ -55,7 +55,7 @@ namespace StateMachineAI
         }
 
         //角度リセット処理（スムーズ）
-        private IEnumerator SmoothResetRotation()
+        public IEnumerator SmoothResetRotation()
         {
             float t = 0f;
             Vector3 startEuler = owner.transform.rotation.eulerAngles;

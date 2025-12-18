@@ -16,14 +16,18 @@ namespace StateMachineAI
             ChangeTarget.Change(owner.m_CenterMarker.transform, owner.myAgent);
 
             Chak();
+            //３秒間移動させる
+            owner.m_CoolDown.StartCoolDown("Move", 3f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
+            PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
             //エージェントに追従
             Flying_Following.FlyingFollowing(owner.myAgent, owner.m_Controller, owner.m_Player, owner.m_Rigidbody);
 
-            if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < 3.0f)
+            //指定ポイントに近づいたらor一定時間たったら
+            if (Vector3.Distance(owner.m_CenterMarker.transform.position, owner.transform.position) < 3.0f || !owner.m_CoolDown.IsCoolDown("Move"))
             {
                 float chance = Random.value; // 0〜1の間のランダムな値
 

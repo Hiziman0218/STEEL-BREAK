@@ -13,16 +13,20 @@ namespace StateMachineAI
         public override void Enter()
         {
             Debug.Log("攻撃");
+            //プレイヤーの方向に向く
+            PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
 
-            //攻撃フラグを立てておく
-            owner.m_atk_flag = true;
-
-            m_TImes = 3.0f;
             //連続で撃つ回数を決める
             shots = Random.Range(1, owner.m_MaxRange);
 
-            //攻撃
+            //攻撃(ランダム連射)
             owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime, shots, 0.2f));
+
+            //待機時間
+            m_TImes = 3.0f;
+            //リジットボディがおかしくならないようにリセット
+            owner.m_Rigidbody.linearVelocity = Vector3.zero;
+            owner.m_Rigidbody.angularVelocity = Vector3.zero;
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()

@@ -58,7 +58,7 @@ namespace StateMachineAI
 
                 if (isRushing)
                 {
-                    // RCController の speed と同期
+                    // Controller の speed と同期
                     owner.m_currentspeed = owner.m_Controller.speed;
 
                     // まっすぐ進む
@@ -68,8 +68,6 @@ namespace StateMachineAI
                         1 - Mathf.Exp(owner.m_acceleration * Time.deltaTime)
                     );
                     owner.transform.position += owner.transform.forward * owner.m_currentspeed * Time.deltaTime;
-
-                    // 拡散ビーム処理（ここに追加）
 
                     // 移動距離で判定
                     float traveled = Vector3.Distance(startPos, owner.transform.position);

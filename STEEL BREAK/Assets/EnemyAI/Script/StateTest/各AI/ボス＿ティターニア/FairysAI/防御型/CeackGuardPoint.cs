@@ -44,7 +44,7 @@ namespace StateMachineAI
             }
 
             //‹ó‚«‚ª‚È‚¯‚ê‚ÎUŒ‚‚µ‚És‚­
-            owner.ChangeState(AIState_Guardian.Shot);
+            owner.ChangeState(AIState_Guardian.Chase);
         }
 
         public override void Exit()

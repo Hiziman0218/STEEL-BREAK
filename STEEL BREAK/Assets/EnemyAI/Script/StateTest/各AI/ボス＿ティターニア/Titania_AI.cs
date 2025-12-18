@@ -157,7 +157,7 @@ namespace StateMachineAI
             {
                 // ダメージイベントを購読
                 m_Enemy.OnDamage += CommandEnemy;
-                m_Enemy.OnStagger -= HandleDamaged;
+                //m_Enemy.OnStagger -= HandleDamaged;
             }
 
             //存在していないクラスが指定されたら本体消滅
@@ -178,11 +178,12 @@ namespace StateMachineAI
             ChangeState(AIState_Titania_T.Idle_T);
         }
 
+        /*
         //ヒットストップ
         private void HandleDamaged(Enemy enemy)
         {
             ChangeState(AIState_Titania_T.Hit_T);
-        }
+        }*/
 
         //ダメージを与えられたら防御型に通知
         private void CommandEnemy()

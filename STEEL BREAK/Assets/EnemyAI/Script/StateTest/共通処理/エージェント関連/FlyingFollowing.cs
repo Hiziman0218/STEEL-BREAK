@@ -9,7 +9,7 @@ public class Flying_Following : MonoBehaviour
     /// 飛行機能を持たせるだけ
     /// </summary>
     /// <param name="myAgent">自分のエージェント</param>
-    /// <param name="m_My">自分の位置</param>
+    /// <param name="m_Controller">エージェントのコントローラー</param>
     /// <param name="m_Player">プレイヤーの位置</param>
     /// <param name="m_Rigidbody">リジットボディ</param>
     public static void FlyingFollowing(GameObject myAgent, SteeringController m_Controller, Transform m_Player, Rigidbody m_Rigidbody)

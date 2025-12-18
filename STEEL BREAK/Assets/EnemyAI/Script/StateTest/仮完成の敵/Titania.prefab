@@ -6671,7 +6671,7 @@ MonoBehaviour:
   m_CenterMarker: {fileID: 0}
   actionEntries:
   - state: 2
-    weight: 7
+    weight: 8
     cooldownKey: 
   - state: 1
     weight: 7
@@ -6708,7 +6708,7 @@ MonoBehaviour:
   m_currentspeed: 0
   isSpawningFairy: 0
   m_RushDirection: {x: 0, y: 0, z: 0}
-  m_RCController: {fileID: 0}
+  m_Controller: {fileID: 0}
   m_rush: {fileID: 0}
 --- !u!114 &308525493644056207
 MonoBehaviour:
