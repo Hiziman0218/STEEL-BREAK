@@ -126,6 +126,7 @@ MonoBehaviour:
   m_audioSource: {fileID: 3024507789642130191}
   m_normalMoveSE: {fileID: 8300000, guid: df225f5b26693944787e4c80dd68ccfe, type: 3}
   m_dashMoveSE: {fileID: 8300000, guid: 4808fd9b3d9946a44809df230192c3fb, type: 3}
+  m_fadeDuration: 0.25
 --- !u!82 &3024507789642130191
 AudioSource:
   m_ObjectHideFlags: 0
