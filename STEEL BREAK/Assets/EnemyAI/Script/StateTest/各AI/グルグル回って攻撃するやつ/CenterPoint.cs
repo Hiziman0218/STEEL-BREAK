@@ -31,13 +31,14 @@ namespace StateMachineAI
             Vector3 dir = owner.transform.right * -owner.m_Muki;
 
             // デバッグ用スクリプトに渡す
+            /*
             RayDebugVisualizer visualizer = owner.GetComponent<RayDebugVisualizer>();
             if (visualizer != null)
             {
                 visualizer.origin = owner.m_CenterMarker.transform;
                 visualizer.direction = dir;
                 visualizer.distance = m_RayDistance;
-            }
+            }*/
 
             // 壁チェック
             if (Physics.Raycast(owner.m_CenterMarker.transform.position, dir, out RaycastHit hit, m_RayDistance, LayerMask.GetMask("Field")))
