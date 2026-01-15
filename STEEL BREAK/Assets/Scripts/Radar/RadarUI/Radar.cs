@@ -1,4 +1,4 @@
-using Ilumisoft.RadarSystem.UI;
+Ôªøusing Ilumisoft.RadarSystem.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,7 +46,7 @@ namespace Ilumisoft.RadarSystem
         {
             if (locatable != null && !locatableIconDictionary.ContainsKey(locatable))
             {
-                // "Enemy"É^ÉOÇÃÉIÉuÉWÉFÉNÉgÇæÇØï\é¶
+                // "Enemy"„Çø„Ç∞„ÅÆ„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà„Å†„ÅëË°®Á§∫
                 if (!locatable.CompareTag("Enemy")) return;
 
                 var icon = locatable.CreateIcon();
@@ -106,18 +106,16 @@ namespace Ilumisoft.RadarSystem
                 var euler = rotation.eulerAngles;
                 euler.y = -euler.y;
                 rotation.eulerAngles = euler;
+
                 var rotated = rotation * new Vector3(iconLocation.x, 0.0f, iconLocation.y);
                 iconLocation = new Vector2(rotated.x, rotated.z);
             }
 
-            if (iconLocation.sqrMagnitude < radarSize * radarSize || locatable.ClampOnRadar)
-            {
-                iconLocation = Vector2.ClampMagnitude(iconLocation, radarSize);
-                return true;
-            }
-
-            return false;
+            //ÁØÑÂõ≤Â§ñ„Åß„ÇÇÂøÖ„ÅöÂÜÜ„ÅÆÁ´Ø„Å´Ë°®Á§∫
+            iconLocation = Vector2.ClampMagnitude(iconLocation, radarSize);
+            return true;
         }
+
 
         private float GetRadarUISize()
         {
