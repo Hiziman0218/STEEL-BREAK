@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: "\u30DF\u30CB\u30AC\u30F3"
   Rate: 0
-  ReloadTime: 1.5
+  ReloadTime: 4
   Speed: 200
-  Damage: 1
+  Damage: 0.8
   StaggerPower: 0.01
-  MaxAmmo: 100
+  MaxAmmo: 70
   UseMuzzleControl: 1
   UseMirror: 1
   MirrorHand: 1

@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bulletRadius: 0.1
-  m_hitEffect: {fileID: 0}
+  m_hitEffect: {fileID: 108262, guid: 4eb9d0c4be05c7e4e8a70454664b1448, type: 3}
   m_disappearOnHit: 0
 --- !u!54 &6352701734054649554
 Rigidbody:

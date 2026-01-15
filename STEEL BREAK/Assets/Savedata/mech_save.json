@@ -3,32 +3,32 @@
         {
             "slotName": "Head",
             "partsDataName": "鎧鬼(Head)",
-            "ap": 40,
-            "weight": 45
-        },
-        {
-            "slotName": "Body",
-            "partsDataName": "鎧鬼(Body)",
             "ap": 80,
             "weight": 85
         },
         {
+            "slotName": "Body",
+            "partsDataName": "鎧鬼(Body)",
+            "ap": 150,
+            "weight": 155
+        },
+        {
             "slotName": "L_Arm",
             "partsDataName": "鎧鬼(L_Arm)",
-            "ap": 20,
-            "weight": 25
+            "ap": 50,
+            "weight": 55
         },
         {
             "slotName": "R_Arm",
             "partsDataName": "鎧鬼(R_Arm)",
-            "ap": 20,
-            "weight": 25
+            "ap": 50,
+            "weight": 55
         },
         {
             "slotName": "Leg",
             "partsDataName": "鎧鬼(Lge)",
-            "ap": 50,
-            "weight": 55
+            "ap": 120,
+            "weight": 125
         },
         {
             "slotName": "Weapon",
@@ -38,7 +38,7 @@
         },
         {
             "slotName": "WeaponL",
-            "partsDataName": "ミニガン",
+            "partsDataName": "レーザーガン",
             "ap": 0,
             "weight": 0
         },
@@ -50,18 +50,18 @@
         },
         {
             "slotName": "BWeapon",
-            "partsDataName": "ビームキャノン",
+            "partsDataName": "ガトリング",
             "ap": 0,
             "weight": 0
         },
         {
             "slotName": "BWeaponL",
-            "partsDataName": "ミサイル",
+            "partsDataName": "ガトリング",
             "ap": 0,
             "weight": 0
         }
     ],
-    "totalAP": 210,
-    "totalWeight": 235,
+    "totalAP": 450,
+    "totalWeight": 475,
     "saveFileName": "mech_save.json"
 }

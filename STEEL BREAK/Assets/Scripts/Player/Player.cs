@@ -19,6 +19,8 @@ public class Player : PlayerBase
     [SerializeField] private float m_lerpSpeed;
     [Tooltip("プレイヤー本体のYaw補間に使うスムースタイム(秒)")]
     [SerializeField] private float m_playerYawSmoothTime = 0.08f;
+    [Tooltip("Yawの最大回転速度（度/秒）")]
+    [SerializeField] private float m_maxYawSpeed = 180f;
     [Tooltip("角度変化がこれ以下なら更新を抑えて微振動を防ぐ(度)")]
     [SerializeField] private float m_yawDeadzoneDegrees = 0.25f;
 
@@ -235,7 +237,7 @@ public class Player : PlayerBase
             targetYaw,
             ref m_yawVelocityPlayer,
             m_playerYawSmoothTime,
-            Mathf.Infinity,
+            m_maxYawSpeed,
             Time.deltaTime
         );
 

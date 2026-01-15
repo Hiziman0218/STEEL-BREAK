@@ -131,7 +131,7 @@ MonoBehaviour:
   m_usePlayerRotate: 0
   m_useWeaponRotate: 1
   m_useDeceleration: 0
-  m_rotateSpeed: 100
+  m_rotateSpeed: 75
   m_decelerateRate: 20
   m_maxPitch: 30
   m_minPitch: -10
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_gunBarrel: {fileID: 3761919109739903506}
   m_gunBurrelNumber: 3
-  m_rotateSpeed: 1200
+  m_rotateSpeed: 600
 --- !u!82 &2114070658639514160
 AudioSource:
   m_ObjectHideFlags: 0

@@ -866,6 +866,7 @@ MonoBehaviour:
   m_maxMultiplier: 1.4
   m_lerpSpeed: 3
   m_playerYawSmoothTime: 0.08
+  m_maxYawSpeed: 100
   m_yawDeadzoneDegrees: 0.25
 --- !u!114 &5841538993253739429
 MonoBehaviour:
@@ -934,7 +935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionRange: 30
   unlockRangeOffset: 10
-  maxAngle: 120
+  maxAngle: 60
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128

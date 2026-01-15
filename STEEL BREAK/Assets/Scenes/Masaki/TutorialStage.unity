@@ -341,6 +341,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6703150408821543758, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
+      propertyPath: range
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7996129138141404539, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -437,6 +441,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2732841552417525489, guid: 55972a48e67e7c24c959d3fe31e5ff98, type: 3}
+      propertyPath: waveDataList.Array.data[0].enemySpawnList.Array.data[0].enemyPrefab
+      value: 
+      objectReference: {fileID: 6332733954681566683, guid: bf989b21da84f71429ccd2bb136e07c9, type: 3}
+    - target: {fileID: 2732841552417525489, guid: 55972a48e67e7c24c959d3fe31e5ff98, type: 3}
+      propertyPath: waveDataList.Array.data[0].enemySpawnList.Array.data[1].enemyPrefab
+      value: 
+      objectReference: {fileID: 6332733954681566683, guid: bf989b21da84f71429ccd2bb136e07c9, type: 3}
+    - target: {fileID: 2732841552417525489, guid: 55972a48e67e7c24c959d3fe31e5ff98, type: 3}
+      propertyPath: waveDataList.Array.data[0].enemySpawnList.Array.data[2].enemyPrefab
+      value: 
+      objectReference: {fileID: 1968146370886645049, guid: 9e3d9e3448462054c9595b31ca9df830, type: 3}
+    - target: {fileID: 2732841552417525489, guid: 55972a48e67e7c24c959d3fe31e5ff98, type: 3}
+      propertyPath: waveDataList.Array.data[0].enemySpawnList.Array.data[3].enemyPrefab
+      value: 
+      objectReference: {fileID: 1968146370886645049, guid: 9e3d9e3448462054c9595b31ca9df830, type: 3}
     - target: {fileID: 3764485563934295639, guid: 55972a48e67e7c24c959d3fe31e5ff98, type: 3}
       propertyPath: m_Name
       value: TutorialMap

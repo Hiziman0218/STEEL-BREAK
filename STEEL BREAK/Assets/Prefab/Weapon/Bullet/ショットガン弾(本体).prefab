@@ -67,8 +67,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_count: 10
-  m_maxRange: 3
-  m_minRange: -3
+  m_maxRange: 5
+  m_minRange: -5
   m_bullet: {fileID: 6736150839298407925}
   m_bulletPrefab: {fileID: 7109917756640507848, guid: 04541e7a339fa9142b13ccb84dbf4301, type: 3}
 --- !u!54 &8300139634209588315
