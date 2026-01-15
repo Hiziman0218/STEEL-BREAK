@@ -1,24 +1,32 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 機体中心を基準としたカメラ制御クラス
+/// UI非表示時のみフリー操作を許可する
+/// </summary>
 public class CustomPlayerRotation : MonoBehaviour
 {
+    //==============================
+    // 設定
+    //==============================
+
     [Header("回転設定")]
-    public float rotationSpeed = 5f;
+    [SerializeField] private float rotation_speed_ = 90f;
 
     [Header("ズーム設定")]
-    public Camera playerCamera;
-    public float zoomSpeed = 2f;
-    public float minZoomDistance = 2f;
-    public float maxZoomDistance = 10f;
+    [SerializeField] private Camera player_camera_;
+    [SerializeField] private float zoom_speed_ = 5f;
+    [SerializeField] private float min_zoom_distance_ = 2f;
+    [SerializeField] private float max_zoom_distance_ = 10f;
 
-    [Header("カメラ移動設定")]
-    public float moveSpeed = 5f;
+    [Header("上下移動設定")]
+    [SerializeField] private float vertical_move_speed_ = 2f;
+    [SerializeField] private float vertical_move_limit_ = 2f;
 
-    [Header("上下移動制限（デフォルトビュー用）")]
-    public float verticalMoveLimit = 2f;   // 🆕 上下の最大距離
-    public float verticalMoveSpeed = 0.5f; // 🆕 上下移動感度
+    //==============================
+    // カメラポイント
+    //==============================
 
-    // カメラポイント群
     public Transform defaultPoint;
     public Transform headPoint;
     public Transform bodyPoint;
@@ -26,229 +34,278 @@ public class CustomPlayerRotation : MonoBehaviour
     public Transform rArmPoint;
     public Transform legPoint;
     public Transform boosterPoint;
-    public Transform WlArmPoint;
-    public Transform WrArmPoint;
+    public Transform wlArmPoint;
+    public Transform wrArmPoint;
 
-    private float currentZoomDistance;
-    private Transform currentTargetPoint = null;
-    private Transform currentRotateCenter = null;
-    private bool isDefaultView = true;
-    private bool hasReachedTarget = false;
+    //==============================
+    // 内部状態
+    //==============================
 
-    // 🆕 現在の上下オフセット値（デフォルトカメラ用）
-    private float currentVerticalOffset = 0f;
+    private Transform current_target_point_;
+    private float vertical_offset_;
+    private float current_zoom_distance_;
+
+    private bool is_default_view_ = true;
+    private bool is_free_control_ = false;
+    private bool has_reached_target_ = false;
+
+    private Quaternion default_body_rotation_;
+
+    //==============================
+    // Unity
+    //==============================
 
     void Start()
     {
-        if (playerCamera == null)
-            playerCamera = Camera.main;
-
-        if (defaultPoint != null)
+        if (player_camera_ == null)
         {
-            playerCamera.transform.position = defaultPoint.position;
-            playerCamera.transform.rotation = defaultPoint.rotation;
-            currentTargetPoint = defaultPoint;
+            player_camera_ = Camera.main;
         }
 
-        currentZoomDistance = Vector3.Distance(transform.position, playerCamera.transform.position);
+        default_body_rotation_ = transform.rotation;
+
+        // 初期ズーム距離を保存
+        current_zoom_distance_ =
+            Vector3.Distance(defaultPoint.position, player_camera_.transform.position);
+
+        ReturnToDefault();
     }
 
     void Update()
     {
-        bool isRotatingOrZooming = Input.GetKey(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") != 0f;
-        bool canControlCamera = isDefaultView || hasReachedTarget;
-
-        // カメラ操作
-        if (canControlCamera && Input.GetKey(KeyCode.E))
+        // Tabキーで必ずデフォルトへ戻す
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (isDefaultView)
+            if (!IsAtDefaultPoint())
             {
-                HandleModelRotation();
-                HandleCameraVerticalMove(); // 🆕 デフォルト時のみ上下移動を追加
+                ReturnToDefault();
             }
-            else
-            {
-                HandleCameraRotationY(); // パーツビュー時は回転のみ
-            }
-
-            HandleZoom();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        // フリー操作はデフォルトビューのみ
+        if (is_free_control_ && is_default_view_)
         {
-            ResetToDefaultView();
+            HandleFreeCameraControl();
         }
 
-        // カメラ位置補間
-        if (currentTargetPoint != null)
+        // パーツビューは自動補間のみ
+        if (!is_default_view_ && !has_reached_target_)
         {
-            if (isDefaultView)
-            {
-                if (!isRotatingOrZooming)
-                    MoveCameraToTarget();
-            }
-            else if (!hasReachedTarget)
-            {
-                MoveCameraToTarget();
-
-                if (Vector3.Distance(playerCamera.transform.position, currentTargetPoint.position) < 0.05f)
-                    hasReachedTarget = true;
-            }
+            MoveCameraToTarget();
         }
     }
 
-    // ===== モデル回転（デフォルト時） =====
-    void HandleModelRotation()
+    //==============================
+    // 外部（UI制御用）
+    //==============================
+
+    public void SetFreeControl(bool enable)
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        transform.Rotate(Vector3.up * -mouseX * rotationSpeed);
+        is_free_control_ = enable;
+
+        if (!enable)
+        {
+            ReturnToDefault();
+        }
     }
 
-    // ===== 🆕 カメラ上下移動（デフォルトビュー限定） =====
-    void HandleCameraVerticalMove()
+    public void ReturnToDefaultFromExternal()
     {
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        // マウスを下に動かすとカメラも下に移動するように符号を反転
-        playerCamera.transform.position += Vector3.up * mouseY * moveSpeed * Time.deltaTime;
-
-        // 上下移動の制限
-        Vector3 pos = playerCamera.transform.position;
-        pos.y = Mathf.Clamp(pos.y, defaultPoint.position.y - 2f, defaultPoint.position.y + 2f);
-        playerCamera.transform.position = pos;
+        ReturnToDefault();
     }
 
-    // ===== カメラY軸回転（パーツビュー時） =====
-    void HandleCameraRotationY()
+    //==============================
+    // フリー操作
+    //==============================
+
+    private void HandleFreeCameraControl()
     {
-        if (currentRotateCenter == null) return;
+        // A / D 機体回転
+        float horizontal = 0f;
+        if (Input.GetKey(KeyCode.A)) horizontal = -1f;
+        if (Input.GetKey(KeyCode.D)) horizontal = 1f;
 
-        float mouseX = Input.GetAxis("Mouse X");
+        transform.Rotate(Vector3.up * horizontal * rotation_speed_ * Time.deltaTime);
 
-        playerCamera.transform.RotateAround(
-            currentRotateCenter.position,
-            Vector3.up,
-            mouseX * rotationSpeed
+        // W / S 上下移動
+        float vertical = 0f;
+        if (Input.GetKey(KeyCode.W)) vertical = 1f;
+        if (Input.GetKey(KeyCode.S)) vertical = -1f;
+
+        vertical_offset_ += vertical * vertical_move_speed_ * Time.deltaTime;
+        vertical_offset_ = Mathf.Clamp(
+            vertical_offset_,
+            -vertical_move_limit_,
+            vertical_move_limit_
+        );
+
+        // Q / E ズーム（カメラ向き基準）
+        if (Input.GetKey(KeyCode.Q)) Zoom(-1f);
+        if (Input.GetKey(KeyCode.E)) Zoom(1f);
+
+        UpdateCameraPosition();
+    }
+
+    private void Zoom(float direction)
+    {
+        current_zoom_distance_ +=
+            direction * zoom_speed_ * Time.deltaTime;
+
+        current_zoom_distance_ = Mathf.Clamp(
+            current_zoom_distance_,
+            min_zoom_distance_,
+            max_zoom_distance_
         );
     }
 
-    // ===== ズーム処理 =====
-    void HandleZoom()
+    private void UpdateCameraPosition()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll == 0f) return;
+        Vector3 base_pos = defaultPoint.position;
+        base_pos.y += vertical_offset_;
 
-        currentZoomDistance -= scroll * zoomSpeed;
-        currentZoomDistance = Mathf.Clamp(currentZoomDistance, minZoomDistance, maxZoomDistance);
+        player_camera_.transform.position =
+            base_pos - defaultPoint.forward * current_zoom_distance_;
 
-        Vector3 center = isDefaultView ? transform.position :
-                          (currentRotateCenter != null ? currentRotateCenter.position : transform.position);
-
-        Vector3 direction = (playerCamera.transform.position - center).normalized;
-        playerCamera.transform.position = center + direction * currentZoomDistance;
-
-        // 🆕 デフォルトビュー中は上下オフセットも反映
-        if (isDefaultView)
-            playerCamera.transform.position += Vector3.up * currentVerticalOffset;
+        player_camera_.transform.rotation = defaultPoint.rotation;
     }
 
-    void MoveCameraToTarget()
+
+    //==============================
+    // パーツビュー
+    //==============================
+
+    private void MoveCameraToTarget()
     {
-        playerCamera.transform.position = Vector3.Lerp(
-            playerCamera.transform.position,
-            currentTargetPoint.position,
-            Time.deltaTime * moveSpeed
+        player_camera_.transform.position = Vector3.Lerp(
+            player_camera_.transform.position,
+            current_target_point_.position,
+            Time.deltaTime * 5f
         );
 
-        playerCamera.transform.rotation = Quaternion.Lerp(
-            playerCamera.transform.rotation,
-            currentTargetPoint.rotation,
-            Time.deltaTime * moveSpeed
+        player_camera_.transform.rotation = Quaternion.Lerp(
+            player_camera_.transform.rotation,
+            current_target_point_.rotation,
+            Time.deltaTime * 5f
         );
+
+        if (Vector3.Distance(
+            player_camera_.transform.position,
+            current_target_point_.position) < 0.05f)
+        {
+            has_reached_target_ = true;
+        }
     }
 
-    void ResetToDefaultView()
+    //==============================
+    // デフォルト復帰
+    //==============================
+
+    private void ReturnToDefault()
     {
         if (defaultPoint == null) return;
 
-        currentTargetPoint = defaultPoint;
-        currentRotateCenter = null;
-        isDefaultView = true;
-        hasReachedTarget = false;
-        currentVerticalOffset = 0f; // 🆕 リセット
+        current_target_point_ = defaultPoint;
+        is_default_view_ = true;
+        has_reached_target_ = false;
+        vertical_offset_ = 0f;
+
+        transform.rotation = default_body_rotation_;
+
+        player_camera_.transform.position = defaultPoint.position;
+        player_camera_.transform.rotation = defaultPoint.rotation;
     }
 
-    // ===== 各フォーカス =====
+    private bool IsAtDefaultPoint()
+    {
+        return Vector3.Distance(
+            player_camera_.transform.position,
+            defaultPoint.position) < 0.01f;
+    }
+
+    //==============================
+    // パーツフォーカス（通常）
+    //==============================
+
     public void FocusHead() => SetCameraTarget(headPoint);
     public void FocusBody() => SetCameraTarget(bodyPoint);
     public void FocusLArm() => SetCameraTarget(lArmPoint);
     public void FocusRArm() => SetCameraTarget(rArmPoint);
     public void FocusLeg() => SetCameraTarget(legPoint);
     public void FocusBooster() => SetCameraTarget(boosterPoint);
-    public void FocusWLArm() => SetCameraTarget(WlArmPoint);
-    public void FocusWRArm() => SetCameraTarget(WrArmPoint);
+    public void FocusWLArmPoint() => SetCameraTarget(wlArmPoint);
+    public void FocusWRArmPoint() => SetCameraTarget(wrArmPoint);
+
+    //==============================
+    // バックパックフォーカス（追加）
+    //==============================
 
     public void FocusBackpackLeft() => SetCameraToBackpackPoint("BWLArmPoint");
     public void FocusBackpackRight() => SetCameraToBackpackPoint("BWRArmPoint");
 
-    void SetCameraToBackpackPoint(string pointName)
+    private void SetCameraToBackpackPoint(string point_name_)
     {
-        Transform bChest = FindDeepChild(transform, "B-chest");
-        if (bChest == null)
+        Transform b_chest_ = FindDeepChild(transform, "B-chest");
+        if (b_chest_ == null)
         {
             Debug.LogWarning("❌ B-chest が見つかりません。");
             return;
         }
 
-        Transform foundPoint = null;
-        foreach (Transform child in bChest)
+        Transform found_point_ = null;
+
+        foreach (Transform child in b_chest_)
         {
             if (child.name.StartsWith("バックパック"))
             {
-                Transform targetPoint = child.Find(pointName);
-                if (targetPoint != null)
+                Transform target_point_ = child.Find(point_name_);
+                if (target_point_ != null)
                 {
-                    foundPoint = targetPoint;
+                    found_point_ = target_point_;
                     break;
                 }
             }
         }
 
-        if (foundPoint != null)
+        if (found_point_ != null)
         {
-            SetCameraTarget(foundPoint);
-            Debug.Log($"✅ {pointName} にカメラ移動しました。");
+            SetCameraTarget(found_point_);
+            Debug.Log($"✅ {point_name_} にカメラ移動しました。");
         }
         else
         {
-            Debug.LogWarning($"❌ {pointName} がバックパック内に見つかりませんでした。");
+            Debug.LogWarning($"❌ {point_name_} がバックパック内に見つかりませんでした。");
         }
     }
 
-    Transform FindDeepChild(Transform parent, string name)
+    private Transform FindDeepChild(Transform parent_, string name_)
     {
-        foreach (Transform child in parent)
+        foreach (Transform child in parent_)
         {
-            if (child.name == name)
+            if (child.name == name_)
+            {
                 return child;
+            }
 
-            Transform result = FindDeepChild(child, name);
-            if (result != null)
-                return result;
+            Transform result_ = FindDeepChild(child, name_);
+            if (result_ != null)
+            {
+                return result_;
+            }
         }
         return null;
     }
 
-    void SetCameraTarget(Transform point)
+    //==============================
+    // 内部共通
+    //==============================
+
+    private void SetCameraTarget(Transform point_)
     {
-        if (point == null) return;
+        if (point_ == null) return;
 
-        currentTargetPoint = point;
-        isDefaultView = false;
-        hasReachedTarget = false;
-        currentVerticalOffset = 0f; // 🆕 上下オフセットリセット
-
-        Transform childCenter = point.Find("CameraPoint");
-        currentRotateCenter = childCenter != null ? childCenter : point;
+        current_target_point_ = point_;
+        is_default_view_ = false;
+        has_reached_target_ = false;
+        is_free_control_ = false;
     }
 }
