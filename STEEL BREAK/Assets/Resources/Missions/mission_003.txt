@@ -1,15 +1,15 @@
-﻿missionID: mission_002
-missionName: 大型兵器破壊
-client: Cybros
+﻿missionID: mission_003
+missionName: 空域制圧
+client: TechTitans
 reward: 10000
-description: 砂漠地帯に展開するCybrosの主要輸送路上に、敵勢力の大型兵器が確認されたため対象を迅速かつ確実に破壊し、輸送路の安全を回復せよ。。
-sceneName: 砂漠
-missionImage: Images/Mission/砂漠
-companyImage: Images/Mission/Cybros
-stageName: 砂漠
+description: TechTitans社の再開発区域に侵入した武装無人勢力を排除せよ。高層ビル群を拠点とする砲撃型ユニットと、上空を制圧する浮遊型ユニットが確認されている。都市空間での三次元戦闘に備え、迅速な制圧を行え。
+sceneName: ビル群
+missionImage: Images/Mission/ビル群
+companyImage: Images/Mission/TechTitans
+stageName: ビル群
 objectives: ||
 objectiveAmounts: ||
 rewardAmount: 10000
-messages:傭兵各位、これは「サイブロス」による正式な依頼です。|現在、我々が保有する輸送路上に敵勢力の大型兵器「Titania」が確認されています。|このまま滞在を許せば、サイブロスの物流に致命的な影響を及ぼすでしょう。|よって、輸送路上に存在する敵大型兵器の破壊。|それが今回の依頼内容です。|サイブロスは、諸君の奮闘に期待しています。
-voices: VoiceClips/Cybros/mission_003_1|VoiceClips/Cybros/mission_003_2|VoiceClips/Cybros/mission_003_3|VoiceClips/Cybros/mission_003_4|VoiceClips/Cybros/mission_003_5|VoiceClips/Cybros/mission_003_6
+messages:傭兵各位、TechTitans作戦管制より。状況を説明します。|戦場は高層ビル群。視界は良好ですが、三次元戦闘が前提です。|敵は砲撃型ユニットおよび浮遊型。ビル屋上と上空を重点的に警戒してください。|都市設備への損害は“最小限が望ましい”とだけ伝えておきます。|作戦完了後、契約報酬は即時支払われます。|それでは,成果を期待しています。
+voices: VoiceClips/TechTitans/mission_003_1|VoiceClips/TechTitans/mission_003_2|VoiceClips/TechTitans/mission_003_3|VoiceClips/TechTitans/mission_003_4|VoiceClips/TechTitans/mission_003_5|VoiceClips/TechTitans/mission_003_6
 battlesceneName: NormalStage2
