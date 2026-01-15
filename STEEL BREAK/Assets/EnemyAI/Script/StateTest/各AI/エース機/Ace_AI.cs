@@ -41,7 +41,16 @@ namespace StateMachineAI
         [Range(2f, 50f)]
         public float m_MoveSpeed = 12f;
         [Header("UŒ‚Œã‚Ì’â~ŠÔ")]
+        [Range(1f, 10f)]
         public float m_TImes = 3.0f;
+
+        [Header("Å‘å˜AË”")]
+        [Range(1,25)]
+        public int m_shots = 5;
+        [Header("˜AËŠÔŠu")]
+        [Range(0.1f,2f)]
+        public float m_interval = 0.5f;
+
 
         [HideInInspector]
         public CoolDown m_CoolDown;

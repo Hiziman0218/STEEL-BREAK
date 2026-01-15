@@ -48421,7 +48421,8 @@ MonoBehaviour:
   m_CenterMarker: {fileID: 0}
   m_AttackDistance: 30
   m_CoolTime: 4
-  m_MoveSpeed: 12
+  m_MoveSpeed: 30
+  m_TImes: 3
   m_CoolDown: {fileID: 0}
   m_Rigidbody: {fileID: 0}
   myAgent: {fileID: 0}

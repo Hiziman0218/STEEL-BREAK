@@ -15,7 +15,7 @@ namespace StateMachineAI
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
 
             // 右武器で攻撃（単発）
-            owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
+            owner.StartCoroutine(Attack_Shots.ShotRandom(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime, owner.m_shots, owner.m_interval));
 
             //待機時間
             owner.m_TImes = 3.0f;
