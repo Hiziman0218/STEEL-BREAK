@@ -15,6 +15,12 @@ namespace Plugins.RaycastPro.Demo.Scripts
         public float arriveDistance = 2f;
         public float turnRate = 15;
 
+        public LayerMask insideWallMask;   // 内側にいるときに使う壁レイヤー
+        public LayerMask outsideWallMask;  // 外側にいるときに使う（基本0）
+
+        public Collider operationArea;     // OperationArea の SphereCollider
+
+
         [SerializeField] private bool movable = true;
         [SerializeField] private bool rotatable = true;
         [SerializeField] private bool fixRotate = true;

@@ -103,6 +103,13 @@ MonoBehaviour:
   accelerationSpeed: 4
   arriveDistance: 0.5
   turnRate: 6
+  insideWallMask:
+    serializedVersion: 2
+    m_Bits: 0
+  outsideWallMask:
+    serializedVersion: 2
+    m_Bits: 0
+  operationArea: {fileID: 0}
   movable: 1
   rotatable: 1
   fixRotate: 0

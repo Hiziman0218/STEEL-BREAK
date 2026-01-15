@@ -12,7 +12,7 @@ namespace StateMachineAI
     /// ここでステートを登録していない場合、
     /// 該当する行動が全くできない。
     /// </summary>
-    public enum AIState_Soldier
+    public enum AIState_Ase
     {
         Chase,
         Shot,
@@ -20,8 +20,8 @@ namespace StateMachineAI
         Hit,
     }
 
-    public class SoldierFairysAI
-        : StatefulObjectBase<SoldierFairysAI, AIState_Soldier>
+    public class AseAI
+        : StatefulObjectBase<AseAI, AIState_Ase>
     {
         [Header("プレイヤー")]
         public Transform m_Player;
@@ -39,7 +39,7 @@ namespace StateMachineAI
         public float m_CoolTime = 4f;
         [Header("移動速度")]
         [Range(2f, 50f)]
-        public float m_MoveSpeed;
+        public float m_MoveSpeed = 12f;
 
         [HideInInspector]
         public CoolDown m_CoolDown;
@@ -71,7 +71,7 @@ namespace StateMachineAI
             m_CenterMarker = PoolManager.Instance.Get("CenterPoint", transform.position + transform.forward, m_Player);
 
             //エージェントを取得
-            myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
+            myAgent = PoolManager.Instance.Get("FlyingFollowing", transform.position, m_Player);
             m_Detector = myAgent.GetComponent<Detector>();
             m_Controller = myAgent.GetComponent<SteeringController>();
 
@@ -89,9 +89,9 @@ namespace StateMachineAI
 
 
             //存在していないクラスが指定されたら本体消滅
-            foreach (AIState_Soldier state in Enum.GetValues(typeof(AIState_Soldier)))
+            foreach (AIState_Ase state in Enum.GetValues(typeof(AIState_Ase)))
             {
-                string className = $"{state}_Soldier"; // enum名からクラス名を組み立て
+                string className = $"{state}_Ase"; // enum名からクラス名を組み立て
                 if (!AddStateByName(className))
                 {
                     Debug.LogError("ステートの取得ができませんでした");
@@ -101,10 +101,10 @@ namespace StateMachineAI
             }
 
             //ステートマシーンを自身として設定
-            stateMachine = new StateMachine<SoldierFairysAI>();
+            stateMachine = new StateMachine<AseAI>();
             
             // 追いかける
-            ChangeState(AIState_Soldier.Chase);
+            ChangeState(AIState_Ase.Chase);
         }
 
         protected override void Update()
@@ -122,7 +122,7 @@ namespace StateMachineAI
 
         private void HandleDamaged(Enemy enemy)
         {
-            ChangeState(AIState_Soldier.Hit);
+            ChangeState(AIState_Ase.Hit);
         }
 
         /// <summary>
@@ -143,16 +143,16 @@ namespace StateMachineAI
                     return true;
                 }
 
-                // 型が State<GunBattery_AI> かどうかをチェック
-                if (!typeof(State<SoldierFairysAI>).IsAssignableFrom(StateType))
+                // 型が State<AseAI> かどうかをチェック
+                if (!typeof(State<AseAI>).IsAssignableFrom(StateType))
                 {
-                    Debug.LogError($"{ClassName} は State<EnemyAI> 型ではありません。");
+                    Debug.LogError($"{ClassName} は State<AseAI> 型ではありません。");
                     return true;
                 }
 
                 // インスタンスを生成
                 System.Reflection.ConstructorInfo Constructor =
-                    StateType.GetConstructor(new[] { typeof(SoldierFairysAI) });
+                    StateType.GetConstructor(new[] { typeof(AseAI) });
 
 
                 if (Constructor == null)
@@ -161,8 +161,8 @@ namespace StateMachineAI
                     return true;
                 }
 
-                State<SoldierFairysAI> StateInstance =
-                    Constructor.Invoke(new object[] { this }) as State<SoldierFairysAI>;
+                State<AseAI> StateInstance =
+                    Constructor.Invoke(new object[] { this }) as State<AseAI>;
 
                 if (StateInstance != null)
                 {
