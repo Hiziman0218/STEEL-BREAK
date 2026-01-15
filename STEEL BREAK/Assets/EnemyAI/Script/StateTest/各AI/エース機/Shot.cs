@@ -5,8 +5,6 @@ namespace StateMachineAI
     //ソルジャーミサイルタイプ
     public class Shot_Ase : State<AseAI>
     {
-        public float m_TImes;
-
         //コンストラクタ
         public Shot_Ase(AseAI owner) : base(owner) { }
         //このAIが起動した瞬間に実行(Startと同義)
@@ -20,7 +18,7 @@ namespace StateMachineAI
             owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, owner.m_CoolTime));
 
             //待機時間
-            m_TImes = 3.0f;
+            owner.m_TImes = 3.0f;
             //リジットボディがおかしくならないようにリセット
             owner.m_Rigidbody.linearVelocity = Vector3.zero;
             owner.m_Rigidbody.angularVelocity = Vector3.zero;
@@ -31,14 +29,14 @@ namespace StateMachineAI
             //プレイヤーの方向に向く
             PlayerLookAt.LookAt(owner.m_Player, owner.m_EnemyModel);
 
-            if (m_TImes <= 0)
+            if (owner.m_TImes <= 0)
             {
                 //ランダムに動く
                 owner.ChangeState(AIState_Ase.RandamMove);
             }
             else
             {
-                m_TImes -= Time.deltaTime;
+                owner.m_TImes -= Time.deltaTime;
             }
         }
         public override void Exit()

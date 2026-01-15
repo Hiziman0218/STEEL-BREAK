@@ -40,6 +40,8 @@ namespace StateMachineAI
         [Header("ˆÚ“®‘¬“x")]
         [Range(2f, 50f)]
         public float m_MoveSpeed = 12f;
+        [Header("UŒ‚Œã‚Ì’â~ŠÔ")]
+        public float m_TImes = 3.0f;
 
         [HideInInspector]
         public CoolDown m_CoolDown;
