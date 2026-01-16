@@ -1,0 +1,15 @@
+﻿missionID: mission_005
+missionName: 空域制圧(裏)
+client: TechTitans
+reward: 10000
+description: echTitans社の再開発区域は、武装無人勢力により深刻な侵食を受けている。高層ビル群には砲撃型ユニットが多数展開し、上空では浮遊型ユニットが制空権を確保している。本任務は都市空間における三次元戦闘を前提とした完全な空域制圧作戦である。敵戦力を排除し、再開発計画の障害を排除せよ。
+sceneName: ビル群(夕暮れ)
+missionImage: Images/Mission/ハードビル群
+companyImage: Images/Mission/TechTitans
+stageName: ビル群(夕暮れ)
+objectives: ||
+objectiveAmounts: ||
+rewardAmount: 10000
+messages:傭兵各位、TechTitans作戦管制です。|戦場は高層ビル群。夕暮れによる視認性低下を想定してください。|敵戦力は当初予測より多く、砲撃型・浮遊型ともに高密度です。|特に上空からの集中攻撃に注意を。回避行動を前提としてください。|都市設備への損害は依然“最小限が望ましい”ですが、優先事項ではありません。|――生存と成果の両立を期待しています。作戦を開始してください。
+voices: VoiceClips/TechTitans/mission_005/mission_005_1|VoiceClips/TechTitans/mission_005/mission_005_2|VoiceClips/TechTitans/mission_005/mission_005_3|VoiceClips/TechTitans/mission_005/mission_005_4|VoiceClips/TechTitans/mission_005/mission_005_5|VoiceClips/TechTitans/mission_005/mission_005_6
+battlesceneName: HardStage2
