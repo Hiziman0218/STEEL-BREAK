@@ -3320,10 +3320,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 335902659}
+  - component: {fileID: 335902663}
   - component: {fileID: 335902662}
   - component: {fileID: 335902661}
   - component: {fileID: 335902660}
-  - component: {fileID: 335902663}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -3438,6 +3438,8 @@ MonoBehaviour:
   - {fileID: 1800989492}
   camera_mode_only_objects_:
   - {fileID: 1865654650}
+  fade_out_delay_: 2.5
+  fade_speed_: 3
   custom_player_rotation_: {fileID: 915253191}
 --- !u!1001 &335905573
 PrefabInstance:
@@ -17489,6 +17491,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1865654651}
+  - component: {fileID: 1865654652}
   m_Layer: 0
   m_Name: "\u8AAC\u660E"
   m_TagString: Untagged
@@ -17519,6 +17522,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1865654652
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865654650}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1867514172
 GameObject:
   m_ObjectHideFlags: 0

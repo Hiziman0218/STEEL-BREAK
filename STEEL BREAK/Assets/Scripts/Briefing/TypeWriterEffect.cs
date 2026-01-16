@@ -1,74 +1,28 @@
-using System;
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using System.Collections;
 
 public class TypeWriterEffect : MonoBehaviour
 {
-    // --- ƒCƒxƒ“ƒg ---
-    public event Action OnTypingFinished;     // ‘S‚Ä‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚µI‚í‚Á‚½‚Æ‚«‚É’Ê’m
-    public event Action<int> OnMessageChanged; // V‚µ‚¢ƒƒbƒZ[ƒW‚ğ•\¦‚·‚éƒ^ƒCƒ~ƒ“ƒO‚Å’Ê’miƒCƒ“ƒfƒbƒNƒX•t‚«j
+    [SerializeField] private TextMeshProUGUI textComponent;
+    [SerializeField] private float typingSpeed = 0.05f;
 
-    [SerializeField] private TextMeshProUGUI textComponent; // ƒƒbƒZ[ƒW•\¦—p‚ÌTextMeshProUGUI
-    [SerializeField] private float typingSpeed = 0.05f;     // 1•¶š‚¸‚Â•\¦‚·‚éŠÔŠui•bj
+    private Coroutine typingCoroutine;
+    private bool isTyping = false;
+    private string currentMessage;
 
-    private string[] messages;           // •\¦‚·‚éƒƒbƒZ[ƒW‚Ì”z—ñ
-    private int currentMessageIndex = 0; // Œ»İ•\¦‚µ‚Ä‚¢‚éƒƒbƒZ[ƒW‚ÌƒCƒ“ƒfƒbƒNƒX
-
-    private Coroutine typingCoroutine;   // Às’†‚ÌƒRƒ‹[ƒ`ƒ“‚ğ•Û‚·‚é‚½‚ß‚Ì•Ï”
-    private bool isTyping = false;       // Œ»İƒ^ƒCƒsƒ“ƒO’†‚©‚Ç‚¤‚©
-    private string currentMessage;       // Œ»İ•\¦’†‚ÌƒƒbƒZ[ƒWiƒXƒLƒbƒv—pj
-
-    /// <summary>
-    /// ƒƒbƒZ[ƒW”z—ñ‚ğó‚¯æ‚èAÅ‰‚ÌƒƒbƒZ[ƒW•\¦‚ğŠJn‚·‚é
-    /// </summary>
     public void StartTyping(string[] messages)
     {
-        this.messages = messages;
-        currentMessageIndex = 0;
+        if (messages == null || messages.Length == 0) return;
 
-        // ƒƒbƒZ[ƒW‚ª–³‚¢ê‡‚Í‘¦I—¹
-        if (messages == null || messages.Length == 0)
-        {
-            OnTypingFinished?.Invoke();  // ƒCƒxƒ“ƒg‚ğ”­‰Î
-            return;
-        }
+        currentMessage = messages[0];
 
-        ShowNextMessage();
-    }
-
-    /// <summary>
-    /// Ÿ‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚·‚é
-    /// </summary>
-    private void ShowNextMessage()
-    {
-        // ‘SƒƒbƒZ[ƒW‚ğ•\¦‚µI‚í‚Á‚½‚çI—¹ƒCƒxƒ“ƒg
-        if (currentMessageIndex >= messages.Length)
-        {
-            OnTypingFinished?.Invoke();
-            return;
-        }
-
-        currentMessage = messages[currentMessageIndex];
-
-        // ƒƒbƒZ[ƒW‚ªØ‚è‘Ö‚í‚Á‚½‚±‚Æ‚ğ’Ê’miƒ{ƒCƒXÄ¶‚È‚Ç‚É—˜—pj
-        OnMessageChanged?.Invoke(currentMessageIndex);
-
-        currentMessageIndex++;
-
-        // Šù‚ÉƒRƒ‹[ƒ`ƒ“‚ª“®‚¢‚Ä‚¢‚½‚ç~‚ß‚éiŸ‚ÌƒƒbƒZ[ƒW‚ÉØ‚è‘Ö‚¦j
         if (typingCoroutine != null)
-        {
             StopCoroutine(typingCoroutine);
-        }
 
-        // 1•¶š‚¸‚Â•\¦‚·‚éƒRƒ‹[ƒ`ƒ“‚ğŠJn
         typingCoroutine = StartCoroutine(TypeMessageCoroutine(currentMessage));
     }
 
-    /// <summary>
-    /// ƒƒbƒZ[ƒW‚ğ1•¶š‚¸‚Â•\¦‚·‚éƒRƒ‹[ƒ`ƒ“
-    /// </summary>
     private IEnumerator TypeMessageCoroutine(string message)
     {
         isTyping = true;
@@ -76,38 +30,29 @@ public class TypeWriterEffect : MonoBehaviour
 
         foreach (char c in message)
         {
-            textComponent.text += c;                // 1•¶š’Ç‰Á
-            yield return new WaitForSeconds(typingSpeed); // w’èŠÔ‘Ò‹@
+            textComponent.text += c;
+            yield return new WaitForSeconds(typingSpeed);
         }
 
-        isTyping = false; // ‘Å‚¿I‚í‚Á‚½‚ç‰ğœ
+        isTyping = false;
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚ªƒNƒŠƒbƒN/ƒL[“ü—Í‚µ‚½‚Æ‚«‚Ì‹““®
+    /// å³å…¨æ–‡è¡¨ç¤ºï¼ˆæ¬¡ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ã¯é€²ã¾ãªã„ï¼‰
     /// </summary>
-    public void OnUserClicked()
+    public void ForceComplete()
     {
-        if (isTyping)
+        if (typingCoroutine != null)
         {
-            // ƒ^ƒCƒsƒ“ƒO’†‚È‚ç‘¦•\¦iƒXƒLƒbƒvj
             StopCoroutine(typingCoroutine);
-            textComponent.text = currentMessage;
-            isTyping = false;
+            typingCoroutine = null;
         }
-        else
-        {
-            // ƒ^ƒCƒsƒ“ƒO‚ªI‚í‚Á‚Ä‚¢‚½‚çŸ‚ÌƒƒbƒZ[ƒW‚Ö
-            ShowNextMessage();
-        }
-    }
 
-    private void Update()
-    {
-        // ƒXƒy[ƒXƒL[ ‚Ü‚½‚Í ƒ}ƒEƒX¶ƒNƒŠƒbƒN ‚ÅƒXƒLƒbƒvEŸƒƒbƒZ[ƒW‚Ö
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        if (textComponent != null)
         {
-            OnUserClicked();
+            textComponent.text = currentMessage;
         }
+
+        isTyping = false;
     }
 }

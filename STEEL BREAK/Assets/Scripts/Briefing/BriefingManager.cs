@@ -32,23 +32,22 @@ public class BriefingManager : MonoBehaviour
     private int currentIndex = 0;
     private Coroutine waitVoiceCoroutine;
 
+    private bool is_message_playing_ = false;
+    private bool is_briefing_finished_ = false; // ★ 追加
+
     void Start()
     {
         var mission = GameData.currentSelected;
         if (mission == null)
         {
-            Debug.LogError("[BriefingManager] MissionDataが設定されていません。");
-            if (briefingUI != null) briefingUI.SetActive(false);
-            if (selectionUI != null) selectionUI.SetActive(true);
+            EndBriefing();
             return;
         }
 
-        //========================
-        // 📋 テキスト・画像初期化
-        //========================
         missionTitleText.text = mission.missionName;
         stageNameText.text = mission.stageName;
         rewardAmountText.text = $"{mission.rewardAmount:N0}";
+
         if (companyImage != null) companyImage.sprite = mission.companyImage;
         if (missionImage != null) missionImage.sprite = mission.missionImage;
 
@@ -66,85 +65,30 @@ public class BriefingManager : MonoBehaviour
             return;
         }
 
-        //========================
-        // 💬 最初のメッセージ開始
-        //========================
         PlayMessage(0);
     }
 
-    /// <summary>
-    /// 指定 index のメッセージ＋ボイスを再生
-    /// </summary>
-    private void PlayMessage(int index)
+    void Update()
     {
-        if (index >= messages.Length)
+        if (is_briefing_finished_) return;
+
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
-            EndBriefing();
-            return;
+            OnUserNext();
         }
-
-        currentIndex = index;
-
-        // テキスト開始（1文ずつ）
-        messageTyper.StartTyping(new string[] { messages[index] });
-
-        // ボイス再生
-        PlayVoice(index);
     }
 
-    /// <summary>
-    /// ボイス再生
-    /// </summary>
-    private void PlayVoice(int index)
+    private void OnUserNext()
     {
-        if (voiceSource == null) return;
-        if (voices == null || index >= voices.Length) return;
+        if (!is_message_playing_) return;
 
-        var clip = Resources.Load<AudioClip>(voices[index]);
-        if (clip == null)
+        // ボイス停止
+        if (voiceSource != null && voiceSource.isPlaying)
         {
-            Debug.LogWarning($"[BriefingManager] ボイスが見つかりません: {voices[index]}");
-            PlayNextMessage();
-            return;
-        }
-
-        if (voiceSource.isPlaying)
             voiceSource.Stop();
+        }
 
-        voiceSource.clip = clip;
-        voiceSource.Play();
-
-        // 既存の待機コルーチン停止
-        if (waitVoiceCoroutine != null)
-            StopCoroutine(waitVoiceCoroutine);
-
-        waitVoiceCoroutine = StartCoroutine(WaitForVoiceEnd());
-    }
-
-    /// <summary>
-    /// ボイス終了待ち
-    /// </summary>
-    private IEnumerator WaitForVoiceEnd()
-    {
-        yield return new WaitWhile(() => voiceSource.isPlaying);
-        PlayNextMessage();
-    }
-
-    /// <summary>
-    /// 次のメッセージへ
-    /// </summary>
-    private void PlayNextMessage()
-    {
-        currentIndex++;
-        PlayMessage(currentIndex);
-    }
-
-    /// <summary>
-    /// ブリーフィング終了処理
-    /// </summary>
-    private void EndBriefing()
-    {
-        Debug.Log("[BriefingManager] ブリーフィング終了");
+        messageTyper.ForceComplete();
 
         if (waitVoiceCoroutine != null)
         {
@@ -152,10 +96,95 @@ public class BriefingManager : MonoBehaviour
             waitVoiceCoroutine = null;
         }
 
-        if (voiceSource != null && voiceSource.isPlaying)
+        PlayNextMessage();
+    }
+
+    private void PlayMessage(int index)
+    {
+        if (is_briefing_finished_) return;
+
+        if (index >= messages.Length)
+        {
+            EndBriefing();
+            return;
+        }
+
+        is_message_playing_ = true;
+        currentIndex = index;
+
+        messageTyper.StartTyping(new string[] { messages[index] });
+        PlayVoice(index);
+    }
+
+    private void PlayVoice(int index)
+    {
+        if (is_briefing_finished_) return;
+        if (voiceSource == null) return;
+        if (voices == null || index >= voices.Length)
+        {
+            PlayNextMessage();
+            return;
+        }
+
+        var clip = Resources.Load<AudioClip>(voices[index]);
+        if (clip == null)
+        {
+            PlayNextMessage();
+            return;
+        }
+
+        voiceSource.Stop();
+        voiceSource.clip = clip;
+        voiceSource.Play();
+
+        if (waitVoiceCoroutine != null)
+            StopCoroutine(waitVoiceCoroutine);
+
+        waitVoiceCoroutine = StartCoroutine(WaitForVoiceEnd());
+    }
+
+    private IEnumerator WaitForVoiceEnd()
+    {
+        yield return new WaitWhile(() => voiceSource.isPlaying);
+
+        if (is_briefing_finished_) yield break;
+
+        PlayNextMessage();
+    }
+
+    private void PlayNextMessage()
+    {
+        currentIndex++;
+        PlayMessage(currentIndex);
+    }
+
+    public void SkipBriefing()
+    {
+        EndBriefing();
+    }
+
+    private void EndBriefing()
+    {
+        if (is_briefing_finished_) return;
+
+        is_briefing_finished_ = true;
+        is_message_playing_ = false;
+
+        if (waitVoiceCoroutine != null)
+        {
+            StopCoroutine(waitVoiceCoroutine);
+            waitVoiceCoroutine = null;
+        }
+
+        if (voiceSource != null)
         {
             voiceSource.Stop();
             voiceSource.clip = null;
+        }
+
+        if (messageTyper != null)
+        {
+            messageTyper.ForceComplete();
         }
 
         if (briefingUI != null) briefingUI.SetActive(false);
