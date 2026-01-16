@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,8 @@ public class Field : MonoBehaviour
 
     private GameObject m_playerInstance; //プレイヤー
     private int m_currentWaveIndex = 0;  //現在のウェーブ
+    
+    public static event Action<int, int> OnWaveChanged; //Wave変更通知
 
     private List<Enemy> m_aliveEnemies = new List<Enemy>(); //生存している敵のリスト
 
@@ -60,6 +63,12 @@ public class Field : MonoBehaviour
     /// </summary>
     private IEnumerator SpawnWave(WaveData wave)
     {
+        int currentWave = m_currentWaveIndex + 1;
+        int totalWave = waveDataList.Count;
+
+        // UIへ通知
+        OnWaveChanged?.Invoke(currentWave, totalWave);
+
         Debug.Log($"Wave {m_currentWaveIndex + 1} 開始");
 
         //敵を生成
@@ -94,7 +103,7 @@ public class Field : MonoBehaviour
         yield return new WaitUntil(() => m_aliveEnemies.Count == 0);
 
         Debug.Log($"Wave {m_currentWaveIndex + 1} 終了");
-        yield return new WaitForSeconds(2f); //次ウェーブまでの待機
+        yield return new WaitForSeconds(1f); //次ウェーブまでの待機
     }
 
     /// <summary>
@@ -114,7 +123,7 @@ public class Field : MonoBehaviour
             totalWeight += entry.spawnWeight;
 
         //0〜totalWeight の乱数を生成
-        float randomValue = Random.Range(0f, totalWeight);
+        float randomValue = UnityEngine.Random.Range(0f, totalWeight);
         float cumulative = 0f;
 
         //重みに応じて該当プレハブを返す
