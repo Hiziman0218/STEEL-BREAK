@@ -173,7 +173,7 @@ public class BriefingManager : MonoBehaviour
         is_voice_disabled_ = true;
 
         StopVoiceAll();
-        EnableVoiceObject(false); // ★ここで完全停止
+        EnableVoiceObject(false); //ここで完全停止w
 
         if (messageTyper != null)
         {

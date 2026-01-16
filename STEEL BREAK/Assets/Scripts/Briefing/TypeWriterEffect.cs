@@ -38,7 +38,7 @@ public class TypeWriterEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// 即全文表示（次メッセージには進まない）
+    /// 即全文表示（次メッセージには進まない）w
     /// </summary>
     public void ForceComplete()
     {
