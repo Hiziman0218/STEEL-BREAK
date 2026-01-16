@@ -1036,7 +1036,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 853214279}
+      - m_Target: {fileID: 1395899941}
         m_TargetAssemblyTypeName: BriefingManager, Assembly-CSharp
         m_MethodName: SkipBriefing
         m_Mode: 1
@@ -1816,7 +1816,6 @@ GameObject:
   - component: {fileID: 853214276}
   - component: {fileID: 853214278}
   - component: {fileID: 853214277}
-  - component: {fileID: 853214279}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -1884,32 +1883,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853214275}
   m_CullTransparentMesh: 1
---- !u!114 &853214279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853214275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7640f20c21a9e4489cc7cb26ee19dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  missionTitleText: {fileID: 995060128}
-  clientText: {fileID: 0}
-  stageNameText: {fileID: 1018722665}
-  rewardAmountText: {fileID: 144420083}
-  companyImage: {fileID: 465851870}
-  missionImage: {fileID: 1680119359}
-  objectiveTexts:
-  - {fileID: 1008440102}
-  - {fileID: 1454646836}
-  - {fileID: 697839315}
-  messageTyper: {fileID: 1542447399}
-  voiceSource: {fileID: 1382613896}
-  briefingUI: {fileID: 769464716}
-  selectionUI: {fileID: 154345038}
 --- !u!1 &858381225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3461,6 +3434,7 @@ MonoBehaviour:
   - {fileID: 697839315}
   messageTyper: {fileID: 1542447399}
   voiceSource: {fileID: 1382613896}
+  voiceObject_: {fileID: 1382613893}
   briefingUI: {fileID: 769464716}
   selectionUI: {fileID: 154345038}
 --- !u!1 &1405692816

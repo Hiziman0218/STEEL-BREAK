@@ -20,7 +20,10 @@ public class BriefingManager : MonoBehaviour
 
     [Header("メッセージ表示")]
     public TypeWriterEffect messageTyper;
+
+    [Header("ボイス")]
     public AudioSource voiceSource;
+    [SerializeField] private GameObject voiceObject_; // ★AudioSource付きGO
 
     [Header("UIオブジェクト")]
     public GameObject briefingUI;
@@ -33,7 +36,8 @@ public class BriefingManager : MonoBehaviour
     private Coroutine waitVoiceCoroutine;
 
     private bool is_message_playing_ = false;
-    private bool is_briefing_finished_ = false; // ★ 追加
+    private bool is_briefing_finished_ = false;
+    private bool is_voice_disabled_ = false;
 
     void Start()
     {
@@ -65,6 +69,7 @@ public class BriefingManager : MonoBehaviour
             return;
         }
 
+        EnableVoiceObject(true);
         PlayMessage(0);
     }
 
@@ -80,22 +85,10 @@ public class BriefingManager : MonoBehaviour
 
     private void OnUserNext()
     {
-        if (!is_message_playing_) return;
+        if (!is_message_playing_ || is_briefing_finished_) return;
 
-        // ボイス停止
-        if (voiceSource != null && voiceSource.isPlaying)
-        {
-            voiceSource.Stop();
-        }
-
+        StopVoiceAll();
         messageTyper.ForceComplete();
-
-        if (waitVoiceCoroutine != null)
-        {
-            StopCoroutine(waitVoiceCoroutine);
-            waitVoiceCoroutine = null;
-        }
-
         PlayNextMessage();
     }
 
@@ -118,8 +111,9 @@ public class BriefingManager : MonoBehaviour
 
     private void PlayVoice(int index)
     {
-        if (is_briefing_finished_) return;
+        if (is_briefing_finished_ || is_voice_disabled_) return;
         if (voiceSource == null) return;
+
         if (voices == null || index >= voices.Length)
         {
             PlayNextMessage();
@@ -133,27 +127,34 @@ public class BriefingManager : MonoBehaviour
             return;
         }
 
-        voiceSource.Stop();
+        EnableVoiceObject(true);
+        StopVoiceAll();
+
         voiceSource.clip = clip;
         voiceSource.Play();
-
-        if (waitVoiceCoroutine != null)
-            StopCoroutine(waitVoiceCoroutine);
 
         waitVoiceCoroutine = StartCoroutine(WaitForVoiceEnd());
     }
 
     private IEnumerator WaitForVoiceEnd()
     {
-        yield return new WaitWhile(() => voiceSource.isPlaying);
+        while (voiceSource != null && voiceSource.isPlaying)
+        {
+            if (is_briefing_finished_ || is_voice_disabled_)
+                yield break;
 
-        if (is_briefing_finished_) yield break;
+            yield return null;
+        }
+
+        if (is_briefing_finished_ || is_voice_disabled_)
+            yield break;
 
         PlayNextMessage();
     }
 
     private void PlayNextMessage()
     {
+        if (is_briefing_finished_) return;
         currentIndex++;
         PlayMessage(currentIndex);
     }
@@ -169,7 +170,26 @@ public class BriefingManager : MonoBehaviour
 
         is_briefing_finished_ = true;
         is_message_playing_ = false;
+        is_voice_disabled_ = true;
 
+        StopVoiceAll();
+        EnableVoiceObject(false); // ★ここで完全停止
+
+        if (messageTyper != null)
+        {
+            messageTyper.ForceComplete();
+        }
+
+        if (briefingUI != null) briefingUI.SetActive(false);
+        if (selectionUI != null) selectionUI.SetActive(true);
+    }
+
+    //================================
+    // 音声制御
+    //================================
+
+    private void StopVoiceAll()
+    {
         if (waitVoiceCoroutine != null)
         {
             StopCoroutine(waitVoiceCoroutine);
@@ -181,13 +201,18 @@ public class BriefingManager : MonoBehaviour
             voiceSource.Stop();
             voiceSource.clip = null;
         }
+    }
 
-        if (messageTyper != null)
+    private void EnableVoiceObject(bool enable)
+    {
+        if (voiceObject_ == null)
         {
-            messageTyper.ForceComplete();
+            Debug.LogError("❌ voiceObject_ が未設定です");
+            return;
         }
 
-        if (briefingUI != null) briefingUI.SetActive(false);
-        if (selectionUI != null) selectionUI.SetActive(true);
+        Debug.Log($"🔊 VoiceObject SetActive({enable}) : {voiceObject_.name}");
+        voiceObject_.SetActive(enable);
     }
+
 }

@@ -2,49 +2,49 @@
     "slots": [
         {
             "slotName": "Head",
-            "partsDataName": "鎧鬼(Head)",
-            "ap": 80,
-            "weight": 85
+            "partsDataName": "Atlas(Head)",
+            "ap": 40,
+            "weight": 45
         },
         {
             "slotName": "Body",
-            "partsDataName": "鎧鬼(Body)",
-            "ap": 150,
-            "weight": 155
+            "partsDataName": "Atlas(Body)",
+            "ap": 50,
+            "weight": 50
         },
         {
             "slotName": "L_Arm",
-            "partsDataName": "鎧鬼(L_Arm)",
-            "ap": 50,
-            "weight": 55
+            "partsDataName": "Atlas(L_Arm)",
+            "ap": 20,
+            "weight": 25
         },
         {
             "slotName": "R_Arm",
-            "partsDataName": "鎧鬼(R_Arm)",
+            "partsDataName": "Atlas(R_Arm)",
+            "ap": 20,
+            "weight": 25
+        },
+        {
+            "slotName": "Leg",
+            "partsDataName": "Atlas(Lge)",
             "ap": 50,
             "weight": 55
         },
         {
-            "slotName": "Leg",
-            "partsDataName": "鎧鬼(Lge)",
-            "ap": 120,
-            "weight": 125
-        },
-        {
             "slotName": "Weapon",
-            "partsDataName": "レーザーガン",
+            "partsDataName": "ショットガン",
             "ap": 0,
             "weight": 0
         },
         {
             "slotName": "WeaponL",
-            "partsDataName": "レーザーガン",
+            "partsDataName": "アサルトライフル",
             "ap": 0,
             "weight": 0
         },
         {
             "slotName": "Booster",
-            "partsDataName": "Booster2",
+            "partsDataName": "Booster1",
             "ap": 0,
             "weight": 0
         },
@@ -56,12 +56,12 @@
         },
         {
             "slotName": "BWeaponL",
-            "partsDataName": "ガトリング",
+            "partsDataName": "ミサイル",
             "ap": 0,
             "weight": 0
         }
     ],
-    "totalAP": 450,
-    "totalWeight": 475,
+    "totalAP": 180,
+    "totalWeight": 200,
     "saveFileName": "mech_save.json"
 }
