@@ -37,9 +37,6 @@ namespace StateMachineAI
         [Header("攻撃のクールタイム")]
         [Range(1f, 10f)]
         public float m_CoolTime = 4f;
-        [Header("移動速度")]
-        [Range(2f, 50f)]
-        public float m_MoveSpeed;
 
         [HideInInspector]
         public CoolDown m_CoolDown;
@@ -74,9 +71,6 @@ namespace StateMachineAI
             myAgent = PoolManager.Instance.Get("Soldier", transform.position + transform.forward, m_Player);
             m_Detector = myAgent.GetComponent<Detector>();
             m_Controller = myAgent.GetComponent<SteeringController>();
-
-            // 初期速度を変更する
-            m_Controller.speed = m_MoveSpeed;
 
             //エネミーのスクリプトを取得
             Enemy m_Enemy = GetComponent<Enemy>();

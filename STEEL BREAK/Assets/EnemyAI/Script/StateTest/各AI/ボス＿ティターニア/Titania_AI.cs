@@ -159,7 +159,6 @@ namespace StateMachineAI
                 m_Enemy.OnDamage += CommandEnemy;
                 //死亡イベントを購読
                 m_Enemy.OnDeath += HandleBossDeath;
-                //m_Enemy.OnStagger -= HandleDamaged;
             }
 
             //存在していないクラスが指定されたら本体消滅
@@ -176,19 +175,9 @@ namespace StateMachineAI
             //ステートマシーンを自身として設定
             stateMachine = new StateMachine<Titania_T>();
 
-            //デバッグ用
-            ChangeState(AIState_Titania_T.Idle_T);
-
             //初期起動時は、雑魚敵の生成に移行させる
-            //ChangeState(AIState_Titania_T.Spawn_T);
+            ChangeState(AIState_Titania_T.Spawn_T);
         }
-
-        /*
-        //ヒットストップ
-        private void HandleDamaged(Enemy enemy)
-        {
-            ChangeState(AIState_Titania_T.Hit_T);
-        }*/
 
         //ダメージを与えられたら防御型に通知してプレイヤーが近ければ攻撃させに行く
         private void CommandEnemy()

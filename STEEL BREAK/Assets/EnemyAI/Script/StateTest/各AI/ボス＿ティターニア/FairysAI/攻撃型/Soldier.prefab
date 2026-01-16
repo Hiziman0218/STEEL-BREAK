@@ -773,10 +773,12 @@ MonoBehaviour:
   m_CenterMarker: {fileID: 0}
   m_AttackDistance: 15
   m_CoolTime: 6
+  m_MoveSpeed: 2
   m_CoolDown: {fileID: 0}
   m_Rigidbody: {fileID: 0}
   myAgent: {fileID: 0}
   m_Detector: {fileID: 0}
+  m_Controller: {fileID: 0}
 --- !u!114 &5416607881140617608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,6 +793,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: 7a181de743a45014aaf89d2f38fdbbe2, type: 2}
   m_staggerThreshold: 1
+  m_isUseRandomWeapon: 0
+  m_attachPointR: {fileID: 0}
+  m_attachPointL: {fileID: 0}
   weaponR: {fileID: 6015796146169042562}
   weaponL: {fileID: 0}
 --- !u!114 &1696165441526648958
@@ -42975,6 +42980,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_statusData: {fileID: 11400000, guid: ec0d97660f18de940973d0b4e64ab777, type: 2}
   m_muzzleTransform: {fileID: 2046337802422045619}
+  m_audioSource: {fileID: 0}
 --- !u!4 &6862813241842318696 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6081246962119037672, guid: f7a99e8a92579d84f9b68ff71d3c914b, type: 3}
