@@ -11,6 +11,7 @@ namespace StateMachineAI
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
+            Debug.Log("回転ビーム");
             //エージェントをいったん返却
             PoolManager.Instance.Return("Titania",owner.myAgent);
             //ビームを撃つ
@@ -21,13 +22,6 @@ namespace StateMachineAI
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
         {
-            // チャージ完了後に初回だけ撃つ
-            if (!hasShot)
-            {
-                owner.StartCoroutine(Attack_Shots.ShotR(owner.m_Enemy, owner.m_CoolDown, 0));
-                hasShot = true;
-            }
-
             // 回転処理
             Quaternion deltaRot = Quaternion.Euler(0f, 180f * Time.deltaTime, 0f);
             owner.m_Rigidbody.MoveRotation(owner.m_Rigidbody.rotation * deltaRot);

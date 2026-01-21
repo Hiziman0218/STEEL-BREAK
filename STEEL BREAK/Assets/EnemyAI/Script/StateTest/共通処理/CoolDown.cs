@@ -22,9 +22,14 @@ public class CoolDown : MonoBehaviour
     //クールダウン開始
     public void StartCoolDown(string actionName, float duration)
     {
-        //Debug.Log("クールダウン開始");
-        CoolDowns[actionName] = duration;
-        CoolTimes[actionName] = Time.time;
+        //上書きの禁止
+        if (!CoolDowns.ContainsKey(actionName))
+        {
+            //Debug.Log("クールダウン開始");
+            CoolDowns[actionName] = duration;
+            CoolTimes[actionName] = Time.time;
+        }
+
     }
 
     //クールダウン中かどうか
@@ -34,6 +39,14 @@ public class CoolDown : MonoBehaviour
         if (!CoolDowns.ContainsKey(actionName) || !CoolTimes.ContainsKey(actionName))
         {
             //クールダウンデータなし＝クールダウン中ではない
+            return false;
+        }
+
+        if (Time.time - CoolTimes[actionName] >= CoolDowns[actionName])
+        {
+            // 終わったら削除
+            CoolDowns.Remove(actionName);
+            CoolTimes.Remove(actionName);
             return false;
         }
 

@@ -9,7 +9,7 @@ namespace StateMachineAI
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
-            Debug.Log("行動決め待機時間");
+            //Debug.Log("行動決め待機時間");
             //別ステートでエージェントを解除して取得していなければ
             if (owner.myAgent == null || !owner.myAgent.activeInHierarchy)
             {

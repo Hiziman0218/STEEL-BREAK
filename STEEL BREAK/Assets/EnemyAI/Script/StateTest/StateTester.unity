@@ -48243,11 +48243,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3801579981757444770, guid: 004ecff7158d5824eb42f31935a6d5c5, type: 3}
       propertyPath: actionEntries.Array.data[2].weight
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3801579981757444770, guid: 004ecff7158d5824eb42f31935a6d5c5, type: 3}
       propertyPath: actionEntries.Array.data[3].weight
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4235757626092868704, guid: 004ecff7158d5824eb42f31935a6d5c5, type: 3}
       propertyPath: m_Mesh

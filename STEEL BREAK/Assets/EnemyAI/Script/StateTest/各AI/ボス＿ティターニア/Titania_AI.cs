@@ -176,7 +176,7 @@ namespace StateMachineAI
             stateMachine = new StateMachine<Titania_T>();
 
             //初期起動時は、雑魚敵の生成に移行させる
-            ChangeState(AIState_Titania_T.Spawn_T);
+            ChangeState(AIState_Titania_T.Idle_T);
         }
 
         //ダメージを与えられたら防御型に通知してプレイヤーが近ければ攻撃させに行く

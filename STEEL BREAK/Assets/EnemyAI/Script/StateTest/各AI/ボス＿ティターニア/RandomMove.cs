@@ -10,7 +10,7 @@ namespace StateMachineAI
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
-            Debug.Log("ランダムに移動");
+            //Debug.Log("ランダムに移動");
 
             //エージェントを自分の位置へ戻す
             owner.myAgent.transform.position = owner.transform.position;

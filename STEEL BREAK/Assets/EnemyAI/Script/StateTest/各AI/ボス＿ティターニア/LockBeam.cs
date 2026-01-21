@@ -15,8 +15,11 @@ namespace StateMachineAI
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
+            Debug.Log("ロックオン");
             //現在の角度を記憶させておく
             originalRotation = owner.transform.rotation;
+
+            isAttacking = false;
 
             owner.m_CoolDown.StartCoolDown("Lockon", 3f);
         }
@@ -51,7 +54,11 @@ namespace StateMachineAI
 
             //次の行動の際にガクッと角度が変わらないようにここで滑らかにリセット
             //この処理が終わり次第ステートが遷移
-            owner.StartCoroutine(SmoothResetRotation());
+            yield return owner.StartCoroutine(SmoothResetRotation());
+
+            // ステート遷移
+            owner.ChangeState(AIState_Titania_T.Idle_T);
+
         }
 
         //角度リセット処理（スムーズ）
@@ -70,12 +77,12 @@ namespace StateMachineAI
                 float newY = startEuler.y; // 向きは固定
                 float newZ = Mathf.LerpAngle(startEuler.z, targetEuler.z, t);
 
-                owner.transform.rotation = Quaternion.Euler(newX, newY, newZ);
+                owner.m_Rigidbody.MoveRotation(
+                    Quaternion.Euler(newX, newY, newZ)
+                );
+
                 yield return null;
             }
-
-            //傾きを調整後にステートを変更
-            owner.ChangeState(AIState_Titania_T.Idle_T);
         }
 
         public override void Exit()
