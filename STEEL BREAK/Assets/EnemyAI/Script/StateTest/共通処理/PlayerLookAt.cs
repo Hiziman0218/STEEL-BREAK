@@ -66,4 +66,32 @@ public class PlayerLookAt : MonoBehaviour
             m_my.rotation = Quaternion.Slerp(m_my.rotation, targetRot, turnSmooth);
         }
     }
+
+    public static void SoftLockRB(Rigidbody rb, Transform target, float turnSmooth)
+    {
+        if (rb == null || target == null)
+            return;
+
+        // 念のためスリープ解除（Sleep してると MoveRotation が効かない）
+        rb.WakeUp();
+
+        // ターゲット方向
+        Vector3 targetDir = (target.position - rb.transform.position).normalized;
+        if (targetDir.sqrMagnitude < 0.0001f)
+            return;
+
+        // 目標回転
+        Quaternion targetRot = Quaternion.LookRotation(targetDir, Vector3.up);
+
+        // 補間（元の SoftLock と同じ Slerp）
+        Quaternion newRot = Quaternion.Slerp(
+            rb.rotation,
+            targetRot,
+            turnSmooth
+        );
+
+        // Rigidbody で回転
+        rb.MoveRotation(newRot);
+    }
+
 }
