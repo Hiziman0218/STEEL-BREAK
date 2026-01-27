@@ -30,7 +30,7 @@ namespace StateMachineAI
                 owner.m_Controller.speed = owner.m_maxspeed;
             }
 
-            owner.m_CoolDown.StartCoolDown("RushLockon", 6f);
+            owner.m_CoolDown.StartCoolDown("RushLockon", 3f);
         }
         //このAIが起動中に常に実行(Updateと同義)
         public override void Stay()
@@ -64,28 +64,57 @@ namespace StateMachineAI
 
                 Vector3 dir;
 
+                // 突進中の進行方向を決める処理
                 if (!reachedSameHeight)
                 {
-                    // 高度差をチェック
+                    // プレイヤーとの高さ差（絶対値）
                     float heightDiff = Mathf.Abs(owner.transform.position.y - targetPos.y);
 
-                    if (heightDiff <= 10f || !owner.m_CoolDown.IsCoolDown("Lock")) // 10m以内の高さなら直進モードへ
+                    // プレイヤーとの水平距離（XZ 平面）
+                    float horizontalDist = Vector3.Distance(
+                        new Vector3(owner.transform.position.x, 0, owner.transform.position.z),
+                        new Vector3(targetPos.x, 0, targetPos.z)
+                    );
+
+                    // 条件1：高さが十分近い
+                    bool heightAligned = heightDiff <= 10f;
+
+                    // 条件2：プレイヤーに十分近づいている
+                    bool closeEnough = horizontalDist <= 45f;
+
+                    // 条件3：Lock が切れた（高度補正フェーズの終了タイミング）
+                    bool lockExpired = !owner.m_CoolDown.IsCoolDown("Lock");
+
+                    // 高さが合っている AND プレイヤーに近い
+                    // または Lock が切れた（安全装置）
+                    if ((heightAligned && closeEnough) || lockExpired)
                     {
+                        // 直進モードへ移行
                         reachedSameHeight = true;
-                        // 直進方向をこの時点で固定
+
+                        // この瞬間の水平方向を固定（以降は方向を変えない）
                         rushDir = flatDir;
+
+                        // 直進方向を返す
                         dir = rushDir;
                     }
                     else
                     {
-                        // 高度がまだ離れている → カーブをかけて降下or上昇
-                        float newY = Mathf.Lerp(owner.transform.position.y, targetPos.y, 0.01f);
-                        dir = new Vector3(flatDir.x, (newY - owner.transform.position.y), flatDir.z).normalized;
+                        // 高度補正フェーズ（Lock が生きている間 & 高さが合っていない）
+                        // プレイヤーの高さへゆっくり追従する
+                        float newY = Mathf.Lerp(owner.transform.position.y, targetPos.y, 0.05f);
+
+                        // 高度補正を含めた方向ベクトル
+                        dir = new Vector3(
+                            flatDir.x,
+                            newY - owner.transform.position.y,
+                            flatDir.z
+                        ).normalized;
                     }
                 }
                 else
                 {
-                    // 直進モード → 開始時に固定した方向で突進
+                    // 直進モード（方向固定）
                     dir = rushDir;
                 }
 
@@ -115,7 +144,7 @@ namespace StateMachineAI
             {
                 Debug.Log("ロックオン中");
                 // プレイヤー方向へ回転
-                PlayerLookAt.SoftLockRB(owner.m_Rigidbody, owner.m_Player, owner.m_turnsmooth);
+                PlayerLookAt.SoftLock(owner.transform, owner.m_Player, owner.m_turnsmooth);
 
                 // プレイヤー方向との角度差をチェック
                 Vector3 toPlayer = (owner.m_Player.position - owner.transform.position).normalized;
@@ -157,7 +186,16 @@ namespace StateMachineAI
         public override void Exit()
         {
             //クールタイムを設ける
-            owner.m_CoolDown.StartCoolDown("Rush", 1f);
+            owner.m_CoolDown.StartCoolDown("Rush", 20f);
+
+            //フラグ初期化
+            isRushing = false;
+            reachedSameHeight = false;
+            rushDir = Vector3.zero;
+            owner.m_CoolDown.ForceEnd("RushLockon");
+            owner.m_CoolDown.ForceEnd("Move");
+            owner.m_CoolDown.ForceEnd("Lock");
+
             //デフォルト速度に戻す
             owner.m_Controller.speed = owner.m_speed;
             //エージェントを再取得
