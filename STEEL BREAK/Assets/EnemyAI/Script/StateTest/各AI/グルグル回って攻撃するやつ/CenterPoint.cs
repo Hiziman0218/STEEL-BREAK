@@ -8,6 +8,7 @@ namespace StateMachineAI
         public CenterPoint(CenteringAI owner) : base(owner) { }
         private float m_RayDistance = 1.5f;
 
+
         //このAIが起動した瞬間に実行(Startと同義)
         public override void Enter()
         {
@@ -50,9 +51,8 @@ namespace StateMachineAI
 
                 // クールダウン開始
                 owner.m_CoolDown.StartCoolDown("siderot", Random.Range(3, 10));
-            }
 
-            //移動方向の反転
+            }
             if (owner.m_CoolDown != null && !owner.m_CoolDown.IsCoolDown("siderot"))
             {
                 // --- 確率で反転 ---

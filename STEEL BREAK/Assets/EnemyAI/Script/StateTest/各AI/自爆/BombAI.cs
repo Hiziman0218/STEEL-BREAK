@@ -65,15 +65,10 @@ namespace StateMachineAI
         [HideInInspector]
         public Enemy m_Enemy;
 
-        //プレイヤーや障害物などの何かしらに当たったら
         void OnTriggerEnter(Collider other)
         {
-            //自爆特攻モードなら
-            if (stateMachine.CurrentState is Ramming_BombAI)
-            {
-                //自爆する
-                ChangeState(AIState_BombAI.Explosion);
-            }
+            // プレイヤーや壁など、何かに当たったら自爆ステートに遷移
+            ChangeState(AIState_BombAI.Explosion);
         }
 
         void Start()

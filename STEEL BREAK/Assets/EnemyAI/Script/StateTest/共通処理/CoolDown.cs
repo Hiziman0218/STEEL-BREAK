@@ -42,7 +42,6 @@ public class CoolDown : MonoBehaviour
             return false;
         }
 
-
         if (Time.time - CoolTimes[actionName] >= CoolDowns[actionName])
         {
             // I‚í‚Á‚½‚çíœ
@@ -79,13 +78,5 @@ public class CoolDown : MonoBehaviour
         float elapsed = Time.time - CoolTimes[actionName];
         return Mathf.Max(0f, CoolDowns[actionName] - elapsed);
     }
-
-    //‹­§íœˆ—
-    public void ForceEnd(string actionName)
-    {
-        CoolDowns.Remove(actionName);
-        CoolTimes.Remove(actionName);
-    }
-
 
 }

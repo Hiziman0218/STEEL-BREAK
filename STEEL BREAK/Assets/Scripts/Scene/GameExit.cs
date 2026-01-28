@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GameExit : MonoBehaviour
 {
+    /*
     //‹N“®Žž‚ÉŽ©“®‚ÅŒÄ‚Î‚ê‚é
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -36,4 +37,5 @@ public class GameExit : MonoBehaviour
         }
 #endif
     }
+    */
 }
