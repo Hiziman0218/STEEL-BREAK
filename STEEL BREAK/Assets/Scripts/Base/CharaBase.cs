@@ -63,6 +63,7 @@ public class CharaBase : MonoBehaviour
     public void GetDamage(float damage)
     {
         m_status.SetHP(m_status.GetHP() - damage);
+        if (m_status.GetHP() <= 0f) m_status.SetHP(0f);
         OnDamage?.Invoke();
         Debug.Log("ƒ_ƒ[ƒW—Ê : " + damage);
     }

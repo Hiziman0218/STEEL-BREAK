@@ -77,6 +77,9 @@ public class PauseMenu : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        //リザルトがあるなら、ポーズ不可能
+        if (FindObjectOfType<Result>() != null) return;
+
         isPaused = true;
         currentIndex = 0;
         UpdateMenu();

@@ -66,7 +66,8 @@ public class Player : PlayerBase
         //ブースト消費量倍率をMovementクラスに設定
         m_movement.SetBoostMultiplierinWeight(GetBoostMultiplier());
 
-        //死亡イベント設定
+        //各種イベント設定
+        OnDamage += UpdateHPRate;
         OnDied += GameOver;
     }
 
@@ -74,6 +75,9 @@ public class Player : PlayerBase
     {
         //フラグ管理
         m_isAutoHorizontal = true;
+
+        //割合計算/反映
+        UpdateBoostRate();
 
         //武装の使用
         //右手の攻撃入力を受け取っていたら
@@ -174,32 +178,29 @@ public class Player : PlayerBase
         //レーザー使用中でなければ、ターゲットの方へ向く
         if(!IsFireLaser())
         LookAtTarget();
-
-        //割合計算/反映
-        UpdateRate();
     }
 
     /// <summary>
-    /// 各種割合を計算し、対応したUIに反映
+    /// HP割合を計算し、UIに反映
     /// </summary>
-    void UpdateRate()
+    void UpdateHPRate()
     {
         //HPバーが設定されていたら
         if (m_HPBar != null)
         {
-            /*
-            //現在のHP割合を計算
-            m_HPRate = m_status.GetHP() / m_status.GetMaxHP() * 100f;
-            //HPバーに反映(体力が完全に0になるまでは最低1%として表示)
-            m_HPBar.BarValue = (m_status.GetHP() > 0f) ? Math.Max(1f, MathF.Floor(m_HPRate)) : 0f;*/
-
             float hp = Mathf.Max(0f, m_status.GetHP());
             float maxHp = m_status.GetMaxHP();
 
             m_HPRate = hp / maxHp * 100f;
             m_HPBar.BarValue = (hp <= 0f) ? 0f : Math.Max(1f, MathF.Floor(m_HPRate));
         }
+    }
 
+    /// <summary>
+    /// ブースト割合を計算し、UIに反映
+    /// </summary>
+    void UpdateBoostRate()
+    {
         //ブーストゲージが設定されていたら
         if (m_boostGauge != null)
         {

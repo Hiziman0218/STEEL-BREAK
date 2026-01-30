@@ -7,13 +7,17 @@ public class LockOn : MonoBehaviour
 {
     [Header("索敵設定")]
     [Tooltip("ロックオン可能な最大距離")]
-    public float detectionRange = 20f;
+    public float detectionRange = 30f;
     [Tooltip("ロックを解除する距離のオフセット")]
-    [SerializeField] private float unlockRangeOffset = 2f;
+    [SerializeField] private float unlockRangeOffset = 10f;
     [Tooltip("ロックオン可能な最大角度")]
     public float maxAngle = 60f;
     [Tooltip("敵のレイヤー")]
     public LayerMask enemyLayer;
+
+    [Header("ボス索敵設定")]
+    [Tooltip("ボス用の索敵距離")]
+    public float bossDetectionRange = 50f;
 
     private bool lockOnEnabled = true; //ロックオン機能の有効/無効フラグ
 
@@ -197,8 +201,11 @@ public class LockOn : MonoBehaviour
     /// </summary>
     private void TryBossLock()
     {
-        // 範囲内の Enemy を取得
-        var cols = Physics.OverlapSphere(transform.position, detectionRange, enemyLayer);
+        var cols = Physics.OverlapSphere(
+            transform.position,
+            bossDetectionRange,
+            enemyLayer
+        );
 
         var boss = cols
             .Select(c => c.GetComponentInParent<Boss>())
@@ -206,13 +213,12 @@ public class LockOn : MonoBehaviour
             {
                 if (b == null) return false;
 
-                // 生存チェック
                 var enemy = b.GetComponent<Enemy>();
                 if (enemy == null || !enemy.IsAlive) return false;
 
-                // 視野角チェック
                 Vector3 dir = (b.transform.position - transform.position).normalized;
                 float angle = Vector3.Angle(transform.forward, dir);
+
                 return angle < maxAngle;
             });
 
@@ -244,8 +250,11 @@ public class LockOn : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, bossDetectionRange);
+
         // 前方視野を描画
-        Vector3 forward = transform.forward * detectionRange;
+        Vector3 forward = transform.forward * bossDetectionRange;
         Quaternion leftRot = Quaternion.AngleAxis(-maxAngle, Vector3.up);
         Quaternion rightRot = Quaternion.AngleAxis(maxAngle, Vector3.up);
         Vector3 leftDir = leftRot * forward;
