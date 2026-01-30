@@ -187,10 +187,17 @@ public class Player : PlayerBase
         //HPバーが設定されていたら
         if (m_HPBar != null)
         {
+            /*
             //現在のHP割合を計算
             m_HPRate = m_status.GetHP() / m_status.GetMaxHP() * 100f;
             //HPバーに反映(体力が完全に0になるまでは最低1%として表示)
-            m_HPBar.BarValue = (m_status.GetHP() > 0f) ? Math.Max(1f, MathF.Floor(m_HPRate)) : 0f;
+            m_HPBar.BarValue = (m_status.GetHP() > 0f) ? Math.Max(1f, MathF.Floor(m_HPRate)) : 0f;*/
+
+            float hp = Mathf.Max(0f, m_status.GetHP());
+            float maxHp = m_status.GetMaxHP();
+
+            m_HPRate = hp / maxHp * 100f;
+            m_HPBar.BarValue = (hp <= 0f) ? 0f : Math.Max(1f, MathF.Floor(m_HPRate));
         }
 
         //ブーストゲージが設定されていたら

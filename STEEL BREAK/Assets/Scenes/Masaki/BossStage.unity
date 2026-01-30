@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &70016898 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+  m_PrefabInstance: {fileID: 772738020}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &113564919 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2015429280888199443, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
@@ -425,6 +430,115 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149d864443ddca94ba93b092e7acd5ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &772738020
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1598195068}
+    m_Modifications:
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 520
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 710
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 102
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -220
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1793655892503392730, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5283423205614701138, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
+      propertyPath: m_Name
+      value: Boss Tutorial
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 317eb4908043380408e6f7080d7111a5, type: 3}
 --- !u!114 &860239769 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7946431735826956285, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
@@ -542,6 +656,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3357143262940317081, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
       insertIndex: 1
       addedObject: {fileID: 2119612768}
+    - targetCorrespondingSourceObject: {fileID: 3357143262940317081, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 70016898}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: caae033cb0db7af4d987a7d4a84dcc15, type: 3}
 --- !u!114 &957194786 stripped

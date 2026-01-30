@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
     //自身のインスタンス
     public static GameManager Instance { get; private set; }
 
+    //ポーズのプレハブ
+    public PauseMenu m_pausePrefab;
     //プレイヤーに設定するHPバー
     public ProgressBar m_playerHPBar;
     //プレイヤーに設定するブーストゲージ
@@ -14,9 +16,11 @@ public class GameManager : MonoBehaviour
     public Radar m_radar;
     //プレイヤーの装備する武器の残弾数
     public AmmoDisplay m_ammoDisplay;
-
     //ボスに設定するHPバー
     public ProgressBar m_bossHPBar;
+
+    //ポーズメニュー
+    private PauseMenu m_pauseMenu;
 
     //プレイヤーが死亡したか
     private bool m_playerDied;
@@ -25,16 +29,28 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
 
-        //マウスカーソルを非表示にする
+        //ポーズを生成
+        m_pauseMenu = Instantiate(m_pausePrefab);
+
+        //マウスカーソルを非表示
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
+        //プレイヤーが死亡したらゲームオーバーを表示
         if (m_playerDied)
         {
             GameData.ShowGameOver();
+            return;
+        }
+
+        //エスケープキーを押したらポーズ
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            m_pauseMenu?.Pause();
+            return;
         }
     }
 
