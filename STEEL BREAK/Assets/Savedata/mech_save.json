@@ -2,49 +2,49 @@
     "slots": [
         {
             "slotName": "Head",
-            "partsDataName": "Atlas(Head)",
-            "ap": 40,
-            "weight": 45
+            "partsDataName": "Rainosu(Head)",
+            "ap": 60,
+            "weight": 65
         },
         {
             "slotName": "Body",
-            "partsDataName": "Atlas(Body)",
-            "ap": 50,
-            "weight": 50
+            "partsDataName": "Rainosu(Body)",
+            "ap": 80,
+            "weight": 85
         },
         {
             "slotName": "L_Arm",
-            "partsDataName": "Atlas(L_Arm)",
-            "ap": 20,
-            "weight": 25
+            "partsDataName": "Rainosu(L_Arm)",
+            "ap": 30,
+            "weight": 35
         },
         {
             "slotName": "R_Arm",
-            "partsDataName": "Atlas(R_Arm)",
-            "ap": 20,
-            "weight": 25
+            "partsDataName": "Rainosu(R_Arm)",
+            "ap": 30,
+            "weight": 35
         },
         {
             "slotName": "Leg",
-            "partsDataName": "Atlas(Lge)",
-            "ap": 50,
-            "weight": 55
+            "partsDataName": "Rainosu(Lge)",
+            "ap": 80,
+            "weight": 85
         },
         {
             "slotName": "Weapon",
-            "partsDataName": "レーザーガン",
+            "partsDataName": "ミニガン",
             "ap": 0,
             "weight": 0
         },
         {
             "slotName": "WeaponL",
-            "partsDataName": "バズーカ",
+            "partsDataName": "ミニガン",
             "ap": 0,
             "weight": 0
         },
         {
             "slotName": "Booster",
-            "partsDataName": "Booster1",
+            "partsDataName": "Booster4",
             "ap": 0,
             "weight": 0
         },
@@ -56,12 +56,12 @@
         },
         {
             "slotName": "BWeaponL",
-            "partsDataName": "レーザ砲",
+            "partsDataName": "ガトリング",
             "ap": 0,
             "weight": 0
         }
     ],
-    "totalAP": 180,
-    "totalWeight": 200,
+    "totalAP": 280,
+    "totalWeight": 305,
     "saveFileName": "mech_save.json"
 }
