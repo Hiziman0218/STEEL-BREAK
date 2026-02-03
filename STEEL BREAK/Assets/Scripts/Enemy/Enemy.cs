@@ -77,7 +77,7 @@ public class Enemy : CharaBase
         {
             //死亡イベント
             OnDeath?.Invoke(this);
-            //OnDiedField?.Invoke(this);
+            OnDiedField?.Invoke(this);
 
             //フラグをfalseにし、死亡処理
             IsAlive = false;
@@ -87,7 +87,7 @@ public class Enemy : CharaBase
 
     private void OnDestroy()
     {
-        OnDiedField?.Invoke(this);
+        //OnDiedField?.Invoke(this);
 
         OperationArea area = FindAnyObjectByType<OperationArea>();
         if (area != null)

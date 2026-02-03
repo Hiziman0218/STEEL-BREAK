@@ -103,7 +103,7 @@ public class Field : MonoBehaviour
         yield return new WaitUntil(() => m_aliveEnemies.Count == 0);
 
         Debug.Log($"Wave {m_currentWaveIndex + 1} 終了");
-        yield return new WaitForSeconds(1f); //次ウェーブまでの待機
+        yield return new WaitForSeconds(2f); //次ウェーブまでの待機
     }
 
     /// <summary>
